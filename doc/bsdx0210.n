@@ -1,0 +1,32 @@
+BSDX 2.1 for WorldVista
+
+This is a Scheduling GUI package. I am way too tired to write complete notes right now; here are the essentials:
+
+Pre-requisites:
+FM 22
+Kernel 8
+XB 3 or above
+SD 5.3
+SD 5.3 patch 11310 (to fix a problem with the code)
+BMX 2 or above
+
+To install:
+Load sd0530_11310.k
+Load bsdx0210.k
+There are a few compilation errors that I have to troubleshoot, but they don't seem to affect anything right now.
+
+Post-installation tasks:
+After installation, complete the following tasks to configure Windows Scheduling:
+1. Using RPMS tools, assign the BSDXMENU security key. All scheduling users
+must have the BSDXZMENU security key.
+2. Users who are also scheduling managers must have the BSDXZMGR key
+assigned. The BSDXZMGR key permits access to the Scheduling Management
+menu in the client application. This menu supports the creation of clinics and
+clinic groups, assignment of users to clinics, designation of user access, and other management activities. For further details, see the User Manual.
+3. Make the BMXRPC and BSDXPRC menu options available to scheduling users.
+These options must be somewhere in the user’s path, either as a secondary option
+or as members of a menu to which the user has access.
+4. Use Scheduling Management to configure Resources (clinics), Users, Resource
+Groups, Access Types, and Access Type Groups. See the User Manual for
+detailed instructions.
+

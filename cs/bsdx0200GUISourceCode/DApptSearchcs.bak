@@ -1,0 +1,531 @@
+using System;
+using System.Drawing;
+using System.Collections;
+using System.ComponentModel;
+using System.Windows.Forms;
+using System.Data;
+using System.Data.OleDb;
+
+namespace IndianHealthService.ClinicalScheduling
+{
+	/// <summary>
+	/// Summary description for DApptSearch.
+	/// </summary>
+	public class DApptSearch : System.Windows.Forms.Form
+	{
+		private System.Windows.Forms.Panel panel1;
+		private System.Windows.Forms.Button cmdCancel;
+		private System.Windows.Forms.Button cmdOK;
+		private System.Windows.Forms.Panel pnlDescription;
+		private System.Windows.Forms.GroupBox grpDescription;
+		private System.Windows.Forms.Label lblDescription;
+		private System.Windows.Forms.Label label1;
+		private System.Windows.Forms.CheckBox chkMon;
+		private System.Windows.Forms.CheckBox chkTue;
+		private System.Windows.Forms.CheckBox chkWed;
+		private System.Windows.Forms.CheckBox chkThu;
+		private System.Windows.Forms.CheckBox chkFri;
+		private System.Windows.Forms.GroupBox grpTimeOfDay;
+		private System.Windows.Forms.GroupBox grpDayOfWeek;
+		private System.Windows.Forms.CheckBox chkSat;
+		private System.Windows.Forms.CheckBox chkSun;
+		private System.Windows.Forms.RadioButton rdoAM;
+		private System.Windows.Forms.RadioButton rdoPM;
+		private System.Windows.Forms.RadioButton rdoBoth;
+		private System.Windows.Forms.Label label2;
+		private System.Windows.Forms.Label label3;
+		private System.Windows.Forms.CheckedListBox lstAccessTypes;
+		private System.Windows.Forms.ComboBox cboAccessTypeFilter;
+		private System.Windows.Forms.MonthCalendar calStartDate;
+		/// <summary>
+		/// Required designer variable.
+		/// </summary>
+		private System.ComponentModel.Container components = null;
+
+		public DApptSearch()
+		{
+			//
+			// Required for Windows Form Designer support
+			//
+			InitializeComponent();
+
+			//
+			// TODO: Add any constructor code after InitializeComponent call
+			//
+		}
+
+		#region Fields
+
+		private OleDbConnection		m_RPMSConnection;
+		private CGDocumentManager	m_DocManager;
+		
+		private DataSet	m_dsGlobal;
+		DataTable		m_dtTypes;
+		DataView		m_dvTypes;
+
+		DateTime		m_dStart;
+		DateTime		m_dEnd;
+		ArrayList		m_alResources;
+		ArrayList		m_alAccessTypes;
+		string			m_sWeekDays;
+		string			m_sAmpm;
+
+		#endregion Fields
+
+		public void LoadListBox(string sGroup)
+		{
+			if (sGroup == "ALL")
+			{
+				//Load the Access Type list box with ALL access types
+				m_dtTypes = m_dsGlobal.Tables["AccessTypes"];
+				m_dvTypes = new DataView(m_dtTypes);
+				lstAccessTypes.DataSource = m_dvTypes;
+				lstAccessTypes.DisplayMember = "ACCESS_TYPE_NAME";
+				lstAccessTypes.ValueMember = "BMXIEN";
+			}
+			else 
+			{
+				//Load the Access Type list box with active access types belonging
+				//to group sGroup
+
+				//Build AccessGroup table containing *active* AccessTypes and their Groups
+				m_dtTypes = m_dsGlobal.Tables["AccessGroupType"];
+
+				//Create a view that is filterable on Access Group
+				m_dvTypes = new DataView(m_dtTypes);
+				m_dvTypes.RowFilter = "ACCESS_GROUP = '" + this.cboAccessTypeFilter.Text + "'";
+				lstAccessTypes.DataSource = m_dvTypes;
+				lstAccessTypes.DisplayMember = "ACCESS_TYPE";
+				lstAccessTypes.ValueMember = "ACCESS_TYPE_ID";
+			}
+		}
+
+		public void InitializePage(ArrayList alResources, CGDocumentManager docManager)
+		{
+
+			this.m_DocManager = docManager;
+			this.m_dsGlobal = m_DocManager.GlobalDataSet;
+			this.m_RPMSConnection = m_DocManager.ADOConnection;			
+			
+			LoadListBox("ALL");
+
+			m_dStart = DateTime.Today;
+			m_dEnd = new DateTime(9999);
+			this.m_alResources = alResources;
+			this.m_alAccessTypes = new ArrayList();
+			this.m_sAmpm="both";
+			this.m_sWeekDays = "";
+
+
+			//Load filter combo with list of access type groups
+			DataTable dtGroup = m_dsGlobal.Tables["AccessGroup"];
+			DataSet dsTemp = new DataSet("dsTemp");
+			dsTemp.Tables.Add(dtGroup.Copy());
+			DataTable dtTemp = dsTemp.Tables["AccessGroup"];
+			DataView dvGroup = new DataView(dtTemp);
+			DataRowView drv = dvGroup.AddNew();
+			drv["ACCESS_GROUP"]="<Show All Access Types>";
+			dvGroup.Sort = "ACCESS_GROUP ASC";
+			cboAccessTypeFilter.DataSource = dvGroup;
+			cboAccessTypeFilter.DisplayMember = "ACCESS_GROUP";
+			cboAccessTypeFilter.SelectedIndex = cboAccessTypeFilter.Items.Count - 1;
+
+			//TODO: Initialize member vars
+
+			this.UpdateDialogData(true);
+		
+		}
+
+		/// <summary>
+		/// If b is true, moves member vars into control data
+		/// otherwise, moves control data into member vars
+		/// </summary>
+		/// <param name="b"></param>
+		private void UpdateDialogData(bool b)
+		{
+			if (b == true) //move member vars into controls
+			{
+
+//				lblClinic.Text = m_pAppt.Resource;
+//				lblEndTime.Text = m_pAppt.EndTime.ToShortDateString() + " " + m_pAppt.EndTime.ToShortTimeString();
+//				lblStartTime.Text = m_pAppt.StartTime.ToShortDateString() + " " + m_pAppt.StartTime.ToShortTimeString();
+//				txtNote.Text = m_pAppt.Note;
+//				nudSlots.Value = m_pAppt.Slots;
+//				if (m_pAppt.AccessTypeID  != 0)
+//				{
+//					lstAccessTypes.SelectedValue = m_pAppt.AccessTypeID;
+//				}
+			}
+			else //move control data into member vars
+			{
+
+				//Build AccessType list
+
+				this.m_alAccessTypes.Clear();
+				for (int j = 0; j < this.lstAccessTypes.CheckedItems.Count; j++)
+				{
+					m_alAccessTypes.Add(this.lstAccessTypes.Items[j].ToString()); 
+				}
+
+				//TODO: AM/PM
+				this.m_sAmpm = "both";
+				
+				//TODO: Weekday
+				this.m_sWeekDays = "any";
+
+//				m_pAppt.Note = txtNote.Text;
+//				int nIndex = this.lstAccessTypes.SelectedIndex;
+//				string sTemp = (string) this.lstAccessTypes.SelectedValue;
+//				sTemp = (sTemp == "")?"-1":sTemp;
+//				m_pAppt.AccessTypeID = Convert.ToInt16(sTemp);
+//				m_pAppt.Slots  = Convert.ToInt16(nudSlots.Value);
+			}		
+		}
+
+
+		/// <summary>
+		/// Clean up any resources being used.
+		/// </summary>
+		protected override void Dispose( bool disposing )
+		{
+			if( disposing )
+			{
+				if(components != null)
+				{
+					components.Dispose();
+				}
+			}
+			base.Dispose( disposing );
+		}
+
+		#region Windows Form Designer generated code
+		/// <summary>
+		/// Required method for Designer support - do not modify
+		/// the contents of this method with the code editor.
+		/// </summary>
+		private void InitializeComponent()
+		{
+			this.panel1 = new System.Windows.Forms.Panel();
+			this.cmdCancel = new System.Windows.Forms.Button();
+			this.cmdOK = new System.Windows.Forms.Button();
+			this.pnlDescription = new System.Windows.Forms.Panel();
+			this.grpDescription = new System.Windows.Forms.GroupBox();
+			this.lblDescription = new System.Windows.Forms.Label();
+			this.calStartDate = new System.Windows.Forms.MonthCalendar();
+			this.label1 = new System.Windows.Forms.Label();
+			this.grpTimeOfDay = new System.Windows.Forms.GroupBox();
+			this.rdoBoth = new System.Windows.Forms.RadioButton();
+			this.rdoPM = new System.Windows.Forms.RadioButton();
+			this.rdoAM = new System.Windows.Forms.RadioButton();
+			this.grpDayOfWeek = new System.Windows.Forms.GroupBox();
+			this.chkSun = new System.Windows.Forms.CheckBox();
+			this.chkSat = new System.Windows.Forms.CheckBox();
+			this.chkFri = new System.Windows.Forms.CheckBox();
+			this.chkThu = new System.Windows.Forms.CheckBox();
+			this.chkWed = new System.Windows.Forms.CheckBox();
+			this.chkTue = new System.Windows.Forms.CheckBox();
+			this.chkMon = new System.Windows.Forms.CheckBox();
+			this.cboAccessTypeFilter = new System.Windows.Forms.ComboBox();
+			this.lstAccessTypes = new System.Windows.Forms.CheckedListBox();
+			this.label2 = new System.Windows.Forms.Label();
+			this.label3 = new System.Windows.Forms.Label();
+			this.panel1.SuspendLayout();
+			this.pnlDescription.SuspendLayout();
+			this.grpDescription.SuspendLayout();
+			this.grpTimeOfDay.SuspendLayout();
+			this.grpDayOfWeek.SuspendLayout();
+			this.SuspendLayout();
+			// 
+			// panel1
+			// 
+			this.panel1.Controls.AddRange(new System.Windows.Forms.Control[] {
+																				 this.cmdCancel,
+																				 this.cmdOK});
+			this.panel1.Dock = System.Windows.Forms.DockStyle.Bottom;
+			this.panel1.Location = new System.Drawing.Point(0, 440);
+			this.panel1.Name = "panel1";
+			this.panel1.Size = new System.Drawing.Size(488, 40);
+			this.panel1.TabIndex = 4;
+			// 
+			// cmdCancel
+			// 
+			this.cmdCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.cmdCancel.Location = new System.Drawing.Point(416, 8);
+			this.cmdCancel.Name = "cmdCancel";
+			this.cmdCancel.Size = new System.Drawing.Size(64, 24);
+			this.cmdCancel.TabIndex = 1;
+			this.cmdCancel.Text = "Cancel";
+			// 
+			// cmdOK
+			// 
+			this.cmdOK.DialogResult = System.Windows.Forms.DialogResult.OK;
+			this.cmdOK.Location = new System.Drawing.Point(336, 8);
+			this.cmdOK.Name = "cmdOK";
+			this.cmdOK.Size = new System.Drawing.Size(64, 24);
+			this.cmdOK.TabIndex = 0;
+			this.cmdOK.Text = "Search";
+			this.cmdOK.Click += new System.EventHandler(this.cmdOK_Click);
+			// 
+			// pnlDescription
+			// 
+			this.pnlDescription.Controls.AddRange(new System.Windows.Forms.Control[] {
+																						 this.grpDescription});
+			this.pnlDescription.Dock = System.Windows.Forms.DockStyle.Bottom;
+			this.pnlDescription.Location = new System.Drawing.Point(0, 376);
+			this.pnlDescription.Name = "pnlDescription";
+			this.pnlDescription.Size = new System.Drawing.Size(488, 64);
+			this.pnlDescription.TabIndex = 47;
+			// 
+			// grpDescription
+			// 
+			this.grpDescription.Controls.AddRange(new System.Windows.Forms.Control[] {
+																						 this.lblDescription});
+			this.grpDescription.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.grpDescription.Name = "grpDescription";
+			this.grpDescription.Size = new System.Drawing.Size(488, 64);
+			this.grpDescription.TabIndex = 0;
+			this.grpDescription.TabStop = false;
+			this.grpDescription.Text = "Description";
+			// 
+			// lblDescription
+			// 
+			this.lblDescription.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.lblDescription.Location = new System.Drawing.Point(3, 16);
+			this.lblDescription.Name = "lblDescription";
+			this.lblDescription.Size = new System.Drawing.Size(482, 45);
+			this.lblDescription.TabIndex = 1;
+			this.lblDescription.Text = "Search for available appointment times using this panel.  You may narrow your sea" +
+				"rch by selecting an access type or by selecting specific days of the week or tim" +
+				"es of day.";
+			// 
+			// calStartDate
+			// 
+			this.calStartDate.Location = new System.Drawing.Point(24, 32);
+			this.calStartDate.Name = "calStartDate";
+			this.calStartDate.TabIndex = 48;
+			// 
+			// label1
+			// 
+			this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
+			this.label1.Location = new System.Drawing.Point(16, 8);
+			this.label1.Name = "label1";
+			this.label1.Size = new System.Drawing.Size(208, 16);
+			this.label1.TabIndex = 49;
+			this.label1.Text = "Search for first availabiltiy after this date:";
+			// 
+			// grpTimeOfDay
+			// 
+			this.grpTimeOfDay.Controls.AddRange(new System.Windows.Forms.Control[] {
+																					   this.rdoBoth,
+																					   this.rdoPM,
+																					   this.rdoAM});
+			this.grpTimeOfDay.Location = new System.Drawing.Point(240, 16);
+			this.grpTimeOfDay.Name = "grpTimeOfDay";
+			this.grpTimeOfDay.Size = new System.Drawing.Size(240, 48);
+			this.grpTimeOfDay.TabIndex = 50;
+			this.grpTimeOfDay.TabStop = false;
+			this.grpTimeOfDay.Text = "Time of Day";
+			// 
+			// rdoBoth
+			// 
+			this.rdoBoth.Checked = true;
+			this.rdoBoth.Location = new System.Drawing.Point(176, 24);
+			this.rdoBoth.Name = "rdoBoth";
+			this.rdoBoth.Size = new System.Drawing.Size(48, 16);
+			this.rdoBoth.TabIndex = 2;
+			this.rdoBoth.TabStop = true;
+			this.rdoBoth.Text = "Both";
+			// 
+			// rdoPM
+			// 
+			this.rdoPM.Location = new System.Drawing.Point(96, 24);
+			this.rdoPM.Name = "rdoPM";
+			this.rdoPM.Size = new System.Drawing.Size(72, 16);
+			this.rdoPM.TabIndex = 1;
+			this.rdoPM.Text = "PM Only";
+			// 
+			// rdoAM
+			// 
+			this.rdoAM.Location = new System.Drawing.Point(16, 24);
+			this.rdoAM.Name = "rdoAM";
+			this.rdoAM.Size = new System.Drawing.Size(72, 16);
+			this.rdoAM.TabIndex = 0;
+			this.rdoAM.Text = "AM Only";
+			// 
+			// grpDayOfWeek
+			// 
+			this.grpDayOfWeek.Controls.AddRange(new System.Windows.Forms.Control[] {
+																					   this.chkSun,
+																					   this.chkSat,
+																					   this.chkFri,
+																					   this.chkThu,
+																					   this.chkWed,
+																					   this.chkTue,
+																					   this.chkMon});
+			this.grpDayOfWeek.Location = new System.Drawing.Point(240, 80);
+			this.grpDayOfWeek.Name = "grpDayOfWeek";
+			this.grpDayOfWeek.Size = new System.Drawing.Size(240, 104);
+			this.grpDayOfWeek.TabIndex = 51;
+			this.grpDayOfWeek.TabStop = false;
+			this.grpDayOfWeek.Text = "Day of the Week";
+			// 
+			// chkSun
+			// 
+			this.chkSun.Location = new System.Drawing.Point(176, 64);
+			this.chkSun.Name = "chkSun";
+			this.chkSun.Size = new System.Drawing.Size(48, 16);
+			this.chkSun.TabIndex = 6;
+			this.chkSun.Text = "Sun";
+			// 
+			// chkSat
+			// 
+			this.chkSat.Location = new System.Drawing.Point(128, 64);
+			this.chkSat.Name = "chkSat";
+			this.chkSat.Size = new System.Drawing.Size(48, 16);
+			this.chkSat.TabIndex = 5;
+			this.chkSat.Text = "Sat";
+			// 
+			// chkFri
+			// 
+			this.chkFri.Location = new System.Drawing.Point(72, 64);
+			this.chkFri.Name = "chkFri";
+			this.chkFri.Size = new System.Drawing.Size(48, 16);
+			this.chkFri.TabIndex = 4;
+			this.chkFri.Text = "Fri";
+			// 
+			// chkThu
+			// 
+			this.chkThu.Location = new System.Drawing.Point(16, 64);
+			this.chkThu.Name = "chkThu";
+			this.chkThu.Size = new System.Drawing.Size(48, 16);
+			this.chkThu.TabIndex = 3;
+			this.chkThu.Text = "Thu";
+			// 
+			// chkWed
+			// 
+			this.chkWed.Location = new System.Drawing.Point(128, 32);
+			this.chkWed.Name = "chkWed";
+			this.chkWed.Size = new System.Drawing.Size(48, 16);
+			this.chkWed.TabIndex = 2;
+			this.chkWed.Text = "Wed";
+			// 
+			// chkTue
+			// 
+			this.chkTue.Location = new System.Drawing.Point(72, 32);
+			this.chkTue.Name = "chkTue";
+			this.chkTue.Size = new System.Drawing.Size(48, 16);
+			this.chkTue.TabIndex = 1;
+			this.chkTue.Text = "Tue";
+			// 
+			// chkMon
+			// 
+			this.chkMon.Location = new System.Drawing.Point(16, 32);
+			this.chkMon.Name = "chkMon";
+			this.chkMon.Size = new System.Drawing.Size(48, 16);
+			this.chkMon.TabIndex = 0;
+			this.chkMon.Text = "Mon";
+			// 
+			// cboAccessTypeFilter
+			// 
+			this.cboAccessTypeFilter.Location = new System.Drawing.Point(72, 208);
+			this.cboAccessTypeFilter.Name = "cboAccessTypeFilter";
+			this.cboAccessTypeFilter.Size = new System.Drawing.Size(224, 21);
+			this.cboAccessTypeFilter.TabIndex = 52;
+			this.cboAccessTypeFilter.Text = "cboAccessTypeFilter";
+			this.cboAccessTypeFilter.SelectionChangeCommitted += new System.EventHandler(this.cboAccessTypeFilter_SelectionChangeCommitted);
+			// 
+			// lstAccessTypes
+			// 
+			this.lstAccessTypes.CheckOnClick = true;
+			this.lstAccessTypes.HorizontalScrollbar = true;
+			this.lstAccessTypes.Location = new System.Drawing.Point(72, 240);
+			this.lstAccessTypes.MultiColumn = true;
+			this.lstAccessTypes.Name = "lstAccessTypes";
+			this.lstAccessTypes.Size = new System.Drawing.Size(408, 124);
+			this.lstAccessTypes.TabIndex = 53;
+			// 
+			// label2
+			// 
+			this.label2.Location = new System.Drawing.Point(16, 208);
+			this.label2.Name = "label2";
+			this.label2.Size = new System.Drawing.Size(48, 32);
+			this.label2.TabIndex = 54;
+			this.label2.Text = "Access Group";
+			// 
+			// label3
+			// 
+			this.label3.Location = new System.Drawing.Point(16, 240);
+			this.label3.Name = "label3";
+			this.label3.Size = new System.Drawing.Size(56, 32);
+			this.label3.TabIndex = 55;
+			this.label3.Text = "Access Type";
+			// 
+			// DApptSearch
+			// 
+			this.AcceptButton = this.cmdOK;
+			this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
+			this.CancelButton = this.cmdCancel;
+			this.ClientSize = new System.Drawing.Size(488, 480);
+			this.Controls.AddRange(new System.Windows.Forms.Control[] {
+																		  this.label3,
+																		  this.label2,
+																		  this.lstAccessTypes,
+																		  this.cboAccessTypeFilter,
+																		  this.grpDayOfWeek,
+																		  this.grpTimeOfDay,
+																		  this.label1,
+																		  this.calStartDate,
+																		  this.pnlDescription,
+																		  this.panel1});
+			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+			this.Name = "DApptSearch";
+			this.Text = "DApptSearch";
+			this.panel1.ResumeLayout(false);
+			this.pnlDescription.ResumeLayout(false);
+			this.grpDescription.ResumeLayout(false);
+			this.grpTimeOfDay.ResumeLayout(false);
+			this.grpDayOfWeek.ResumeLayout(false);
+			this.ResumeLayout(false);
+
+		}
+		#endregion
+
+		private void cboAccessTypeFilter_SelectionChangeCommitted(object sender, System.EventArgs e)
+		{
+			//Load Access Types listbox & filter
+			string sGroup = cboAccessTypeFilter.Text;
+			if (sGroup == "<Show All Access Types>")
+			{
+				LoadListBox("ALL");
+			}
+			else 
+			{
+				LoadListBox("SELECTED");
+			}			
+		}
+
+		private void cmdOK_Click(object sender, System.EventArgs e)
+		{
+			//Get the control data into local vars
+			UpdateDialogData(false);
+			
+			//Do the search
+			DataSet rsOut = new DataSet("AvailabilitySearch");
+			OleDbCommand cmd = m_RPMSConnection.CreateCommand();
+			System.Data.OleDb.OleDbDataAdapter da = new OleDbDataAdapter();
+			//Resource array, Begin date, Access type array, MTWTF , AM PM
+//			string sSql = "BSDX SEARCH AVAILABILITY^" + m_nAccessGroupID.ToString() + "^" + nAccessTypeID.ToString();
+//			cmd.CommandText = sSql;
+			da.SelectCommand = cmd;
+			da.Fill(rsOut, "AvailabilitySearch");
+
+			// if the result set count > 0 open the result dialog
+			// else display a "no availability found" messagebox and return
+
+			//if the return from the result dialog is cancel then return to the search dialog
+			//else close the search dialog with dialogresult.oi
+
+		}
+
+	}
+}

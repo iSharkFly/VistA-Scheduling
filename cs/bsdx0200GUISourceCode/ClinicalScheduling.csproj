@@ -1,0 +1,464 @@
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
+  <PropertyGroup>
+    <ProjectType>Local</ProjectType>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{8C05C4F7-FE81-479F-87A0-44E04C7F6E0F}</ProjectGuid>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ApplicationIcon>App.ico</ApplicationIcon>
+    <AssemblyKeyContainerName>
+    </AssemblyKeyContainerName>
+    <AssemblyName>ClinicalScheduling</AssemblyName>
+    <AssemblyOriginatorKeyFile>
+    </AssemblyOriginatorKeyFile>
+    <DefaultClientScript>JScript</DefaultClientScript>
+    <DefaultHTMLPageLayout>Grid</DefaultHTMLPageLayout>
+    <DefaultTargetSchema>IE50</DefaultTargetSchema>
+    <DelaySign>false</DelaySign>
+    <OutputType>WinExe</OutputType>
+    <RootNamespace>IndianHealthService.ClinicalScheduling</RootNamespace>
+    <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
+    <StartupObject>IndianHealthService.ClinicalScheduling.CGDocumentManager</StartupObject>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
+    <SccProjectName>
+    </SccProjectName>
+    <SccLocalPath>
+    </SccLocalPath>
+    <SccAuxPath>
+    </SccAuxPath>
+    <SccProvider>
+    </SccProvider>
+    <OldToolsVersion>2.0</OldToolsVersion>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <TargetFrameworkSubset>
+    </TargetFrameworkSubset>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>2.0.0.%2a</ApplicationVersion>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <OutputPath>bin\Debug\</OutputPath>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <BaseAddress>285212672</BaseAddress>
+    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+    <ConfigurationOverrideFile>
+    </ConfigurationOverrideFile>
+    <DefineConstants>DEBUG</DefineConstants>
+    <DocumentationFile>bin\Release\ClinicalScheduling.XML</DocumentationFile>
+    <DebugSymbols>false</DebugSymbols>
+    <FileAlignment>4096</FileAlignment>
+    <NoStdLib>false</NoStdLib>
+    <NoWarn>
+    </NoWarn>
+    <Optimize>false</Optimize>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <RemoveIntegerChecks>false</RemoveIntegerChecks>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <WarningLevel>4</WarningLevel>
+    <DebugType>full</DebugType>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <OutputPath>bin\Release\</OutputPath>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <BaseAddress>285212672</BaseAddress>
+    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+    <ConfigurationOverrideFile>
+    </ConfigurationOverrideFile>
+    <DefineConstants>
+    </DefineConstants>
+    <DocumentationFile>bin\Release\ClinicalScheduling.XML</DocumentationFile>
+    <DebugSymbols>false</DebugSymbols>
+    <FileAlignment>4096</FileAlignment>
+    <NoStdLib>false</NoStdLib>
+    <NoWarn>
+    </NoWarn>
+    <Optimize>true</Optimize>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <RemoveIntegerChecks>false</RemoveIntegerChecks>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <WarningLevel>4</WarningLevel>
+    <DebugType>none</DebugType>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="BMXNet20, Version=2.0.2459.21970, Culture=neutral, PublicKeyToken=069dc2499aed6a8c, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>.\BMXNet20.dll</HintPath>
+    </Reference>
+    <Reference Include="CalendarGrid, Version=1.0.2790.30319, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>.\CalendarGrid.dll</HintPath>
+    </Reference>
+    <Reference Include="CrystalDecisions.CrystalReports.Engine, Version=10.2.3600.0, Culture=neutral, PublicKeyToken=692fbea5521e1304, processorArchitecture=MSIL" />
+    <Reference Include="CrystalDecisions.Enterprise.Framework, Version=10.2.3600.0, Culture=neutral, PublicKeyToken=692fbea5521e1304" />
+    <Reference Include="CrystalDecisions.Enterprise.InfoStore, Version=10.2.3600.0, Culture=neutral, PublicKeyToken=692fbea5521e1304" />
+    <Reference Include="CrystalDecisions.ReportSource, Version=10.2.3600.0, Culture=neutral, PublicKeyToken=692fbea5521e1304, processorArchitecture=MSIL" />
+    <Reference Include="CrystalDecisions.Shared, Version=10.2.3600.0, Culture=neutral, PublicKeyToken=692fbea5521e1304, processorArchitecture=MSIL" />
+    <Reference Include="CrystalDecisions.Windows.Forms, Version=10.2.3600.0, Culture=neutral, PublicKeyToken=692fbea5521e1304, processorArchitecture=MSIL" />
+    <Reference Include="System">
+      <Name>System</Name>
+    </Reference>
+    <Reference Include="System.configuration" />
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data">
+      <Name>System.Data</Name>
+    </Reference>
+    <Reference Include="System.Data.DataSetExtensions">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Drawing">
+      <Name>System.Drawing</Name>
+    </Reference>
+    <Reference Include="System.Web.Extensions">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Web.Services">
+      <Name>System.Web.Services</Name>
+    </Reference>
+    <Reference Include="System.Windows.Forms">
+      <Name>System.Windows.Forms</Name>
+    </Reference>
+    <Reference Include="System.Xml">
+      <Name>System.XML</Name>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+    <None Include="CGView.cd" />
+    <None Include="ClassDiagram1.cd" />
+    <None Include="ClassDiagram2.cd" />
+    <None Include="dsPatientApptDisplay2.xsc">
+      <DependentUpon>dsPatientApptDisplay2.xsd</DependentUpon>
+    </None>
+    <None Include="dsPatientApptDisplay2.xss">
+      <DependentUpon>dsPatientApptDisplay2.xsd</DependentUpon>
+    </None>
+    <None Include="dsPatientApptDisplay2.xsx">
+      <DependentUpon>dsPatientApptDisplay2.xsd</DependentUpon>
+    </None>
+    <None Include="dsRebookAppts.xsc">
+      <DependentUpon>dsRebookAppts.xsd</DependentUpon>
+    </None>
+    <None Include="dsRebookAppts.xss">
+      <DependentUpon>dsRebookAppts.xsd</DependentUpon>
+    </None>
+    <None Include="dsRebookAppts.xsx">
+      <DependentUpon>dsRebookAppts.xsd</DependentUpon>
+    </None>
+    <Content Include="App.ico" />
+    <Content Include="dsPatientApptDisplay2.xsd">
+      <Generator>MSDataSetGenerator</Generator>
+      <LastGenOutput>dsPatientApptDisplay2.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="dsRebookAppts.xsd">
+      <Generator>MSDataSetGenerator</Generator>
+      <LastGenOutput>dsRebookAppts.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </Content>
+    <Compile Include="AssemblyInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="CGAVDocument.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="CGAVView.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="CGDocument.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="CGDocumentManager.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="CGSchedLib.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="CGView.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="crAppointmentList.cs">
+      <DependentUpon>crAppointmentList.rpt</DependentUpon>
+      <SubType>Component</SubType>
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+    </Compile>
+    <Compile Include="crCancelLetter.cs">
+      <DependentUpon>crCancelLetter.rpt</DependentUpon>
+      <SubType>Component</SubType>
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+    </Compile>
+    <Compile Include="crPatientApptDisplay.cs">
+      <DependentUpon>crPatientApptDisplay.rpt</DependentUpon>
+      <SubType>Component</SubType>
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+    </Compile>
+    <Compile Include="crPatientLetter.cs">
+      <DependentUpon>crPatientLetter.rpt</DependentUpon>
+      <SubType>Component</SubType>
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+    </Compile>
+    <Compile Include="crRebookLetter.cs">
+      <DependentUpon>crRebookLetter.rpt</DependentUpon>
+      <SubType>Component</SubType>
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+    </Compile>
+    <Compile Include="DAccessGroup.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="DAccessGroupItem.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="DAccessTemplate.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="DAccessType.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="DAppointPage.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="DApptSearch.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="DCancelAppt.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="DCheckIn.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="DCopyAppts.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="dInputText.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="DManagement.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="DNoShow.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="DPatientApptDisplay.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="DPatientLetter.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="DPatientLookup.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="DResource.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="DResourceGroup.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="DResourceGroupItem.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="DResourceUser.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="DSelectLetterClinics.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="DSelectSchedules.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="dsPatientApptDisplay2.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>dsPatientApptDisplay2.xsd</DependentUpon>
+    </Compile>
+    <Compile Include="DSplash.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="dsRebookAppts.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>dsRebookAppts.xsd</DependentUpon>
+    </Compile>
+    <EmbeddedResource Include="CGAVView.resx">
+      <DependentUpon>CGAVView.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="CGDocumentManager.resx">
+      <DependentUpon>CGDocumentManager.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="CGView.resx">
+      <DependentUpon>CGView.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="crAppointmentList.rpt">
+      <Generator>CrystalDecisions.VSDesigner.CodeGen.ReportCodeGenerator</Generator>
+      <LastGenOutput>crAppointmentList.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="crCancelLetter.rpt">
+      <Generator>CrystalDecisions.VSDesigner.CodeGen.ReportCodeGenerator</Generator>
+      <LastGenOutput>crCancelLetter.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="crPatientApptDisplay.rpt">
+      <Generator>CrystalDecisions.VSDesigner.CodeGen.ReportCodeGenerator</Generator>
+      <LastGenOutput>crPatientApptDisplay.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="crPatientLetter.rpt">
+      <Generator>CrystalDecisions.VSDesigner.CodeGen.ReportCodeGenerator</Generator>
+      <LastGenOutput>crPatientLetter.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="crRebookLetter.rpt">
+      <Generator>CrystalDecisions.VSDesigner.CodeGen.ReportCodeGenerator</Generator>
+      <LastGenOutput>crRebookLetter.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DAccessGroup.resx">
+      <DependentUpon>DAccessGroup.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DAccessGroupItem.resx">
+      <DependentUpon>DAccessGroupItem.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DAccessTemplate.resx">
+      <DependentUpon>DAccessTemplate.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DAccessType.resx">
+      <DependentUpon>DAccessType.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DAppointPage.resx">
+      <DependentUpon>DAppointPage.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DApptSearch.resx">
+      <DependentUpon>DApptSearch.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DCancelAppt.resx">
+      <DependentUpon>DCancelAppt.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DCheckIn.resx">
+      <DependentUpon>DCheckIn.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DCopyAppts.resx">
+      <DependentUpon>DCopyAppts.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="dInputText.resx">
+      <DependentUpon>dInputText.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DManagement.resx">
+      <DependentUpon>DManagement.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DNoShow.resx">
+      <DependentUpon>DNoShow.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DPatientApptDisplay.resx">
+      <DependentUpon>DPatientApptDisplay.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DPatientLetter.resx">
+      <DependentUpon>DPatientLetter.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DPatientLookup.resx">
+      <DependentUpon>DPatientLookup.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DResource.resx">
+      <DependentUpon>DResource.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DResourceGroup.resx">
+      <DependentUpon>DResourceGroup.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DResourceGroupItem.resx">
+      <DependentUpon>DResourceGroupItem.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DResourceUser.resx">
+      <DependentUpon>DResourceUser.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DSelectLetterClinics.resx">
+      <DependentUpon>DSelectLetterClinics.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DSelectSchedules.resx">
+      <DependentUpon>DSelectSchedules.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DSplash.resx">
+      <DependentUpon>DSplash.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{967B4E0D-AD0C-4609-AB67-0FA40C0206D8}" />
+    <Service Include="{CF845C55-C321-4742-B673-E6212D061ED9}" />
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework Client Profile</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.2.0">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 2.0 %28x86%29</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.0">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.0 %28x86%29</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PreBuildEvent>
+    </PreBuildEvent>
+    <PostBuildEvent>
+    </PostBuildEvent>
+  </PropertyGroup>
+</Project>

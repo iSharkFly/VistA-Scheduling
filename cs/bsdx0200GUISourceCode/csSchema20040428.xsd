@@ -1,0 +1,201 @@
+<?xml version="1.0" standalone="yes"?>
+<xs:schema id="GlobalDataSet" xmlns="" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+  <xs:element name="GlobalDataSet" msdata:IsDataSet="true">
+    <xs:complexType>
+      <xs:choice maxOccurs="unbounded">
+        <xs:element name="VersionInfo">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="ERROR" type="xs:string" minOccurs="0" />
+              <xs:element name="MAJOR_VERSION" type="xs:string" minOccurs="0" />
+              <xs:element name="MINOR_VERSION" type="xs:string" minOccurs="0" />
+              <xs:element name="BUILD" type="xs:string" minOccurs="0" />
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="SchedulingUser">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="MANAGER" type="xs:string" minOccurs="0" />
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="AccessTypes">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="BMXIEN" type="xs:int" />
+              <xs:element name="ACCESS_TYPE_NAME" type="xs:string" minOccurs="0" />
+              <xs:element name="BLUE" type="xs:int" minOccurs="0" />
+              <xs:element name="DEPARTMENT_NAME" type="xs:string" minOccurs="0" />
+              <xs:element name="DISPLAY_COLOR" type="xs:string" minOccurs="0" />
+              <xs:element name="GREEN" type="xs:int" minOccurs="0" />
+              <xs:element name="INACTIVE" type="xs:string" minOccurs="0" />
+              <xs:element name="RED" type="xs:int" minOccurs="0" />
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="AccessGroup">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="BMXIEN" type="xs:int" minOccurs="0" />
+              <xs:element name="ACCESS_GROUP" type="xs:string" />
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="AccessGroupType">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="ACCESS_GROUP_TYPEID" type="xs:int" />
+              <xs:element name="ACCESS_GROUP_ID" type="xs:int" minOccurs="0" />
+              <xs:element name="ACCESS_GROUP" type="xs:string" minOccurs="0" />
+              <xs:element name="ACCESS_TYPE_ID" type="xs:int" minOccurs="0" />
+              <xs:element name="ACCESS_TYPE" type="xs:string" minOccurs="0" />
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="ResourceGroup">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="RESOURCE_GROUPID" type="xs:int" minOccurs="0" />
+              <xs:element name="RESOURCE_GROUP" type="xs:string" />
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="Resources">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="RESOURCEID" type="xs:int" />
+              <xs:element name="RESOURCE_NAME" type="xs:string" minOccurs="0" />
+              <xs:element name="INACTIVE" type="xs:string" minOccurs="0" />
+              <xs:element name="TIMESCALE" type="xs:int" minOccurs="0" />
+              <xs:element name="HOSPITAL_LOCATION_ID" type="xs:int" minOccurs="0" />
+              <xs:element name="LETTER_TEXT" type="xs:string" minOccurs="0" />
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="GroupResources">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="RESOURCE_GROUPID" type="xs:int" minOccurs="0" />
+              <xs:element name="RESOURCE_GROUP" type="xs:string" minOccurs="0" />
+              <xs:element name="RESOURCE_GROUP_ITEMID" type="xs:int" minOccurs="0" />
+              <xs:element name="RESOURCE_NAME" type="xs:string" minOccurs="0" />
+              <xs:element name="RESOURCEID" type="xs:int" minOccurs="0" />
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="HospitalLocation">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="HOSPITAL_LOCATION_ID" type="xs:int" />
+              <xs:element name="HOSPITAL_LOCATION" type="xs:string" minOccurs="0" />
+              <xs:element name="DEFAULT_PROVIDER" type="xs:string" minOccurs="0" />
+              <xs:element name="STOP_CODE_NUMBER" type="xs:string" minOccurs="0" />
+              <xs:element name="INACTIVATE_DATE" type="xs:dateTime" minOccurs="0" />
+              <xs:element name="REACTIVATE_DATE" type="xs:dateTime" minOccurs="0" />
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="ClinicSetupParameters">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="HOSPITAL_LOCATION_ID" type="xs:int" />
+              <xs:element name="HOSPITAL_LOCATION" type="xs:string" minOccurs="0" />
+              <xs:element name="CREATE_VISIT" type="xs:string" minOccurs="0" />
+              <xs:element name="VISIT_SERVICE_CATEGORY" type="xs:string" minOccurs="0" />
+              <xs:element name="PROVIDER" msdata:ReadOnly="true" msdata:Expression="Parent.DEFAULT_PROVIDER" type="xs:string" minOccurs="0" />
+              <xs:element name="CLINIC_STOP" msdata:ReadOnly="true" msdata:Expression="Parent.STOP_CODE_NUMBER" type="xs:string" minOccurs="0" />
+              <xs:element name="INACTIVATE_DATE" msdata:ReadOnly="true" msdata:Expression="Parent.INACTIVATE_DATE" type="xs:string" minOccurs="0" />
+              <xs:element name="REACTIVATE_DATE" msdata:ReadOnly="true" msdata:Expression="Parent.REACTIVATE_DATE" type="xs:string" minOccurs="0" />
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="ScheduleUser">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="USERID" type="xs:int" />
+              <xs:element name="USERNAME" type="xs:string" minOccurs="0" />
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="ResourceUser">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="RESOURCEUSER_ID" type="xs:int" />
+              <xs:element name="RESOURCEID" type="xs:int" minOccurs="0" />
+              <xs:element name="OVERBOOK" type="xs:string" minOccurs="0" />
+              <xs:element name="MODIFY_SCHEDULE" type="xs:string" minOccurs="0" />
+              <xs:element name="USERID" type="xs:string" minOccurs="0" />
+              <xs:element name="USERID1" type="xs:int" minOccurs="0" />
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="Provider">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="BMXIEN" type="xs:int" minOccurs="0" />
+              <xs:element name="NAME" type="xs:string" minOccurs="0" />
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+      </xs:choice>
+    </xs:complexType>
+    <xs:unique name="Constraint1" msdata:PrimaryKey="true">
+      <xs:selector xpath=".//AccessTypes" />
+      <xs:field xpath="BMXIEN" />
+    </xs:unique>
+    <xs:unique name="AccessGroup_Constraint1" msdata:ConstraintName="Constraint1" msdata:PrimaryKey="true">
+      <xs:selector xpath=".//AccessGroup" />
+      <xs:field xpath="ACCESS_GROUP" />
+    </xs:unique>
+    <xs:unique name="Constraint2">
+      <xs:selector xpath=".//AccessGroup" />
+      <xs:field xpath="BMXIEN" />
+    </xs:unique>
+    <xs:unique name="AccessGroupType_Constraint1" msdata:ConstraintName="Constraint1" msdata:PrimaryKey="true">
+      <xs:selector xpath=".//AccessGroupType" />
+      <xs:field xpath="ACCESS_GROUP_TYPEID" />
+    </xs:unique>
+    <xs:unique name="ResourceGroup_Constraint1" msdata:ConstraintName="Constraint1" msdata:PrimaryKey="true">
+      <xs:selector xpath=".//ResourceGroup" />
+      <xs:field xpath="RESOURCE_GROUP" />
+    </xs:unique>
+    <xs:unique name="Resources_Constraint1" msdata:ConstraintName="Constraint1" msdata:PrimaryKey="true">
+      <xs:selector xpath=".//Resources" />
+      <xs:field xpath="RESOURCEID" />
+    </xs:unique>
+    <xs:unique name="HospitalLocation_Constraint1" msdata:ConstraintName="Constraint1" msdata:PrimaryKey="true">
+      <xs:selector xpath=".//HospitalLocation" />
+      <xs:field xpath="HOSPITAL_LOCATION_ID" />
+    </xs:unique>
+    <xs:unique name="ClinicSetupParameters_Constraint1" msdata:ConstraintName="Constraint1" msdata:PrimaryKey="true">
+      <xs:selector xpath=".//ClinicSetupParameters" />
+      <xs:field xpath="HOSPITAL_LOCATION_ID" />
+    </xs:unique>
+    <xs:unique name="ScheduleUser_Constraint1" msdata:ConstraintName="Constraint1" msdata:PrimaryKey="true">
+      <xs:selector xpath=".//ScheduleUser" />
+      <xs:field xpath="USERID" />
+    </xs:unique>
+    <xs:unique name="ResourceUser_Constraint1" msdata:ConstraintName="Constraint1" msdata:PrimaryKey="true">
+      <xs:selector xpath=".//ResourceUser" />
+      <xs:field xpath="RESOURCEUSER_ID" />
+    </xs:unique>
+    <xs:keyref name="ResourceUser" refer="Resources_Constraint1">
+      <xs:selector xpath=".//ResourceUser" />
+      <xs:field xpath="RESOURCEID" />
+    </xs:keyref>
+    <xs:keyref name="GroupResource" refer="ResourceGroup_Constraint1">
+      <xs:selector xpath=".//GroupResources" />
+      <xs:field xpath="RESOURCE_GROUP" />
+    </xs:keyref>
+    <xs:keyref name="AccessGroupType" refer="Constraint2">
+      <xs:selector xpath=".//AccessGroupType" />
+      <xs:field xpath="ACCESS_GROUP_ID" />
+    </xs:keyref>
+  </xs:element>
+  <xs:annotation>
+    <xs:appinfo>
+      <msdata:Relationship name="HospitalLocationClinic" msdata:parent="HospitalLocation" msdata:child="ClinicSetupParameters" msdata:parentkey="HOSPITAL_LOCATION_ID" msdata:childkey="HOSPITAL_LOCATION_ID" />
+    </xs:appinfo>
+  </xs:annotation>
+</xs:schema>

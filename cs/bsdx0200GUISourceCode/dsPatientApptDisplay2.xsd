@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<xs:schema id="dsPatientApptDisplay2" targetNamespace="http://tempuri.org/dsPatientApptDisplay2.xsd"
+	elementFormDefault="qualified" attributeFormDefault="qualified" xmlns="http://tempuri.org/dsPatientApptDisplay2.xsd"
+	xmlns:mstns="http://tempuri.org/dsPatientApptDisplay2.xsd" xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+	<xs:element name="dsPatientApptDisplay2" msdata:IsDataSet="true">
+		<xs:complexType>
+			<xs:choice maxOccurs="unbounded">
+				<xs:element name="PatientAppts">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="Name" type="xs:string" minOccurs="0" />
+							<xs:element name="DOB" type="xs:date" minOccurs="0" />
+							<xs:element name="Sex" type="xs:string" minOccurs="0" />
+							<xs:element name="HRN" type="xs:string" minOccurs="0" />
+							<xs:element name="ApptDate" type="xs:date" minOccurs="0" />
+							<xs:element name="Clinic" type="xs:string" minOccurs="0" />
+							<xs:element name="TypeStatus" type="xs:string" minOccurs="0" />
+							<xs:element name="RESOURCEID" type="xs:unsignedInt" minOccurs="0" />
+							<xs:element name="APPT_MADE_BY" type="xs:string" minOccurs="0" />
+							<xs:element name="DATE_APPT_MADE" type="xs:date" minOccurs="0" />
+							<xs:element name="NOTE" type="xs:string" minOccurs="0" />
+							<xs:element name="STREET" type="xs:string" minOccurs="0" />
+							<xs:element name="CITY" type="xs:string" minOccurs="0" />
+							<xs:element name="STATE" type="xs:string" minOccurs="0" />
+							<xs:element name="ZIP" type="xs:string" minOccurs="0" />
+							<xs:element name="HOMEPHONE" type="xs:string" minOccurs="0" />
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="BSDXResource">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="RESOURCEID" type="xs:unsignedInt" minOccurs="0" />
+							<xs:element name="RESOURCE_NAME" type="xs:string" minOccurs="0" />
+							<xs:element name="LETTER_TEXT" type="xs:string" minOccurs="0" />
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+			</xs:choice>
+		</xs:complexType>
+		<xs:key name="kBSDXResourceID">
+			<xs:selector xpath=".//mstns:BSDXResource" />
+			<xs:field xpath="mstns:RESOURCEID" />
+		</xs:key>
+		<xs:keyref name="BSDXResourcePatientAppts" refer="kBSDXResourceID">
+			<xs:selector xpath=".//mstns:PatientAppts" />
+			<xs:field xpath="mstns:RESOURCEID" />
+		</xs:keyref>
+	</xs:element>
+</xs:schema>
