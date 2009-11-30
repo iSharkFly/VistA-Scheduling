@@ -73,7 +73,6 @@ namespace IndianHealthService.ClinicalScheduling
 		/// </summary>
 		private void InitializeComponent()
 		{
-            System.Windows.Forms.Button cmdViewEHR;
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabAppointment = new System.Windows.Forms.TabPage();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
@@ -115,7 +114,6 @@ namespace IndianHealthService.ClinicalScheduling
             this.cmdViewAppointments = new System.Windows.Forms.Button();
             this.cmdCancel = new System.Windows.Forms.Button();
             this.cmdOK = new System.Windows.Forms.Button();
-            cmdViewEHR = new System.Windows.Forms.Button();
             this.tabControl1.SuspendLayout();
             this.tabAppointment.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -124,16 +122,6 @@ namespace IndianHealthService.ClinicalScheduling
             this.groupBox2.SuspendLayout();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
-            // 
-            // cmdViewEHR
-            // 
-            cmdViewEHR.CausesValidation = false;
-            cmdViewEHR.Location = new System.Drawing.Point(131, 8);
-            cmdViewEHR.Name = "cmdViewEHR";
-            cmdViewEHR.Size = new System.Drawing.Size(70, 24);
-            cmdViewEHR.TabIndex = 4;
-            cmdViewEHR.Text = "View EHR";
-            cmdViewEHR.Click += new System.EventHandler(this.cmdViewEHR_Click);
             // 
             // tabControl1
             // 
@@ -474,7 +462,6 @@ namespace IndianHealthService.ClinicalScheduling
             // 
             // panel1
             // 
-            this.panel1.Controls.Add(cmdViewEHR);
             this.panel1.Controls.Add(this.cmdPrintLetter);
             this.panel1.Controls.Add(this.cmdViewAppointments);
             this.panel1.Controls.Add(this.cmdCancel);
@@ -700,16 +687,6 @@ namespace IndianHealthService.ClinicalScheduling
 			}
 		}
 
-        public void ViewPatientEHR()
-        {
-            MessageBox.Show("Sorry, not implemented in WorldVista.", "Not Implemented");
-            /* not implemented right now in CPRS //SMH 7/25/09
-            Debug.Assert(m_sPatientIEN != "");
-            string sWID = Environment.MachineName;
-            string sCmd = "BSDX EHR PATIENT^" + sWID + "^" + m_sPatientIEN;
-            DataTable dtAppt = this.DocManager.RPMSDataTable(sCmd, "EHR Patient");
-            */
-        }
 
 		private void cmdPrintLetter_Click(object sender, System.EventArgs e)
 		{
@@ -748,11 +725,6 @@ namespace IndianHealthService.ClinicalScheduling
 		{
 			cmdPrintLetter.Enabled = !(m_dStartTime < DateTime.Today);
 		}
-
-        private void cmdViewEHR_Click(object sender, EventArgs e)
-        {
-            ViewPatientEHR();
-        }
 
 		#endregion //Methods
 

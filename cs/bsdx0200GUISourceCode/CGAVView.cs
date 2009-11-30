@@ -126,10 +126,10 @@ namespace IndianHealthService.ClinicalScheduling
             this.lstClip.Name = "lstClip";
             this.lstClip.Size = new System.Drawing.Size(120, 407);
             this.lstClip.TabIndex = 0;
-            this.lstClip.DragEnter += new System.Windows.Forms.DragEventHandler(this.lstClip_DragEnter);
             this.lstClip.DragDrop += new System.Windows.Forms.DragEventHandler(this.lstClip_DragDrop);
             this.lstClip.MouseMove += new System.Windows.Forms.MouseEventHandler(this.lstClip_MouseMove);
             this.lstClip.MouseDown += new System.Windows.Forms.MouseEventHandler(this.lstClip_MouseDown);
+            this.lstClip.DragEnter += new System.Windows.Forms.DragEventHandler(this.lstClip_DragEnter);
             // 
             // ctxApptClipMenu
             // 
@@ -477,8 +477,8 @@ namespace IndianHealthService.ClinicalScheduling
             this.Menu = this.mainMenu1;
             this.Name = "CGAVView";
             this.Text = "CGAVView";
-            this.Closing += new System.ComponentModel.CancelEventHandler(this.CGAVView_Closing);
             this.Load += new System.EventHandler(this.CGAVView_Load);
+            this.Closing += new System.ComponentModel.CancelEventHandler(this.CGAVView_Closing);
             this.panelRight.ResumeLayout(false);
             this.panelClip.ResumeLayout(false);
             this.panelBottom.ResumeLayout(false);

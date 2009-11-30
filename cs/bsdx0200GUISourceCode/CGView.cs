@@ -100,7 +100,6 @@ namespace IndianHealthService.ClinicalScheduling
 		private System.Windows.Forms.MenuItem mnuOpenMultipleSchedules;
 		private System.Windows.Forms.MenuItem mnuDisplayWalkIns;
         private System.Windows.Forms.MenuItem mnuRPMSDivision;
-        private MenuItem ctxCalGridEHR;
         private IContainer components;
 
         #region Initialization
@@ -272,7 +271,6 @@ namespace IndianHealthService.ClinicalScheduling
             this.ctxCalGridEdit = new System.Windows.Forms.MenuItem();
             this.ctxCalGridDelete = new System.Windows.Forms.MenuItem();
             this.ctxCalGridCheckIn = new System.Windows.Forms.MenuItem();
-            this.ctxCalGridEHR = new System.Windows.Forms.MenuItem();
             this.menuItem2 = new System.Windows.Forms.MenuItem();
             this.ctxCalGridNoShow = new System.Windows.Forms.MenuItem();
             this.ctxCalGridNoShowUndo = new System.Windows.Forms.MenuItem();
@@ -812,7 +810,6 @@ namespace IndianHealthService.ClinicalScheduling
             this.ctxCalGridEdit,
             this.ctxCalGridDelete,
             this.ctxCalGridCheckIn,
-            this.ctxCalGridEHR,
             this.menuItem2,
             this.ctxCalGridNoShow,
             this.ctxCalGridNoShowUndo,
@@ -844,37 +841,31 @@ namespace IndianHealthService.ClinicalScheduling
             this.ctxCalGridCheckIn.Text = "Check In Patient";
             this.ctxCalGridCheckIn.Click += new System.EventHandler(this.ctxCalGridCheckIn_Click);
             // 
-            // ctxCalGridEHR
-            // 
-            this.ctxCalGridEHR.Index = 4;
-            this.ctxCalGridEHR.Text = "View Patient in EHR";
-            this.ctxCalGridEHR.Click += new System.EventHandler(this.ctxCalGridEHR_Click);
-            // 
             // menuItem2
             // 
-            this.menuItem2.Index = 5;
+            this.menuItem2.Index = 4;
             this.menuItem2.Text = "-";
             // 
             // ctxCalGridNoShow
             // 
-            this.ctxCalGridNoShow.Index = 6;
+            this.ctxCalGridNoShow.Index = 5;
             this.ctxCalGridNoShow.Text = "Mark as No Show";
             this.ctxCalGridNoShow.Click += new System.EventHandler(this.ctxCalGridNoShow_Click);
             // 
             // ctxCalGridNoShowUndo
             // 
-            this.ctxCalGridNoShowUndo.Index = 7;
+            this.ctxCalGridNoShowUndo.Index = 6;
             this.ctxCalGridNoShowUndo.Text = "Undo NoShow";
             this.ctxCalGridNoShowUndo.Click += new System.EventHandler(this.ctxCalGridNoShowUndo_Click);
             // 
             // menuItem9
             // 
-            this.menuItem9.Index = 8;
+            this.menuItem9.Index = 7;
             this.menuItem9.Text = "-";
             // 
             // ctxCalGridWalkin
             // 
-            this.ctxCalGridWalkin.Index = 9;
+            this.ctxCalGridWalkin.Index = 8;
             this.ctxCalGridWalkin.Text = "Create Wal&k-In Appointment";
             this.ctxCalGridWalkin.Click += new System.EventHandler(this.ctxCalGridWalkin_Click);
             // 
@@ -1224,7 +1215,6 @@ namespace IndianHealthService.ClinicalScheduling
 			ctxCalGridNoShow.Enabled = bEditAppointments;
 			ctxCalGridNoShowUndo.Enabled = bEditAppointments;
 			ctxCalGridWalkin.Enabled = ctxCalGridAdd.Enabled;
-            this.ctxCalGridEHR.Enabled = bEditAppointments;
 		}
 
 		private void ctxCalGridAdd_Click(object sender, System.EventArgs e)
@@ -1262,11 +1252,6 @@ namespace IndianHealthService.ClinicalScheduling
 		{
 			AppointmentNoShow(false);
 		}
-
-        private void ctxCalGridEHR_Click(object sender, EventArgs e)
-        {
-            AppointmentEHRPatient();
-        }
 
 		#endregion ctxCalGridMenu Handlers
 
@@ -1634,30 +1619,6 @@ namespace IndianHealthService.ClinicalScheduling
 				return;
 			}
 		}
-
-        private void AppointmentEHRPatient()
-        {
-            try
-            {
-                int nApptID = this.calendarGrid1.SelectedAppointment;
-                Debug.Assert(nApptID != 0);
-
-                CGAppointment a = (CGAppointment)this.Appointments.AppointmentTable[nApptID];
-
-                string sDFN = a.PatientID.ToString();
-                if (sDFN == "")
-                    return;
-
-                string sWID = Environment.MachineName;
-                string sCmd = "BSDX EHR PATIENT^" + sWID + "^" + sDFN;
-                DataTable dtAppt = this.DocManager.RPMSDataTable(sCmd, "EHR Patient");
-
-            }
-            catch (Exception ex)
-            {
-                Debug.Write("CGView.AppointmentEHRPatient Failed:  " + ex.Message);
-            }
-        }
 
 		private void AppointmentEdit()
 		{
