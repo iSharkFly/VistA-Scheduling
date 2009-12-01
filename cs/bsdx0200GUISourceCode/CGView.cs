@@ -1438,7 +1438,7 @@ namespace IndianHealthService.ClinicalScheduling
 			}
 			catch (Exception ex)
 			{
-				MessageBox.Show("Unable to edit availability for " + m_sDocName + " schedule.  " +  ex.Message, "IHS Clinical Scheduling");
+				MessageBox.Show("Unable to edit availability for " + m_sDocName + " schedule.  " +  ex.Message, "Clinical Scheduling");
 				this.m_DocManager.CloseAllViews(doc);
 				return;
 			}
@@ -1480,7 +1480,7 @@ namespace IndianHealthService.ClinicalScheduling
 				}
 				catch (Exception ex)
 				{
-					MessageBox.Show("Unable to open " + m_sDocName + " schedule.  " +  ex.Message, "IHS Clinical Scheduling");
+					MessageBox.Show("Unable to open " + m_sDocName + " schedule.  " +  ex.Message, "Clinical Scheduling");
 					this.m_DocManager.CloseAllViews(doc);
 					return;
 				}
@@ -1614,7 +1614,7 @@ namespace IndianHealthService.ClinicalScheduling
 			}
 			catch (Exception ex)
 			{
-				MessageBox.Show("Unable to open " + m_sDocName + " schedule.  " +  ex.Message, "IHS Clinical Scheduling");
+				MessageBox.Show("Unable to open " + m_sDocName + " schedule.  " +  ex.Message, "Clinical Scheduling");
 				this.m_DocManager.CloseAllViews(doc);
 				return;
 			}
@@ -1687,7 +1687,7 @@ namespace IndianHealthService.ClinicalScheduling
 						&&
 						(a.StartTime.Date > DateTime.Today.Date)
 						&&
-						(MessageBox.Show(this, "The appointment for " + a.PatientName + " is in the future.  Are you sure you want to No-Show?", "IHS Windows Scheduling", MessageBoxButtons.OKCancel, MessageBoxIcon.Question) != DialogResult.OK))
+						(MessageBox.Show(this, "The appointment for " + a.PatientName + " is in the future.  Are you sure you want to No-Show?", "Windows Scheduling", MessageBoxButtons.OKCancel, MessageBoxIcon.Question) != DialogResult.OK))
 					{
 					}
 					else
@@ -1701,7 +1701,7 @@ namespace IndianHealthService.ClinicalScheduling
 				}
 				catch (Exception ex)
 				{
-					MessageBox.Show("Unable to mark appointment No Show: " +  ex.Message, "IHS Clinical Scheduling");
+					MessageBox.Show("Unable to mark appointment No Show: " +  ex.Message, "Clinical Scheduling");
 				}
 				if (bRebook == true)
 				{
@@ -1866,7 +1866,7 @@ namespace IndianHealthService.ClinicalScheduling
 				}
 				catch (Exception ex)
 				{
-					MessageBox.Show("Unable to delete appointment.  " +  ex.Message, "IHS Clinical Scheduling");
+					MessageBox.Show("Unable to delete appointment.  " +  ex.Message, "Clinical Scheduling");
 				}
 
 			}
@@ -1908,7 +1908,7 @@ namespace IndianHealthService.ClinicalScheduling
 					&&
 					(a.StartTime.Date > DateTime.Today.Date))
 				{
-					MessageBox.Show(this, "It is too early to check in " + a.PatientName, "IHS Windows Scheduling", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+					MessageBox.Show(this, "It is too early to check in " + a.PatientName, "Windows Scheduling", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
 					return;
 				}
 				//Find the default provider for the resource & load into combo box
@@ -1990,7 +1990,7 @@ namespace IndianHealthService.ClinicalScheduling
 			}
 			catch (Exception ex)
 			{
-				MessageBox.Show("Error checking in patient:  " +  ex.Message, "IHS Clinical Scheduling");
+				MessageBox.Show("Error checking in patient:  " +  ex.Message, "Clinical Scheduling");
 			}
 
 			if (bDeleted == true)
@@ -2032,7 +2032,7 @@ namespace IndianHealthService.ClinicalScheduling
 
 				if (dStart.Date > DateTime.Today.Date)
 				{
-					MessageBox.Show(this, "You cannot create a walk-in appointment for a date in the future.\n Select today's date and try again.", "IHS Windows Scheduling", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+					MessageBox.Show(this, "You cannot create a walk-in appointment for a date in the future.\n Select today's date and try again.", "Windows Scheduling", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
 					return;
 				}
 
@@ -2046,7 +2046,7 @@ namespace IndianHealthService.ClinicalScheduling
 
 				if (m_nSlots < 1)
 				{
-					DialogResult dr = MessageBox.Show(this, "There are no slots available at the selected time.  Do you want to overbook this appointment?", "IHS Clinical Scheduling",MessageBoxButtons.YesNo);
+					DialogResult dr = MessageBox.Show(this, "There are no slots available at the selected time.  Do you want to overbook this appointment?", "Clinical Scheduling",MessageBoxButtons.YesNo);
 					if (dr != DialogResult.Yes)
 					{
 						return;
@@ -2082,7 +2082,7 @@ namespace IndianHealthService.ClinicalScheduling
 
 				if (m_nSlots < 1)
 				{
-					DialogResult dr = MessageBox.Show(this, "There are no slots available at the selected time.  Do you want to overbook this appointment?", "IHS Clinical Scheduling",MessageBoxButtons.YesNo);
+					DialogResult dr = MessageBox.Show(this, "There are no slots available at the selected time.  Do you want to overbook this appointment?", "Clinical Scheduling",MessageBoxButtons.YesNo);
 					if (dr != DialogResult.Yes)
 					{
 						return;
@@ -2109,7 +2109,7 @@ namespace IndianHealthService.ClinicalScheduling
 			}
 			catch (Exception ex)
 			{
-				MessageBox.Show("Unable to add walk-in appointment  " +  ex.Message, "IHS Clinical Scheduling");
+				MessageBox.Show("Unable to add walk-in appointment  " +  ex.Message, "Clinical Scheduling");
 				return;
 
 			}
@@ -2138,7 +2138,7 @@ namespace IndianHealthService.ClinicalScheduling
 					string sHoliday = "";
 					DataRowView drv = dvHoliday[nFind];
 					sHoliday = drv["NAME"].ToString();
-					if (MessageBox.Show(this, dStart.ToShortDateString() + " is a holiday (" + sHoliday + ").  Are you sure you want to make this appointment?","IHS Clinical Scheduling", MessageBoxButtons.OKCancel, MessageBoxIcon.Question) != DialogResult.OK)
+					if (MessageBox.Show(this, dStart.ToShortDateString() + " is a holiday (" + sHoliday + ").  Are you sure you want to make this appointment?","Clinical Scheduling", MessageBoxButtons.OKCancel, MessageBoxIcon.Question) != DialogResult.OK)
 						return;
 				}
 				
@@ -2157,7 +2157,7 @@ namespace IndianHealthService.ClinicalScheduling
 
 				if (m_nSlots < 1)
 				{
-					DialogResult dr = MessageBox.Show(this, "There are no slots available at the selected time.  Do you want to overbook this appointment?", "IHS Clinical Scheduling",MessageBoxButtons.YesNo);
+					DialogResult dr = MessageBox.Show(this, "There are no slots available at the selected time.  Do you want to overbook this appointment?", "Clinical Scheduling",MessageBoxButtons.YesNo);
 					if (dr != DialogResult.Yes)
 					{
 						return;
@@ -2206,7 +2206,7 @@ namespace IndianHealthService.ClinicalScheduling
 
 				if (m_nSlots < 1)
 				{
-					DialogResult dr = MessageBox.Show(this, "There are no slots available at the selected time.  Do you want to overbook this appointment?", "IHS Clinical Scheduling",MessageBoxButtons.YesNo);
+					DialogResult dr = MessageBox.Show(this, "There are no slots available at the selected time.  Do you want to overbook this appointment?", "Clinical Scheduling",MessageBoxButtons.YesNo);
 					if (dr != DialogResult.Yes)
 					{
 						return;
@@ -2218,7 +2218,7 @@ namespace IndianHealthService.ClinicalScheduling
 			}
 			catch (Exception ex)
 			{
-				MessageBox.Show("Unable to add new appointment  " +  ex.Message, "IHS Clinical Scheduling");
+				MessageBox.Show("Unable to add new appointment  " +  ex.Message, "Clinical Scheduling");
 				return;
 
 			}
@@ -2242,7 +2242,7 @@ namespace IndianHealthService.ClinicalScheduling
 			}
 			catch (Exception ex)
 			{
-				MessageBox.Show("Unable to refresh document " +  ex.Message, "IHS Clinical Scheduling");
+				MessageBox.Show("Unable to refresh document " +  ex.Message, "Clinical Scheduling");
 			}
 			finally
 			{
@@ -2263,7 +2263,7 @@ namespace IndianHealthService.ClinicalScheduling
 			}
 			catch (Exception ex)
 			{
-				MessageBox.Show("Unable to update arrays " +  ex.Message, "IHS Clinical Scheduling");
+				MessageBox.Show("Unable to update arrays " +  ex.Message, "Clinical Scheduling");
 			}
 		}
 
@@ -2308,7 +2308,7 @@ namespace IndianHealthService.ClinicalScheduling
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Scheduling Management Error:  " + ex.Message, "IHS Clinical Scheduling");
+                MessageBox.Show("Scheduling Management Error:  " + ex.Message, "Clinical Scheduling");
             }
         }
 
@@ -2336,7 +2336,7 @@ namespace IndianHealthService.ClinicalScheduling
             }
             catch (Exception ex)
             {
-                MessageBox.Show(this, ex.Message, "IHS Clinical Scheduling", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                MessageBox.Show(this, ex.Message, "Clinical Scheduling", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
             }
         }
 
@@ -2391,7 +2391,7 @@ namespace IndianHealthService.ClinicalScheduling
             }
             catch (Exception ex)
             {
-                MessageBox.Show(this, ex.Message, "IHS Clinical Scheduling", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                MessageBox.Show(this, ex.Message, "Clinical Scheduling", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
             }
         }
 
@@ -2665,7 +2665,7 @@ namespace IndianHealthService.ClinicalScheduling
 			{
 				if (e.Appointment.CheckInTime.Ticks > 0)
 				{
-					MessageBox.Show("You cannot change the appointment time because the patient has already checked in.", "IHS Clinical Scheduling",  MessageBoxButtons.OKCancel, MessageBoxIcon.Information);
+					MessageBox.Show("You cannot change the appointment time because the patient has already checked in.", "Clinical Scheduling",  MessageBoxButtons.OKCancel, MessageBoxIcon.Information);
 					return;
 				}
 
@@ -2674,7 +2674,7 @@ namespace IndianHealthService.ClinicalScheduling
 				if (EditAppointmentEnabled(e.Appointment.Resource) == false)
 					return;
 
-				if (MessageBox.Show("Are you sure you want to move this appointment?", "IHS Clinical Scheduling",  MessageBoxButtons.YesNo) != DialogResult.Yes)
+				if (MessageBox.Show("Are you sure you want to move this appointment?", "Clinical Scheduling",  MessageBoxButtons.YesNo) != DialogResult.Yes)
 					return;
 
 				//20040909 Cherokee Replaced this block with following
@@ -2707,7 +2707,7 @@ namespace IndianHealthService.ClinicalScheduling
 				*/
 				if (bSlotsAvailable == false)
 				{
-					DialogResult dr = MessageBox.Show(this, "There are no slots available at the selected time.  Do you want to overbook this appointment?", "IHS Clinical Scheduling",MessageBoxButtons.YesNo);
+					DialogResult dr = MessageBox.Show(this, "There are no slots available at the selected time.  Do you want to overbook this appointment?", "Clinical Scheduling",MessageBoxButtons.YesNo);
 					if (dr != DialogResult.Yes)
 					{
 						return;
@@ -2730,7 +2730,7 @@ namespace IndianHealthService.ClinicalScheduling
 			}
 			catch (Exception ex)
 			{
-				MessageBox.Show("Unable to change appointment  " +  ex.Message, "IHS Clinical Scheduling");
+				MessageBox.Show("Unable to change appointment  " +  ex.Message, "Clinical Scheduling");
 				this.m_DocManager.UpdateViews();
 				return;
 			}
@@ -2783,12 +2783,12 @@ namespace IndianHealthService.ClinicalScheduling
 
 		private void mnuHelpAbout_Click(object sender, System.EventArgs e)
 		{
-			MessageBox.Show("IHS Clinical Scheduling Version " + Application.ProductVersion, "IHS Clinical Scheduling", MessageBoxButtons.OK, MessageBoxIcon.Information);	
+			MessageBox.Show("Clinical Scheduling Version " + Application.ProductVersion, "Clinical Scheduling", MessageBoxButtons.OK, MessageBoxIcon.Information);	
 		}
 
 		private void ImplementMsg()
 		{
-			MessageBox.Show("IHS Clinical Scheduling", "TODO: Implement this function");
+			MessageBox.Show("Clinical Scheduling", "TODO: Implement this function");
 		}
 
 		private void mnuClose_Click(object sender, System.EventArgs e)
@@ -2894,7 +2894,7 @@ namespace IndianHealthService.ClinicalScheduling
 				*/
 				if (bSlotsAvailable == false)
 				{
-					DialogResult dr = MessageBox.Show(this, "There are no slots available at the selected time.  Do you want to overbook this appointment?", "IHS Clinical Scheduling",MessageBoxButtons.YesNo);
+					DialogResult dr = MessageBox.Show(this, "There are no slots available at the selected time.  Do you want to overbook this appointment?", "Clinical Scheduling",MessageBoxButtons.YesNo);
 					if (dr != DialogResult.Yes)
 					{
 						return;
@@ -2909,7 +2909,7 @@ namespace IndianHealthService.ClinicalScheduling
 			}
 			catch (Exception ex)
 			{
-				MessageBox.Show("Unable to add new appointment  " +  ex.Message, "IHS Clinical Scheduling");
+				MessageBox.Show("Unable to add new appointment  " +  ex.Message, "Clinical Scheduling");
 				return;
 			}
 			try
@@ -2953,7 +2953,7 @@ namespace IndianHealthService.ClinicalScheduling
 			}
 			catch(Exception ex)
 			{
-				MessageBox.Show(this, ex.Message, "IHS Clinical Scheduling", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+				MessageBox.Show(this, ex.Message, "Clinical Scheduling", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
 			}
 		}
 
@@ -2979,7 +2979,7 @@ namespace IndianHealthService.ClinicalScheduling
 			}
 			catch(Exception ex)
 			{
-				MessageBox.Show(this, ex.Message, "IHS Clinical Scheduling", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+				MessageBox.Show(this, ex.Message, "Clinical Scheduling", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
 			}
 			
 		}
@@ -3013,7 +3013,7 @@ namespace IndianHealthService.ClinicalScheduling
 			}
 			catch(Exception ex)
 			{
-				MessageBox.Show(this, ex.Message, "IHS Clinical Scheduling", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+				MessageBox.Show(this, ex.Message, "Clinical Scheduling", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
 			}		
 		}
 
@@ -3073,7 +3073,7 @@ namespace IndianHealthService.ClinicalScheduling
 			}
 			catch(Exception ex)
 			{
-				MessageBox.Show(this, ex.Message, "IHS Clinical Scheduling", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+				MessageBox.Show(this, ex.Message, "Clinical Scheduling", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
 			}
 
 		}
@@ -3117,7 +3117,7 @@ namespace IndianHealthService.ClinicalScheduling
 			}
 			catch(Exception ex)
 			{
-				MessageBox.Show(this, ex.Message, "IHS Clinical Scheduling", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+				MessageBox.Show(this, ex.Message, "Clinical Scheduling", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
 			}
         }
 

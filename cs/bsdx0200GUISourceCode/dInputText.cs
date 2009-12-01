@@ -126,7 +126,7 @@ namespace IndianHealthService.ClinicalScheduling
 			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
 			this.Name = "dInputText";
 			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-			this.Text = "IHS Clinical Scheduling";
+			this.Text = "Clinical Scheduling";
 			this.pnlPageBottom.ResumeLayout(false);
 			this.ResumeLayout(false);
 

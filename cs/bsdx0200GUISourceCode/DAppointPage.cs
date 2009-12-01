@@ -671,7 +671,7 @@ namespace IndianHealthService.ClinicalScheduling
 			}
 			catch (Exception ex)
 			{
-				MessageBox.Show(this, ex.Message, "IHS Clinical Scheduling", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+				MessageBox.Show(this, ex.Message, "Clinical Scheduling", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
 			}
 		}
 
@@ -698,7 +698,7 @@ namespace IndianHealthService.ClinicalScheduling
 			}
 			catch (Exception ex)
 			{
-				MessageBox.Show(this, ex.Message, "IHS Clinical Scheduling", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+				MessageBox.Show(this, ex.Message, "Clinical Scheduling", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
 			}		
 		}
 

@@ -67,7 +67,7 @@ namespace IndianHealthService.ClinicalScheduling
 			this.label1.Name = "label1";
 			this.label1.Size = new System.Drawing.Size(448, 40);
 			this.label1.TabIndex = 0;
-			this.label1.Text = "IHS Clinical Scheduling";
+			this.label1.Text = "Clinical Scheduling";
 			this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
 			// 
 			// lblVersion
@@ -110,7 +110,7 @@ namespace IndianHealthService.ClinicalScheduling
 			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Fixed3D;
 			this.Name = "DSplash";
 			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-			this.Text = "IHS Clinical Scheduling";
+			this.Text = "Clinical Scheduling";
 			this.Load += new System.EventHandler(this.DSplash_Load);
 			this.ResumeLayout(false);
 

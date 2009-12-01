@@ -661,7 +661,7 @@ namespace IndianHealthService.ClinicalScheduling
 			}
 			catch (Exception ex)
 			{
-				MessageBox.Show("Unable to add new access block  " +  ex.Message, "IHS Clinical Scheduling");
+				MessageBox.Show("Unable to add new access block  " +  ex.Message, "Clinical Scheduling");
 				return;
 			}
 			try
@@ -695,7 +695,7 @@ namespace IndianHealthService.ClinicalScheduling
 					DateTime sEnd2 = a.EndTime;
 					if (CGSchedLib.TimesOverlap(dStart, dEnd, a.StartTime, a.EndTime))
 					{
-						MessageBox.Show("Access blocks may not overlap.","IHS Clinical Scheduling", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+						MessageBox.Show("Access blocks may not overlap.","Clinical Scheduling", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
 						return;
 					}
 				}
@@ -720,7 +720,7 @@ namespace IndianHealthService.ClinicalScheduling
 			}
 			catch (Exception ex)
 			{
-				MessageBox.Show("Unable to add new access block  " +  ex.Message, "IHS Clinical Scheduling");
+				MessageBox.Show("Unable to add new access block  " +  ex.Message, "Clinical Scheduling");
 				return;
 			}
 			try
@@ -741,7 +741,7 @@ namespace IndianHealthService.ClinicalScheduling
 			if (calendarGrid1.SelectedAppointments.AppointmentTable.Count > 1)
 				sMsg = " these access blocks?";
 
-			if (MessageBox.Show("Are you sure you want to delete" + sMsg, "IHS Clinical Scheduling",  MessageBoxButtons.YesNo) != DialogResult.Yes)
+			if (MessageBox.Show("Are you sure you want to delete" + sMsg, "Clinical Scheduling",  MessageBoxButtons.YesNo) != DialogResult.Yes)
 			{
 				calendarGrid1.CGToolTip.Active = true;
 				return;
@@ -760,7 +760,7 @@ namespace IndianHealthService.ClinicalScheduling
 				}
 				catch (Exception ex)
 				{
-					MessageBox.Show("Unable to delete access block" +  ex.Message, "IHS Clinical Scheduling");
+					MessageBox.Show("Unable to delete access block" +  ex.Message, "Clinical Scheduling");
 				}
 			}
 			if (bDeleted == true)
@@ -809,7 +809,7 @@ namespace IndianHealthService.ClinicalScheduling
 			}
 			catch (Exception ex)
 			{
-				MessageBox.Show("Scheduling Management Error:  " +  ex.Message, "IHS Clinical Scheduling");
+				MessageBox.Show("Scheduling Management Error:  " +  ex.Message, "Clinical Scheduling");
 			}
 		}
 
@@ -885,7 +885,7 @@ namespace IndianHealthService.ClinicalScheduling
 			{
 //				this.DocManager.EnableAutoRefresh(false);
 
-				if (MessageBox.Show("Are you sure you want to move this access block?", "IHS Clinical Scheduling",  MessageBoxButtons.YesNo) != DialogResult.Yes)
+				if (MessageBox.Show("Are you sure you want to move this access block?", "Clinical Scheduling",  MessageBoxButtons.YesNo) != DialogResult.Yes)
 					return;
 
 				m_Document.ChangeAppointmentTime(e.Appointment, e.StartTime, e.EndTime, e.Resource);
@@ -893,7 +893,7 @@ namespace IndianHealthService.ClinicalScheduling
 			}
 			catch (Exception ex)
 			{
-				MessageBox.Show("Unable to change access block  " +  ex.Message, "IHS Clinical Scheduling");
+				MessageBox.Show("Unable to change access block  " +  ex.Message, "Clinical Scheduling");
 				this.m_DocManager.UpdateViews();
 				return;
 			}
@@ -957,12 +957,12 @@ namespace IndianHealthService.ClinicalScheduling
 
 		private void mnuHelpAbout_Click(object sender, System.EventArgs e)
 		{
-			MessageBox.Show("IHS Clinical Scheduling Version " + Application.ProductVersion, "IHS Clinical Scheduling", MessageBoxButtons.OK, MessageBoxIcon.Information);	
+			MessageBox.Show("Clinical Scheduling Version " + Application.ProductVersion, "Clinical Scheduling", MessageBoxButtons.OK, MessageBoxIcon.Information);	
 		}
 
 		private void ImplementMsg()
 		{
-			MessageBox.Show("IHS Clinical Scheduling", "TODO: Implement this function");
+			MessageBox.Show("Clinical Scheduling", "TODO: Implement this function");
 		}
 
 		private void mnuLoadTemplate_Click(object sender, System.EventArgs e)
@@ -1059,7 +1059,7 @@ namespace IndianHealthService.ClinicalScheduling
 			}
 			catch (Exception ex)
 			{
-				MessageBox.Show(this, "Error loading template:  " + ex.Message, "IHS Clinical Scheduling", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+				MessageBox.Show(this, "Error loading template:  " + ex.Message, "Clinical Scheduling", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
 			}
 		}
 
@@ -1129,7 +1129,7 @@ namespace IndianHealthService.ClinicalScheduling
 //			}//end try
 //			catch (Exception ex)
 //			{
-//				MessageBox.Show(this, "Error loading template:  " + ex.Message, "IHS Clinical Scheduling", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+//				MessageBox.Show(this, "Error loading template:  " + ex.Message, "Clinical Scheduling", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
 //			}
 //		}
 
@@ -1175,7 +1175,7 @@ namespace IndianHealthService.ClinicalScheduling
 			}
 			catch (Exception ex)
 			{
-				MessageBox.Show(this, "Error saving template:  " + ex.Message, "IHS Clinical Scheduling", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+				MessageBox.Show(this, "Error saving template:  " + ex.Message, "Clinical Scheduling", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
 			}
 		}
 
@@ -1257,7 +1257,7 @@ namespace IndianHealthService.ClinicalScheduling
 			}
 			catch (Exception ex)
 			{
-				MessageBox.Show("Unable to add new access block  " +  ex.Message, "IHS Clinical Scheduling");
+				MessageBox.Show("Unable to add new access block  " +  ex.Message, "Clinical Scheduling");
 				return;
 			}
 			try

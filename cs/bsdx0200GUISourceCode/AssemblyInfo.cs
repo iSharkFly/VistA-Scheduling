@@ -7,7 +7,7 @@ using System.Runtime.CompilerServices;
 // associated with an assembly.
 //
 [assembly: AssemblyTitle("ClinicalScheduling")]
-[assembly: AssemblyDescription("IHS Windows Scheduling Application")]
+[assembly: AssemblyDescription("Windows Scheduling Application")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Indian Health Service")]
 [assembly: AssemblyProduct("")]

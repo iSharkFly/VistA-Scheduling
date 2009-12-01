@@ -23,7 +23,7 @@ namespace IndianHealthService.ClinicalScheduling
 		private static CGDocumentManager	_current;
 		private Hashtable					_views = new Hashtable();
 		private Hashtable					m_AVViews = new Hashtable();
-		private string						m_sWindowText = "IHS Clinical Scheduling"; //Default Window Text
+		private string						m_sWindowText = "Clinical Scheduling"; //Default Window Text
 		private bool						m_bSchedManager;
 		private bool						m_bExitOK = true;
         public string                       m_sHandle = "0";
@@ -931,7 +931,7 @@ namespace IndianHealthService.ClinicalScheduling
 				sMsg = "Scheduling System Shutting Down Immediately for Maintenance.";
 			}
 
-			MessageBox.Show(sMsg, "IHS Clinical Scheduling Administrator -- System Shutdown Notification", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+			MessageBox.Show(sMsg, "Clinical Scheduling Administrator -- System Shutdown Notification", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
 
 			CloseAll();
 		}

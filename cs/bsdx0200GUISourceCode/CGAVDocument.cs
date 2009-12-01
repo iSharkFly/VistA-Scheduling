@@ -170,7 +170,7 @@ namespace IndianHealthService.ClinicalScheduling
 					DateTime sEnd2 = a.EndTime;
 					if ((a.AppointmentKey != pAppt.AppointmentKey) && (CGSchedLib.TimesOverlap(dNewStart, dNewEnd, a.StartTime, a.EndTime)))
 					{
-						MessageBox.Show("Access blocks may not overlap.","IHS Clinical Scheduling", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+						MessageBox.Show("Access blocks may not overlap.","Clinical Scheduling", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
 						return;
 					}
 				}
@@ -294,7 +294,7 @@ namespace IndianHealthService.ClinicalScheduling
 					if (CGSchedLib.TimesOverlap(aCopy.StartTime, aCopy.EndTime, a.StartTime, a.EndTime))
 					{
 						//						throw new Exception("Access blocks may not overlap.");
-						MessageBox.Show("Access blocks may not overlap.","IHS Clinical Scheduling", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+						MessageBox.Show("Access blocks may not overlap.","Clinical Scheduling", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
 						return -1;
 					}
 						

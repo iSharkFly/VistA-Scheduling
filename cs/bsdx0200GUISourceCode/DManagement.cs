@@ -2270,7 +2270,7 @@ namespace IndianHealthService.ClinicalScheduling
 			}
 			catch(Exception ex)
 			{
-				MessageBox.Show(this,ex.Message,"IHS Clinical Scheduling");
+				MessageBox.Show(this,ex.Message,"Clinical Scheduling");
 			}
 		
 		}
@@ -2367,7 +2367,7 @@ namespace IndianHealthService.ClinicalScheduling
 		{
 			string sMessage;
 			dInputText dlg = new dInputText();
-			dlg.DialogTitle = "IHS Clinical Scheduling - Send Message to Scheduling Clients.";
+			dlg.DialogTitle = "Clinical Scheduling - Send Message to Scheduling Clients.";
 
 			if (dlg.ShowDialog(this) != DialogResult.OK)
 				return;
@@ -2382,7 +2382,7 @@ namespace IndianHealthService.ClinicalScheduling
 
 		private void cmdWorkStationsShutdown_Click(object sender, System.EventArgs e)
 		{
-			if (MessageBox.Show("Are you sure you want to shut down all IHS Clincal Scheduling clients?" ,"IHS Clinical Scheduling Client Shutdown", MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes)
+			if (MessageBox.Show("Are you sure you want to shut down all Clincal Scheduling clients?" ,"Clinical Scheduling Client Shutdown", MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes)
 			{
 				return;
 			}
