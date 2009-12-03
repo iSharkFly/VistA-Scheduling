@@ -1083,5 +1083,83 @@
             Contains the beginning date of the appointment document
             </summary>
         </member>
+        <member name="T:IndianHealthService.ClinicalScheduling.CalendarGrid">
+            <summary>
+            This class was regenerated from Calendargrid.dll using Reflector.exe
+            by Sam Habiel for WorldVista. The original source code is lost.
+            </summary>
+        </member>
+        <member name="T:IndianHealthService.ClinicalScheduling.DAccessBlock">
+            <summary>
+            This class was regenerated from Calendargrid.dll using Reflector.exe
+            by Sam Habiel for WorldVista. The original source code is lost.
+            </summary>
+        </member>
+        <member name="T:IndianHealthService.ClinicalScheduling.CGAppointment">
+            <summary>
+            This class was regenerated from Calendargrid.dll using Reflector.exe
+            by Sam Habiel for WorldVista. The original source code is lost.
+            </summary>
+        </member>
+        <member name="T:IndianHealthService.ClinicalScheduling.CGAppointmentChangedArgs">
+            <summary>
+            This class was regenerated from Calendargrid.dll using Reflector.exe
+            by Sam Habiel for WorldVista. The original source code is lost.
+            </summary>
+        </member>
+        <member name="T:IndianHealthService.ClinicalScheduling.CGAppointmentChangedHandler">
+            <summary>
+            This class was regenerated from Calendargrid.dll using Reflector.exe
+            by Sam Habiel for WorldVista. The original source code is lost.
+            </summary>
+        </member>
+        <member name="T:IndianHealthService.ClinicalScheduling.CGAppointments">
+            <summary>
+            This class was regenerated from Calendargrid.dll using Reflector.exe
+            by Sam Habiel for WorldVista. The original source code is lost.
+            </summary>
+        </member>
+        <member name="T:IndianHealthService.ClinicalScheduling.CGAvailability">
+            <summary>
+            This class was regenerated from Calendargrid.dll using Reflector.exe
+            by Sam Habiel for WorldVista. The original source code is lost.
+            </summary>
+        </member>
+        <member name="T:IndianHealthService.ClinicalScheduling.CGCell">
+            <summary>
+            This class was regenerated from Calendargrid.dll using Reflector.exe
+            by Sam Habiel for WorldVista. The original source code is lost.
+            </summary>
+        </member>
+        <member name="T:IndianHealthService.ClinicalScheduling.CGCells">
+            <summary>
+            This class was regenerated from Calendargrid.dll using Reflector.exe
+            by Sam Habiel for WorldVista. The original source code is lost.
+            </summary>
+        </member>
+        <member name="T:IndianHealthService.ClinicalScheduling.CGRange">
+            <summary>
+            This class was regenerated from Calendargrid.dll using Reflector.exe
+            by Sam Habiel for WorldVista. The original source code is lost.
+            </summary>
+        </member>
+        <member name="T:IndianHealthService.ClinicalScheduling.CGResource">
+            <summary>
+            This class was regenerated from Calendargrid.dll using Reflector.exe
+            by Sam Habiel for WorldVista. The original source code is lost.
+            </summary>
+        </member>
+        <member name="T:IndianHealthService.ClinicalScheduling.CGSelectionChangedArgs">
+            <summary>
+            This class was regenerated from Calendargrid.dll using Reflector.exe
+            by Sam Habiel for WorldVista. The original source code is lost.
+            </summary>
+        </member>
+        <member name="T:IndianHealthService.ClinicalScheduling.CGSelectionChangedHandler">
+            <summary>
+            This class was regenerated from Calendargrid.dll using Reflector.exe
+            by Sam Habiel for WorldVista. The original source code is lost.
+            </summary>
+        </member>
     </members>
 </doc>

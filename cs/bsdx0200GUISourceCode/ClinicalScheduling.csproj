@@ -101,10 +101,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>.\BMXNet20.dll</HintPath>
     </Reference>
-    <Reference Include="CalendarGrid, Version=1.0.2790.30319, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>.\CalendarGrid.dll</HintPath>
-    </Reference>
     <Reference Include="CrystalDecisions.CrystalReports.Engine, Version=10.2.3600.0, Culture=neutral, PublicKeyToken=692fbea5521e1304, processorArchitecture=MSIL">
       <Private>True</Private>
     </Reference>
@@ -189,21 +185,35 @@
     <Compile Include="AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="CalendarGrid.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="CGAppointment.cs" />
+    <Compile Include="CGAppointmentChangedArgs.cs" />
+    <Compile Include="CGAppointmentChangedHandler.cs" />
+    <Compile Include="CGAppointments.cs" />
+    <Compile Include="CGAvailability.cs" />
     <Compile Include="CGAVDocument.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="CGAVView.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="CGCell.cs" />
+    <Compile Include="CGCells.cs" />
     <Compile Include="CGDocument.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="CGDocumentManager.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="CGRange.cs" />
+    <Compile Include="CGResource.cs" />
     <Compile Include="CGSchedLib.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="CGSelectionChangedArgs.cs" />
+    <Compile Include="CGSelectionChangedHandler.cs" />
     <Compile Include="CGView.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -236,6 +246,9 @@
       <SubType>Component</SubType>
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
+    </Compile>
+    <Compile Include="DAccessBlock.cs">
+      <SubType>Form</SubType>
     </Compile>
     <Compile Include="DAccessGroup.cs">
       <SubType>Form</SubType>
