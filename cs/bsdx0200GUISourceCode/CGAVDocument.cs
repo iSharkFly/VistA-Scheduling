@@ -244,7 +244,7 @@ namespace IndianHealthService.ClinicalScheduling
 				nErrorID = Convert.ToInt32(r["ERRORID"]);
 				if (nErrorID != -1)
 				{
-					throw new Exception("RPMS Error");
+					throw new Exception("VistA Error");
 				}
 				Debug.Write("CreateAvailabilityAuto -- new AV block created\n");
 
@@ -312,7 +312,7 @@ namespace IndianHealthService.ClinicalScheduling
 				nErrorID = Convert.ToInt32(r["ERRORID"]);
 				if (nErrorID != -1)
 				{
-					throw new Exception("RPMS Error");
+					throw new Exception("VistA Error");
 				}
 				Debug.Write("CreateAvailability -- new AV block created\n");
 

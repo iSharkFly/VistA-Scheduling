@@ -175,7 +175,7 @@ namespace IndianHealthService.ClinicalScheduling
 			this.lblDescription.Name = "lblDescription";
 			this.lblDescription.Size = new System.Drawing.Size(492, 61);
 			this.lblDescription.TabIndex = 1;
-			this.lblDescription.Text = @"Resources may optionally be linked to an RPMS Clinic.  To define the parameters for an RPMS clinic, you must log into RPMS and use the RPMS Scheduling Supervisor's menus.  The Time Interval field controls the increment of time used on the Calendar display.  The Letter Text tab contains the body text of reminder letters for this clinic.";
+			this.lblDescription.Text = @"Resources may optionally be linked to a VistA Clinic.  To define the parameters for an VistA clinic, you must log into VistA and use the VistA Scheduling Supervisor's menus.  The Time Interval field controls the increment of time used on the Calendar display.  The Letter Text tab contains the body text of reminder letters for this clinic.";
 			// 
 			// tabResources
 			// 
@@ -267,7 +267,7 @@ namespace IndianHealthService.ClinicalScheduling
 			this.grpRPMSClinicLink.Size = new System.Drawing.Size(384, 208);
 			this.grpRPMSClinicLink.TabIndex = 48;
 			this.grpRPMSClinicLink.TabStop = false;
-			this.grpRPMSClinicLink.Text = "RPMS Clinic Link";
+			this.grpRPMSClinicLink.Text = "VistA Clinic Link";
 			// 
 			// lblReactivateDate
 			// 
@@ -377,7 +377,7 @@ namespace IndianHealthService.ClinicalScheduling
 			this.label4.Name = "label4";
 			this.label4.Size = new System.Drawing.Size(72, 16);
 			this.label4.TabIndex = 45;
-			this.label4.Text = "RPMS Clinic:";
+			this.label4.Text = "VistA Clinic:";
 			this.label4.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
 			// cboRPMSClinic

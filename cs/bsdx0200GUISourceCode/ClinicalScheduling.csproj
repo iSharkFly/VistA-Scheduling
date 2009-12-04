@@ -6,7 +6,7 @@
     <ProjectGuid>{8C05C4F7-FE81-479F-87A0-44E04C7F6E0F}</ProjectGuid>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ApplicationIcon>App.ico</ApplicationIcon>
+    <ApplicationIcon>hwIco281.ICO</ApplicationIcon>
     <AssemblyKeyContainerName>
     </AssemblyKeyContainerName>
     <AssemblyName>ClinicalScheduling</AssemblyName>
@@ -81,7 +81,8 @@
     <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
     <ConfigurationOverrideFile>
     </ConfigurationOverrideFile>
-    <DefineConstants>DEBUG</DefineConstants>
+    <DefineConstants>
+    </DefineConstants>
     <DocumentationFile>bin\Release\ClinicalScheduling.XML</DocumentationFile>
     <DebugSymbols>false</DebugSymbols>
     <FileAlignment>4096</FileAlignment>
@@ -99,7 +100,7 @@
   <ItemGroup>
     <Reference Include="BMXNet20, Version=2.0.2459.21970, Culture=neutral, PublicKeyToken=069dc2499aed6a8c, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>.\BMXNet20.dll</HintPath>
+      <HintPath>bin\Release\BMXNet20.dll</HintPath>
     </Reference>
     <Reference Include="CrystalDecisions.CrystalReports.Engine, Version=10.2.3600.0, Culture=neutral, PublicKeyToken=692fbea5521e1304, processorArchitecture=MSIL">
       <Private>True</Private>
@@ -182,6 +183,7 @@
       <LastGenOutput>dsRebookAppts.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </Content>
+    <Content Include="hwIco281.ICO" />
     <Compile Include="AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>

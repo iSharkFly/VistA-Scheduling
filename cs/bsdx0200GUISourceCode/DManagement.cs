@@ -1024,7 +1024,7 @@ namespace IndianHealthService.ClinicalScheduling
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(136, 16);
             this.label2.TabIndex = 4;
-            this.label2.Text = "Copy From RPMS Clinic:";
+            this.label2.Text = "Copy From VistA Clinic:";
             // 
             // cboRPMSClinic
             // 
@@ -1413,7 +1413,7 @@ namespace IndianHealthService.ClinicalScheduling
 				this.cmdAddResource.Text = "Add User...";
 				this.cmdChangeResource.Text = "Change User...";
 				this.cmdRemoveUser.Visible = true;
-				this.lblDescription.Text = "Define the users who can create appointments and establish availability for a particular resource.  Users must first be given basic access to the RPMS Scheduling package using standard RPMS menu and key management before they can be selected here and assigned to a resource.  Click the left-pointing arrow near the upper right of the window to go back to the list of resources.";
+				this.lblDescription.Text = "Define the users who can create appointments and establish availability for a particular resource.  Users must first be given basic access to the VistA Scheduling package using standard VistA menu and key management before they can be selected here and assigned to a resource.  Click the left-pointing arrow near the upper right of the window to go back to the list of resources.";
 				int nRows = this.grdResources.VisibleRowCount;
 				if (nRows == 0)
 				{

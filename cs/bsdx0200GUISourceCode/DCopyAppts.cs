@@ -16,13 +16,9 @@ namespace IndianHealthService.ClinicalScheduling
 	/// Summary description for DCopyAppts.
 	/// </summary>
 	public class DCopyAppts : System.Windows.Forms.Form
-	{
-		private System.Windows.Forms.Button cmdCancel;
+    {
 		private System.Windows.Forms.Button cmdOK;
-		private System.Windows.Forms.Panel pnlOKCancel;
-		private System.Windows.Forms.Panel pnlDescription;
-		private System.Windows.Forms.GroupBox grpDescription;
-		private System.Windows.Forms.Label lblDescription;
+        private System.Windows.Forms.Panel pnlOKCancel;
 		private System.Windows.Forms.Label lblSummary;
 		private System.Windows.Forms.Label lblProgress;
 		private System.ComponentModel.IContainer components;
@@ -73,140 +69,91 @@ namespace IndianHealthService.ClinicalScheduling
 		/// </summary>
 		private void InitializeComponent()
 		{
-			this.components = new System.ComponentModel.Container();
-			this.pnlOKCancel = new System.Windows.Forms.Panel();
-			this.cmdCancel = new System.Windows.Forms.Button();
-			this.cmdOK = new System.Windows.Forms.Button();
-			this.pnlDescription = new System.Windows.Forms.Panel();
-			this.grpDescription = new System.Windows.Forms.GroupBox();
-			this.lblDescription = new System.Windows.Forms.Label();
-			this.lblSummary = new System.Windows.Forms.Label();
-			this.lblProgress = new System.Windows.Forms.Label();
-			this.timerPoll = new System.Windows.Forms.Timer(this.components);
-			this.label1 = new System.Windows.Forms.Label();
-			this.label2 = new System.Windows.Forms.Label();
-			this.pnlOKCancel.SuspendLayout();
-			this.pnlDescription.SuspendLayout();
-			this.grpDescription.SuspendLayout();
-			this.SuspendLayout();
-			// 
-			// pnlOKCancel
-			// 
-			this.pnlOKCancel.Controls.Add(this.cmdCancel);
-			this.pnlOKCancel.Controls.Add(this.cmdOK);
-			this.pnlOKCancel.Dock = System.Windows.Forms.DockStyle.Bottom;
-			this.pnlOKCancel.Location = new System.Drawing.Point(0, 286);
-			this.pnlOKCancel.Name = "pnlOKCancel";
-			this.pnlOKCancel.Size = new System.Drawing.Size(376, 40);
-			this.pnlOKCancel.TabIndex = 4;
-			// 
-			// cmdCancel
-			// 
-			this.cmdCancel.Location = new System.Drawing.Point(288, 8);
-			this.cmdCancel.Name = "cmdCancel";
-			this.cmdCancel.Size = new System.Drawing.Size(64, 24);
-			this.cmdCancel.TabIndex = 1;
-			this.cmdCancel.Text = "Cancel";
-			this.cmdCancel.Click += new System.EventHandler(this.cmdCancel_Click);
-			// 
-			// cmdOK
-			// 
-			this.cmdOK.DialogResult = System.Windows.Forms.DialogResult.OK;
-			this.cmdOK.Location = new System.Drawing.Point(208, 8);
-			this.cmdOK.Name = "cmdOK";
-			this.cmdOK.Size = new System.Drawing.Size(64, 24);
-			this.cmdOK.TabIndex = 0;
-			this.cmdOK.Text = "OK";
-			// 
-			// pnlDescription
-			// 
-			this.pnlDescription.Controls.Add(this.grpDescription);
-			this.pnlDescription.Dock = System.Windows.Forms.DockStyle.Bottom;
-			this.pnlDescription.Location = new System.Drawing.Point(0, 222);
-			this.pnlDescription.Name = "pnlDescription";
-			this.pnlDescription.Size = new System.Drawing.Size(376, 64);
-			this.pnlDescription.TabIndex = 47;
-			// 
-			// grpDescription
-			// 
-			this.grpDescription.Controls.Add(this.lblDescription);
-			this.grpDescription.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.grpDescription.Location = new System.Drawing.Point(0, 0);
-			this.grpDescription.Name = "grpDescription";
-			this.grpDescription.Size = new System.Drawing.Size(376, 64);
-			this.grpDescription.TabIndex = 0;
-			this.grpDescription.TabStop = false;
-			this.grpDescription.Text = "Description";
-			// 
-			// lblDescription
-			// 
-			this.lblDescription.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.lblDescription.Location = new System.Drawing.Point(3, 16);
-			this.lblDescription.Name = "lblDescription";
-			this.lblDescription.Size = new System.Drawing.Size(370, 45);
-			this.lblDescription.TabIndex = 1;
-			this.lblDescription.Text = "This panel displays the progress of the appointment copy process.  Press the \'Can" +
-				"cel\' button to stop copying appointments.";
-			// 
-			// lblSummary
-			// 
-			this.lblSummary.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-			this.lblSummary.Location = new System.Drawing.Point(32, 32);
-			this.lblSummary.Name = "lblSummary";
-			this.lblSummary.Size = new System.Drawing.Size(312, 64);
-			this.lblSummary.TabIndex = 48;
-			this.lblSummary.Text = "lblSummary";
-			// 
-			// lblProgress
-			// 
-			this.lblProgress.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-			this.lblProgress.Location = new System.Drawing.Point(32, 128);
-			this.lblProgress.Name = "lblProgress";
-			this.lblProgress.Size = new System.Drawing.Size(312, 72);
-			this.lblProgress.TabIndex = 49;
-			this.lblProgress.Text = "lblProgress";
-			// 
-			// timerPoll
-			// 
-			this.timerPoll.Tick += new System.EventHandler(this.timerPoll_Tick);
-			// 
-			// label1
-			// 
-			this.label1.Location = new System.Drawing.Point(32, 112);
-			this.label1.Name = "label1";
-			this.label1.Size = new System.Drawing.Size(144, 16);
-			this.label1.TabIndex = 50;
-			this.label1.Text = "Status:";
-			// 
-			// label2
-			// 
-			this.label2.Location = new System.Drawing.Point(32, 16);
-			this.label2.Name = "label2";
-			this.label2.Size = new System.Drawing.Size(144, 16);
-			this.label2.TabIndex = 51;
-			this.label2.Text = "Job Summary:";
-			// 
-			// DCopyAppts
-			// 
-			this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
-			this.ClientSize = new System.Drawing.Size(376, 326);
-			this.Controls.Add(this.label2);
-			this.Controls.Add(this.label1);
-			this.Controls.Add(this.lblProgress);
-			this.Controls.Add(this.lblSummary);
-			this.Controls.Add(this.pnlDescription);
-			this.Controls.Add(this.pnlOKCancel);
-			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
-			this.MaximizeBox = false;
-			this.Name = "DCopyAppts";
-			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-			this.Text = "Copy Appointments";
-			this.Closing += new System.ComponentModel.CancelEventHandler(this.DCopyAppts_Closing);
-			this.Load += new System.EventHandler(this.DCopyAppts_Load);
-			this.pnlOKCancel.ResumeLayout(false);
-			this.pnlDescription.ResumeLayout(false);
-			this.grpDescription.ResumeLayout(false);
-			this.ResumeLayout(false);
+            this.components = new System.ComponentModel.Container();
+            this.pnlOKCancel = new System.Windows.Forms.Panel();
+            this.cmdOK = new System.Windows.Forms.Button();
+            this.lblSummary = new System.Windows.Forms.Label();
+            this.lblProgress = new System.Windows.Forms.Label();
+            this.timerPoll = new System.Windows.Forms.Timer(this.components);
+            this.label1 = new System.Windows.Forms.Label();
+            this.label2 = new System.Windows.Forms.Label();
+            this.pnlOKCancel.SuspendLayout();
+            this.SuspendLayout();
+            // 
+            // pnlOKCancel
+            // 
+            this.pnlOKCancel.Controls.Add(this.cmdOK);
+            this.pnlOKCancel.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.pnlOKCancel.Location = new System.Drawing.Point(0, 211);
+            this.pnlOKCancel.Name = "pnlOKCancel";
+            this.pnlOKCancel.Size = new System.Drawing.Size(376, 40);
+            this.pnlOKCancel.TabIndex = 4;
+            // 
+            // cmdOK
+            // 
+            this.cmdOK.DialogResult = System.Windows.Forms.DialogResult.OK;
+            this.cmdOK.Location = new System.Drawing.Point(208, 8);
+            this.cmdOK.Name = "cmdOK";
+            this.cmdOK.Size = new System.Drawing.Size(136, 24);
+            this.cmdOK.TabIndex = 0;
+            this.cmdOK.Text = "OK";
+            // 
+            // lblSummary
+            // 
+            this.lblSummary.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.lblSummary.Location = new System.Drawing.Point(32, 32);
+            this.lblSummary.Name = "lblSummary";
+            this.lblSummary.Size = new System.Drawing.Size(312, 64);
+            this.lblSummary.TabIndex = 48;
+            this.lblSummary.Text = "lblSummary";
+            // 
+            // lblProgress
+            // 
+            this.lblProgress.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.lblProgress.Location = new System.Drawing.Point(32, 128);
+            this.lblProgress.Name = "lblProgress";
+            this.lblProgress.Size = new System.Drawing.Size(312, 72);
+            this.lblProgress.TabIndex = 49;
+            this.lblProgress.Text = "lblProgress";
+            // 
+            // timerPoll
+            // 
+            this.timerPoll.Tick += new System.EventHandler(this.timerPoll_Tick);
+            // 
+            // label1
+            // 
+            this.label1.Location = new System.Drawing.Point(32, 112);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(144, 16);
+            this.label1.TabIndex = 50;
+            this.label1.Text = "Status:";
+            // 
+            // label2
+            // 
+            this.label2.Location = new System.Drawing.Point(32, 16);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(144, 16);
+            this.label2.TabIndex = 51;
+            this.label2.Text = "Job Summary:";
+            // 
+            // DCopyAppts
+            // 
+            this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
+            this.ClientSize = new System.Drawing.Size(376, 251);
+            this.Controls.Add(this.label2);
+            this.Controls.Add(this.label1);
+            this.Controls.Add(this.lblProgress);
+            this.Controls.Add(this.lblSummary);
+            this.Controls.Add(this.pnlOKCancel);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+            this.MaximizeBox = false;
+            this.Name = "DCopyAppts";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
+            this.Text = "Copy Appointments";
+            this.Load += new System.EventHandler(this.DCopyAppts_Load);
+            this.Closing += new System.ComponentModel.CancelEventHandler(this.DCopyAppts_Closing);
+            this.pnlOKCancel.ResumeLayout(false);
+            this.ResumeLayout(false);
 
 		}
 		#endregion
@@ -236,8 +183,8 @@ namespace IndianHealthService.ClinicalScheduling
 			try
 			{
 				//Start M copy job and get the ZTSK number
-				this.timerPoll.Stop();
-				lblProgress.Text = "Starting Process";
+				//this.timerPoll.Stop();
+				lblProgress.Text = "Starting Process... \r\n";
 
 				string sSql = "BSDX COPY APPOINTMENTS^" + m_ResourceID + "^" + m_HospLocationID + "^" + m_dtBegin.ToShortDateString() + "^" + m_dtEnd.ToShortDateString();
 				DataTable dt = m_DocManager.RPMSDataTable(sSql, "ApptCopy");
@@ -253,17 +200,15 @@ namespace IndianHealthService.ClinicalScheduling
 				string sError = oError.ToString();
 				if (sError != "OK")
 				{
-					timerPoll.Stop();
+					//timerPoll.Stop();
 					lblProgress.Text = sError;
 					cmdOK.Enabled = true;
-					cmdCancel.Enabled = false;
 				}
 				else
 				{
-					lblProgress.Text = "RPMS Job queued as Task #" + m_sTask;
-					;//this.timerPoll.Start();
-					cmdOK.Enabled = false;
-					cmdCancel.Enabled = true;
+					lblProgress.Text += "VistA Job queued as Task #" + m_sTask;
+					//this.timerPoll.Start();
+					cmdOK.Enabled = true;	
 				}
 
 			}

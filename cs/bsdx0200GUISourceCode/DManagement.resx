@@ -127,7 +127,7 @@
     <value>Use this panel to organize Access Types into convenient groups.  Access Groups are useful when selecting the Access Type (Walk-in, Same-Day, etc) to use when setting up the schedule for a resource.  Access Type Groups will be visible to all scheduling users.</value>
   </data>
   <data name="lblDescriptionXfer.Text" xml:space="preserve">
-    <value>Use this panel to copy appointments from an RPMS clinic into a Windows Scheduling clinic.  Select the Beginning and Ending dates for the transfer.  All appointments (except cancelled appointments) during the time between these dates will be copied from RPMS to the selected Windows Scheduling resource.</value>
+    <value>Use this panel to copy appointments from an VistA clinic into a Windows Scheduling clinic.  Select the Beginning and Ending dates for the transfer.  All appointments (except cancelled appointments) during the time between these dates will be copied from VistA to the selected Windows Scheduling resource.</value>
   </data>
   <data name="lblWorkstations.Text" xml:space="preserve">
     <value>From this panel you can view, communicate with and shut down workstations running clinical scheduling software.  Press the Refresh button to show a current list of running workstations.  To stop all scheduling clients, enter a shutdown message in the textbox below and press the Stop Workstations button.</value>

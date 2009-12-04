@@ -77,6 +77,24 @@
             Gets the date selected by the user
             </summary>
         </member>
+        <member name="T:IndianHealthService.ClinicalScheduling.CGSelectionChangedArgs">
+            <summary>
+            This class was regenerated from Calendargrid.dll using Reflector.exe
+            by Sam Habiel for WorldVista. The original source code is lost.
+            </summary>
+        </member>
+        <member name="T:IndianHealthService.ClinicalScheduling.CalendarGrid">
+            <summary>
+            This class was regenerated from Calendargrid.dll using Reflector.exe
+            by Sam Habiel for WorldVista. The original source code is lost.
+            </summary>
+        </member>
+        <member name="T:IndianHealthService.ClinicalScheduling.CGSelectionChangedHandler">
+            <summary>
+            This class was regenerated from Calendargrid.dll using Reflector.exe
+            by Sam Habiel for WorldVista. The original source code is lost.
+            </summary>
+        </member>
         <member name="T:IndianHealthService.ClinicalScheduling.CGDocumentManager">
             <summary>
             Summary description for DocumentManager.
@@ -360,6 +378,12 @@
             Gets the name of the Access Group;
             </summary>
         </member>
+        <member name="T:IndianHealthService.ClinicalScheduling.CGResource">
+            <summary>
+            This class was regenerated from Calendargrid.dll using Reflector.exe
+            by Sam Habiel for WorldVista. The original source code is lost.
+            </summary>
+        </member>
         <member name="T:IndianHealthService.ClinicalScheduling.DSplash">
             <summary>
             Summary description for DSplash.
@@ -543,6 +567,12 @@
             the contents of this method with the code editor.
             </summary>
         </member>
+        <member name="T:IndianHealthService.ClinicalScheduling.CGRange">
+            <summary>
+            This class was regenerated from Calendargrid.dll using Reflector.exe
+            by Sam Habiel for WorldVista. The original source code is lost.
+            </summary>
+        </member>
         <member name="T:IndianHealthService.ClinicalScheduling.DSelectLetterClinics">
             <summary>
             Summary description for DSelectLetterClinics.
@@ -562,6 +592,18 @@
         <member name="P:IndianHealthService.ClinicalScheduling.DSelectLetterClinics.SelectedClinics">
             <summary>
             Returns the |-delimited string of selected resource id's
+            </summary>
+        </member>
+        <member name="T:IndianHealthService.ClinicalScheduling.DAccessBlock">
+            <summary>
+            This class was regenerated from Calendargrid.dll using Reflector.exe
+            by Sam Habiel for WorldVista. The original source code is lost.
+            </summary>
+        </member>
+        <member name="T:IndianHealthService.ClinicalScheduling.CGAppointments">
+            <summary>
+            This class was regenerated from Calendargrid.dll using Reflector.exe
+            by Sam Habiel for WorldVista. The original source code is lost.
             </summary>
         </member>
         <member name="T:IndianHealthService.ClinicalScheduling.DCancelAppt">
@@ -768,6 +810,12 @@
             Appointment end time
             </summary>
         </member>
+        <member name="T:IndianHealthService.ClinicalScheduling.CGAppointmentChangedHandler">
+            <summary>
+            This class was regenerated from Calendargrid.dll using Reflector.exe
+            by Sam Habiel for WorldVista. The original source code is lost.
+            </summary>
+        </member>
         <member name="T:IndianHealthService.ClinicalScheduling.DResourceGroup">
             <summary>
             Summary description for DResourceGroup.
@@ -839,6 +887,12 @@
             Contains the name of the AccessType
             </summary>
         </member>
+        <member name="T:IndianHealthService.ClinicalScheduling.CGCell">
+            <summary>
+            This class was regenerated from Calendargrid.dll using Reflector.exe
+            by Sam Habiel for WorldVista. The original source code is lost.
+            </summary>
+        </member>
         <member name="T:IndianHealthService.ClinicalScheduling.DSelectSchedules">
             <summary>
             Summary description for DSelectSchedules.
@@ -889,6 +943,18 @@
         <member name="P:IndianHealthService.ClinicalScheduling.CGAVView.Document">
             <summary>
             Accesses the document associated with this view
+            </summary>
+        </member>
+        <member name="T:IndianHealthService.ClinicalScheduling.CGAvailability">
+            <summary>
+            This class was regenerated from Calendargrid.dll using Reflector.exe
+            by Sam Habiel for WorldVista. The original source code is lost.
+            </summary>
+        </member>
+        <member name="T:IndianHealthService.ClinicalScheduling.CGAppointment">
+            <summary>
+            This class was regenerated from Calendargrid.dll using Reflector.exe
+            by Sam Habiel for WorldVista. The original source code is lost.
             </summary>
         </member>
         <member name="T:IndianHealthService.ClinicalScheduling.DResourceGroupItem">
@@ -975,6 +1041,18 @@
         <member name="P:IndianHealthService.ClinicalScheduling.DNoShow.RebookMaxDays">
             <summary>
             Sets and returns the maximum number of days in the future to look for rebook availability
+            </summary>
+        </member>
+        <member name="T:IndianHealthService.ClinicalScheduling.CGCells">
+            <summary>
+            This class was regenerated from Calendargrid.dll using Reflector.exe
+            by Sam Habiel for WorldVista. The original source code is lost.
+            </summary>
+        </member>
+        <member name="T:IndianHealthService.ClinicalScheduling.CGAppointmentChangedArgs">
+            <summary>
+            This class was regenerated from Calendargrid.dll using Reflector.exe
+            by Sam Habiel for WorldVista. The original source code is lost.
             </summary>
         </member>
         <member name="T:IndianHealthService.ClinicalScheduling.DResourceUser">
@@ -1081,84 +1159,6 @@
         <member name="P:IndianHealthService.ClinicalScheduling.CGAVDocument.StartDate">
             <summary>
             Contains the beginning date of the appointment document
-            </summary>
-        </member>
-        <member name="T:IndianHealthService.ClinicalScheduling.CalendarGrid">
-            <summary>
-            This class was regenerated from Calendargrid.dll using Reflector.exe
-            by Sam Habiel for WorldVista. The original source code is lost.
-            </summary>
-        </member>
-        <member name="T:IndianHealthService.ClinicalScheduling.DAccessBlock">
-            <summary>
-            This class was regenerated from Calendargrid.dll using Reflector.exe
-            by Sam Habiel for WorldVista. The original source code is lost.
-            </summary>
-        </member>
-        <member name="T:IndianHealthService.ClinicalScheduling.CGAppointment">
-            <summary>
-            This class was regenerated from Calendargrid.dll using Reflector.exe
-            by Sam Habiel for WorldVista. The original source code is lost.
-            </summary>
-        </member>
-        <member name="T:IndianHealthService.ClinicalScheduling.CGAppointmentChangedArgs">
-            <summary>
-            This class was regenerated from Calendargrid.dll using Reflector.exe
-            by Sam Habiel for WorldVista. The original source code is lost.
-            </summary>
-        </member>
-        <member name="T:IndianHealthService.ClinicalScheduling.CGAppointmentChangedHandler">
-            <summary>
-            This class was regenerated from Calendargrid.dll using Reflector.exe
-            by Sam Habiel for WorldVista. The original source code is lost.
-            </summary>
-        </member>
-        <member name="T:IndianHealthService.ClinicalScheduling.CGAppointments">
-            <summary>
-            This class was regenerated from Calendargrid.dll using Reflector.exe
-            by Sam Habiel for WorldVista. The original source code is lost.
-            </summary>
-        </member>
-        <member name="T:IndianHealthService.ClinicalScheduling.CGAvailability">
-            <summary>
-            This class was regenerated from Calendargrid.dll using Reflector.exe
-            by Sam Habiel for WorldVista. The original source code is lost.
-            </summary>
-        </member>
-        <member name="T:IndianHealthService.ClinicalScheduling.CGCell">
-            <summary>
-            This class was regenerated from Calendargrid.dll using Reflector.exe
-            by Sam Habiel for WorldVista. The original source code is lost.
-            </summary>
-        </member>
-        <member name="T:IndianHealthService.ClinicalScheduling.CGCells">
-            <summary>
-            This class was regenerated from Calendargrid.dll using Reflector.exe
-            by Sam Habiel for WorldVista. The original source code is lost.
-            </summary>
-        </member>
-        <member name="T:IndianHealthService.ClinicalScheduling.CGRange">
-            <summary>
-            This class was regenerated from Calendargrid.dll using Reflector.exe
-            by Sam Habiel for WorldVista. The original source code is lost.
-            </summary>
-        </member>
-        <member name="T:IndianHealthService.ClinicalScheduling.CGResource">
-            <summary>
-            This class was regenerated from Calendargrid.dll using Reflector.exe
-            by Sam Habiel for WorldVista. The original source code is lost.
-            </summary>
-        </member>
-        <member name="T:IndianHealthService.ClinicalScheduling.CGSelectionChangedArgs">
-            <summary>
-            This class was regenerated from Calendargrid.dll using Reflector.exe
-            by Sam Habiel for WorldVista. The original source code is lost.
-            </summary>
-        </member>
-        <member name="T:IndianHealthService.ClinicalScheduling.CGSelectionChangedHandler">
-            <summary>
-            This class was regenerated from Calendargrid.dll using Reflector.exe
-            by Sam Habiel for WorldVista. The original source code is lost.
             </summary>
         </member>
     </members>

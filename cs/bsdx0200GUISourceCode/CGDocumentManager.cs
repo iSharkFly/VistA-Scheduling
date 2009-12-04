@@ -236,7 +236,7 @@ namespace IndianHealthService.ClinicalScheduling
                 m_ds.Refresh();
 				this.Activate();
                 System.Configuration.ConfigurationManager.GetSection("appSettings");
-                m_ds.SetStatus("Connecting to RPMS Server...");
+                m_ds.SetStatus("Connecting to VistA Server...");
                 m_ds.Refresh();
 				bool bRetry = true;
 				do
@@ -258,7 +258,7 @@ namespace IndianHealthService.ClinicalScheduling
 					catch (Exception ex)
 					{
 						m_ds.Close(); 
-						if (MessageBox.Show("Unable to connect to RPMS.  " + ex.Message , "Clinical Scheduling", MessageBoxButtons.RetryCancel) == DialogResult.Retry)
+						if (MessageBox.Show("Unable to connect to VistA.  " + ex.Message , "Clinical Scheduling", MessageBoxButtons.RetryCancel) == DialogResult.Retry)
 						{
 							bRetry = true;
 							_current.m_ConnectInfo.ChangeServerInfo();
@@ -296,11 +296,11 @@ namespace IndianHealthService.ClinicalScheduling
 				m_ConnectInfo.AppContext = "BSDXRPC";
 	
 				//Load global recordsets
-				m_ds.SetStatus("Loading RPMS data tables...");
+				m_ds.SetStatus("Loading VistA data tables...");
                 m_ds.Refresh();
 				if (_current.LoadGlobalRecordsets() == false)
 				{
-					MessageBox.Show("Unable to create RPMS recordsets"); //TODO Improve this message
+					MessageBox.Show("Unable to create VistA recordsets"); //TODO Improve this message
 					m_ds.Close();
 					return;
 				}
@@ -841,7 +841,7 @@ namespace IndianHealthService.ClinicalScheduling
 		private void mnuRPMSServer_Click(object sender, EventArgs e)
 		{
 			//Warn that changing servers will close all schedules
-			if (MessageBox.Show("Are you sure you want to close all schedules and connect to a different RPMS server?", "Clinical Scheduling", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning) != DialogResult.OK)
+			if (MessageBox.Show("Are you sure you want to close all schedules and connect to a different VistA server?", "Clinical Scheduling", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning) != DialogResult.OK)
 				return;
 
 			//Reconnect to RPMS and recreate all global recordsets
@@ -865,7 +865,7 @@ namespace IndianHealthService.ClinicalScheduling
 							bRetry = false;
 							return;
 						}
-						if (MessageBox.Show("Unable to connect to RPMS.  " + ex.Message , "Clinical Scheduling", MessageBoxButtons.RetryCancel) == DialogResult.Retry)
+						if (MessageBox.Show("Unable to connect to VistA.  " + ex.Message , "Clinical Scheduling", MessageBoxButtons.RetryCancel) == DialogResult.Retry)
 						{
 							bRetry = true;
 						}
@@ -899,7 +899,7 @@ namespace IndianHealthService.ClinicalScheduling
 		private void mnuRPMSLogin_Click(object sender, EventArgs e)
 		{
 			//Warn that changing login will close all schedules
-			if (MessageBox.Show("Are you sure you want to close all schedules and login to RPMS?", "Clinical Scheduling", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning) != DialogResult.OK)
+			if (MessageBox.Show("Are you sure you want to close all schedules and login to VistA?", "Clinical Scheduling", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning) != DialogResult.OK)
 				return;
 
 			//Reconnect to RPMS and recreate all global recordsets

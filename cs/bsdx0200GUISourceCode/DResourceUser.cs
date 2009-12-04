@@ -155,7 +155,7 @@ namespace IndianHealthService.ClinicalScheduling
 			this.lblDescriptionResourceGroup.Size = new System.Drawing.Size(442, 53);
 			this.lblDescriptionResourceGroup.TabIndex = 0;
 			this.lblDescriptionResourceGroup.Text = "Use this panel to assign user access to Resources.  Only users who have the BSDXZ" +
-				"MENU key in RPMS will appear in the selection list.  If Modify Schedule is check" +
+				"MENU key in VistA will appear in the selection list.  If Modify Schedule is check" +
 				"ed, then the user will be able to add and edit the resource\'s availability.";
 			// 
 			// chkModifySchedule

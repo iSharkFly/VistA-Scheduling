@@ -341,19 +341,19 @@ namespace IndianHealthService.ClinicalScheduling
             // mnuRPMSServer
             // 
             this.mnuRPMSServer.Index = 3;
-            this.mnuRPMSServer.Text = "Change RPMS &Server";
+            this.mnuRPMSServer.Text = "Change VistA &Server";
             this.mnuRPMSServer.Click += new System.EventHandler(this.mnuRPMSServer_Click);
             // 
             // mnuRPMSLogin
             // 
             this.mnuRPMSLogin.Index = 4;
-            this.mnuRPMSLogin.Text = "Change RPMS &Login";
+            this.mnuRPMSLogin.Text = "Change VistA &Login";
             this.mnuRPMSLogin.Click += new System.EventHandler(this.mnuRPMSLogin_Click);
             // 
             // mnuRPMSDivision
             // 
             this.mnuRPMSDivision.Index = 5;
-            this.mnuRPMSDivision.Text = "Change RPMS &Division";
+            this.mnuRPMSDivision.Text = "Change VistA &Division";
             this.mnuRPMSDivision.Click += new System.EventHandler(this.mnuRPMSDivision_Click);
             // 
             // menuItem3

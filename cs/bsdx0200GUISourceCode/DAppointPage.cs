@@ -377,6 +377,7 @@ namespace IndianHealthService.ClinicalScheduling
             // 
             this.txtPhoneOffice.Location = new System.Drawing.Point(272, 96);
             this.txtPhoneOffice.Name = "txtPhoneOffice";
+            this.txtPhoneOffice.ReadOnly = true;
             this.txtPhoneOffice.Size = new System.Drawing.Size(166, 20);
             this.txtPhoneOffice.TabIndex = 22;
             // 
@@ -393,6 +394,7 @@ namespace IndianHealthService.ClinicalScheduling
             // 
             this.txtPhoneHome.Location = new System.Drawing.Point(96, 96);
             this.txtPhoneHome.Name = "txtPhoneHome";
+            this.txtPhoneHome.ReadOnly = true;
             this.txtPhoneHome.Size = new System.Drawing.Size(120, 20);
             this.txtPhoneHome.TabIndex = 20;
             // 
@@ -400,6 +402,7 @@ namespace IndianHealthService.ClinicalScheduling
             // 
             this.txtCity.Location = new System.Drawing.Point(96, 48);
             this.txtCity.Name = "txtCity";
+            this.txtCity.ReadOnly = true;
             this.txtCity.Size = new System.Drawing.Size(342, 20);
             this.txtCity.TabIndex = 18;
             // 
@@ -425,6 +428,7 @@ namespace IndianHealthService.ClinicalScheduling
             // 
             this.txtZip.Location = new System.Drawing.Point(272, 72);
             this.txtZip.Name = "txtZip";
+            this.txtZip.ReadOnly = true;
             this.txtZip.Size = new System.Drawing.Size(166, 20);
             this.txtZip.TabIndex = 16;
             // 
@@ -441,6 +445,7 @@ namespace IndianHealthService.ClinicalScheduling
             // 
             this.txtState.Location = new System.Drawing.Point(96, 72);
             this.txtState.Name = "txtState";
+            this.txtState.ReadOnly = true;
             this.txtState.Size = new System.Drawing.Size(120, 20);
             this.txtState.TabIndex = 14;
             // 
@@ -457,6 +462,7 @@ namespace IndianHealthService.ClinicalScheduling
             // 
             this.txtStreet.Location = new System.Drawing.Point(96, 22);
             this.txtStreet.Name = "txtStreet";
+            this.txtStreet.ReadOnly = true;
             this.txtStreet.Size = new System.Drawing.Size(342, 20);
             this.txtStreet.TabIndex = 12;
             // 
@@ -603,7 +609,7 @@ namespace IndianHealthService.ClinicalScheduling
 			}
 			catch(Exception e)
 			{
-				MessageBox.Show("DAppointPage::InitializePage -- Unable to retrieve patient information from RPMS.  " + e.Message);
+				MessageBox.Show("DAppointPage::InitializePage -- Unable to retrieve patient information from VistA.  " + e.Message);
 			}
 
 		}
