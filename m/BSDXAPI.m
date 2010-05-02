@@ -1,4 +1,4 @@
-BSDXAPI ; IHS/ANMC/LJF - SCHEDULING APIs ;  Fri Jul 24 22:45:37 PDT 2009
+BSDXAPI ; IHS/ANMC/LJF - SCHEDULING APIs ; 4/29/10 9:42pm
  ;;2.1;BSDX;;24JUL2009
  ;Orignal routine is BSDAPI by IHS/LJF, HMW, and MAW
  ;local mods (many) by WV/SMH
@@ -246,3 +246,15 @@ SCIEN(PAT,CLINIC,DATE) ;PEP; returns ien for appt in ^SC
  	. I +$G(^SC(CLINIC,"S",DATE,1,X,0))=PAT S IEN=X
  Q $G(IEN)
  ;
+APPTYP(PAT,DATE) ;PEP; -- returns type of appt (scheduled or walk-in)
+ NEW X S X=$P($G(^DPT(PAT,"S",DATE,0)),U,7)
+ Q $S(X=3:"SCHED",X=4:"WALK-IN",1:"??")
+ ;
+CO(PAT,CLINIC,DATE,SDIEN) ;PEP; -- returns 1 if appt already checked-out
+ NEW X
+ S X=$G(SDIEN)   ;ien sent in call
+ I 'X S X=$$SCIEN(PAT,CLINIC,DATE) I 'X Q 0
+ S X=$P($G(^SC(CLINIC,"S",DATE,1,X,"C")),U,3)
+ Q $S(X:1,1:0)
+ ;
+
