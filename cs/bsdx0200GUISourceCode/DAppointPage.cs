@@ -34,9 +34,7 @@ namespace IndianHealthService.ClinicalScheduling
 		private System.Windows.Forms.TextBox txtPhoneOffice;
 		private System.Windows.Forms.Label label13;
 		private System.Windows.Forms.TextBox txtPhoneHome;
-		private System.Windows.Forms.GroupBox groupBox1;
-		private System.Windows.Forms.TextBox txtCommunity;
-		private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.GroupBox groupBox1;
 		private System.Windows.Forms.Label label6;
 		private System.Windows.Forms.TextBox txtSSN;
 		private System.Windows.Forms.Label label5;
@@ -53,13 +51,13 @@ namespace IndianHealthService.ClinicalScheduling
 		private System.Windows.Forms.Label label4;
 		private System.Windows.Forms.Label label3;
 		private System.Windows.Forms.Label label14;
-		private System.Windows.Forms.TextBox txtHRN;
-		private System.Windows.Forms.Button cmdViewAppointments;
-		private System.Windows.Forms.Button cmdPrintLetter;
-		/// <summary>
-		/// Required designer variable.
-		/// </summary>
-		private System.ComponentModel.Container components = null;
+        private System.Windows.Forms.TextBox txtHRN;
+        private System.Windows.Forms.Button cmdPrintLetter;
+        private GroupBox groupBox4;
+        private BindingSource dsPatientApptDisplay2BindingSource;
+        private dsPatientApptDisplay2 dsPatientApptDisplay2;
+        private BindingSource patientApptsBindingSource;
+        private IContainer components;
 
 		public DAppointPage()
 		{
@@ -73,6 +71,7 @@ namespace IndianHealthService.ClinicalScheduling
 		/// </summary>
 		private void InitializeComponent()
 		{
+            this.components = new System.ComponentModel.Container();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabAppointment = new System.Windows.Forms.TabPage();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
@@ -87,8 +86,6 @@ namespace IndianHealthService.ClinicalScheduling
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.label14 = new System.Windows.Forms.Label();
             this.txtHRN = new System.Windows.Forms.TextBox();
-            this.txtCommunity = new System.Windows.Forms.TextBox();
-            this.label7 = new System.Windows.Forms.Label();
             this.label6 = new System.Windows.Forms.Label();
             this.txtSSN = new System.Windows.Forms.TextBox();
             this.label5 = new System.Windows.Forms.Label();
@@ -111,9 +108,12 @@ namespace IndianHealthService.ClinicalScheduling
             this.txtStreet = new System.Windows.Forms.TextBox();
             this.panel1 = new System.Windows.Forms.Panel();
             this.cmdPrintLetter = new System.Windows.Forms.Button();
-            this.cmdViewAppointments = new System.Windows.Forms.Button();
             this.cmdCancel = new System.Windows.Forms.Button();
             this.cmdOK = new System.Windows.Forms.Button();
+            this.groupBox4 = new System.Windows.Forms.GroupBox();
+            this.patientApptsBindingSource = new System.Windows.Forms.BindingSource(this.components);
+            this.dsPatientApptDisplay2BindingSource = new System.Windows.Forms.BindingSource(this.components);
+            this.dsPatientApptDisplay2 = new IndianHealthService.ClinicalScheduling.dsPatientApptDisplay2();
             this.tabControl1.SuspendLayout();
             this.tabAppointment.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -121,6 +121,9 @@ namespace IndianHealthService.ClinicalScheduling
             this.tabPatientInfo.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.panel1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.patientApptsBindingSource)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dsPatientApptDisplay2BindingSource)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dsPatientApptDisplay2)).BeginInit();
             this.SuspendLayout();
             // 
             // tabControl1
@@ -131,21 +134,24 @@ namespace IndianHealthService.ClinicalScheduling
             this.tabControl1.Location = new System.Drawing.Point(0, 0);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(463, 374);
+            this.tabControl1.Size = new System.Drawing.Size(471, 526);
             this.tabControl1.TabIndex = 0;
             // 
             // tabAppointment
             // 
+            this.tabAppointment.Controls.Add(this.groupBox4);
             this.tabAppointment.Controls.Add(this.groupBox3);
             this.tabAppointment.Controls.Add(this.groupBox1);
             this.tabAppointment.Location = new System.Drawing.Point(4, 22);
             this.tabAppointment.Name = "tabAppointment";
-            this.tabAppointment.Size = new System.Drawing.Size(455, 348);
+            this.tabAppointment.Size = new System.Drawing.Size(463, 500);
             this.tabAppointment.TabIndex = 1;
             this.tabAppointment.Text = "Appointment";
             // 
             // groupBox3
             // 
+            this.groupBox3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox3.Controls.Add(this.lblClinic);
             this.groupBox3.Controls.Add(this.label15);
             this.groupBox3.Controls.Add(this.txtNote);
@@ -154,9 +160,9 @@ namespace IndianHealthService.ClinicalScheduling
             this.groupBox3.Controls.Add(this.lblStartTime);
             this.groupBox3.Controls.Add(this.label4);
             this.groupBox3.Controls.Add(this.label3);
-            this.groupBox3.Location = new System.Drawing.Point(8, 136);
+            this.groupBox3.Location = new System.Drawing.Point(8, 107);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(439, 168);
+            this.groupBox3.Size = new System.Drawing.Size(439, 141);
             this.groupBox3.TabIndex = 13;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Appointment";
@@ -184,7 +190,7 @@ namespace IndianHealthService.ClinicalScheduling
             this.txtNote.Location = new System.Drawing.Point(80, 72);
             this.txtNote.Multiline = true;
             this.txtNote.Name = "txtNote";
-            this.txtNote.Size = new System.Drawing.Size(353, 88);
+            this.txtNote.Size = new System.Drawing.Size(353, 60);
             this.txtNote.TabIndex = 17;
             // 
             // label1
@@ -234,8 +240,6 @@ namespace IndianHealthService.ClinicalScheduling
             // 
             this.groupBox1.Controls.Add(this.label14);
             this.groupBox1.Controls.Add(this.txtHRN);
-            this.groupBox1.Controls.Add(this.txtCommunity);
-            this.groupBox1.Controls.Add(this.label7);
             this.groupBox1.Controls.Add(this.label6);
             this.groupBox1.Controls.Add(this.txtSSN);
             this.groupBox1.Controls.Add(this.label5);
@@ -244,7 +248,7 @@ namespace IndianHealthService.ClinicalScheduling
             this.groupBox1.Controls.Add(this.txtPatientName);
             this.groupBox1.Location = new System.Drawing.Point(8, 8);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(439, 120);
+            this.groupBox1.Size = new System.Drawing.Size(439, 93);
             this.groupBox1.TabIndex = 12;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Patient ID";
@@ -265,23 +269,6 @@ namespace IndianHealthService.ClinicalScheduling
             this.txtHRN.ReadOnly = true;
             this.txtHRN.Size = new System.Drawing.Size(120, 20);
             this.txtHRN.TabIndex = 12;
-            // 
-            // txtCommunity
-            // 
-            this.txtCommunity.Location = new System.Drawing.Point(96, 88);
-            this.txtCommunity.Name = "txtCommunity";
-            this.txtCommunity.ReadOnly = true;
-            this.txtCommunity.Size = new System.Drawing.Size(337, 20);
-            this.txtCommunity.TabIndex = 10;
-            // 
-            // label7
-            // 
-            this.label7.Location = new System.Drawing.Point(24, 88);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(72, 16);
-            this.label7.TabIndex = 11;
-            this.label7.Text = "Community:";
-            this.label7.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // label6
             // 
@@ -339,7 +326,7 @@ namespace IndianHealthService.ClinicalScheduling
             this.tabPatientInfo.Controls.Add(this.groupBox2);
             this.tabPatientInfo.Location = new System.Drawing.Point(4, 22);
             this.tabPatientInfo.Name = "tabPatientInfo";
-            this.tabPatientInfo.Size = new System.Drawing.Size(455, 348);
+            this.tabPatientInfo.Size = new System.Drawing.Size(463, 500);
             this.tabPatientInfo.TabIndex = 0;
             this.tabPatientInfo.Text = "Contact Information";
             // 
@@ -469,34 +456,23 @@ namespace IndianHealthService.ClinicalScheduling
             // panel1
             // 
             this.panel1.Controls.Add(this.cmdPrintLetter);
-            this.panel1.Controls.Add(this.cmdViewAppointments);
             this.panel1.Controls.Add(this.cmdCancel);
             this.panel1.Controls.Add(this.cmdOK);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panel1.Location = new System.Drawing.Point(0, 334);
+            this.panel1.Location = new System.Drawing.Point(0, 486);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(463, 40);
+            this.panel1.Size = new System.Drawing.Size(471, 40);
             this.panel1.TabIndex = 1;
             // 
             // cmdPrintLetter
             // 
             this.cmdPrintLetter.CausesValidation = false;
-            this.cmdPrintLetter.Location = new System.Drawing.Point(208, 8);
+            this.cmdPrintLetter.Location = new System.Drawing.Point(12, 9);
             this.cmdPrintLetter.Name = "cmdPrintLetter";
             this.cmdPrintLetter.Size = new System.Drawing.Size(68, 24);
             this.cmdPrintLetter.TabIndex = 3;
             this.cmdPrintLetter.Text = "Print Letter";
             this.cmdPrintLetter.Click += new System.EventHandler(this.cmdPrintLetter_Click);
-            // 
-            // cmdViewAppointments
-            // 
-            this.cmdViewAppointments.CausesValidation = false;
-            this.cmdViewAppointments.Location = new System.Drawing.Point(12, 8);
-            this.cmdViewAppointments.Name = "cmdViewAppointments";
-            this.cmdViewAppointments.Size = new System.Drawing.Size(112, 24);
-            this.cmdViewAppointments.TabIndex = 2;
-            this.cmdViewAppointments.Text = "View Appointments";
-            this.cmdViewAppointments.Click += new System.EventHandler(this.cmdViewAppointments_Click);
             // 
             // cmdCancel
             // 
@@ -517,12 +493,36 @@ namespace IndianHealthService.ClinicalScheduling
             this.cmdOK.Text = "OK";
             this.cmdOK.Click += new System.EventHandler(this.cmdOK_Click);
             // 
+            // groupBox4
+            // 
+            this.groupBox4.Location = new System.Drawing.Point(8, 254);
+            this.groupBox4.Name = "groupBox4";
+            this.groupBox4.Size = new System.Drawing.Size(439, 204);
+            this.groupBox4.TabIndex = 14;
+            this.groupBox4.TabStop = false;
+            this.groupBox4.Text = "Other Appointments";
+            // 
+            // patientApptsBindingSource
+            // 
+            this.patientApptsBindingSource.DataMember = "PatientAppts";
+            this.patientApptsBindingSource.DataSource = this.dsPatientApptDisplay2BindingSource;
+            // 
+            // dsPatientApptDisplay2BindingSource
+            // 
+            this.dsPatientApptDisplay2BindingSource.DataSource = this.dsPatientApptDisplay2;
+            this.dsPatientApptDisplay2BindingSource.Position = 0;
+            // 
+            // dsPatientApptDisplay2
+            // 
+            this.dsPatientApptDisplay2.DataSetName = "dsPatientApptDisplay2";
+            this.dsPatientApptDisplay2.SchemaSerializationMode = System.Data.SchemaSerializationMode.IncludeSchema;
+            // 
             // DAppointPage
             // 
             this.AcceptButton = this.cmdOK;
             this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
             this.CancelButton = this.cmdCancel;
-            this.ClientSize = new System.Drawing.Size(463, 374);
+            this.ClientSize = new System.Drawing.Size(471, 526);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.tabControl1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
@@ -540,6 +540,9 @@ namespace IndianHealthService.ClinicalScheduling
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
             this.panel1.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.patientApptsBindingSource)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dsPatientApptDisplay2BindingSource)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dsPatientApptDisplay2)).EndInit();
             this.ResumeLayout(false);
 
 		}
@@ -606,7 +609,10 @@ namespace IndianHealthService.ClinicalScheduling
 				this.m_sPhoneHome = r["HOMEPHONE"].ToString();
 
 				this.UpdateDialogData(true);
-			}
+                Control UC = new UCPatientAppts(m_DocManager, int.Parse(m_sPatientIEN));
+                UC.Dock = DockStyle.Fill;
+                groupBox4.Controls.Add(UC);
+            }
 			catch(Exception e)
 			{
 				MessageBox.Show("DAppointPage::InitializePage -- Unable to retrieve patient information from VistA.  " + e.Message);
