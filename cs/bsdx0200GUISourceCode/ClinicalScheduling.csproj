@@ -413,10 +413,6 @@
       <DependentUpon>DNoShow.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="DPatientApptDisplay.resx">
-      <DependentUpon>DPatientApptDisplay.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
     <EmbeddedResource Include="DPatientLetter.resx">
       <DependentUpon>DPatientLetter.cs</DependentUpon>
       <SubType>Designer</SubType>

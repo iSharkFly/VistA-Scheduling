@@ -663,7 +663,7 @@
         </member>
         <member name="M:IndianHealthService.ClinicalScheduling.UCPatientAppts.#ctor(IndianHealthService.ClinicalScheduling.CGDocumentManager,System.Int32)">
             <summary>
-            Ctor
+            Ctor - Creates control and populates data into datagridview
             </summary>
             <param name="docManager">Document Manager from main context</param>
             <param name="nPatientID">Patient IEN</param>

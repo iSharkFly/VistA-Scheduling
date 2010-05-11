@@ -39,8 +39,8 @@
             this.dsPatientApptDisplay2BindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.dsPatientApptDisplay2 = new IndianHealthService.ClinicalScheduling.dsPatientApptDisplay2();
             this.panel1 = new System.Windows.Forms.Panel();
-            this.chkPastAppts = new System.Windows.Forms.CheckBox();
             this.btnPrint = new System.Windows.Forms.Button();
+            this.chkPastAppts = new System.Windows.Forms.CheckBox();
             this.printDialog1 = new System.Windows.Forms.PrintDialog();
             this.PrintPtAppts = new System.Drawing.Printing.PrintDocument();
             ((System.ComponentModel.ISupportInitialize)(this.dgAppts)).BeginInit();
@@ -132,6 +132,16 @@
             this.panel1.Size = new System.Drawing.Size(544, 32);
             this.panel1.TabIndex = 3;
             // 
+            // btnPrint
+            // 
+            this.btnPrint.Location = new System.Drawing.Point(3, 3);
+            this.btnPrint.Name = "btnPrint";
+            this.btnPrint.Size = new System.Drawing.Size(75, 23);
+            this.btnPrint.TabIndex = 1;
+            this.btnPrint.Text = "Print";
+            this.btnPrint.UseVisualStyleBackColor = true;
+            this.btnPrint.Click += new System.EventHandler(this.btnPrint_Click);
+            // 
             // chkPastAppts
             // 
             this.chkPastAppts.Anchor = System.Windows.Forms.AnchorStyles.Right;
@@ -144,16 +154,6 @@
             this.chkPastAppts.UseVisualStyleBackColor = true;
             this.chkPastAppts.CheckedChanged += new System.EventHandler(this.chkPastAppts_CheckedChanged);
             // 
-            // btnPrint
-            // 
-            this.btnPrint.Location = new System.Drawing.Point(3, 3);
-            this.btnPrint.Name = "btnPrint";
-            this.btnPrint.Size = new System.Drawing.Size(75, 23);
-            this.btnPrint.TabIndex = 1;
-            this.btnPrint.Text = "Print";
-            this.btnPrint.UseVisualStyleBackColor = true;
-            this.btnPrint.Click += new System.EventHandler(this.btnPrint_Click);
-            // 
             // printDialog1
             // 
             this.printDialog1.Document = this.PrintPtAppts;
@@ -163,6 +163,7 @@
             // 
             this.PrintPtAppts.DocumentName = "Print Patient Appointments";
             this.PrintPtAppts.PrintPage += new System.Drawing.Printing.PrintPageEventHandler(this.PrintPtAppts_PrintPage);
+            this.PrintPtAppts.QueryPageSettings += new System.Drawing.Printing.QueryPageSettingsEventHandler(this.PrintPtAppts_QueryPageSettings);
             // 
             // UCPatientAppts
             // 
