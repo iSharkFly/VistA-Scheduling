@@ -52,7 +52,6 @@ namespace IndianHealthService.ClinicalScheduling
 		private System.Windows.Forms.Label label3;
 		private System.Windows.Forms.Label label14;
         private System.Windows.Forms.TextBox txtHRN;
-        private System.Windows.Forms.Button cmdPrintLetter;
         private GroupBox groupBox4;
         private BindingSource dsPatientApptDisplay2BindingSource;
         private dsPatientApptDisplay2 dsPatientApptDisplay2;
@@ -74,6 +73,7 @@ namespace IndianHealthService.ClinicalScheduling
             this.components = new System.ComponentModel.Container();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabAppointment = new System.Windows.Forms.TabPage();
+            this.groupBox4 = new System.Windows.Forms.GroupBox();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.lblClinic = new System.Windows.Forms.Label();
             this.label15 = new System.Windows.Forms.Label();
@@ -107,10 +107,8 @@ namespace IndianHealthService.ClinicalScheduling
             this.label11 = new System.Windows.Forms.Label();
             this.txtStreet = new System.Windows.Forms.TextBox();
             this.panel1 = new System.Windows.Forms.Panel();
-            this.cmdPrintLetter = new System.Windows.Forms.Button();
             this.cmdCancel = new System.Windows.Forms.Button();
             this.cmdOK = new System.Windows.Forms.Button();
-            this.groupBox4 = new System.Windows.Forms.GroupBox();
             this.patientApptsBindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.dsPatientApptDisplay2BindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.dsPatientApptDisplay2 = new IndianHealthService.ClinicalScheduling.dsPatientApptDisplay2();
@@ -147,6 +145,15 @@ namespace IndianHealthService.ClinicalScheduling
             this.tabAppointment.Size = new System.Drawing.Size(463, 500);
             this.tabAppointment.TabIndex = 1;
             this.tabAppointment.Text = "Appointment";
+            // 
+            // groupBox4
+            // 
+            this.groupBox4.Location = new System.Drawing.Point(8, 254);
+            this.groupBox4.Name = "groupBox4";
+            this.groupBox4.Size = new System.Drawing.Size(439, 204);
+            this.groupBox4.TabIndex = 14;
+            this.groupBox4.TabStop = false;
+            this.groupBox4.Text = "Other Appointments";
             // 
             // groupBox3
             // 
@@ -455,7 +462,6 @@ namespace IndianHealthService.ClinicalScheduling
             // 
             // panel1
             // 
-            this.panel1.Controls.Add(this.cmdPrintLetter);
             this.panel1.Controls.Add(this.cmdCancel);
             this.panel1.Controls.Add(this.cmdOK);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Bottom;
@@ -463,16 +469,6 @@ namespace IndianHealthService.ClinicalScheduling
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(471, 40);
             this.panel1.TabIndex = 1;
-            // 
-            // cmdPrintLetter
-            // 
-            this.cmdPrintLetter.CausesValidation = false;
-            this.cmdPrintLetter.Location = new System.Drawing.Point(12, 9);
-            this.cmdPrintLetter.Name = "cmdPrintLetter";
-            this.cmdPrintLetter.Size = new System.Drawing.Size(68, 24);
-            this.cmdPrintLetter.TabIndex = 3;
-            this.cmdPrintLetter.Text = "Print Letter";
-            this.cmdPrintLetter.Click += new System.EventHandler(this.cmdPrintLetter_Click);
             // 
             // cmdCancel
             // 
@@ -492,15 +488,6 @@ namespace IndianHealthService.ClinicalScheduling
             this.cmdOK.TabIndex = 0;
             this.cmdOK.Text = "OK";
             this.cmdOK.Click += new System.EventHandler(this.cmdOK_Click);
-            // 
-            // groupBox4
-            // 
-            this.groupBox4.Location = new System.Drawing.Point(8, 254);
-            this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Size = new System.Drawing.Size(439, 204);
-            this.groupBox4.TabIndex = 14;
-            this.groupBox4.TabStop = false;
-            this.groupBox4.Text = "Other Appointments";
             // 
             // patientApptsBindingSource
             // 
@@ -529,7 +516,6 @@ namespace IndianHealthService.ClinicalScheduling
             this.Name = "DAppointPage";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Patient Appointment";
-            this.Load += new System.EventHandler(this.DAppointPage_Load);
             this.tabControl1.ResumeLayout(false);
             this.tabAppointment.ResumeLayout(false);
             this.groupBox3.ResumeLayout(false);
@@ -673,70 +659,6 @@ namespace IndianHealthService.ClinicalScheduling
 			base.Dispose( disposing );
 		}
 
-		private void cmdViewAppointments_Click(object sender, System.EventArgs e)
-		{
-			try
-			{
-				Debug.Assert(m_sPatientIEN != "");
-				int nPatientID = Convert.ToInt32(m_sPatientIEN);
-				ViewPatientAppointments(nPatientID);
-			}
-			catch (Exception ex)
-			{
-				MessageBox.Show(this, ex.Message, "Clinical Scheduling", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-			}
-		}
-
-		public void ViewPatientAppointments(int PatientID)
-		{
-			DPatientApptDisplay dPa = new DPatientApptDisplay();
-
-			dPa.InitializeForm(this.DocManager, PatientID);
-
-			if (dPa.ShowDialog(this) != DialogResult.Cancel)
-			{
-				return;
-			}
-		}
-
-
-		private void cmdPrintLetter_Click(object sender, System.EventArgs e)
-		{
-			try
-			{
-				Debug.Assert(m_sPatientIEN != "");
-				int nPatientID = Convert.ToInt32(m_sPatientIEN);
-				PrintPatientLetter(nPatientID);
-			}
-			catch (Exception ex)
-			{
-				MessageBox.Show(this, ex.Message, "Clinical Scheduling", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-			}		
-		}
-
-		private void PrintPatientLetter(int PatientID)
-		{
-			//Print letter for individual patient
-			try
-			{
-				DPatientLetter dPa = new DPatientLetter();
-				dPa.InitializeForm(DocManager, PatientID);
-
-				if (dPa.ShowDialog(this) != DialogResult.Cancel)
-				{
-					return;
-				}
-			}
-			catch (Exception ex)
-			{
-				throw ex;
-			}
-		}
-
-		private void DAppointPage_Load(object sender, System.EventArgs e)
-		{
-			cmdPrintLetter.Enabled = !(m_dStartTime < DateTime.Today);
-		}
 
 		#endregion //Methods
 

@@ -375,6 +375,7 @@ namespace IndianHealthService.ClinicalScheduling
             // mnuPrintClinicSchedules
             // 
             this.mnuPrintClinicSchedules.Index = 9;
+            this.mnuPrintClinicSchedules.Shortcut = System.Windows.Forms.Shortcut.CtrlP;
             this.mnuPrintClinicSchedules.Text = "&Print Clinic Schedules";
             this.mnuPrintClinicSchedules.Click += new System.EventHandler(this.mnuPrintClinicSchedules_Click);
             // 
@@ -2370,50 +2371,6 @@ namespace IndianHealthService.ClinicalScheduling
 
         }
 
-        private void PrintPatientLetter()
-        {
-            //Prompt for patient and
-            //Print letter for individual patient
-            try
-            {
-                //Display a dialog to collect Patient Name
-                DPatientLookup dPat = new DPatientLookup();
-                dPat.DocManager = m_DocManager;
-                if (dPat.ShowDialog(this) == DialogResult.Cancel)
-                {
-                    return;
-                }
-
-                Debug.Assert(dPat.PatientIEN != "");
-                int nPatientID = Convert.ToInt32(dPat.PatientIEN);
-                PrintPatientLetter(nPatientID);
-
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(this, ex.Message, "Clinical Scheduling", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-            }
-        }
-
-        private void PrintPatientLetter(int PatientID)
-        {
-            //Print letter for individual patient
-            try
-            {
-                DPatientLetter dPa = new DPatientLetter();
-                dPa.InitializeForm(DocManager, PatientID);
-
-                if (dPa.ShowDialog(this) != DialogResult.Cancel)
-                {
-                    return;
-                }
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-        }
-
         #endregion Methods
 
 		#region Events
@@ -3019,7 +2976,7 @@ namespace IndianHealthService.ClinicalScheduling
 
 		private void mnuPrintPatientLetter_Click(object sender, System.EventArgs e)
 		{
-			PrintPatientLetter();
+			ViewPatientAppointments();
 		}
 
 		private void mnuRPMSDivision_Click(object sender, System.EventArgs e)

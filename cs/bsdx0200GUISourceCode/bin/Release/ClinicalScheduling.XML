@@ -499,6 +499,21 @@
             Accesses the document associated with this view
             </summary>
         </member>
+        <member name="T:IndianHealthService.ClinicalScheduling.Printing">
+            <summary>
+            Class that encapsulates printing functions in Clinical Scheduling
+            </summary>
+        </member>
+        <member name="M:IndianHealthService.ClinicalScheduling.Printing.PrintAppointments(IndianHealthService.ClinicalScheduling.dsPatientApptDisplay2,System.Drawing.Printing.PrintPageEventArgs,System.DateTime,System.DateTime,System.Int32,System.Int32@)">
+            <summary>
+            Print Appointments
+            </summary>
+            <param name="ds">Strongly Typed DataSet contains Resources and Appointments</param>
+            <param name="e">PrintPageEventArgs from PrintDocument Print handler</param>
+            <param name="beg">Begin Datetime to print appointments</param>
+            <param name="end">End Datetime to print appointments</param>
+            <remarks>beg and end have no effect on operation--they are there for documentation for user only</remarks>
+        </member>
         <member name="T:IndianHealthService.ClinicalScheduling.DResourceGroupItem">
             <summary>
             Summary description for DResourceGroup.
@@ -675,8 +690,24 @@
             <param name="ShowPastAppts">boolean - self explanatory</param>
         </member>
         <member name="T:IndianHealthService.ClinicalScheduling.DSelectLetterClinics">
+             <summary>
+             Use this dialog to select resources and dates (begin and end) for their examination.
+             <example>
+             DSelectLetterClinics ds = new DSelectLetterClinics();
+             ds.InitializePage(this.m_DocManager.GlobalDataSet, "Print Clinic Cancellation Letters");
+            	ds.ShowDialog(this) 					
+            
+             //get the resource names and call the letter printer
+            	string sClinics = ds.SelectedClinics;
+            	DateTime dtBegin = ds.BeginDate;
+            	DateTime dtEnd = ds.EndDate;
+             </example>
+             </summary>
+             
+        </member>
+        <member name="M:IndianHealthService.ClinicalScheduling.DSelectLetterClinics.#ctor">
             <summary>
-            Summary description for DSelectLetterClinics.
+            Ctor; also sets default enter and cancel buttons
             </summary>
         </member>
         <member name="M:IndianHealthService.ClinicalScheduling.DSelectLetterClinics.Dispose(System.Boolean)">

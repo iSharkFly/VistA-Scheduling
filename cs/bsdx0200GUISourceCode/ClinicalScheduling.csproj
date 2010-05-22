@@ -109,24 +109,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>bin\Release\BMXNet20.dll</HintPath>
     </Reference>
-    <Reference Include="CrystalDecisions.CrystalReports.Engine, Version=10.2.3600.0, Culture=neutral, PublicKeyToken=692fbea5521e1304, processorArchitecture=MSIL">
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="CrystalDecisions.Enterprise.Framework, Version=10.2.3600.0, Culture=neutral, PublicKeyToken=692fbea5521e1304">
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="CrystalDecisions.Enterprise.InfoStore, Version=10.2.3600.0, Culture=neutral, PublicKeyToken=692fbea5521e1304">
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="CrystalDecisions.ReportSource, Version=10.2.3600.0, Culture=neutral, PublicKeyToken=692fbea5521e1304, processorArchitecture=MSIL">
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="CrystalDecisions.Shared, Version=10.2.3600.0, Culture=neutral, PublicKeyToken=692fbea5521e1304, processorArchitecture=MSIL">
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="CrystalDecisions.Windows.Forms, Version=10.2.3600.0, Culture=neutral, PublicKeyToken=692fbea5521e1304, processorArchitecture=MSIL">
-      <Private>False</Private>
-    </Reference>
     <Reference Include="System">
       <Name>System</Name>
     </Reference>
@@ -228,30 +210,6 @@
     <Compile Include="CGView.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="crAppointmentList.cs">
-      <DependentUpon>crAppointmentList.rpt</DependentUpon>
-      <SubType>Component</SubType>
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-    </Compile>
-    <Compile Include="crCancelLetter.cs">
-      <DependentUpon>crCancelLetter.rpt</DependentUpon>
-      <SubType>Component</SubType>
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-    </Compile>
-    <Compile Include="crPatientLetter.cs">
-      <DependentUpon>crPatientLetter.rpt</DependentUpon>
-      <SubType>Component</SubType>
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-    </Compile>
-    <Compile Include="crRebookLetter.cs">
-      <DependentUpon>crRebookLetter.rpt</DependentUpon>
-      <SubType>Component</SubType>
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-    </Compile>
     <Compile Include="DAccessBlock.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -326,11 +284,17 @@
     <Compile Include="DSplash.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="dsRebookAppts.cs">
+      <DependentUpon>dsRebookAppts.xsd</DependentUpon>
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="dsRebookAppts.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>dsRebookAppts.xsd</DependentUpon>
     </Compile>
+    <Compile Include="Options.cs" />
+    <Compile Include="Printing.cs" />
     <Compile Include="UCPatientAppts.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -348,22 +312,6 @@
     <EmbeddedResource Include="CGView.resx">
       <DependentUpon>CGView.cs</DependentUpon>
       <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="crAppointmentList.rpt">
-      <Generator>CrystalDecisions.VSDesigner.CodeGen.ReportCodeGenerator</Generator>
-      <LastGenOutput>crAppointmentList.cs</LastGenOutput>
-    </EmbeddedResource>
-    <EmbeddedResource Include="crCancelLetter.rpt">
-      <Generator>CrystalDecisions.VSDesigner.CodeGen.ReportCodeGenerator</Generator>
-      <LastGenOutput>crCancelLetter.cs</LastGenOutput>
-    </EmbeddedResource>
-    <EmbeddedResource Include="crPatientLetter.rpt">
-      <Generator>CrystalDecisions.VSDesigner.CodeGen.ReportCodeGenerator</Generator>
-      <LastGenOutput>crPatientLetter.cs</LastGenOutput>
-    </EmbeddedResource>
-    <EmbeddedResource Include="crRebookLetter.rpt">
-      <Generator>CrystalDecisions.VSDesigner.CodeGen.ReportCodeGenerator</Generator>
-      <LastGenOutput>crRebookLetter.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="DAccessGroup.resx">
       <DependentUpon>DAccessGroup.cs</DependentUpon>

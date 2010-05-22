@@ -35,7 +35,8 @@
     <RemoteDebugMachine>
     </RemoteDebugMachine>
     <StartAction>Project</StartAction>
-    <StartArguments>http://homedev.ihs.gov/otherprgms/clinicalscheduling/ClinicalScheduling.exe</StartArguments>
+    <StartArguments>
+    </StartArguments>
     <StartPage>
     </StartPage>
     <StartProgram>C:\WINDOWS\Microsoft.NET\Framework\v1.1.4322\IEExec.exe</StartProgram>

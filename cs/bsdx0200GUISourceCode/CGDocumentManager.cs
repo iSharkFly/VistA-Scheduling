@@ -10,6 +10,7 @@ using System.Threading;
 using System.IO;
 using IndianHealthService.BMXNet;
 using System.Configuration;
+using Mono.Options;
 
 namespace IndianHealthService.ClinicalScheduling
 {
@@ -27,6 +28,10 @@ namespace IndianHealthService.ClinicalScheduling
 		private bool						m_bSchedManager;
 		private bool						m_bExitOK = true;
         public string                       m_sHandle = "0";
+        private string                      m_AccessCode="";
+        private string                      m_VerifyCode="";
+        private string                      m_Server="";
+        private int                         m_Port=0;
 
 		//M Connection member variables
 		private DataSet									m_dsGlobal = null;
@@ -250,9 +255,16 @@ namespace IndianHealthService.ClinicalScheduling
 						}
 						else
 						{
-							//Use autologin
-							_current.m_ConnectInfo.LoadConnectInfo();
-						}
+                            if (m_Server != String.Empty && m_Port != 0 && m_AccessCode != String.Empty
+                                && m_VerifyCode != String.Empty)
+                                m_ConnectInfo.LoadConnectInfo(m_Server, m_Port, m_AccessCode, m_VerifyCode);
+
+                            else if (m_Server != String.Empty && m_Port != 0)
+                                m_ConnectInfo.LoadConnectInfo(m_Server, m_Port);
+
+                            else
+							    m_ConnectInfo.LoadConnectInfo();
+                        }
 						bRetry = false;
 					}
 					catch (Exception ex)
@@ -291,7 +303,7 @@ namespace IndianHealthService.ClinicalScheduling
                 //decimal fBuild = Convert.ToDecimal(sBuild);
 
 				//Set application context
-				m_ds.SetStatus("Setting Application Context...");
+				m_ds.SetStatus("Setting Application Context to BSDXRPC...");
                 m_ds.Refresh();
 				m_ConnectInfo.AppContext = "BSDXRPC";
 	
@@ -334,13 +346,22 @@ namespace IndianHealthService.ClinicalScheduling
 			}
 		}
 
-		[STAThread()] static void Main()
+		[STAThread()] static void Main(string[] args)
 		{
             try
-            {
-                //Store the current manager
+            {   
+                 //Store the current manager
                 _current = new CGDocumentManager();
+                
+                var opset = new OptionSet () {
+                    { "s=", s => _current.m_Server = s },
+                    { "p=", p => _current.m_Port = int.Parse(p) },
+                    { "a=", a => _current.m_AccessCode = a },
+                    { "v=", v => _current.m_VerifyCode = v }
+                };
 
+                opset.Parse(args);
+                
                 try
                 {
                     _current.InitializeApp();

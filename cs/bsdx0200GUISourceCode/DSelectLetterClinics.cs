@@ -8,8 +8,19 @@ using System.Data;
 namespace IndianHealthService.ClinicalScheduling
 {
 	/// <summary>
-	/// Summary description for DSelectLetterClinics.
+	/// Use this dialog to select resources and dates (begin and end) for their examination.
+    /// <example>
+    /// DSelectLetterClinics ds = new DSelectLetterClinics();
+    /// ds.InitializePage(this.m_DocManager.GlobalDataSet, "Print Clinic Cancellation Letters");
+	///	ds.ShowDialog(this) 					
+    ///
+	/// //get the resource names and call the letter printer
+	///	string sClinics = ds.SelectedClinics;
+	///	DateTime dtBegin = ds.BeginDate;
+	///	DateTime dtEnd = ds.EndDate;
+    /// </example>
 	/// </summary>
+    /// 
 	public class DSelectLetterClinics : System.Windows.Forms.Form
 	{
 		private System.Windows.Forms.Button cmdCancel;
@@ -30,9 +41,14 @@ namespace IndianHealthService.ClinicalScheduling
 		private System.Windows.Forms.CheckBox chkSelectAll;
 		private System.ComponentModel.Container components = null;
 
-		public DSelectLetterClinics()
+		/// <summary>
+		/// Ctor; also sets default enter and cancel buttons
+		/// </summary>
+        public DSelectLetterClinics()
 		{
 			InitializeComponent();
+            this.AcceptButton = cmdOK;
+            this.CancelButton = cmdCancel;
 		}
 
 		/// <summary>
