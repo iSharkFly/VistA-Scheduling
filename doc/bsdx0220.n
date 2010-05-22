@@ -1,4 +1,4 @@
-BSDX 2.1 for WorldVista
+BSDX 2.2 for WorldVista
 
 This is a Scheduling GUI package. I am way too tired to write complete notes right now; here are the essentials:
 
@@ -9,6 +9,13 @@ XB 3 or above
 SD 5.3
 SD 5.3 patch 11310 (to fix a problem with the code)
 BMX 2 or above
+
+For a Virgin WorldVistA 6-08 release install the following:
+XB 4
+BMX 2.1
+XWB 1.1 patch 113102
+BSDX 2.2
+SD 5.3 patch 11310
 
 To install:
 Load sd0530_11310.k
