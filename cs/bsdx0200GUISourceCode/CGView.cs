@@ -82,7 +82,7 @@ namespace IndianHealthService.ClinicalScheduling
 		private System.Windows.Forms.MenuItem ctxCalGridCheckIn;
 		private System.Windows.Forms.MenuItem menuItem6;
 		private System.Windows.Forms.MenuItem menuItem7;
-		private System.Windows.Forms.MenuItem mnuPrintClinicLetters;
+		private System.Windows.Forms.MenuItem mnuPrintReminderLetters;
 		private System.Windows.Forms.MenuItem mnuPrintPatientLetter;
 		private System.Windows.Forms.MenuItem mnuPrintClinicSchedules;
 		private System.Windows.Forms.MenuItem ctxCalGridNoShow;
@@ -212,7 +212,7 @@ namespace IndianHealthService.ClinicalScheduling
             this.mnuSchedulingManagment = new System.Windows.Forms.MenuItem();
             this.menuItem6 = new System.Windows.Forms.MenuItem();
             this.mnuPrintClinicSchedules = new System.Windows.Forms.MenuItem();
-            this.mnuPrintClinicLetters = new System.Windows.Forms.MenuItem();
+            this.mnuPrintReminderLetters = new System.Windows.Forms.MenuItem();
             this.mnuPrintRebookLetters = new System.Windows.Forms.MenuItem();
             this.mnuPrintCancellationLetters = new System.Windows.Forms.MenuItem();
             this.mnuPrintPatientLetter = new System.Windows.Forms.MenuItem();
@@ -310,7 +310,7 @@ namespace IndianHealthService.ClinicalScheduling
             this.mnuSchedulingManagment,
             this.menuItem6,
             this.mnuPrintClinicSchedules,
-            this.mnuPrintClinicLetters,
+            this.mnuPrintReminderLetters,
             this.mnuPrintRebookLetters,
             this.mnuPrintCancellationLetters,
             this.mnuPrintPatientLetter,
@@ -364,6 +364,7 @@ namespace IndianHealthService.ClinicalScheduling
             // mnuSchedulingManagment
             // 
             this.mnuSchedulingManagment.Index = 7;
+            this.mnuSchedulingManagment.Shortcut = System.Windows.Forms.Shortcut.CtrlShiftM;
             this.mnuSchedulingManagment.Text = "Scheduling &Management";
             this.mnuSchedulingManagment.Click += new System.EventHandler(this.mnuSchedulingManagment_Click);
             // 
@@ -379,11 +380,12 @@ namespace IndianHealthService.ClinicalScheduling
             this.mnuPrintClinicSchedules.Text = "&Print Clinic Schedules";
             this.mnuPrintClinicSchedules.Click += new System.EventHandler(this.mnuPrintClinicSchedules_Click);
             // 
-            // mnuPrintClinicLetters
+            // mnuPrintReminderLetters
             // 
-            this.mnuPrintClinicLetters.Index = 10;
-            this.mnuPrintClinicLetters.Text = "Print Rem&inder Letters";
-            this.mnuPrintClinicLetters.Click += new System.EventHandler(this.mnuPrintClinicLetters_Click);
+            this.mnuPrintReminderLetters.Index = 10;
+            this.mnuPrintReminderLetters.Shortcut = System.Windows.Forms.Shortcut.CtrlR;
+            this.mnuPrintReminderLetters.Text = "Print Rem&inder Letters";
+            this.mnuPrintReminderLetters.Click += new System.EventHandler(this.mnuPrintReminderLetters_Click);
             // 
             // mnuPrintRebookLetters
             // 
@@ -394,6 +396,7 @@ namespace IndianHealthService.ClinicalScheduling
             // mnuPrintCancellationLetters
             // 
             this.mnuPrintCancellationLetters.Index = 12;
+            this.mnuPrintCancellationLetters.Shortcut = System.Windows.Forms.Shortcut.CtrlShiftC;
             this.mnuPrintCancellationLetters.Text = "Print C&ancellation Letters";
             this.mnuPrintCancellationLetters.Click += new System.EventHandler(this.mnuPrintCancellationLetters_Click);
             // 
@@ -1786,11 +1789,8 @@ namespace IndianHealthService.ClinicalScheduling
 				{
 					sClinicList = sClinicList + sRes + "|";	
 				}
-				string sSql = "BSDX REBOOK LIST^" + sApptIDList;
-				DataTable dtLetters = m_DocManager.RPMSDataTable(sSql, "PatientAppts");
-				DPatientLetter dpl = new DPatientLetter();
-					
-				dpl.InitializeFormRebookLetters(this.DocManager, sClinicList, dtLetters);
+				DPatientLetter dpl = new DPatientLetter();					
+				dpl.InitializeFormRebookLetters(this.DocManager, sClinicList, sApptIDList);
 				dpl.ShowDialog(this);
 			}		
 		}
@@ -2914,7 +2914,7 @@ namespace IndianHealthService.ClinicalScheduling
 			}
 		}
 
-		private void mnuPrintClinicLetters_Click(object sender, System.EventArgs e)
+		private void mnuPrintReminderLetters_Click(object sender, System.EventArgs e)
 		{
 			try
 			{
@@ -2930,7 +2930,7 @@ namespace IndianHealthService.ClinicalScheduling
 				DateTime dtEnd = ds.EndDate;
 
 				DPatientLetter dpl = new DPatientLetter();
-				dpl.InitializeFormClinicLetters(this.DocManager, sClinics, dtBegin, dtEnd);
+				dpl.InitializeFormPatientReminderLetters(this.DocManager, sClinics, dtBegin, dtEnd);
 				dpl.ShowDialog(this);
 
 			}
@@ -2950,21 +2950,9 @@ namespace IndianHealthService.ClinicalScheduling
 				if (ds.ShowDialog(this) != DialogResult.OK)
 					return;
 
-				//get the resource names and call the letter printer
-
-				string sClinics = ds.SelectedClinics;
-				DateTime dtBegin = ds.BeginDate;
-				DateTime dtEnd = ds.EndDate;
-				string sBegin = dtBegin.ToString("M/d/yyyy@HH:mm");
-				string sEnd = dtEnd.ToString("M/d/yyyy@HH:mm");
-
+				//Call the letter printer
 				DPatientLetter dpl = new DPatientLetter();
-				
-				//Call RPC to get list of appt ids that have been rebooked for these clinics on these dates
-				string sSql = "BSDX REBOOK CLINIC LIST^" + sClinics + "^" + sBegin + "^" + sEnd;
-				DataTable dtLetters = DocManager.RPMSDataTable(sSql, "PatientAppts");
-
-				dpl.InitializeFormRebookLetters(this.DocManager, sClinics, dtLetters);
+                dpl.InitializeFormRebookLetters(this.DocManager, ds.SelectedClinics, ds.BeginDate, ds.EndDate);
 				dpl.ShowDialog(this);
 
 			}
@@ -3059,18 +3047,11 @@ namespace IndianHealthService.ClinicalScheduling
 				string sClinics = ds.SelectedClinics;
 				DateTime dtBegin = ds.BeginDate;
 				DateTime dtEnd = ds.EndDate;
-				string sBegin = dtBegin.ToString("M/d/yyyy@HH:mm");
-				string sEnd = dtEnd.ToString("M/d/yyyy@HH:mm");
 
 				DPatientLetter dpl = new DPatientLetter();
 				
-				//Call RPC to get list of appt ids that have been cancelled for these clinics on these dates
-				string sSql = "BSDX CANCEL CLINIC LIST^" + sClinics + "^" + sBegin + "^" + sEnd;
-				DataTable dtLetters = DocManager.RPMSDataTable(sSql, "PatientAppts");
-
-				dpl.InitializeFormCancellationLetters(this.DocManager, sClinics, dtLetters);
+				dpl.InitializeFormCancellationLetters(this.DocManager, sClinics, dtBegin, dtEnd);
 				dpl.ShowDialog(this);
-
 			}
 			catch(Exception ex)
 			{

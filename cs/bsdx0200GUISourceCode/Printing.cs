@@ -20,10 +20,13 @@ namespace IndianHealthService.ClinicalScheduling
         /// <param name="ds">Strongly Typed DataSet contains Resources and Appointments</param>
         /// <param name="e">PrintPageEventArgs from PrintDocument Print handler</param>
         /// <param name="beg">Begin Datetime to print appointments</param>
-        /// <param name="end">End Datetime to print appointments</param>
+        /// <param name="end">End Datetime to print appointments</param
+        /// <param name="resourceToPrint">The resouce to print</param>
+        /// <param name="apptPrinting">Current Appointment printing</param>
+        /// <param name="pageNumber">Current page number</param>
         /// <remarks>beg and end have no effect on operation--they are there for documentation for user only</remarks>
         public static void PrintAppointments(dsPatientApptDisplay2 ds, PrintPageEventArgs e, DateTime beg, DateTime end,
-            int resourceToPrint, ref int apptPrinted)
+            int resourceToPrint, ref int apptPrinting, int pageNumber)
         {
             Graphics g = e.Graphics;
             //g.PageUnit = GraphicsUnit.Millimeter;
@@ -39,41 +42,174 @@ namespace IndianHealthService.ClinicalScheduling
             StringFormat sf = new StringFormat();
             sf.Alignment = StringAlignment.Center;
             
+            //Header
             g.DrawString("Confidential Patient Information", f8, Brushes.Black, e.PageBounds, sf);
             
+            //Footer
+            sf.Alignment = StringAlignment.Center;
+            sf.LineAlignment = StringAlignment.Far;
+            g.DrawString("Page " + pageNumber, f8, Brushes.Black, e.PageBounds, sf);
+
             //Typical manipulable print area
             Rectangle printArea = e.MarginBounds;
             
+            //resource we want to print
             dsPatientApptDisplay2.BSDXResourceRow r = ds.BSDXResource[resourceToPrint];
             
+            //header
             string toprint;
             if (beg == end) toprint = "Appointments for " + r.RESOURCE_NAME + " on " + beg.ToLongDateString();
             else toprint = "Appointments for " + r.RESOURCE_NAME + " from " + beg.ToShortDateString() + " to "
                 + end.ToShortDateString();
             g.DrawString(toprint, f14bold, Brushes.Black, printArea);
             
+            //Move print area down
+            printArea.Height -= (int)f14bold.GetHeight();
             printArea.Y += (int)f14bold.GetHeight();
+
+            //Draw Line
             g.DrawLine(new Pen(Brushes.Black, 0), printArea.X, printArea.Y, printArea.X + printArea.Width, printArea.Y);
-            printArea.Y += 5;
             
-            System.Data.DataRow[] appts = r.GetChildRows(ds.Relations[0]); //only one relation
+            //Move print area down
+            printArea.Y += 5; 
+            printArea.Height -= 5;
+            
+            System.Data.DataRow[] appts = r.GetChildRows(ds.Relations[0]); //ds has only one relation 
 
-            toprint = "";
-            StringFormat sf2 = new StringFormat();
-            sf2.SetTabStops(50, new float[] { 100, 200, 200 });
+            StringFormat sf2 = new StringFormat();                 //sf to hold tab stops
+            sf2.SetTabStops(50, new float[] { 100, 250, 25 });     
 
-            foreach (dsPatientApptDisplay2.PatientApptsRow a in appts)
+            //appt printed starts at zero
+            while (apptPrinting < appts.Length)
             {
-                toprint += a.ApptDate.ToString() + "\t" + a.Name +"(" + a.Sex + ")" + "\t" + "DOB: " + a.DOB.ToString("dd-MMM-yyyy") + "\t" + "ID: " + a.HRN;
-                toprint += "\n";
-                toprint += "Home Phone: " + a.HOMEPHONE + "\t" + "Address: " + a.STREET + ", " + a.CITY + ", " + a.STATE + " " + a.ZIP;
-                toprint += "\n";
-                toprint += "Note: " + a.NOTE;
-                toprint += "\n";
-                toprint += "Appointment made by " + a.APPT_MADE_BY + " on " + a.DATE_APPT_MADE;
-                toprint += "\n\n";
+                dsPatientApptDisplay2.PatientApptsRow a = (dsPatientApptDisplay2.PatientApptsRow)appts[apptPrinting];
+                
+                StringBuilder apptPrintStr = new StringBuilder(200); 
+                apptPrintStr.AppendLine(a.ApptDate.ToString() + "\t" + a.Name + "(" + a.Sex + ")" + "\t" + "DOB: " + a.DOB.ToString("dd-MMM-yyyy") + "\t" + "ID: " + a.HRN);
+                apptPrintStr.AppendLine("P: " + a.HOMEPHONE + "\t" + "Address: " + a.STREET + ", " + a.CITY + ", " + a.STATE + " " + a.ZIP);
+                apptPrintStr.AppendLine("Note: " + a.NOTE);
+                apptPrintStr.AppendLine("Appointment made by " + a.APPT_MADE_BY + " on " + a.DATE_APPT_MADE);
+
+                int printedApptHeight = (int)g.MeasureString(apptPrintStr.ToString(), f10, printArea.Width).Height;
+                if (printedApptHeight > printArea.Height) // too much to print -- move to next page
+                    // but don't increment the appointment to print since we haven't printed it yet.
+                    // i.e. apptPrinting stays the same.
+                {
+                    e.HasMorePages = true;
+                    break;
+                }
+   
+                //otherwise print it
+                g.DrawString(apptPrintStr.ToString(), f10, Brushes.Black, printArea, sf2);
+                
+                //Move print area down
+                printArea.Y += printedApptHeight + 3;
+                printArea.Height -= printedApptHeight + 3;
+
+                //Draw a divider line
+                Point pt1 = new Point((int)(printArea.X + printArea.Width * 0.25), printArea.Y);
+                Point pt2 = new Point((int)(printArea.X + printArea.Width * 0.75), printArea.Y);
+                g.DrawLine(Pens.Gray, pt1, pt2);
+
+                //move down, again
+                printArea.Y += 3;
+                printArea.Height -= 3;
+
+                //go to the next appointment
+                apptPrinting++;
             }
-            g.DrawString(toprint, f10, Brushes.Black, printArea, sf2);
         }
+
+        /// <summary>
+        /// Print Letter to be given or mailed to the patient
+        /// </summary>
+        /// <param name="ptrow">Strongly typed PatientApptsRow to pass (just one ApptRow)</param>
+        /// <param name="e">You know what that is</param>
+        /// <param name="letter">Contains letter string</param>
+        /// <param name="title">Title of the letter</param>
+        public static void PrintReminderLetter(dsPatientApptDisplay2.PatientApptsRow ptRow, PrintPageEventArgs e, string letter, string title)
+        {
+
+            Rectangle printArea = e.MarginBounds;
+            Graphics g = e.Graphics;
+            StringFormat sf = new StringFormat();
+            sf.Alignment = StringAlignment.Center; //for title
+            Font fTitle = new Font(FontFamily.GenericSerif, 24, FontStyle.Bold); //for title
+            Font fBody = new Font(FontFamily.GenericSerif, 12);
+            g.DrawString(title, fTitle, Brushes.Black, printArea, sf); //title
+
+            // move down
+            int titleHeight = (int)g.MeasureString(title, fTitle, printArea.Width).Height;
+            printArea.Y += titleHeight;
+            printArea.Height -= titleHeight;
+            
+            // draw underline
+            g.DrawLine(Pens.Black, printArea.Location, new Point(printArea.Right, printArea.Y));
+            printArea.Y += 15;
+            printArea.Height -= 15;
+            
+            // write missive
+            g.DrawString(letter, fBody, Brushes.Black, printArea);
+
+            //print Address in lower left corner for windowed envolopes
+            printArea.Location = new Point(e.MarginBounds.X, (int)(e.PageBounds.Height * 0.66));
+            printArea.Height = (int)(e.MarginBounds.Height * 0.20);
+            sf.Alignment = StringAlignment.Near;
+            sf.LineAlignment = StringAlignment.Center;
+            StringBuilder address = new StringBuilder(100);
+            address.AppendLine(ptRow.Name);
+            address.AppendLine(ptRow.STREET);
+            address.AppendLine(ptRow.CITY + ", " + ptRow.STATE + " " + ptRow.ZIP);
+            g.DrawString(address.ToString(), fBody, Brushes.Black, printArea, sf);
+        }
+
+        /// <summary>
+        /// Print Letter to be given or mailed to the patient
+        /// </summary>
+        /// <param name="ptrow">Strongly typed PatientApptsRow to pass (just one ApptRow)</param>
+        /// <param name="e">You know what that is</param>
+        /// <param name="letter">Contains letter string</param>
+        /// <param name="title">Title of the letter</param>
+        public static void PrintCancelLetter(dsRebookAppts.PatientApptsRow ptRow, PrintPageEventArgs e, string letter, string title)
+        {
+            Rectangle printArea = e.MarginBounds;
+            Graphics g = e.Graphics;
+            StringFormat sf = new StringFormat();
+            sf.Alignment = StringAlignment.Center; //for title
+            Font fTitle = new Font(FontFamily.GenericSerif, 24, FontStyle.Bold); //for title
+            Font fBody = new Font(FontFamily.GenericSerif, 12);
+            g.DrawString(title, fTitle, Brushes.Black, printArea, sf); //title
+
+            // move down
+            int titleHeight = (int)g.MeasureString(title, fTitle, printArea.Width).Height;
+            printArea.Y += titleHeight;
+            printArea.Height -= titleHeight;
+
+            // draw underline
+            g.DrawLine(Pens.Black, printArea.Location, new Point(printArea.Right, printArea.Y));
+            printArea.Y += 15;
+            printArea.Height -= 15;
+
+            // write missive
+            g.DrawString(letter, fBody, Brushes.Black, printArea);
+
+            //print Address in lower left corner for windowed envolopes
+            printArea.Location = new Point(e.MarginBounds.X, (int)(e.PageBounds.Height * 0.66));
+            printArea.Height = (int)(e.MarginBounds.Height * 0.20);
+            sf.Alignment = StringAlignment.Near;
+            sf.LineAlignment = StringAlignment.Center;
+            StringBuilder address = new StringBuilder(100);
+            address.AppendLine(ptRow.Name);
+            address.AppendLine(ptRow.STREET);
+            address.AppendLine(ptRow.CITY + ", " + ptRow.STATE + " " + ptRow.ZIP);
+            g.DrawString(address.ToString(), fBody, Brushes.Black, printArea, sf);
+        }
+
+        public static void PrintMessage(string msg, PrintPageEventArgs e)
+        {
+            e.Graphics.DrawString(msg, new Font(FontFamily.GenericSerif, 14),
+                Brushes.Black, e.MarginBounds);
+        }
+        
     }
 }

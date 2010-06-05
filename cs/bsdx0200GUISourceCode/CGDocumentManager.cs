@@ -2,15 +2,10 @@ using System;
 using System.Windows.Forms;
 using System.Collections;
 using System.Data;
-using System.Text;
 using System.Diagnostics;
-using System.Net;
-using System.Net.Sockets;
-using System.Threading;
-using System.IO;
 using IndianHealthService.BMXNet;
-using System.Configuration;
 using Mono.Options;
+using System.Runtime.InteropServices;
 
 namespace IndianHealthService.ClinicalScheduling
 {
@@ -258,12 +253,10 @@ namespace IndianHealthService.ClinicalScheduling
                             if (m_Server != String.Empty && m_Port != 0 && m_AccessCode != String.Empty
                                 && m_VerifyCode != String.Empty)
                                 m_ConnectInfo.LoadConnectInfo(m_Server, m_Port, m_AccessCode, m_VerifyCode);
-
                             else if (m_Server != String.Empty && m_Port != 0)
-                                m_ConnectInfo.LoadConnectInfo(m_Server, m_Port);
-
+                                m_ConnectInfo.LoadConnectInfo(m_Server, m_Port, "", "");
                             else
-							    m_ConnectInfo.LoadConnectInfo();
+                                m_ConnectInfo.LoadConnectInfo();
                         }
 						bRetry = false;
 					}
@@ -346,13 +339,24 @@ namespace IndianHealthService.ClinicalScheduling
 			}
 		}
 
-		[STAThread()] static void Main(string[] args)
+        //To write to the console
+        [DllImport("kernel32.dll")]
+        static extern bool AttachConsole(int dwProcessId);
+        private const int ATTACH_PARENT_PROCESS = -1;
+
+		[STAThread()] 
+        static void Main(string[] args)
 		{
+#if DEBUG
+            // Print console messages to console if launched from console
+            AttachConsole(ATTACH_PARENT_PROCESS);
+#endif
             try
-            {   
+            {
                  //Store the current manager
                 _current = new CGDocumentManager();
                 
+                //Get command line options; store in private variables
                 var opset = new OptionSet () {
                     { "s=", s => _current.m_Server = s },
                     { "p=", p => _current.m_Port = int.Parse(p) },
