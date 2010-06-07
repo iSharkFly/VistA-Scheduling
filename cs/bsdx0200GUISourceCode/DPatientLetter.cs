@@ -30,6 +30,7 @@ namespace IndianHealthService.ClinicalScheduling
         //dataset to load the results of queries into and set to print routines
         dsPatientApptDisplay2 _dsApptDisplay;
         private PrintDocument printCancelLetters;
+        private PrintDocument printRebookLetters;
         dsRebookAppts _dsRebookAppts;
 		#endregion Fields
 
@@ -72,7 +73,14 @@ namespace IndianHealthService.ClinicalScheduling
 			}
 		}
 
-		public void InitializeFormRebookLetters(CGDocumentManager docManager,
+        /// <summary>
+        /// Print Rebook Letters by Date
+        /// </summary>
+        /// <param name="docManager">This docManger</param>
+        /// <param name="sClinicList">Clinics for which to print</param>
+        /// <param name="dtBegin">Beginning Date</param>
+        /// <param name="dtEnd">End Date</param>
+        public void InitializeFormRebookLetters(CGDocumentManager docManager,
 			string sClinicList,
 		    DateTime dtBegin,
             DateTime dtEnd)
@@ -88,17 +96,29 @@ namespace IndianHealthService.ClinicalScheduling
                 string sEnd = dtEnd.ToString("M/d/yyyy@HH:mm");
 
                 //Call RPC to get list of appt ids that have been rebooked for these clinics on these dates
-                string sSql1 = "BSDX REBOOK CLINIC LIST^" + sClinicList + "^" + sBegin + "^" + sEnd;
-                DataTable dtLetters = docManager.RPMSDataTable(sSql1, "PatientAppts");
-				
+                string sSql1 = "BSDX REBOOK CLINIC LIST^" + sClinicList + "^" + sBegin + "^" + sEnd;				
 				string sSql2 = "BSDX RESOURCE LETTERS^" + sClinicList;
-				DataTable dt = docManager.RPMSDataTable(sSql2, "Resources");				
+
+                _dsRebookAppts = new dsRebookAppts();
+                _dsRebookAppts.PatientAppts.Merge(docManager.RPMSDataTable(sSql1, "PatientAppts"));
+                _dsRebookAppts.BSDXResource.Merge(docManager.RPMSDataTable(sSql2, "Resources"));
+
             }
 			catch (Exception ex)
 			{
 				throw ex;
 			}
+
+            PrintPreviewControl.Document = printRebookLetters;
+
 		}
+
+        /// <summary>
+        /// Print Rebook Letters by Date
+        /// </summary>
+        /// <param name="docManager">This docManger</param>
+        /// <param name="sClinicList">Clinics for which to print</param>
+        /// <param name="sApptIDList">List of appointments IENs in ^BSDXAPPT, delimited by |</param>
         public void InitializeFormRebookLetters(CGDocumentManager docManager,
             string sClinicList,
             string sApptIDList)
@@ -110,17 +130,21 @@ namespace IndianHealthService.ClinicalScheduling
                     throw new Exception("At least one clinic must be selected.");
                 }
 
-                string sSql = "BSDX REBOOK LIST^" + sApptIDList;
-                DataTable dtLetters = docManager.RPMSDataTable(sSql, "PatientAppts");
-
+                string sSql1 = "BSDX REBOOK LIST^" + sApptIDList;
                 string sSql2 = "BSDX RESOURCE LETTERS^" + sClinicList;
-                DataTable dt = docManager.RPMSDataTable(sSql2, "Resources");
+
+                _dsRebookAppts = new dsRebookAppts();
+                _dsRebookAppts.PatientAppts.Merge(docManager.RPMSDataTable(sSql1, "PatientAppts"));
+                _dsRebookAppts.BSDXResource.Merge(docManager.RPMSDataTable(sSql2, "Resources"));
+
 
             }
             catch (Exception ex)
             {
                 throw ex;
             }
+
+            PrintPreviewControl.Document = printRebookLetters;
         }
 
         /// <summary>
@@ -202,7 +226,9 @@ namespace IndianHealthService.ClinicalScheduling
 			}
 		}
 
-
+        /// <summary>
+        /// Ctor
+        /// </summary>
 		public DPatientLetter() : base()
 		{
 			//
@@ -240,6 +266,7 @@ namespace IndianHealthService.ClinicalScheduling
             this.printAppts = new System.Drawing.Printing.PrintDocument();
             this.printReminderLetters = new System.Drawing.Printing.PrintDocument();
             this.printCancelLetters = new System.Drawing.Printing.PrintDocument();
+            this.printRebookLetters = new System.Drawing.Printing.PrintDocument();
             this.SuspendLayout();
             // 
             // printAppts
@@ -253,6 +280,10 @@ namespace IndianHealthService.ClinicalScheduling
             // printCancelLetters
             // 
             this.printCancelLetters.PrintPage += new System.Drawing.Printing.PrintPageEventHandler(this.printCancelLetters_PrintPage);
+            // 
+            // printRebookLetters
+            // 
+            this.printRebookLetters.PrintPage += new System.Drawing.Printing.PrintPageEventHandler(this.printRebookLetters_PrintPage);
             // 
             // DPatientLetter
             // 
@@ -330,6 +361,27 @@ namespace IndianHealthService.ClinicalScheduling
                     e.HasMorePages = true;
             }
 
+        }
+
+        private void printRebookLetters_PrintPage(object sender, PrintPageEventArgs e)
+        {
+            // no patients
+            if (_dsRebookAppts.PatientAppts.Count == 0)
+            {
+                ClinicalScheduling.Printing.PrintMessage("No Appointments found", e);
+                return;
+            }
+            // if there are patients
+            else if (_currentApptPrinting < _dsRebookAppts.PatientAppts.Count)
+            {
+                dsRebookAppts.BSDXResourceRow c = (dsRebookAppts.BSDXResourceRow)
+                   _dsRebookAppts.PatientAppts[_currentApptPrinting].GetParentRow(_dsRebookAppts.Relations[0]);
+                //XXX: Rebook letter rather oddly currently stored in NO SHOW LETTER field. What gives???
+                ClinicalScheduling.Printing.PrintRebookLetter(_dsRebookAppts.PatientAppts[_currentApptPrinting], e, c.NO_SHOW_LETTER, "Rebook Letter");
+                _currentApptPrinting++;
+                if (_currentApptPrinting < _dsRebookAppts.PatientAppts.Count)
+                    e.HasMorePages = true;
+            }
         }
 	}
 }

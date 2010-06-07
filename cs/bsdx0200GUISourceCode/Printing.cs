@@ -147,7 +147,16 @@ namespace IndianHealthService.ClinicalScheduling
             g.DrawLine(Pens.Black, printArea.Location, new Point(printArea.Right, printArea.Y));
             printArea.Y += 15;
             printArea.Height -= 15;
-            
+
+            // write appointment date
+            string str = "Appointment Date: " + ptRow.ApptDate + "\n\n";
+            g.DrawString(str, fBody, Brushes.Black, printArea);
+
+            // move down
+            int strHeight = (int)g.MeasureString(str, fBody, printArea.Width).Height;
+            printArea.Y += strHeight;
+            printArea.Height -= strHeight;
+
             // write missive
             g.DrawString(letter, fBody, Brushes.Black, printArea);
 
@@ -164,9 +173,9 @@ namespace IndianHealthService.ClinicalScheduling
         }
 
         /// <summary>
-        /// Print Letter to be given or mailed to the patient
+        /// Cancellation Letter to be given or mailed to the patient
         /// </summary>
-        /// <param name="ptrow">Strongly typed PatientApptsRow to pass (just one ApptRow)</param>
+        /// <param name="ptRow">Strongly typed PatientApptsRow to pass (just one ApptRow)</param>
         /// <param name="e">You know what that is</param>
         /// <param name="letter">Contains letter string</param>
         /// <param name="title">Title of the letter</param>
@@ -190,6 +199,15 @@ namespace IndianHealthService.ClinicalScheduling
             printArea.Y += 15;
             printArea.Height -= 15;
 
+            // write appointment date
+            string str = "Appointment Date: " + ptRow.OldApptDate + "\n\n";
+            g.DrawString(str, fBody, Brushes.Black, printArea);
+
+            // move down
+            int strHeight = (int)g.MeasureString(str, fBody, printArea.Width).Height;
+            printArea.Y += strHeight;
+            printArea.Height -= strHeight;
+
             // write missive
             g.DrawString(letter, fBody, Brushes.Black, printArea);
 
@@ -205,6 +223,64 @@ namespace IndianHealthService.ClinicalScheduling
             g.DrawString(address.ToString(), fBody, Brushes.Black, printArea, sf);
         }
 
+        /// <summary>
+        /// Print rebook letters. Prints old and new appointments dates then the missive.
+        /// </summary>
+        /// <param name="ptRow">Strongly typed appointment row</param>
+        /// <param name="e">etc</param>
+        /// <param name="letter">Text of the letter to print</param>
+        /// <param name="title">Title to print at the top of the letter</param>
+        public static void PrintRebookLetter(dsRebookAppts.PatientApptsRow ptRow, PrintPageEventArgs e, string letter, string title)
+        {
+            Rectangle printArea = e.MarginBounds;
+            Graphics g = e.Graphics;
+            StringFormat sf = new StringFormat();
+            sf.Alignment = StringAlignment.Center; //for title
+            Font fTitle = new Font(FontFamily.GenericSerif, 24, FontStyle.Bold); //for title
+            Font fBody = new Font(FontFamily.GenericSerif, 12);
+            g.DrawString(title, fTitle, Brushes.Black, printArea, sf); //title
+
+            // move down
+            int titleHeight = (int)g.MeasureString(title, fTitle, printArea.Width).Height;
+            printArea.Y += titleHeight;
+            printArea.Height -= titleHeight;
+
+            // draw underline
+            g.DrawLine(Pens.Black, printArea.Location, new Point(printArea.Right, printArea.Y));
+            printArea.Y += 15;
+            printArea.Height -= 15;
+
+            // write old and new appointment dates
+            string str = "Old Appointment Date:\t\t" + ptRow.OldApptDate + "\n";
+            str += "New Appointment Date:\t\t" + ptRow.NewApptDate + "\n\n";
+            g.DrawString(str, fBody, Brushes.Black, printArea);
+
+            // move down
+            int strHeight = (int)g.MeasureString(str, fBody, printArea.Width).Height;
+            printArea.Y += strHeight;
+            printArea.Height -= strHeight;
+
+            // write missive
+            g.DrawString(letter, fBody, Brushes.Black, printArea);
+
+            //print Address in lower left corner for windowed envolopes
+            printArea.Location = new Point(e.MarginBounds.X, (int)(e.PageBounds.Height * 0.66));
+            printArea.Height = (int)(e.MarginBounds.Height * 0.20);
+            sf.Alignment = StringAlignment.Near;
+            sf.LineAlignment = StringAlignment.Center;
+            StringBuilder address = new StringBuilder(100);
+            address.AppendLine(ptRow.Name);
+            address.AppendLine(ptRow.STREET);
+            address.AppendLine(ptRow.CITY + ", " + ptRow.STATE + " " + ptRow.ZIP);
+            g.DrawString(address.ToString(), fBody, Brushes.Black, printArea, sf);
+
+        }
+
+        /// <summary>
+        /// Print message on a page; typically that there are no appointments to be found.
+        /// </summary>
+        /// <param name="msg">The exact string to print.</param>
+        /// <param name="e">Print Page event args</param>
         public static void PrintMessage(string msg, PrintPageEventArgs e)
         {
             e.Graphics.DrawString(msg, new Font(FontFamily.GenericSerif, 14),

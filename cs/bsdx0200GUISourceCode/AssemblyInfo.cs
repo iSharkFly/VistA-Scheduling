@@ -1,13 +1,14 @@
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 
 //
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 //
-[assembly: AssemblyTitle("ClinicalScheduling")]
-[assembly: AssemblyDescription("Windows Scheduling Application")]
+[assembly: AssemblyTitle("Clinical Scheduling")]
+[assembly: AssemblyDescription("Windows Scheduling Application for VistA")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("WorldVistA")]
 [assembly: AssemblyProduct("")]
@@ -26,7 +27,7 @@ using System.Runtime.CompilerServices;
 // You can specify all the values or you can default the Revision and Build Numbers 
 // by using the '*' as shown below:
 
-[assembly: AssemblyVersion("2.2.*")]
+[assembly: AssemblyVersion("1.1.*")]
 
 //
 // In order to sign your assembly you must specify a key to use. Refer to the 
@@ -56,4 +57,5 @@ using System.Runtime.CompilerServices;
 [assembly: AssemblyDelaySign(false)]
 [assembly: AssemblyKeyFile("")]
 [assembly: AssemblyKeyName("")]
-[assembly: AssemblyFileVersionAttribute("2.2.0.0")]
+[assembly: AssemblyFileVersionAttribute("1.1.0.0")]
+[assembly: ComVisibleAttribute(false)]

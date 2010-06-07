@@ -167,6 +167,55 @@
             Required designer variable.
             </summary>
         </member>
+        <member name="M:IndianHealthService.ClinicalScheduling.DPatientLetter.InitializeFormClinicSchedule(IndianHealthService.ClinicalScheduling.CGDocumentManager,System.String,System.DateTime,System.DateTime)">
+            <summary>
+            Print Clinic Schedules
+            </summary>
+            <param name="docManager">This docManger</param>
+            <param name="sClinicList">Clinics for which to print</param>
+            <param name="dtBegin">Beginning Date</param>
+            <param name="dtEnd">End Date</param>
+        </member>
+        <member name="M:IndianHealthService.ClinicalScheduling.DPatientLetter.InitializeFormRebookLetters(IndianHealthService.ClinicalScheduling.CGDocumentManager,System.String,System.DateTime,System.DateTime)">
+            <summary>
+            Print Rebook Letters by Date
+            </summary>
+            <param name="docManager">This docManger</param>
+            <param name="sClinicList">Clinics for which to print</param>
+            <param name="dtBegin">Beginning Date</param>
+            <param name="dtEnd">End Date</param>
+        </member>
+        <member name="M:IndianHealthService.ClinicalScheduling.DPatientLetter.InitializeFormRebookLetters(IndianHealthService.ClinicalScheduling.CGDocumentManager,System.String,System.String)">
+            <summary>
+            Print Rebook Letters by Date
+            </summary>
+            <param name="docManager">This docManger</param>
+            <param name="sClinicList">Clinics for which to print</param>
+            <param name="sApptIDList">List of appointments IENs in ^BSDXAPPT, delimited by |</param>
+        </member>
+        <member name="M:IndianHealthService.ClinicalScheduling.DPatientLetter.InitializeFormCancellationLetters(IndianHealthService.ClinicalScheduling.CGDocumentManager,System.String,System.DateTime,System.DateTime)">
+            <summary>
+            Print Cancellation letters to mail to patients
+            </summary>
+            <param name="docManager">This Docmanager</param>
+            <param name="sClinicList">| delemited clinic list (IEN's)</param>
+            <param name="dtBegin">Beginning Date</param>
+            <param name="dtEnd">Ending Date</param>
+        </member>
+        <member name="M:IndianHealthService.ClinicalScheduling.DPatientLetter.InitializeFormPatientReminderLetters(IndianHealthService.ClinicalScheduling.CGDocumentManager,System.String,System.DateTime,System.DateTime)">
+            <summary>
+            Print Reminder Letters to give or mail to patients
+            </summary>
+            <param name="docManager">This docManger</param>
+            <param name="sClinicList">Clinics for which to print</param>
+            <param name="dtBegin">Beginning Date</param>
+            <param name="dtEnd">End Date</param>
+        </member>
+        <member name="M:IndianHealthService.ClinicalScheduling.DPatientLetter.#ctor">
+            <summary>
+            Ctor
+            </summary>
+        </member>
         <member name="M:IndianHealthService.ClinicalScheduling.DPatientLetter.Dispose(System.Boolean)">
             <summary>
             Clean up any resources being used.
@@ -504,15 +553,40 @@
             Class that encapsulates printing functions in Clinical Scheduling
             </summary>
         </member>
-        <member name="M:IndianHealthService.ClinicalScheduling.Printing.PrintAppointments(IndianHealthService.ClinicalScheduling.dsPatientApptDisplay2,System.Drawing.Printing.PrintPageEventArgs,System.DateTime,System.DateTime,System.Int32,System.Int32@)">
+        <!-- Badly formed XML comment ignored for member "M:IndianHealthService.ClinicalScheduling.Printing.PrintAppointments(IndianHealthService.ClinicalScheduling.dsPatientApptDisplay2,System.Drawing.Printing.PrintPageEventArgs,System.DateTime,System.DateTime,System.Int32,System.Int32@,System.Int32)" -->
+        <member name="M:IndianHealthService.ClinicalScheduling.Printing.PrintReminderLetter(IndianHealthService.ClinicalScheduling.dsPatientApptDisplay2.PatientApptsRow,System.Drawing.Printing.PrintPageEventArgs,System.String,System.String)">
             <summary>
-            Print Appointments
+            Print Letter to be given or mailed to the patient
             </summary>
-            <param name="ds">Strongly Typed DataSet contains Resources and Appointments</param>
-            <param name="e">PrintPageEventArgs from PrintDocument Print handler</param>
-            <param name="beg">Begin Datetime to print appointments</param>
-            <param name="end">End Datetime to print appointments</param>
-            <remarks>beg and end have no effect on operation--they are there for documentation for user only</remarks>
+            <param name="ptrow">Strongly typed PatientApptsRow to pass (just one ApptRow)</param>
+            <param name="e">You know what that is</param>
+            <param name="letter">Contains letter string</param>
+            <param name="title">Title of the letter</param>
+        </member>
+        <member name="M:IndianHealthService.ClinicalScheduling.Printing.PrintCancelLetter(IndianHealthService.ClinicalScheduling.dsRebookAppts.PatientApptsRow,System.Drawing.Printing.PrintPageEventArgs,System.String,System.String)">
+            <summary>
+            Cancellation Letter to be given or mailed to the patient
+            </summary>
+            <param name="ptRow">Strongly typed PatientApptsRow to pass (just one ApptRow)</param>
+            <param name="e">You know what that is</param>
+            <param name="letter">Contains letter string</param>
+            <param name="title">Title of the letter</param>
+        </member>
+        <member name="M:IndianHealthService.ClinicalScheduling.Printing.PrintRebookLetter(IndianHealthService.ClinicalScheduling.dsRebookAppts.PatientApptsRow,System.Drawing.Printing.PrintPageEventArgs,System.String,System.String)">
+            <summary>
+            Print rebook letters. Prints old and new appointments dates then the missive.
+            </summary>
+            <param name="ptRow">Strongly typed appointment row</param>
+            <param name="e">etc</param>
+            <param name="letter">Text of the letter to print</param>
+            <param name="title">Title to print at the top of the letter</param>
+        </member>
+        <member name="M:IndianHealthService.ClinicalScheduling.Printing.PrintMessage(System.String,System.Drawing.Printing.PrintPageEventArgs)">
+            <summary>
+            Print message on a page; typically that there are no appointments to be found.
+            </summary>
+            <param name="msg">The exact string to print.</param>
+            <param name="e">Print Page event args</param>
         </member>
         <member name="T:IndianHealthService.ClinicalScheduling.DResourceGroupItem">
             <summary>
