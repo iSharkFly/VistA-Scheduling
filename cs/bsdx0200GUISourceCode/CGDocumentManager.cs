@@ -239,41 +239,67 @@ namespace IndianHealthService.ClinicalScheduling
                 m_ds.SetStatus("Connecting to VistA Server...");
                 m_ds.Refresh();
 				bool bRetry = true;
+
+                //Try to connect using supplied values for Server and Port
+                //Why am I doing this? The library BMX net uses prompts for access and verify code
+                //whether you can connect or not. Not good. So I test first whether
+                //we can connect at all by doing a simple connection and disconnect.
+                //TODO: Make this more robust by sending a TCPConnect message and seeing if you get a response.
+
+                if (m_Server != "" && m_Port != 0)
+                {
+                    System.Net.Sockets.TcpClient tcpClient = new System.Net.Sockets.TcpClient();
+                    try
+                    {
+                        tcpClient.Connect(m_Server, m_Port); // open it
+                        tcpClient.Close();                  // then close it
+                    }
+                    catch (System.Net.Sockets.SocketException ex)
+                    {
+                        throw ex;
+                    }
+                }
 				do
 				{
-					try 
-					{
-						if (bReLogin == true)
-						{
-							//Prompt for Access and Verify codes
-							_current.m_ConnectInfo.LoadConnectInfo("", "");
-						}
-						else
-						{
+                    try
+                    {
+                        if (bReLogin == true)
+                        {
+                            //Prompt for Access and Verify codes
+                            _current.m_ConnectInfo.LoadConnectInfo("", "");
+                        }
+                        else
+                        {
                             if (m_Server != String.Empty && m_Port != 0 && m_AccessCode != String.Empty
                                 && m_VerifyCode != String.Empty)
+                            {
                                 m_ConnectInfo.LoadConnectInfo(m_Server, m_Port, m_AccessCode, m_VerifyCode);
+                            }
                             else if (m_Server != String.Empty && m_Port != 0)
                                 m_ConnectInfo.LoadConnectInfo(m_Server, m_Port, "", "");
                             else
                                 m_ConnectInfo.LoadConnectInfo();
                         }
-						bRetry = false;
-					}
-					catch (Exception ex)
-					{
-						m_ds.Close(); 
-						if (MessageBox.Show("Unable to connect to VistA.  " + ex.Message , "Clinical Scheduling", MessageBoxButtons.RetryCancel) == DialogResult.Retry)
-						{
-							bRetry = true;
-							_current.m_ConnectInfo.ChangeServerInfo();
-						}
-						else
-						{
-							bRetry = false;
-							throw ex;
-						}
-					}
+                        bRetry = false;
+                    }
+                    catch (System.Net.Sockets.SocketException)
+                    {
+                        MessageBox.Show("Cannot connect to VistA. ");
+                    }
+                    catch (Exception ex)
+                    {
+                        m_ds.Close();
+                        if (MessageBox.Show("Unable to connect to VistA.  " + ex.Message, "Clinical Scheduling", MessageBoxButtons.RetryCancel) == DialogResult.Retry)
+                        {
+                            bRetry = true;
+                            _current.m_ConnectInfo.ChangeServerInfo();
+                        }
+                        else
+                        {
+                            bRetry = false;
+                            throw ex;
+                        }
+                    }
 				}while (bRetry == true);
 
 				//Create global dataset
@@ -414,6 +440,7 @@ namespace IndianHealthService.ClinicalScheduling
 			Debug.Write("LoadGlobalRecordsets -- AccessGroupTypes loaded\n");
 		}
 
+        //TODO:REMOVE THIS
 		public void LoadClinicSetupTable()
 		{
 			string sCommandText = "BSDX CLINIC SETUP";
@@ -612,7 +639,7 @@ namespace IndianHealthService.ClinicalScheduling
 			m_dsGlobal.Relations.Add(dr);
 
 			//Build active provider table
-			sCommandText = "SELECT BMXIEN, NAME FROM NEW_PERSON WHERE INACTIVE_DATE = '' AND INTERNAL[PROVIDER_CLASS] > 0";
+			sCommandText = "SELECT BMXIEN, NAME FROM NEW_PERSON WHERE INACTIVE_DATE = ''";
 			ConnectInfo.RPMSDataTable(sCommandText, "Provider", m_dsGlobal);
 			Debug.Write("LoadGlobalRecordsets -- Provider loaded\n");
 
@@ -625,6 +652,11 @@ namespace IndianHealthService.ClinicalScheduling
 			//Build the HOLIDAY table
 			sCommandText = "SELECT NAME, DATE FROM HOLIDAY WHERE DATE > '" + DateTime.Today.ToShortDateString() + "'";
 			ConnectInfo.RPMSDataTable(sCommandText, "HOLIDAY", m_dsGlobal);
+            Debug.Write("LoadingGlobalRecordsets -- Holidays loaded\n");
+
+            sCommandText = @"SELECT HOSPITAL_LOCATION.BMXIEN 'BMXIEN', HOSPITAL_LOCATION.PROVIDER.PROVIDER 'PROVIDER', HOSPITAL_LOCATION.PROVIDER.DEFAULT_PROVIDER 'DEFAULT' FROM HOSPITAL_LOCATION";
+            ConnectInfo.RPMSDataTable(sCommandText, "ClinicProviders", m_dsGlobal);
+            Debug.Write("LoadingGlobalRecordsets -- ClinicProviders loaded\n");
 
 			//Save the xml schema
 			//m_dsGlobal.WriteXmlSchema(@"..\..\csSchema20060526.xsd");
