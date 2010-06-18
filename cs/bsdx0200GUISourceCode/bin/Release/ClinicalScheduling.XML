@@ -664,6 +664,24 @@
             Required designer variable.
             </summary>
         </member>
+        <member name="M:IndianHealthService.ClinicalScheduling.DCheckIn.InitializePage(IndianHealthService.ClinicalScheduling.CGAppointment,IndianHealthService.ClinicalScheduling.CGDocumentManager,System.String,System.Boolean,System.Boolean,System.Boolean,System.String,System.Int32)">
+            <summary>
+            Fill memeber variables before showing dialog
+            </summary>
+            <param name="a">Appointment</param>
+            <param name="docManager">Document Manager</param>
+            <param name="sDefaultProvider">Default provider</param>
+            <param name="bProviderRequired">not used</param>
+            <param name="bGeneratePCCPlus">not used</param>
+            <param name="bMultCodes">not used</param>
+            <param name="sStopCode">Stop Code</param>
+        </member>
+        <member name="M:IndianHealthService.ClinicalScheduling.DCheckIn.PCCPlus">
+            <summary>
+            Not used in VISTA. Needs to be removed
+            <remarks>Not used in VISTA.</remarks>
+            </summary>
+        </member>
         <member name="M:IndianHealthService.ClinicalScheduling.DCheckIn.UpdateDialogData(System.Boolean)">
             <summary>
             If b is true, moves member vars into control data

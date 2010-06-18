@@ -441,12 +441,12 @@ namespace IndianHealthService.ClinicalScheduling
 		}
 
         //TODO:REMOVE THIS
-		public void LoadClinicSetupTable()
+		/*public void LoadClinicSetupTable()
 		{
 			string sCommandText = "BSDX CLINIC SETUP";
 			ConnectInfo.RPMSDataTable(sCommandText, "ClinicSetupParameters", m_dsGlobal);
 			Debug.Write("LoadGlobalRecordsets -- ClinicSetupParameters loaded\n");
-		}
+		}*/
 
 		public void LoadBSDXResourcesTable()
 		{
@@ -589,10 +589,12 @@ namespace IndianHealthService.ClinicalScheduling
 			dc[0] = dtTemp.Columns["HOSPITAL_LOCATION_ID"];
 			m_dsGlobal.Tables["HospitalLocation"].PrimaryKey = dc;
 
-			LoadClinicSetupTable();
+            //smh
+			//LoadClinicSetupTable();
 
+            //smh
 			//Build Primary Key for ClinicSetupParameters table
-			dc = new DataColumn[1];
+			/*dc = new DataColumn[1];
 			dtTemp = m_dsGlobal.Tables["ClinicSetupParameters"];
 			dc[0] = dtTemp.Columns["HOSPITAL_LOCATION_ID"];
 			m_dsGlobal.Tables["ClinicSetupParameters"].PrimaryKey = dc;
@@ -601,12 +603,13 @@ namespace IndianHealthService.ClinicalScheduling
 			dr = new DataRelation("HospitalLocationClinic",	//Relation Name
 				m_dsGlobal.Tables["HospitalLocation"].Columns["HOSPITAL_LOCATION_ID"],	//Parent
 				m_dsGlobal.Tables["ClinicSetupParameters"].Columns["HOSPITAL_LOCATION_ID"], false);	//Child
-			m_dsGlobal.Relations.Add(dr);
-
+			m_dsGlobal.Relations.Add(dr);*/
+            /*SMH
 			dtTemp.Columns.Add("PROVIDER", System.Type.GetType("System.String"), "Parent.DEFAULT_PROVIDER");
 			dtTemp.Columns.Add("CLINIC_STOP", System.Type.GetType("System.String"), "Parent.STOP_CODE_NUMBER");
 			dtTemp.Columns.Add("INACTIVATE_DATE", System.Type.GetType("System.String"), "Parent.INACTIVATE_DATE");
 			dtTemp.Columns.Add("REACTIVATE_DATE", System.Type.GetType("System.String"), "Parent.REACTIVATE_DATE");
+            */
 
 			//Build Data Relationships between Resources and HospitalLocation tables
 			dr = new DataRelation("HospitalLocationResource",	//Relation Name
@@ -654,9 +657,6 @@ namespace IndianHealthService.ClinicalScheduling
 			ConnectInfo.RPMSDataTable(sCommandText, "HOLIDAY", m_dsGlobal);
             Debug.Write("LoadingGlobalRecordsets -- Holidays loaded\n");
 
-            sCommandText = @"SELECT HOSPITAL_LOCATION.BMXIEN 'BMXIEN', HOSPITAL_LOCATION.PROVIDER.PROVIDER 'PROVIDER', HOSPITAL_LOCATION.PROVIDER.DEFAULT_PROVIDER 'DEFAULT' FROM HOSPITAL_LOCATION";
-            ConnectInfo.RPMSDataTable(sCommandText, "ClinicProviders", m_dsGlobal);
-            Debug.Write("LoadingGlobalRecordsets -- ClinicProviders loaded\n");
 
 			//Save the xml schema
 			//m_dsGlobal.WriteXmlSchema(@"..\..\csSchema20060526.xsd");

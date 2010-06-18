@@ -164,7 +164,6 @@
     <None Include="dsRebookAppts.xsx">
       <DependentUpon>dsRebookAppts.xsd</DependentUpon>
     </None>
-    <None Include="Properties\app.manifest" />
     <Content Include="App.ico" />
     <Content Include="dsPatientApptDisplay2.xsd">
       <Generator>MSDataSetGenerator</Generator>
@@ -433,6 +432,9 @@
       <ProductName>.NET Framework 3.5 SP1</ProductName>
       <Install>false</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Properties\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

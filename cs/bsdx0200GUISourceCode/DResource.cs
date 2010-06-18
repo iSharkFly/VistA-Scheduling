@@ -537,7 +537,6 @@ namespace IndianHealthService.ClinicalScheduling
 
 		public void InitializePage(int nSelectedResourceID, DataSet dsGlobal)
 		{
-
 			m_dtResources = dsGlobal.Tables["Resources"];
 
 			//Datasource the HOSPITAL LOCATION combo box
@@ -554,13 +553,13 @@ namespace IndianHealthService.ClinicalScheduling
 				drv.EndEdit();
 			}
 
-			DataTable dtClinicParams = dsGlobal.Tables["ClinicSetupParameters"];
-			m_dvClinicParams = new DataView(dtClinicParams);
+//			DataTable dtClinicParams = dsGlobal.Tables["ClinicSetupParameters"];
+//			m_dvClinicParams = new DataView(dtClinicParams);
 //			m_dvClinicParams.Sort = "HOSPITAL_LOCATION_ID ASC";
-			m_dvClinicParams.Sort = "HOSPITAL_LOCATION ASC";
-			string sFind = "<None>";
+//			m_dvClinicParams.Sort = "HOSPITAL_LOCATION ASC";
+//			string sFind = "<None>";
 //			nFind = m_dvClinicParams.Find((int) 0);
-			nFind = m_dvClinicParams.Find((string) sFind);
+/*			nFind = m_dvClinicParams.Find((string) sFind);
 
 			if (nFind < 0)
 			{
@@ -572,7 +571,7 @@ namespace IndianHealthService.ClinicalScheduling
 				drv["VISIT_SERVICE_CATEGORY"]="";
 				drv.EndEdit();
 			}
-
+*/
 //smh       cboRPMSClinic.DataSource = m_dvClinicParams;
             cboRPMSClinic.DataSource = m_dvHospLoc;
 			cboRPMSClinic.DisplayMember = "HOSPITAL_LOCATION";

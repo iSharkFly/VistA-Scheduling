@@ -1959,6 +1959,7 @@ namespace IndianHealthService.ClinicalScheduling
 
 					
                     //TODO: Remove this. This doesn't exist in VISTA.
+                    /*
                     DataRow[] draCS = drHL.GetChildRows(m_DocManager.GlobalDataSet.Relations["HospitalLocationClinic"]);
 					if (draCS.GetLength(0) > 0)
 					{
@@ -1970,10 +1971,11 @@ namespace IndianHealthService.ClinicalScheduling
 					bProvReqd = (sProvReqd == "YES")?true:false;
 					bPCC = (sPCC == "YES")?true:false;
 					bMultCodes = (sMultCodes == "YES")?true:false;
+                     */
 				}
 
 				DCheckIn dlgCheckin = new DCheckIn();
-				dlgCheckin.InitializePage(a, this.m_DocManager, sProv, bProvReqd, bPCC, bMultCodes, sStopCode);
+				dlgCheckin.InitializePage(a, this.m_DocManager, sProv, bProvReqd, bPCC, bMultCodes, sStopCode, nHospLoc);
 				calendarGrid1.CGToolTip.Active = false;
 				if (dlgCheckin.ShowDialog(this) != DialogResult.OK)
 				{
