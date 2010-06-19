@@ -584,9 +584,18 @@
         <member name="M:IndianHealthService.ClinicalScheduling.Printing.PrintMessage(System.String,System.Drawing.Printing.PrintPageEventArgs)">
             <summary>
             Print message on a page; typically that there are no appointments to be found.
+            Or just a test message to verify that printing works.
             </summary>
             <param name="msg">The exact string to print.</param>
             <param name="e">Print Page event args</param>
+        </member>
+        <member name="M:IndianHealthService.ClinicalScheduling.Printing.PrintRoutingSlip(IndianHealthService.ClinicalScheduling.CGAppointment,System.String,System.Drawing.Printing.PrintPageEventArgs)">
+            <summary>
+            Print Routing Slip
+            </summary>
+            <param name="a">Appointment Data Structure</param>
+            <param name="title">String to print for title</param>
+            <param name="e">etc</param>
         </member>
         <member name="T:IndianHealthService.ClinicalScheduling.DResourceGroupItem">
             <summary>
@@ -657,11 +666,6 @@
         <member name="T:IndianHealthService.ClinicalScheduling.DCheckIn">
             <summary>
             Summary description for DCheckIn.
-            </summary>
-        </member>
-        <member name="F:IndianHealthService.ClinicalScheduling.DCheckIn.components">
-            <summary>
-            Required designer variable.
             </summary>
         </member>
         <member name="M:IndianHealthService.ClinicalScheduling.DCheckIn.InitializePage(IndianHealthService.ClinicalScheduling.CGAppointment,IndianHealthService.ClinicalScheduling.CGDocumentManager,System.String,System.Boolean,System.Boolean,System.Boolean,System.String,System.Int32)">

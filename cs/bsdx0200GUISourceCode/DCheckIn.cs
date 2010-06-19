@@ -14,10 +14,7 @@ namespace IndianHealthService.ClinicalScheduling
     /// </summary>
     public class DCheckIn : System.Windows.Forms.Form
     {
-        /// <summary>
-        /// Required designer variable.
-        /// </summary>
-        private System.ComponentModel.Container components = null;
+        private IContainer components;
 
         public DCheckIn()
         {
@@ -81,6 +78,7 @@ namespace IndianHealthService.ClinicalScheduling
         private bool m_bPCC;
         private string m_sPCCClinicIEN;
         private string m_sPCCFormIEN;
+        private ToolTip toolTip1;
         private bool m_bPCCOutGuide;
 
         #endregion Fields
@@ -240,6 +238,7 @@ namespace IndianHealthService.ClinicalScheduling
                 if (nRow.Length > 0) nFind = m_dtProvider.Rows.IndexOf(nRow[0]);
                 cboProvider.SelectedIndex = nFind;
             }
+            //otherwise, just use the default provider table
             else
             {
                 m_dtProvider = m_dsGlobal.Tables["Provider"];
@@ -261,6 +260,7 @@ namespace IndianHealthService.ClinicalScheduling
 
 
             //Stop code processing
+            //TODO: Remove... not in VISTA.
             this.lblStopCode.Visible = false;
             this.cboStopCode.Visible = false;
             m_dvCS = new DataView(m_dsGlobal.Tables["ClinicStop"]);
@@ -452,6 +452,8 @@ namespace IndianHealthService.ClinicalScheduling
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(DCheckIn));
             this.pnlPageBottom = new System.Windows.Forms.Panel();
             this.cmdCancel = new System.Windows.Forms.Button();
             this.cmdOK = new System.Windows.Forms.Button();
@@ -474,6 +476,7 @@ namespace IndianHealthService.ClinicalScheduling
             this.cboPCCPlusClinic = new System.Windows.Forms.ComboBox();
             this.cboPCCPlusForm = new System.Windows.Forms.ComboBox();
             this.label5 = new System.Windows.Forms.Label();
+            this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.pnlPageBottom.SuspendLayout();
             this.pnlDescription.SuspendLayout();
             this.grpDescriptionResourceGroup.SuspendLayout();
@@ -536,9 +539,7 @@ namespace IndianHealthService.ClinicalScheduling
             this.lblDescriptionResourceGroup.Name = "lblDescriptionResourceGroup";
             this.lblDescriptionResourceGroup.Size = new System.Drawing.Size(514, 53);
             this.lblDescriptionResourceGroup.TabIndex = 0;
-            this.lblDescriptionResourceGroup.Text = "Use this panel to check in an appointment. A PCC visit will automatically be crea" +
-                "ted for this patient at the check in date and time if the clinic is set up to cr" +
-                "eate a visit at checkin.  A patient may only be checked-in once.";
+            this.lblDescriptionResourceGroup.Text = resources.GetString("lblDescriptionResourceGroup.Text");
             // 
             // label1
             // 
@@ -561,7 +562,7 @@ namespace IndianHealthService.ClinicalScheduling
             // 
             // lblAlready
             // 
-            this.lblAlready.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
+            this.lblAlready.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblAlready.ForeColor = System.Drawing.Color.Green;
             this.lblAlready.Location = new System.Drawing.Point(288, 40);
             this.lblAlready.Name = "lblAlready";
@@ -624,6 +625,7 @@ namespace IndianHealthService.ClinicalScheduling
             this.chkRoutingSlip.Size = new System.Drawing.Size(128, 16);
             this.chkRoutingSlip.TabIndex = 14;
             this.chkRoutingSlip.Text = "Print Routing Slip";
+            this.toolTip1.SetToolTip(this.chkRoutingSlip, "Prints routing slip to the Windows Default Printer");
             // 
             // grpPCCPlus
             // 

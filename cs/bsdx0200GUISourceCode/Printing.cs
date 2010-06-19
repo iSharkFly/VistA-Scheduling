@@ -278,6 +278,7 @@ namespace IndianHealthService.ClinicalScheduling
 
         /// <summary>
         /// Print message on a page; typically that there are no appointments to be found.
+        /// Or just a test message to verify that printing works.
         /// </summary>
         /// <param name="msg">The exact string to print.</param>
         /// <param name="e">Print Page event args</param>
@@ -286,6 +287,54 @@ namespace IndianHealthService.ClinicalScheduling
             e.Graphics.DrawString(msg, new Font(FontFamily.GenericSerif, 14),
                 Brushes.Black, e.MarginBounds);
         }
-        
+
+        /// <summary>
+        /// Print Routing Slip
+        /// </summary>
+        /// <param name="a">Appointment Data Structure</param>
+        /// <param name="title">String to print for title</param>
+        /// <param name="e">etc</param>
+        public static void PrintRoutingSlip(CGAppointment a, string title, PrintPageEventArgs e)
+        {
+            Rectangle printArea = e.MarginBounds;
+            Graphics g = e.Graphics;
+            StringFormat sf = new StringFormat();
+            sf.Alignment = StringAlignment.Center; //for title
+            Font fTitle = new Font(FontFamily.GenericSerif, 24, FontStyle.Bold); //for title
+            Font fBody = new Font(FontFamily.GenericSerif, 18);
+            Font fBodyEm = new Font(FontFamily.GenericSerif, 18, FontStyle.Bold);
+            g.DrawString(title, fTitle, Brushes.Black, printArea, sf); //title
+
+            // move down
+            int titleHeight = (int)g.MeasureString(title, fTitle, printArea.Width).Height;
+            printArea.Y += titleHeight;
+            printArea.Height -= titleHeight;
+
+            // draw underline
+            g.DrawLine(Pens.Black, printArea.Location, new Point(printArea.Right, printArea.Y));
+            printArea.Y += 15;
+            printArea.Height -= 15;
+
+            //construct what to print
+            string toprint = "Patient: " + a.PatientName + "\t" + "ID: " + a.PatientID;
+            toprint += "\n\n";
+            toprint += "Appointment Time: " + a.StartTime.ToLongDateString() + " " + a.StartTime.ToLongTimeString();
+            toprint += "\n\n";
+            toprint += "Notes:\n" + a.Note;
+
+            //print
+            g.DrawString(toprint, fBody, Brushes.Black, printArea);
+
+            // Print Date Printed
+            //sf to move to bottom center
+            StringFormat sf2 = new StringFormat();
+            sf2.LineAlignment = StringAlignment.Far;
+            sf2.Alignment = StringAlignment.Center;
+
+            //Print
+            Font fFooter = new Font(FontFamily.GenericSerif, 8);
+            g.DrawString("Printed: " + DateTime.Now, fFooter, Brushes.Black, printArea, sf2);
+
+        }
     }
 }
