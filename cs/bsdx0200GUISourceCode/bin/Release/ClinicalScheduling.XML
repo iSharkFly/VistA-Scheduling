@@ -45,9 +45,18 @@
         </member>
         <member name="T:IndianHealthService.ClinicalScheduling.CalendarGrid">
             <summary>
-            This class was regenerated from Calendargrid.dll using Reflector.exe
-            by Sam Habiel for WorldVista. The original source code is lost.
+            This class is reponsible for rendering the Calendar Grid.
             </summary>
+        </member>
+        <member name="M:IndianHealthService.ClinicalScheduling.CalendarGrid.WndProc(System.Windows.Forms.Message@)">
+            <summary>
+            The purpose of this is to properly draw the date boxes at the top of the calendar grid.
+            Otherwise, when scrolling, it gets garbled.
+            </summary>
+            <param name="msg">Handles two messages:
+            WM_VSCROLL (0x115 - Vertical Scrolling)
+            WM_HSCROLL (0x114 - Horizontal Scrolling)
+            </param>
         </member>
         <member name="T:IndianHealthService.ClinicalScheduling.DPatientLookup">
             <summary>

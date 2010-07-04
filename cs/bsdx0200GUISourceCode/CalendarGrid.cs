@@ -9,12 +9,11 @@
     using System.Runtime.InteropServices;
     using System.Windows.Forms;
     /// <summary>
-    /// This class was regenerated from Calendargrid.dll using Reflector.exe
-    /// by Sam Habiel for WorldVista. The original source code is lost.
+    /// This class is reponsible for rendering the Calendar Grid.
     /// </summary>
     public class CalendarGrid : Panel
     {
-        private Container components;
+        private IContainer components;
         private Font fontArial10;
         private Font fontArial8;
         private CGAppointments m_Appointments;
@@ -48,10 +47,10 @@
         private StringFormat m_sfHour;
         private StringFormat m_sfRight;
         private ArrayList m_sResourcesArray;
-        private Timer m_Timer;
+        private Timer m_Timer;                  // Timeer used in Drag and Drop Operations
         private ToolTip m_toolTip;
-        private const int WM_HSCROLL = 0x114;
-        private const int WM_VSCROLL = 0x115;
+        private const int WM_HSCROLL = 0x114;   // Horizontal Scrolling Windows Message
+        private const int WM_VSCROLL = 0x115;   // Vertical Scrolling Windows Message
 
         public event CGAppointmentChangedHandler CGAppointmentAdded;
 
@@ -69,7 +68,7 @@
             this.m_gridCells = new CGCells();
             this.m_selectedRange = new CGRange();
             this.m_SelectedAppointments = new CGAppointments();
-            this.m_dtStart = new DateTime(0x7d3, 1, 0x1b);
+            this.m_dtStart = new DateTime(2003, 1, 27);
             this.m_ApptOverlapTable = new Hashtable();
             this.m_ColumnInfoTable = new Hashtable();
             this.m_sResourcesArray = new ArrayList();
@@ -122,7 +121,7 @@
                 this.m_cellHeight = ((int) ef.Height) + 4;
                 int nColumns = this.m_nColumns;
                 int num2 = 60 / this.m_nTimeScale;
-                int num3 = 0x18 * num2;
+                int num3 = 24 * num2;
                 nColumns++;
                 num3++;
                 this.m_cellWidth = 600 / nColumns;
@@ -286,6 +285,29 @@
                     }
                 }
                 this.m_toolTip.RemoveAll();
+
+                ////smh new code -- select cell
+                //int nRow = -1;
+                //int nCol = -1;
+
+                ////Is the mouse over a known cell? If so, highlight cell
+                //if (this.HitTest(x, y, ref nRow, ref nCol))
+                //{
+                //    CGCell cellFromRowCol = this.m_gridCells.GetCellFromRowCol(nRow, nCol);
+                //    if (cellFromRowCol != null)
+                //    {
+                //        this.m_currentCell = cellFromRowCol;
+                //        this.m_selectedRange.StartCell = null;
+                //        this.m_selectedRange.EndCell = null;
+                //        this.m_selectedRange.CreateRange(this.m_gridCells, cellFromRowCol, cellFromRowCol);
+                //        this.m_bSelectingRange = true;
+                //        cellFromRowCol.IsSelected = true;
+                //        base.Invalidate(this.m_currentCell.CellRectangle);
+                //        //base.Invalidate();
+                //    }
+                //}
+
+
             }
         }
 
@@ -417,156 +439,207 @@
 
         private void DrawGrid(Graphics g)
         {
-            try
+            //Default color of grid lines is black
+            Pen pen = new Pen(Color.Black);
+
+            //each cell's height is Height of Arial Font 10pt + 10 pixels (by default 26 pixels)
+            SizeF ef = g.MeasureString("Test", this.m_fCell);
+            int num = 10;
+            this.m_cellHeight = ((int) ef.Height) + num;
+
+            // Number of columns is dynamic based on user of Grid. See Property Columns. Default 5 in init.
+            int nColumns = this.m_nColumns;
+
+            //Time scale is also dynamic. Property TimeScale. Default 20 (minutes)
+            //num3 stands for number of cells per hour
+            int num3 = 60 / this.m_nTimeScale;
+            //num4 stands for number of cells per day (aka rows in the grid)
+            int num4 = 24 * num3;
+            //Add extra column to hold time in the left hand corner
+            nColumns++;
+            //add extra row to represent dates or resources (depending on which view we are in)
+            //Not sure of which variable controls view yet.
+            num4++;
+
+            // 100 px is reserved no matter our column sizes for displaying the time scale
+
+            // Minimum cell width is 600/columns (100 px by default)
+            this.m_cellWidth = 600 / nColumns;
+
+            // if we happen to have more than 600 pixels in our Client Window then cell
+            // is (Width-100) / (number of date columns)
+            if (base.ClientRectangle.Width > 600)
             {
-                Pen pen = new Pen(Color.Black);
-                SizeF ef = g.MeasureString("Test", this.m_fCell);
-                int num = 10;
-                this.m_cellHeight = ((int) ef.Height) + num;
-                int nColumns = this.m_nColumns;
-                int num3 = 60 / this.m_nTimeScale;
-                int num4 = 0x18 * num3;
-                nColumns++;
-                num4++;
-                this.m_cellWidth = 600 / nColumns;
-                if (base.ClientRectangle.Width > 600)
+                this.m_cellWidth = (base.ClientRectangle.Width - this.m_col0Width) / (nColumns - 1);
+            }
+
+            // If we have one column, the cell width is the itself - 100
+            if (this.m_nColumns == 1)
+            {
+                this.m_cellWidth = base.ClientRectangle.Width - this.m_col0Width;
+            }
+
+            // Our rectangle will start scrolling if width is less than 600 and height less than  height of all cells comb
+            // Of course Height will scroll all the time unless you have a humungous screen
+            base.AutoScrollMinSize = new Size(600, this.m_cellHeight * num4);
+
+            // Default Rectangle is Gray
+            g.FillRectangle(Brushes.LightGray, base.ClientRectangle);
+            
+            int num5 = 0; //Minutes (start at 0)
+            int num6 = 0; //Hour (starts at 0)
+            
+            // flag is true only if there are no cells what so ever in the screen
+            // Only true when no resource is selected.
+            bool flag = this.m_gridCells.CellCount == 0;
+
+            // Move the base point from the client screen to the scrolling region top-left corner.
+            g.TranslateTransform((float) base.AutoScrollPosition.X, (float) base.AutoScrollPosition.Y);
+
+            // For each row except the first one (i starts from 1 rather than zero)
+            for (int i = 1; i < num4; i++)
+            {
+                int x = 0;
+                //point is (0, 1st Cell Start) then (0, 2nd Cell Start) until we run out
+                Point point = new Point(x, i * this.m_cellHeight);
+                //rectangle2 represents each cell rectangle
+                Rectangle rectangle2 = new Rectangle(point.X, point.Y, this.m_cellWidth, this.m_cellHeight);
+                //rect stands for the time scale rectangle; width is 100px; Height is length of the hour on grid
+                Rectangle rect = new Rectangle(0, rectangle2.Y, this.m_col0Width, rectangle2.Height * num3);
+                //height is length of hour
+                int height = rect.Height;
+                //Min font height is 25 pixels (100/4)--see below where it's used
+                height = (height > (this.m_col0Width / 4)) ? (this.m_col0Width / 4) : height;
+
+                //if we are the top of the time scale (at hour:00) -- num5 is min
+                if (num5 == 0)
                 {
-                    this.m_cellWidth = (base.ClientRectangle.Width - this.m_col0Width) / (nColumns - 1);
+                    // Fill time scale triangle with Gray (remember, this is the whole hour!)
+                    g.FillRectangle(Brushes.LightGray, rect);
+                    // Draw Rectangle
+                    g.DrawRectangle(pen, rect.X, rect.Y, rect.Width, rect.Height);
+                    //Pad time with at least one zero to make it 2 digits
+                    string str = string.Format("{0}", num6).PadLeft(2, '0');
+                    //Font height using pixels. Min is 25 pixels
+                    Font font = new Font("Arial", (float) height, FontStyle.Bold, GraphicsUnit.Pixel);
+                    // rectangle3 is the left half of the time rectangle
+                    Rectangle rectangle3 = new Rectangle(rect.X, rect.Y, rect.Width / 2, rect.Height);
+                    // In this left half, draw the hours (m_sfHour is the stringformat:
+                    // Horizontal Center and Right Justified to rectangle3
+                    g.DrawString(str, font, Brushes.Black, rectangle3, this.m_sfHour);
+                    // Increment hour
+                    num6++;
+                    font.Dispose();
                 }
-                if (this.m_nColumns == 1)
+                
+                // Pad minutes with zeros to be 2 digits long
+                string s = string.Format("{0}", num5);
+                s = ":" + s.PadLeft(2, '0');
+                // Rectangle starts at 
+                // X: 2/3rds of width of Time Rectangle
+                // Y: Top of the current time slot cell
+                // Width: 1/3rd of the width of the Time Rectangle
+                // Height: Height of a time slot
+                Rectangle layoutRectangle = new Rectangle(rect.X + ((rect.Width * 2) / 3), rectangle2.Top, rect.Width / 3, rectangle2.Height);
+                // At in this rectangle, write the minutes. Horizontal Ctr and Right Justified to Rectangle
+                g.DrawString(s, this.m_fCell, Brushes.Black, layoutRectangle, this.m_sfRight);
+                Point point2 = new Point(rect.X + ((rect.Width * 2) / 3), rectangle2.Bottom);
+                Point point3 = new Point(rect.Right, rectangle2.Bottom);
+                g.DrawLine(pen, point2, point3);
+                num5 += this.m_nTimeScale;
+                num5 = (num5 >= 60) ? 0 : num5;
+                if ((i == (num4 - 1)) && !this.m_bScroll)
                 {
-                    this.m_cellWidth = base.ClientRectangle.Width - this.m_col0Width;
+                    g.TranslateTransform((float) -base.AutoScrollPosition.X, (float) -base.AutoScrollPosition.Y);
+                    rect = new Rectangle(0, 0, this.m_col0Width, this.m_cellHeight);
+                    g.FillRectangle(Brushes.LightGray, rect);
+                    g.DrawRectangle(pen, rect);
+                    g.TranslateTransform((float) base.AutoScrollPosition.X, (float) base.AutoScrollPosition.Y);
                 }
-                base.AutoScrollMinSize = new Size(600, this.m_cellHeight * num4);
-                g.FillRectangle(Brushes.LightGray, base.ClientRectangle);
-                int num5 = 0;
-                int num6 = 0;
-                bool flag = this.m_gridCells.CellCount == 0;
-                g.TranslateTransform((float) base.AutoScrollPosition.X, (float) base.AutoScrollPosition.Y);
-                for (int i = 1; i < num4; i++)
+            }
+            for (int j = num4; j > -1; j--)
+            {
+                for (int k = 1; k < nColumns; k++)
                 {
-                    int x = 0;
-                    Point point = new Point(x, i * this.m_cellHeight);
-                    Rectangle rectangle2 = new Rectangle(point.X, point.Y, this.m_cellWidth, this.m_cellHeight);
-                    Rectangle rect = new Rectangle(0, rectangle2.Y, this.m_col0Width, rectangle2.Height * num3);
-                    int height = rect.Height;
-                    height = (height > (this.m_col0Width / 4)) ? (this.m_col0Width / 4) : height;
-                    if (num5 == 0)
+                    int num12 = 0;
+                    if (k == 1)
                     {
-                        g.FillRectangle(Brushes.LightGray, rect);
-                        g.DrawRectangle(pen, rect.X, rect.Y, rect.Width, rect.Height);
-                        string str = string.Format("{0}", num6).PadLeft(2, '0');
-                        Font font = new Font("Arial", (float) height, FontStyle.Bold, GraphicsUnit.Pixel);
-                        Rectangle rectangle3 = new Rectangle(rect.X, rect.Y, rect.Width / 2, rect.Height);
-                        g.DrawString(str, font, Brushes.Black, rectangle3, this.m_sfHour);
-                        num6++;
-                        font.Dispose();
+                        num12 = this.m_col0Width;
                     }
-                    string s = string.Format("{0}", num5);
-                    s = ":" + s.PadLeft(2, '0');
-                    Rectangle layoutRectangle = new Rectangle(rect.X + ((rect.Width * 2) / 3), rectangle2.Top, rect.Width / 3, rectangle2.Height);
-                    g.DrawString(s, this.m_fCell, Brushes.Black, layoutRectangle, this.m_sfRight);
-                    Point point2 = new Point(rect.X + ((rect.Width * 2) / 3), rectangle2.Bottom);
-                    Point point3 = new Point(rect.Right, rectangle2.Bottom);
-                    g.DrawLine(pen, point2, point3);
-                    num5 += this.m_nTimeScale;
-                    num5 = (num5 >= 60) ? 0 : num5;
-                    if ((i == (num4 - 1)) && !this.m_bScroll)
+                    if (k > 1)
                     {
-                        g.TranslateTransform((float) -base.AutoScrollPosition.X, (float) -base.AutoScrollPosition.Y);
-                        rect = new Rectangle(0, 0, this.m_col0Width, this.m_cellHeight);
-                        g.FillRectangle(Brushes.LightGray, rect);
-                        g.DrawRectangle(pen, rect);
-                        g.TranslateTransform((float) base.AutoScrollPosition.X, (float) base.AutoScrollPosition.Y);
+                        num12 = this.m_col0Width + (this.m_cellWidth * (k - 1));
                     }
-                }
-                for (int j = num4; j > -1; j--)
-                {
-                    for (int k = 1; k < nColumns; k++)
+                    Point point4 = new Point(num12, j * this.m_cellHeight);
+                    Rectangle r = new Rectangle(point4.X, point4.Y, this.m_cellWidth, this.m_cellHeight);
+                    if (j != 0)
                     {
-                        int num12 = 0;
-                        if (k == 1)
+                        CGCell cellFromRowCol = null;
+                        if (flag)
                         {
-                            num12 = this.m_col0Width;
+                            cellFromRowCol = new CGCell(r, j, k);
+                            this.m_gridCells.AddCell(cellFromRowCol);
                         }
-                        if (k > 1)
+                        else
                         {
-                            num12 = this.m_col0Width + (this.m_cellWidth * (k - 1));
+                            cellFromRowCol = this.m_gridCells.GetCellFromRowCol(j, k);
+                            cellFromRowCol.CellRectangle = r;
                         }
-                        Point point4 = new Point(num12, j * this.m_cellHeight);
-                        Rectangle r = new Rectangle(point4.X, point4.Y, this.m_cellWidth, this.m_cellHeight);
-                        if (j != 0)
+                        if (this.m_sResourcesArray.Count > 0)
                         {
-                            CGCell cellFromRowCol = null;
-                            if (flag)
+                            if (this.m_selectedRange.CellIsInRange(cellFromRowCol))
                             {
-                                cellFromRowCol = new CGCell(r, j, k);
-                                this.m_gridCells.AddCell(cellFromRowCol);
+                                g.FillRectangle(Brushes.Aquamarine, r);
                             }
                             else
                             {
-                                cellFromRowCol = this.m_gridCells.GetCellFromRowCol(j, k);
-                                cellFromRowCol.CellRectangle = r;
+                                g.FillRectangle(cellFromRowCol.AppointmentTypeColor, r);
                             }
-                            if (this.m_sResourcesArray.Count > 0)
+                            g.DrawRectangle(pen, r.X, r.Y, r.Width, r.Height);
+                            if (j == 1)
                             {
-                                if (this.m_selectedRange.CellIsInRange(cellFromRowCol))
-                                {
-                                    g.FillRectangle(Brushes.Aquamarine, r);
-                                }
-                                else
-                                {
-                                    g.FillRectangle(cellFromRowCol.AppointmentTypeColor, r);
-                                }
-                                g.DrawRectangle(pen, r.X, r.Y, r.Width, r.Height);
-                                if (j == 1)
-                                {
-                                    this.DrawAppointments(g, this.m_col0Width, this.m_cellWidth, this.m_cellHeight);
-                                }
+                                this.DrawAppointments(g, this.m_col0Width, this.m_cellWidth, this.m_cellHeight);
                             }
-                            continue;
                         }
-                        if (!this.m_bScroll)
+                        continue;
+                    }
+                    if (!this.m_bScroll)
+                    {
+                        g.TranslateTransform(0f, (float) -base.AutoScrollPosition.Y);
+                        Rectangle rectangle6 = r;
+                        g.FillRectangle(Brushes.LightBlue, rectangle6);
+                        g.DrawRectangle(pen, rectangle6.X, rectangle6.Y, rectangle6.Width, rectangle6.Height);
+                        string str3 = "";
+                        if (this.m_sResourcesArray.Count > 1)
                         {
-                            g.TranslateTransform(0f, (float) -base.AutoScrollPosition.Y);
-                            Rectangle rectangle6 = r;
-                            g.FillRectangle(Brushes.LightBlue, rectangle6);
-                            g.DrawRectangle(pen, rectangle6.X, rectangle6.Y, rectangle6.Width, rectangle6.Height);
-                            string str3 = "";
-                            if (this.m_sResourcesArray.Count > 1)
+                            foreach (DictionaryEntry entry in this.m_ColumnInfoTable)
                             {
-                                foreach (DictionaryEntry entry in this.m_ColumnInfoTable)
+                                int num13 = (int) entry.Value;
+                                num13++;
+                                if (num13 == k)
                                 {
-                                    int num13 = (int) entry.Value;
-                                    num13++;
-                                    if (num13 == k)
-                                    {
-                                        str3 = entry.Key.ToString();
-                                        break;
-                                    }
+                                    str3 = entry.Key.ToString();
+                                    break;
                                 }
                             }
-                            else
-                            {
-                                DateTime dtStart = this.m_dtStart;
-                                if (k > 1)
-                                {
-                                    dtStart = dtStart.AddDays((double) (k - 1));
-                                }
-                                string format = "ddd, MMM d";
-                                str3 = dtStart.ToString(format, DateTimeFormatInfo.InvariantInfo);
-                            }
-                            g.DrawString(str3, this.m_fCell, Brushes.Black, rectangle6, this.m_sf);
-                            g.TranslateTransform(0f, (float) base.AutoScrollPosition.Y);
                         }
+                        else
+                        {
+                            DateTime dtStart = this.m_dtStart;
+                            if (k > 1)
+                            {
+                                dtStart = dtStart.AddDays((double) (k - 1));
+                            }
+                            string format = "ddd, MMM d";
+                            str3 = dtStart.ToString(format, DateTimeFormatInfo.InvariantInfo);
+                        }
+                        g.DrawString(str3, this.m_fCell, Brushes.Black, rectangle6, this.m_sf);
+                        g.TranslateTransform(0f, (float) base.AutoScrollPosition.Y);
                     }
                 }
-                this.m_bScroll = false;
-                pen.Dispose();
             }
-            catch (Exception)
-            {
-            }
+            this.m_bScroll = false;
+            pen.Dispose();
         }
 
         public Rectangle GetAppointmentRect(CGAppointment a, int col0Width, int cellWidth, int cellHeight, out bool bRet)
@@ -775,21 +848,28 @@
 
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
+            this.m_toolTip = new System.Windows.Forms.ToolTip(this.components);
+            this.SuspendLayout();
+            // 
+            // CalendarGrid
+            // 
             this.AutoScroll = true;
-            base.AutoScrollMinSize = new Size(600, 400);
-            this.BackColor = SystemColors.Window;
-            base.Paint += new PaintEventHandler(this.CalendarGrid_Paint);
-            base.MouseDown += new MouseEventHandler(this.CalendarGrid_MouseDown);
-            base.MouseUp += new MouseEventHandler(this.CalendarGrid_MouseUp);
-            base.MouseMove += new MouseEventHandler(this.CalendarGrid_MouseMove);
-            base.DragEnter += new DragEventHandler(this.CalendarGrid_DragEnter);
-            base.DragDrop += new DragEventHandler(this.CalendarGrid_DragDrop);
-            this.m_toolTip = new ToolTip();
+            this.AutoScrollMinSize = new System.Drawing.Size(600, 400);
+            this.BackColor = System.Drawing.SystemColors.Window;
+            this.Paint += new System.Windows.Forms.PaintEventHandler(this.CalendarGrid_Paint);
+            this.MouseMove += new System.Windows.Forms.MouseEventHandler(this.CalendarGrid_MouseMove);
+            this.DragDrop += new System.Windows.Forms.DragEventHandler(this.CalendarGrid_DragDrop);
+            this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.CalendarGrid_MouseDown);
+            this.MouseUp += new System.Windows.Forms.MouseEventHandler(this.CalendarGrid_MouseUp);
+            this.DragEnter += new System.Windows.Forms.DragEventHandler(this.CalendarGrid_DragEnter);
+            this.ResumeLayout(false);
+
         }
 
         private int MinSince80(DateTime d)
         {
-            DateTime time = new DateTime(0x7bc, 1, 1, 0, 0, 0);
+            DateTime time = new DateTime(1980, 1, 1, 0, 0, 0);
             TimeSpan span = (TimeSpan) (d - time);
             return (int) span.TotalMinutes;
         }
@@ -994,6 +1074,7 @@
             {
                 this.m_ApptOverlapTable.Add(num4, 0);
             }
+            // Here it draws the Dates on Top
             if (this.m_ApptOverlapTable.Count != 0)
             {
                 int num5 = (this.m_sResourcesArray.Count > 1) ? 1 : this.StartDate.DayOfYear;
@@ -1061,17 +1142,25 @@
             return rectangle2.IntersectsWith(rect);
         }
 
+        /// <summary>
+        /// The purpose of this is to properly draw the date boxes at the top of the calendar grid.
+        /// Otherwise, when scrolling, it gets garbled.
+        /// </summary>
+        /// <param name="msg">Handles two messages:
+        /// WM_VSCROLL (0x115 - Vertical Scrolling)
+        /// WM_HSCROLL (0x114 - Horizontal Scrolling)
+        /// </param>
         protected override void WndProc(ref Message msg)
         {
             try
             {
-                if (msg.Msg == 0x115)
+                if (msg.Msg == WM_VSCROLL)
                 {
                     this.m_bScroll = true;
                     base.Invalidate(false);
                     this.m_bScroll = false;
                 }
-                if (msg.Msg == 0x114)
+                if (msg.Msg == WM_HSCROLL)
                 {
                     base.Invalidate(false);
                 }
@@ -1272,6 +1361,7 @@
                 }
             }
         }
+
     }
 }
 

@@ -235,7 +235,7 @@ namespace IndianHealthService.ClinicalScheduling
 				m_ds.SetStatus("Loading Configuration Settings...");
                 m_ds.Refresh();
 				this.Activate();
-                System.Configuration.ConfigurationManager.GetSection("appSettings");
+                // smh--not used System.Configuration.ConfigurationManager.GetSection("appSettings");
                 m_ds.SetStatus("Connecting to VistA Server...");
                 m_ds.Refresh();
 				bool bRetry = true;
@@ -261,13 +261,16 @@ namespace IndianHealthService.ClinicalScheduling
                 }
 				do
 				{
+                    // login crap
                     try
                     {
+                        // Not my code
                         if (bReLogin == true)
                         {
                             //Prompt for Access and Verify codes
                             _current.m_ConnectInfo.LoadConnectInfo("", "");
                         }
+                        // My code -- buts looks so ugly!
                         else
                         {
                             if (m_Server != String.Empty && m_Port != 0 && m_AccessCode != String.Empty
@@ -336,6 +339,7 @@ namespace IndianHealthService.ClinicalScheduling
 					return;
 				}
 				
+                //smh -- why get handles?
 				System.IntPtr pHandle = this.Handle;
 				System.IntPtr pConnHandle = this.ConnectInfo.Handle;
                 this.m_sHandle = pHandle.ToString();
@@ -375,6 +379,7 @@ namespace IndianHealthService.ClinicalScheduling
 		{
 #if DEBUG
             // Print console messages to console if launched from console
+            // Note: Imported From kernel32.dll
             AttachConsole(ATTACH_PARENT_PROCESS);
 #endif
             try

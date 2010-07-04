@@ -237,6 +237,13 @@ namespace IndianHealthService.ClinicalScheduling
                 DataRow[] nRow = m_dtProvider.Select("DEFAULT='YES'", "NAME ASC");
                 if (nRow.Length > 0) nFind = m_dtProvider.Rows.IndexOf(nRow[0]);
                 cboProvider.SelectedIndex = nFind;
+
+                //an experiment: LINQ
+                var defProv = from Provider in m_dtProvider.AsEnumerable() 
+                              where 
+                                Provider["DEFAULT"] == "YES" 
+                              select Provider;
+
             }
             //otherwise, just use the default provider table
             else

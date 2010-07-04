@@ -26,7 +26,7 @@ namespace IndianHealthService.ClinicalScheduling
 		public int				m_nColumnCount; //todo: this should point to the view's member for column count
 		public int				m_nTimeUnits;
 		private string			m_sDocName;
-		public ArrayList		m_sResourcesArray;
+		public ArrayList		m_sResourcesArray; //keeps the resources
 		public ScheduleType		m_ScheduleType;
 		private DateTime		m_dSelectedDate; //Holds the user's selection from the dtpicker
 		private DateTime		m_dStartDate; //Beginning date of document data
@@ -200,13 +200,19 @@ namespace IndianHealthService.ClinicalScheduling
 				CGDocumentManager	pApp = CGDocumentManager.Current;
 				DataTable			rAppointmentSchedule;
 
+                //Nice to know that it gets set here!!!
 				m_dLastRefresh = DateTime.Now;
 
 				this.m_appointments.ClearAllAppointments();
 
+                //  calls RPC to (presumably--not sure yet) get appointments
 				rAppointmentSchedule = CGSchedLib.CreateAppointmentSchedule(m_DocManager, m_sResourcesArray, this.m_dStartDate, this.m_dEndDate);
-				CGSchedLib.OutputArray(rAppointmentSchedule, "rAppointmentSchedule");
-				foreach (DataRow r in rAppointmentSchedule.Rows) 
+				
+                // Datatable dumper into Debug Log (nice to know that this exists)
+                CGSchedLib.OutputArray(rAppointmentSchedule, "rAppointmentSchedule");
+				
+                
+                foreach (DataRow r in rAppointmentSchedule.Rows) 
 				{
 				
 					if (r["APPOINTMENTID"].ToString() == "0")
@@ -278,6 +284,8 @@ namespace IndianHealthService.ClinicalScheduling
 			//Set initial From and To dates based on current day
 			//			DateTime dDate = new DateTime(2001,12,05);  //Testing line
 			DateTime dDate = DateTime.Today;
+            
+            //smh: Question: Where does bRet get used? It's a useless varaible so far.
 			bool bRet = this.WeekNeedsRefresh(2,dDate, out this.m_dStartDate, out this.m_dEndDate);
 
 			//Create new View

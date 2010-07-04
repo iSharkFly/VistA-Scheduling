@@ -139,7 +139,9 @@ namespace IndianHealthService.ClinicalScheduling
 			this.StartDate = dStartDate;
 			this.Document = doc;
 			this.Appointments = cgAppts;
-			this.Text = this.DocManager.ConnectInfo.UserName;
+			
+            // Set username and division up top
+            this.Text = this.DocManager.ConnectInfo.UserName;
 			if (sText != null)
 				this.Text += " - " + sText;
 			if (DocManager.ConnectInfo.DivisionName != null)
@@ -268,6 +270,7 @@ namespace IndianHealthService.ClinicalScheduling
             this.dateTimePicker1 = new System.Windows.Forms.DateTimePicker();
             this.lblResource = new System.Windows.Forms.Label();
             this.panelCenter = new System.Windows.Forms.Panel();
+            this.calendarGrid1 = new IndianHealthService.ClinicalScheduling.CalendarGrid();
             this.ctxCalendarGrid = new System.Windows.Forms.ContextMenu();
             this.ctxCalGridAdd = new System.Windows.Forms.MenuItem();
             this.ctxCalGridEdit = new System.Windows.Forms.MenuItem();
@@ -279,13 +282,12 @@ namespace IndianHealthService.ClinicalScheduling
             this.menuItem9 = new System.Windows.Forms.MenuItem();
             this.ctxCalGridWalkin = new System.Windows.Forms.MenuItem();
             this.menuItem10 = new System.Windows.Forms.MenuItem();
+            this.ctxCalGridReprintRoutingSlip = new System.Windows.Forms.MenuItem();
             this.panelBottom = new System.Windows.Forms.Panel();
             this.statusBar1 = new System.Windows.Forms.StatusBar();
             this.splitter1 = new System.Windows.Forms.Splitter();
             this.splitter2 = new System.Windows.Forms.Splitter();
             this.printRoutingSlip = new System.Drawing.Printing.PrintDocument();
-            this.calendarGrid1 = new IndianHealthService.ClinicalScheduling.CalendarGrid();
-            this.ctxCalGridReprintRoutingSlip = new System.Windows.Forms.MenuItem();
             this.panelRight.SuspendLayout();
             this.panelClip.SuspendLayout();
             this.panelTop.SuspendLayout();
@@ -795,6 +797,34 @@ namespace IndianHealthService.ClinicalScheduling
             this.panelCenter.Size = new System.Drawing.Size(668, 321);
             this.panelCenter.TabIndex = 7;
             // 
+            // calendarGrid1
+            // 
+            this.calendarGrid1.AllowDrop = true;
+            this.calendarGrid1.Appointments = null;
+            this.calendarGrid1.ApptDragSource = null;
+            this.calendarGrid1.AutoScroll = true;
+            this.calendarGrid1.AutoScrollMinSize = new System.Drawing.Size(600, 1898);
+            this.calendarGrid1.AvailabilityArray = null;
+            this.calendarGrid1.BackColor = System.Drawing.SystemColors.Window;
+            this.calendarGrid1.Columns = 5;
+            this.calendarGrid1.ContextMenu = this.ctxCalendarGrid;
+            this.calendarGrid1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.calendarGrid1.DrawWalkIns = true;
+            this.calendarGrid1.GridBackColor = null;
+            this.calendarGrid1.GridEnter = false;
+            this.calendarGrid1.Location = new System.Drawing.Point(0, 0);
+            this.calendarGrid1.Name = "calendarGrid1";
+            this.calendarGrid1.Resources = ((System.Collections.ArrayList)(resources.GetObject("calendarGrid1.Resources")));
+            this.calendarGrid1.SelectedAppointment = 0;
+            this.calendarGrid1.Size = new System.Drawing.Size(668, 321);
+            this.calendarGrid1.StartDate = new System.DateTime(2003, 1, 27, 0, 0, 0, 0);
+            this.calendarGrid1.TabIndex = 0;
+            this.calendarGrid1.TimeScale = 20;
+            this.calendarGrid1.DoubleClick += new System.EventHandler(this.calendarGrid1_DoubleClick);
+            this.calendarGrid1.CGSelectionChanged += new IndianHealthService.ClinicalScheduling.CGSelectionChangedHandler(this.calendarGrid1_CGSelectionChanged);
+            this.calendarGrid1.CGAppointmentChanged += new IndianHealthService.ClinicalScheduling.CGAppointmentChangedHandler(this.calendarGrid1_CGAppointmentChanged);
+            this.calendarGrid1.CGAppointmentAdded += new IndianHealthService.ClinicalScheduling.CGAppointmentChangedHandler(this.calendarGrid1_CGAppointmentAdded);
+            // 
             // ctxCalendarGrid
             // 
             this.ctxCalendarGrid.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
@@ -868,6 +898,12 @@ namespace IndianHealthService.ClinicalScheduling
             this.menuItem10.Index = 9;
             this.menuItem10.Text = "-";
             // 
+            // ctxCalGridReprintRoutingSlip
+            // 
+            this.ctxCalGridReprintRoutingSlip.Index = 10;
+            this.ctxCalGridReprintRoutingSlip.Text = "&Reprint Routing Slip";
+            this.ctxCalGridReprintRoutingSlip.Click += new System.EventHandler(this.ctxCalGridReprintRoutingSlip_Click);
+            // 
             // panelBottom
             // 
             this.panelBottom.Controls.Add(this.statusBar1);
@@ -907,40 +943,6 @@ namespace IndianHealthService.ClinicalScheduling
             // 
             this.printRoutingSlip.DocumentName = "Routing Slip";
             this.printRoutingSlip.PrintPage += new System.Drawing.Printing.PrintPageEventHandler(this.printRoutingSlip_PrintPage);
-            // 
-            // calendarGrid1
-            // 
-            this.calendarGrid1.AllowDrop = true;
-            this.calendarGrid1.Appointments = null;
-            this.calendarGrid1.ApptDragSource = null;
-            this.calendarGrid1.AutoScroll = true;
-            this.calendarGrid1.AutoScrollMinSize = new System.Drawing.Size(600, 1898);
-            this.calendarGrid1.AvailabilityArray = null;
-            this.calendarGrid1.BackColor = System.Drawing.SystemColors.Window;
-            this.calendarGrid1.Columns = 5;
-            this.calendarGrid1.ContextMenu = this.ctxCalendarGrid;
-            this.calendarGrid1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.calendarGrid1.DrawWalkIns = true;
-            this.calendarGrid1.GridBackColor = null;
-            this.calendarGrid1.GridEnter = false;
-            this.calendarGrid1.Location = new System.Drawing.Point(0, 0);
-            this.calendarGrid1.Name = "calendarGrid1";
-            this.calendarGrid1.Resources = ((System.Collections.ArrayList)(resources.GetObject("calendarGrid1.Resources")));
-            this.calendarGrid1.SelectedAppointment = 0;
-            this.calendarGrid1.Size = new System.Drawing.Size(668, 321);
-            this.calendarGrid1.StartDate = new System.DateTime(2003, 1, 27, 0, 0, 0, 0);
-            this.calendarGrid1.TabIndex = 0;
-            this.calendarGrid1.TimeScale = 20;
-            this.calendarGrid1.DoubleClick += new System.EventHandler(this.calendarGrid1_DoubleClick);
-            this.calendarGrid1.CGSelectionChanged += new IndianHealthService.ClinicalScheduling.CGSelectionChangedHandler(this.calendarGrid1_CGSelectionChanged);
-            this.calendarGrid1.CGAppointmentChanged += new IndianHealthService.ClinicalScheduling.CGAppointmentChangedHandler(this.calendarGrid1_CGAppointmentChanged);
-            this.calendarGrid1.CGAppointmentAdded += new IndianHealthService.ClinicalScheduling.CGAppointmentChangedHandler(this.calendarGrid1_CGAppointmentAdded);
-            // 
-            // ctxCalGridReprintRoutingSlip
-            // 
-            this.ctxCalGridReprintRoutingSlip.Index = 10;
-            this.ctxCalGridReprintRoutingSlip.Text = "&Reprint Routing Slip";
-            this.ctxCalGridReprintRoutingSlip.Click += new System.EventHandler(this.ctxCalGridReprintRoutingSlip_Click);
             // 
             // CGView
             // 
@@ -2290,11 +2292,14 @@ namespace IndianHealthService.ClinicalScheduling
 		public void UpdateArrays()
 		{
 			Debug.Assert(this.InvokeRequired == false,"CGView.UpdateArrays InvokeRequired");
+            // This is where you set how the grid will look
 			try 
 			{
 				this.calendarGrid1.AvailabilityArray = this.m_Document.AvailabilityArray;
 				this.calendarGrid1.Resources = this.m_Document.Resources;
-				this.calendarGrid1.OnUpdateArrays();
+                // this.calendarGrid1.Columns = 7; //test
+                this.calendarGrid1.StartDate = DateTime.Parse("10-10-2007"); // another test
+				this.calendarGrid1.OnUpdateArrays(); // this draws the Calendar
 				this.lblResource.Text = this.m_Document.DocName;
 				this.calendarGrid1.Invalidate();
 			}
