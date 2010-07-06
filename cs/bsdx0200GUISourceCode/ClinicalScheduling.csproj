@@ -107,9 +107,9 @@
     <UseVSHostingProcess>false</UseVSHostingProcess>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="BMXNet20, Version=2.0.2459.21970, Culture=neutral, PublicKeyToken=069dc2499aed6a8c, processorArchitecture=MSIL">
+    <Reference Include="BMXNet21, Version=2.0.3839.7911, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>bin\Release\BMXNet20.dll</HintPath>
+      <HintPath>..\..\..\BMX\bmx_0200scr\BMX2\BMXNet\bin\Release\BMXNet21.dll</HintPath>
     </Reference>
     <Reference Include="System">
       <Name>System</Name>

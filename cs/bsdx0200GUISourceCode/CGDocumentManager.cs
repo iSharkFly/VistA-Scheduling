@@ -23,10 +23,15 @@ namespace IndianHealthService.ClinicalScheduling
 		private bool						m_bSchedManager;
 		private bool						m_bExitOK = true;
         public string                       m_sHandle = "0";
+        
+        //Connection variables
         private string                      m_AccessCode="";
         private string                      m_VerifyCode="";
         private string                      m_Server="";
         private int                         m_Port=0;
+
+        //Encoding string (empty by default)
+        private string                      m_Encoding="";
 
 		//M Connection member variables
 		private DataSet									m_dsGlobal = null;
@@ -36,15 +41,13 @@ namespace IndianHealthService.ClinicalScheduling
 
 		#endregion
 
+        /// <summary>
+        /// Constructor. Sets up connector, and ties BMXNet Events to function here.
+        /// </summary>
 		public CGDocumentManager()
 		{
 			InitializeComponent();
-			m_ConnectInfo = new BMXNetConnectInfo();
-            //m_ConnectInfo.bmxNetLib.StartLog();    //This line turns on logging of messages
             m_bSchedManager = false;
-			CDocMgrEventDelegate = new BMXNetConnectInfo.BMXNetEventDelegate(CDocMgrEventHandler);
-			m_ConnectInfo.BMXNetEvent += CDocMgrEventDelegate;
-			m_ConnectInfo.EventPollingEnabled = false;
         }
 
         #region BMXNet Event Handler
@@ -226,6 +229,12 @@ namespace IndianHealthService.ClinicalScheduling
 
 		private void InitializeApp(bool bReLogin)
 		{
+            m_ConnectInfo = new BMXNetConnectInfo(m_Encoding); // Encoding is "" unless passed in command line
+            //m_ConnectInfo.bmxNetLib.StartLog();    //This line turns on logging of messages
+            CDocMgrEventDelegate = new BMXNetConnectInfo.BMXNetEventDelegate(CDocMgrEventHandler);
+            m_ConnectInfo.BMXNetEvent += CDocMgrEventDelegate;
+            m_ConnectInfo.EventPollingEnabled = false;
+
 			try
 			{
 				//Set M connection info
@@ -392,7 +401,8 @@ namespace IndianHealthService.ClinicalScheduling
                     { "s=", s => _current.m_Server = s },
                     { "p=", p => _current.m_Port = int.Parse(p) },
                     { "a=", a => _current.m_AccessCode = a },
-                    { "v=", v => _current.m_VerifyCode = v }
+                    { "v=", v => _current.m_VerifyCode = v },
+                    { "e=", e => _current.m_Encoding = e}
                 };
 
                 opset.Parse(args);
@@ -647,7 +657,7 @@ namespace IndianHealthService.ClinicalScheduling
 			m_dsGlobal.Relations.Add(dr);
 
 			//Build active provider table
-			sCommandText = "SELECT BMXIEN, NAME FROM NEW_PERSON WHERE INACTIVE_DATE = ''";
+			sCommandText = "SELECT BMXIEN, NAME FROM NEW_PERSON WHERE INACTIVE_DATE = '' AND BMXIEN > 1";
 			ConnectInfo.RPMSDataTable(sCommandText, "Provider", m_dsGlobal);
 			Debug.Write("LoadGlobalRecordsets -- Provider loaded\n");
 
@@ -1038,7 +1048,8 @@ namespace IndianHealthService.ClinicalScheduling
 				System.IntPtr pHandle = this.Handle;
 				DataTable dtOut;
 				RPMSDataTableDelegate rdtd = new RPMSDataTableDelegate(ConnectInfo.RPMSDataTable);
-				dtOut = (DataTable) this.Invoke(rdtd, new object[] {sSQL, sTableName});
+				//dtOut = (DataTable) this.Invoke(rdtd, new object[] {sSQL, sTableName});
+                dtOut = ConnectInfo.RPMSDataTable(sSQL, sTableName);
 				return dtOut;
 			}
 			catch (Exception ex)

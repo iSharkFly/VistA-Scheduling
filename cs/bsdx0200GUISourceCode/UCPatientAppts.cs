@@ -44,7 +44,7 @@ namespace IndianHealthService.ClinicalScheduling
         void SetPastFilter(bool ShowPastAppts)
         {
             if (ShowPastAppts) dvAppt.RowFilter = "";
-            else dvAppt.RowFilter = "ApptDate > " + "#" + DateTime.Today.ToShortDateString() + "#";
+            else dvAppt.RowFilter = "ApptDate > " + "'" + DateTime.Today.ToShortDateString() + "'";
         }
 
         private void chkPastAppts_CheckedChanged(object sender, EventArgs e)

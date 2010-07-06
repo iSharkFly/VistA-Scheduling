@@ -4,6 +4,107 @@
         <name>ClinicalScheduling</name>
     </assembly>
     <members>
+        <member name="T:IndianHealthService.ClinicalScheduling.DApptSearch">
+            <summary>
+            Summary description for DApptSearch.
+            </summary>
+        </member>
+        <member name="F:IndianHealthService.ClinicalScheduling.DApptSearch.components">
+            <summary>
+            Required designer variable.
+            </summary>
+        </member>
+        <member name="M:IndianHealthService.ClinicalScheduling.DApptSearch.UpdateDialogData(System.Boolean)">
+            <summary>
+            If b is true, moves member vars into control data
+            otherwise, moves control data into member vars
+            </summary>
+            <param name="b"></param>
+        </member>
+        <member name="M:IndianHealthService.ClinicalScheduling.DApptSearch.Dispose(System.Boolean)">
+            <summary>
+            Clean up any resources being used.
+            </summary>
+        </member>
+        <member name="M:IndianHealthService.ClinicalScheduling.DApptSearch.InitializeComponent">
+            <summary>
+            Required method for Designer support - do not modify
+            the contents of this method with the code editor.
+            </summary>
+        </member>
+        <member name="P:IndianHealthService.ClinicalScheduling.DApptSearch.SelectedResource">
+            <summary>
+            Gets the resource selected by the user
+            </summary>
+        </member>
+        <member name="P:IndianHealthService.ClinicalScheduling.DApptSearch.SelectedDate">
+            <summary>
+            Gets the date selected by the user
+            </summary>
+        </member>
+        <member name="T:IndianHealthService.ClinicalScheduling.UCPatientAppts">
+            <summary>
+            User Control that shows patient's appointments and allows printing
+            </summary>
+        </member>
+        <member name="M:IndianHealthService.ClinicalScheduling.UCPatientAppts.#ctor(IndianHealthService.ClinicalScheduling.CGDocumentManager,System.Int32)">
+            <summary>
+            Ctor - Creates control and populates data into datagridview
+            </summary>
+            <param name="docManager">Document Manager from main context</param>
+            <param name="nPatientID">Patient IEN</param>
+        </member>
+        <member name="M:IndianHealthService.ClinicalScheduling.UCPatientAppts.SetPastFilter(System.Boolean)">
+            <summary>
+            Sets the filter for the DataView on whether to show past appointments or not
+            </summary>
+            <param name="ShowPastAppts">boolean - self explanatory</param>
+        </member>
+        <member name="F:IndianHealthService.ClinicalScheduling.UCPatientAppts.components">
+            <summary> 
+            Required designer variable.
+            </summary>
+        </member>
+        <member name="M:IndianHealthService.ClinicalScheduling.UCPatientAppts.Dispose(System.Boolean)">
+            <summary> 
+            Clean up any resources being used.
+            </summary>
+            <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        </member>
+        <member name="M:IndianHealthService.ClinicalScheduling.UCPatientAppts.InitializeComponent">
+            <summary> 
+            Required method for Designer support - do not modify 
+            the contents of this method with the code editor.
+            </summary>
+        </member>
+        <member name="T:IndianHealthService.ClinicalScheduling.DResource">
+            <summary>
+            Summary description for DResource.
+            </summary>
+        </member>
+        <member name="F:IndianHealthService.ClinicalScheduling.DResource.components">
+            <summary>
+            Required designer variable.
+            </summary>
+        </member>
+        <member name="M:IndianHealthService.ClinicalScheduling.DResource.InitializeComponent">
+            <summary>
+            Required method for Designer support - do not modify
+            the contents of this method with the code editor.
+            </summary>
+        </member>
+        <member name="M:IndianHealthService.ClinicalScheduling.DResource.UpdateDialogData(System.Boolean)">
+            <summary>
+            If b is true, moves member vars into control data
+            otherwise, moves control data into member vars
+            </summary>
+            <param name="b"></param>
+        </member>
+        <member name="M:IndianHealthService.ClinicalScheduling.DResource.Dispose(System.Boolean)">
+            <summary>
+            Clean up any resources being used.
+            </summary>
+        </member>
         <member name="T:IndianHealthService.ClinicalScheduling.DPatientApptDisplay">
             <summary>
             Summary description for DPatientApptDisplay.
@@ -25,19 +126,261 @@
             the contents of this method with the code editor.
             </summary>
         </member>
-        <member name="T:IndianHealthService.ClinicalScheduling.CGSelectionChangedHandler">
+        <member name="T:IndianHealthService.ClinicalScheduling.DAccessTemplate">
+            <summary>
+            Summary description for DAccessTemplate.
+            </summary>
+        </member>
+        <member name="F:IndianHealthService.ClinicalScheduling.DAccessTemplate.components">
+            <summary>
+            Required designer variable.
+            </summary>
+        </member>
+        <member name="M:IndianHealthService.ClinicalScheduling.DAccessTemplate.UpdateDialogData(System.Boolean)">
+            <summary>
+            If b is true, moves member vars into control data
+            otherwise, moves control data into member vars
+            </summary>
+            <param name="b"></param>
+        </member>
+        <member name="M:IndianHealthService.ClinicalScheduling.DAccessTemplate.Dispose(System.Boolean)">
+            <summary>
+            Clean up any resources being used.
+            </summary>
+        </member>
+        <member name="M:IndianHealthService.ClinicalScheduling.DAccessTemplate.InitializeComponent">
+            <summary>
+            Required method for Designer support - do not modify
+            the contents of this method with the code editor.
+            </summary>
+        </member>
+        <member name="P:IndianHealthService.ClinicalScheduling.DAccessTemplate.FileDialog">
+            <summary>
+            Returns the open file dialog object
+            </summary>
+        </member>
+        <member name="P:IndianHealthService.ClinicalScheduling.DAccessTemplate.StartDate">
+            <summary>
+            Sets or returns the start date to apply the template
+            </summary>
+        </member>
+        <member name="P:IndianHealthService.ClinicalScheduling.DAccessTemplate.WeeksToApply">
+            <summary>
+            Sets or returns the number of weeks to apply the template
+            </summary>
+        </member>
+        <member name="T:IndianHealthService.ClinicalScheduling.DSplash">
+            <summary>
+            Summary description for DSplash.
+            </summary>
+        </member>
+        <member name="F:IndianHealthService.ClinicalScheduling.DSplash.components">
+            <summary>
+            Required designer variable.
+            </summary>
+        </member>
+        <member name="M:IndianHealthService.ClinicalScheduling.DSplash.Dispose(System.Boolean)">
+            <summary>
+            Clean up any resources being used.
+            </summary>
+        </member>
+        <member name="M:IndianHealthService.ClinicalScheduling.DSplash.InitializeComponent">
+            <summary>
+            Required method for Designer support - do not modify
+            the contents of this method with the code editor.
+            </summary>
+        </member>
+        <member name="P:IndianHealthService.ClinicalScheduling.DSplash.Status">
+            <summary>
+            Gets or sets the value of the Status displayed on the splash screen
+            </summary>
+        </member>
+        <member name="T:IndianHealthService.ClinicalScheduling.DAccessGroupItem">
+            <summary>
+            Summary description for DAccessGroupItem.
+            </summary>
+        </member>
+        <member name="F:IndianHealthService.ClinicalScheduling.DAccessGroupItem.components">
+            <summary>
+            Required designer variable.
+            </summary>
+        </member>
+        <member name="M:IndianHealthService.ClinicalScheduling.DAccessGroupItem.Dispose(System.Boolean)">
+            <summary>
+            Clean up any resources being used.
+            </summary>
+        </member>
+        <member name="M:IndianHealthService.ClinicalScheduling.DAccessGroupItem.InitializeComponent">
+            <summary>
+            Required method for Designer support - do not modify
+            the contents of this method with the code editor.
+            </summary>
+        </member>
+        <member name="M:IndianHealthService.ClinicalScheduling.DAccessGroupItem.UpdateDialogData(System.Boolean)">
+            <summary>
+            If b is true, moves member vars into control data
+            otherwise, moves control data into member vars
+            </summary>
+            <param name="b"></param>
+        </member>
+        <member name="P:IndianHealthService.ClinicalScheduling.DAccessGroupItem.AccessTypeID">
+            <summary>
+            Contains the IEN of the AccessType in the BSDX_ACCESS_TYPE file
+            </summary>
+        </member>
+        <member name="P:IndianHealthService.ClinicalScheduling.DAccessGroupItem.AccessTypeName">
+            <summary>
+            Contains the name of the AccessType
+            </summary>
+        </member>
+        <member name="T:IndianHealthService.ClinicalScheduling.CGView">
+            <summary>
+            Summary description for CGView.
+            </summary>
+        </member>
+        <member name="M:IndianHealthService.ClinicalScheduling.CGView.InitializeComponent">
+            <summary>
+            Required method for Designer support - do not modify
+            the contents of this method with the code editor.
+            </summary>
+        </member>
+        <member name="M:IndianHealthService.ClinicalScheduling.CGView.Dispose(System.Boolean)">
+            <summary>
+            Clean up any resources being used.
+            </summary>
+        </member>
+        <member name="M:IndianHealthService.ClinicalScheduling.CGView.AppointmentNoShow(System.Boolean)">
+            <summary>
+            Marks all selected appointments as No Show
+            </summary>
+            <param name="nApptID"></param>
+            <returns></returns>		
+        </member>
+        <member name="M:IndianHealthService.ClinicalScheduling.CGView.AppointmentDeleteOne(System.Int32)">
+            <summary>
+            Delete appointment ApptID
+            </summary>
+            <param name="nApptID"></param>
+            <returns></returns>
+        </member>
+        <member name="M:IndianHealthService.ClinicalScheduling.CGView.AppointmentDelete">
+            <summary>
+            Delete all selected appointments
+            </summary>
+        </member>
+        <member name="P:IndianHealthService.ClinicalScheduling.CGView.CGrid">
+            <summary>
+            Access the CalendarGrid associated with this view
+            </summary>
+        </member>
+        <member name="P:IndianHealthService.ClinicalScheduling.CGView.Document">
+            <summary>
+            Accesses the document associated with this view
+            </summary>
+        </member>
+        <member name="T:IndianHealthService.ClinicalScheduling.CGSelectionChangedArgs">
+            <summary>
+            This class was regenerated from Calendargrid.dll using Reflector.exe
+            by Sam Habiel for WorldVista. The original source code is lost.
+            </summary>
+        </member>
+        <member name="T:IndianHealthService.ClinicalScheduling.CGAVDocument">
+            <summary>
+            Contains array of availability blocks for a scheduling resource
+            </summary>
+        </member>
+        <member name="M:IndianHealthService.ClinicalScheduling.CGAVDocument.CreateAppointmentAuto(IndianHealthService.ClinicalScheduling.CGAppointment)">
+            <summary>
+            Called by LoadTemplate to create Access Block
+            Returns the IEN of the availability block in the RPMS BSDX AVAILABILITY file.
+            </summary>
+        </member>
+        <member name="M:IndianHealthService.ClinicalScheduling.CGAVDocument.RefreshDaysSchedule">
+            <summary>
+            Update availability block schedule based on info in RPMS
+            </summary>
+        </member>
+        <member name="M:IndianHealthService.ClinicalScheduling.CGAVDocument.WeekNeedsRefresh(System.Int32,System.DateTime,System.DateTime@,System.DateTime@)">
+            <summary>
+            Given a selected date,
+            Calculates StartDay and End Day and returns them in output params.  
+            nWeeks == number of Weeks to display
+            nColumnCount is number of days displayed per week.  If 5 columns, begin on
+            Monday, if 7 Columns, begin on Sunday
+            
+            Returns TRUE if the document's data needs refreshing based on 
+            this newly selected date.
+            </summary>
+        </member>
+        <member name="M:IndianHealthService.ClinicalScheduling.CGAVDocument.UpdateAllViews">
+            <summary>
+            Calls each AVview associated with this AVdocument and tells it to update itself
+            </summary>
+        </member>
+        <member name="P:IndianHealthService.ClinicalScheduling.CGAVDocument.ResourceID">
+            <summary>
+            Resource IEN in ^BSDXRES
+            </summary>
+        </member>
+        <member name="P:IndianHealthService.ClinicalScheduling.CGAVDocument.Resources">
+            <summary>
+            The list of Resource names
+            </summary>
+        </member>
+        <member name="P:IndianHealthService.ClinicalScheduling.CGAVDocument.AVBlocks">
+            <summary>
+            Contains the hashtable of Availability Blocks
+            </summary>
+        </member>
+        <member name="P:IndianHealthService.ClinicalScheduling.CGAVDocument.SelectedDate">
+            <summary>
+            Holds the date selected by the user in CGView.dateTimePicker1
+            </summary>
+        </member>
+        <member name="P:IndianHealthService.ClinicalScheduling.CGAVDocument.StartDate">
+            <summary>
+            Contains the beginning date of the appointment document
+            </summary>
+        </member>
+        <member name="T:IndianHealthService.ClinicalScheduling.CGAppointment">
+            <summary>
+            This class was regenerated from Calendargrid.dll using Reflector.exe
+            by Sam Habiel for WorldVista. The original source code is lost.
+            </summary>
+        </member>
+        <member name="T:IndianHealthService.ClinicalScheduling.DSelectSchedules">
+            <summary>
+            Summary description for DSelectSchedules.
+            </summary>
+        </member>
+        <member name="F:IndianHealthService.ClinicalScheduling.DSelectSchedules.components">
+            <summary>
+            Required designer variable.
+            </summary>
+        </member>
+        <member name="M:IndianHealthService.ClinicalScheduling.DSelectSchedules.Dispose(System.Boolean)">
+            <summary>
+            Clean up any resources being used.
+            </summary>
+        </member>
+        <member name="M:IndianHealthService.ClinicalScheduling.DSelectSchedules.InitializeComponent">
+            <summary>
+            Required method for Designer support - do not modify
+            the contents of this method with the code editor.
+            </summary>
+        </member>
+        <member name="P:IndianHealthService.ClinicalScheduling.DSelectSchedules.SelectedClinics">
+            <summary>
+            Returns the an ArrayList of selected resource names
+            </summary>
+        </member>
+        <member name="T:IndianHealthService.ClinicalScheduling.CGRange">
             <summary>
             This class was regenerated from Calendargrid.dll using Reflector.exe
             by Sam Habiel for WorldVista. The original source code is lost.
             </summary>
         </member>
         <member name="T:IndianHealthService.ClinicalScheduling.CGAppointments">
-            <summary>
-            This class was regenerated from Calendargrid.dll using Reflector.exe
-            by Sam Habiel for WorldVista. The original source code is lost.
-            </summary>
-        </member>
-        <member name="T:IndianHealthService.ClinicalScheduling.CGAppointment">
             <summary>
             This class was regenerated from Calendargrid.dll using Reflector.exe
             by Sam Habiel for WorldVista. The original source code is lost.
@@ -57,6 +400,44 @@
             WM_VSCROLL (0x115 - Vertical Scrolling)
             WM_HSCROLL (0x114 - Horizontal Scrolling)
             </param>
+        </member>
+        <member name="T:IndianHealthService.ClinicalScheduling.DResourceGroupItem">
+            <summary>
+            Summary description for DResourceGroup.
+            </summary>
+        </member>
+        <member name="F:IndianHealthService.ClinicalScheduling.DResourceGroupItem.components">
+            <summary>
+            Required designer variable.
+            </summary>
+        </member>
+        <member name="M:IndianHealthService.ClinicalScheduling.DResourceGroupItem.Dispose(System.Boolean)">
+            <summary>
+            Clean up any resources being used.
+            </summary>
+        </member>
+        <member name="M:IndianHealthService.ClinicalScheduling.DResourceGroupItem.InitializeComponent">
+            <summary>
+            Required method for Designer support - do not modify
+            the contents of this method with the code editor.
+            </summary>
+        </member>
+        <member name="M:IndianHealthService.ClinicalScheduling.DResourceGroupItem.UpdateDialogData(System.Boolean)">
+            <summary>
+            If b is true, moves member vars into control data
+            otherwise, moves control data into member vars
+            </summary>
+            <param name="b"></param>
+        </member>
+        <member name="P:IndianHealthService.ClinicalScheduling.DResourceGroupItem.ResourceID">
+            <summary>
+            Contains the IEN of the Resource in the BSDX_RESOURCE file
+            </summary>
+        </member>
+        <member name="P:IndianHealthService.ClinicalScheduling.DResourceGroupItem.ResourceName">
+            <summary>
+            Contains the name of the Resource
+            </summary>
         </member>
         <member name="T:IndianHealthService.ClinicalScheduling.DPatientLookup">
             <summary>
@@ -93,45 +474,6 @@
             <summary>
             The string representation of the Health Record Number
             </summary>
-        </member>
-        <member name="T:IndianHealthService.ClinicalScheduling.DManagement">
-            <summary>
-            Summary description for DManagement.
-            </summary>
-        </member>
-        <member name="M:IndianHealthService.ClinicalScheduling.DManagement.InitializeComponent">
-            <summary>
-            Required method for Designer support - do not modify
-            the contents of this method with the code editor.
-            </summary>
-        </member>
-        <member name="T:IndianHealthService.ClinicalScheduling.DAccessType">
-            <summary>
-            Summary description for DAccessType.
-            </summary>
-        </member>
-        <member name="F:IndianHealthService.ClinicalScheduling.DAccessType.components">
-            <summary>
-            Required designer variable.
-            </summary>
-        </member>
-        <member name="M:IndianHealthService.ClinicalScheduling.DAccessType.Dispose(System.Boolean)">
-            <summary>
-            Clean up any resources being used.
-            </summary>
-        </member>
-        <member name="M:IndianHealthService.ClinicalScheduling.DAccessType.InitializeComponent">
-            <summary>
-            Required method for Designer support - do not modify
-            the contents of this method with the code editor.
-            </summary>
-        </member>
-        <member name="M:IndianHealthService.ClinicalScheduling.DAccessType.UpdateDialogData(System.Boolean)">
-            <summary>
-            If b is true, moves member vars into control data
-            otherwise, moves control data into member vars
-            </summary>
-            <param name="b"></param>
         </member>
         <member name="T:IndianHealthService.ClinicalScheduling.DResourceGroup">
             <summary>
@@ -236,6 +578,83 @@
             the contents of this method with the code editor.
             </summary>
         </member>
+        <member name="T:IndianHealthService.ClinicalScheduling.CGDocumentManager">
+            <summary>
+            Summary description for DocumentManager.
+            </summary>
+        </member>
+        <member name="M:IndianHealthService.ClinicalScheduling.CGDocumentManager.#ctor">
+            <summary>
+            Constructor. Sets up connector, and ties BMXNet Events to function here.
+            </summary>
+        </member>
+        <member name="M:IndianHealthService.ClinicalScheduling.CGDocumentManager.Dispose(System.Boolean)">
+            <summary>
+            Clean up any resources being used.
+            </summary>
+        </member>
+        <member name="M:IndianHealthService.ClinicalScheduling.CGDocumentManager.GetViewByResource(System.Collections.ArrayList)">
+            <summary>
+            Return the first view having a resource array matching sResourceArray
+            </summary>
+            <param name="sResourceArray"></param>
+            <returns></returns>
+        </member>
+        <member name="M:IndianHealthService.ClinicalScheduling.CGDocumentManager.UpdateViews(System.String,System.String)">
+            <summary>
+            Propogate availability updates to all sRresource's doc/views 
+            </summary>
+        </member>
+        <member name="M:IndianHealthService.ClinicalScheduling.CGDocumentManager.UpdateViews">
+            <summary>
+            Propogate availability updates to all doc/views 
+            </summary>
+        </member>
+        <member name="M:IndianHealthService.ClinicalScheduling.CGDocumentManager.CloseAllViews(IndianHealthService.ClinicalScheduling.CGDocument)">
+            <summary>
+            Calls each view associated with document Doc and closes it.
+            </summary>		
+        </member>
+        <member name="M:IndianHealthService.ClinicalScheduling.CGDocumentManager.CloseAllViews(IndianHealthService.ClinicalScheduling.CGAVDocument)">
+            <summary>
+            Calls each view associated with Availability Doc and closes it.
+            </summary>		
+        </member>
+        <member name="P:IndianHealthService.ClinicalScheduling.CGDocumentManager.ConnectInfo">
+            <summary>
+            Returns the document manager's BMXNetConnectInfo member
+            </summary>
+        </member>
+        <member name="P:IndianHealthService.ClinicalScheduling.CGDocumentManager.ScheduleManager">
+            <summary>
+            True if the current user holds the BSDXZMGR or XUPROGMODE keys in RPMS
+            </summary>
+        </member>
+        <member name="P:IndianHealthService.ClinicalScheduling.CGDocumentManager.WindowText">
+            <summary>
+            Holds the user and division
+            </summary>
+        </member>
+        <member name="P:IndianHealthService.ClinicalScheduling.CGDocumentManager.GlobalDataSet">
+            <summary>
+            This dataset contains tables used by the entire application
+            </summary>		
+        </member>
+        <member name="P:IndianHealthService.ClinicalScheduling.CGDocumentManager.Current">
+            <summary>
+            Returns the single CGDocumentManager object
+            </summary>
+        </member>
+        <member name="P:IndianHealthService.ClinicalScheduling.CGDocumentManager.Views">
+            <summary>
+            Returns the list of currently opened documents
+            </summary>
+        </member>
+        <member name="P:IndianHealthService.ClinicalScheduling.CGDocumentManager.AvailabilityViews">
+            <summary>
+            Returns the list of currently opened CGAVViews
+            </summary>
+        </member>
         <member name="T:IndianHealthService.ClinicalScheduling.dsRebookAppts">
              <summary>
             Represents a strongly typed in-memory cache of data.
@@ -269,75 +688,6 @@
         <member name="T:IndianHealthService.ClinicalScheduling.dsRebookAppts.BSDXResourceRowChangeEvent">
              <summary>
             Row event argument class
-            </summary>
-        </member>
-        <member name="T:IndianHealthService.ClinicalScheduling.DCancelAppt">
-            <summary>
-            Summary description for DCancelAppt.
-            </summary>
-        </member>
-        <member name="F:IndianHealthService.ClinicalScheduling.DCancelAppt.components">
-            <summary>
-            Required designer variable.
-            </summary>
-        </member>
-        <member name="M:IndianHealthService.ClinicalScheduling.DCancelAppt.UpdateDialogData(System.Boolean)">
-            <summary>
-            If b is true, moves member vars into control data
-            otherwise, moves control data into member vars
-            </summary>
-            <param name="b"></param>
-        </member>
-        <member name="M:IndianHealthService.ClinicalScheduling.DCancelAppt.Dispose(System.Boolean)">
-            <summary>
-            Clean up any resources being used.
-            </summary>
-        </member>
-        <member name="M:IndianHealthService.ClinicalScheduling.DCancelAppt.InitializeComponent">
-            <summary>
-            Required method for Designer support - do not modify
-            the contents of this method with the code editor.
-            </summary>
-        </member>
-        <member name="P:IndianHealthService.ClinicalScheduling.DCancelAppt.RebookAccessType">
-            <summary>
-            Sets or returns the rebook access type:  -1 = use current type, -2 = use any type, 0 = prompt for a type
-            </summary>
-        </member>
-        <member name="P:IndianHealthService.ClinicalScheduling.DCancelAppt.ClinicCancelled">
-            <summary>
-            Returns true if appt cancelled by Clinic, otherwise false
-            </summary>
-        </member>
-        <member name="P:IndianHealthService.ClinicalScheduling.DCancelAppt.AutoRebook">
-            <summary>
-            Returns value of AutoRebook check box
-            </summary>
-        </member>
-        <member name="P:IndianHealthService.ClinicalScheduling.DCancelAppt.CancelReason">
-            <summary>
-            Returns internal entry in the CANCELLATION REASON file (409.2)
-            </summary>
-        </member>
-        <member name="P:IndianHealthService.ClinicalScheduling.DCancelAppt.CancelRemarks">
-            <summary>
-            Returns cancellation remarks.
-            </summary>
-        </member>
-        <member name="P:IndianHealthService.ClinicalScheduling.DCancelAppt.RebookStartDays">
-            <summary>
-            Sets or returns the number of days in the future to start searching for availability
-            </summary>
-        </member>
-        <member name="P:IndianHealthService.ClinicalScheduling.DCancelAppt.RebookMaxDays">
-            <summary>
-            Sets and returns the maximum number of days in the future to look for rebook availability
-            </summary>
-        </member>
-        <member name="T:IndianHealthService.ClinicalScheduling.CGAvailability">
-            <summary>
-            This class was regenerated from Calendargrid.dll using Reflector.exe
-            by Sam Habiel for WorldVista. The original source code is lost.
             </summary>
         </member>
         <member name="T:IndianHealthService.ClinicalScheduling.DResourceUser">
@@ -388,288 +738,36 @@
             True if the user is allowed to create, edit and delete appointments
             </summary>
         </member>
-        <member name="T:IndianHealthService.ClinicalScheduling.DAccessTemplate">
+        <member name="T:IndianHealthService.ClinicalScheduling.DManagement">
             <summary>
-            Summary description for DAccessTemplate.
+            Summary description for DManagement.
             </summary>
         </member>
-        <member name="F:IndianHealthService.ClinicalScheduling.DAccessTemplate.components">
+        <member name="M:IndianHealthService.ClinicalScheduling.DManagement.InitializeComponent">
+            <summary>
+            Required method for Designer support - do not modify
+            the contents of this method with the code editor.
+            </summary>
+        </member>
+        <member name="T:IndianHealthService.ClinicalScheduling.dInputText">
+            <summary>
+            Summary description for dInputText.
+            </summary>
+        </member>
+        <member name="F:IndianHealthService.ClinicalScheduling.dInputText.components">
             <summary>
             Required designer variable.
             </summary>
         </member>
-        <member name="M:IndianHealthService.ClinicalScheduling.DAccessTemplate.UpdateDialogData(System.Boolean)">
-            <summary>
-            If b is true, moves member vars into control data
-            otherwise, moves control data into member vars
-            </summary>
-            <param name="b"></param>
-        </member>
-        <member name="M:IndianHealthService.ClinicalScheduling.DAccessTemplate.Dispose(System.Boolean)">
+        <member name="M:IndianHealthService.ClinicalScheduling.dInputText.Dispose(System.Boolean)">
             <summary>
             Clean up any resources being used.
             </summary>
         </member>
-        <member name="M:IndianHealthService.ClinicalScheduling.DAccessTemplate.InitializeComponent">
+        <member name="M:IndianHealthService.ClinicalScheduling.dInputText.InitializeComponent">
             <summary>
             Required method for Designer support - do not modify
             the contents of this method with the code editor.
-            </summary>
-        </member>
-        <member name="P:IndianHealthService.ClinicalScheduling.DAccessTemplate.FileDialog">
-            <summary>
-            Returns the open file dialog object
-            </summary>
-        </member>
-        <member name="P:IndianHealthService.ClinicalScheduling.DAccessTemplate.StartDate">
-            <summary>
-            Sets or returns the start date to apply the template
-            </summary>
-        </member>
-        <member name="P:IndianHealthService.ClinicalScheduling.DAccessTemplate.WeeksToApply">
-            <summary>
-            Sets or returns the number of weeks to apply the template
-            </summary>
-        </member>
-        <member name="T:IndianHealthService.ClinicalScheduling.DNoShow">
-            <summary>
-            Summary description for DAutoRebook.
-            </summary>
-        </member>
-        <member name="F:IndianHealthService.ClinicalScheduling.DNoShow.components">
-            <summary>
-            Required designer variable.
-            </summary>
-        </member>
-        <member name="M:IndianHealthService.ClinicalScheduling.DNoShow.UpdateDialogData(System.Boolean)">
-            <summary>
-            If b is true, moves member vars into control data
-            otherwise, moves control data into member vars
-            </summary>
-            <param name="b"></param>
-        </member>
-        <member name="M:IndianHealthService.ClinicalScheduling.DNoShow.Dispose(System.Boolean)">
-            <summary>
-            Clean up any resources being used.
-            </summary>
-        </member>
-        <member name="M:IndianHealthService.ClinicalScheduling.DNoShow.InitializeComponent">
-            <summary>
-            Required method for Designer support - do not modify
-            the contents of this method with the code editor.
-            </summary>
-        </member>
-        <member name="P:IndianHealthService.ClinicalScheduling.DNoShow.RebookAccessType">
-            <summary>
-            Sets or returns the rebook access type:  -1 = use current type, -2 = use any type, 0 = prompt for a type
-            </summary>
-        </member>
-        <member name="P:IndianHealthService.ClinicalScheduling.DNoShow.AutoRebook">
-            <summary>
-            Returns value of AutoRebook check box
-            </summary>
-        </member>
-        <member name="P:IndianHealthService.ClinicalScheduling.DNoShow.RebookStartDays">
-            <summary>
-            Sets or returns the number of days in the future to start searching for availability
-            </summary>
-        </member>
-        <member name="P:IndianHealthService.ClinicalScheduling.DNoShow.RebookMaxDays">
-            <summary>
-            Sets and returns the maximum number of days in the future to look for rebook availability
-            </summary>
-        </member>
-        <member name="T:IndianHealthService.ClinicalScheduling.DAccessGroup">
-            <summary>
-            Summary description for DAccessGroup.
-            </summary>
-        </member>
-        <member name="F:IndianHealthService.ClinicalScheduling.DAccessGroup.components">
-            <summary>
-            Required designer variable.
-            </summary>
-        </member>
-        <member name="M:IndianHealthService.ClinicalScheduling.DAccessGroup.Dispose(System.Boolean)">
-            <summary>
-            Clean up any resources being used.
-            </summary>
-        </member>
-        <member name="M:IndianHealthService.ClinicalScheduling.DAccessGroup.InitializeComponent">
-            <summary>
-            Required method for Designer support - do not modify
-            the contents of this method with the code editor.
-            </summary>
-        </member>
-        <member name="M:IndianHealthService.ClinicalScheduling.DAccessGroup.UpdateDialogData(System.Boolean)">
-            <summary>
-            If b is true, moves member vars into control data
-            otherwise, moves control data into member vars
-            </summary>
-            <param name="b"></param>
-        </member>
-        <member name="P:IndianHealthService.ClinicalScheduling.DAccessGroup.AccessGroupName">
-            <summary>
-            Gets the name of the Access Group;
-            </summary>
-        </member>
-        <member name="T:IndianHealthService.ClinicalScheduling.CGView">
-            <summary>
-            Summary description for CGView.
-            </summary>
-        </member>
-        <member name="M:IndianHealthService.ClinicalScheduling.CGView.InitializeComponent">
-            <summary>
-            Required method for Designer support - do not modify
-            the contents of this method with the code editor.
-            </summary>
-        </member>
-        <member name="M:IndianHealthService.ClinicalScheduling.CGView.Dispose(System.Boolean)">
-            <summary>
-            Clean up any resources being used.
-            </summary>
-        </member>
-        <member name="M:IndianHealthService.ClinicalScheduling.CGView.AppointmentNoShow(System.Boolean)">
-            <summary>
-            Marks all selected appointments as No Show
-            </summary>
-            <param name="nApptID"></param>
-            <returns></returns>		
-        </member>
-        <member name="M:IndianHealthService.ClinicalScheduling.CGView.AppointmentDeleteOne(System.Int32)">
-            <summary>
-            Delete appointment ApptID
-            </summary>
-            <param name="nApptID"></param>
-            <returns></returns>
-        </member>
-        <member name="M:IndianHealthService.ClinicalScheduling.CGView.AppointmentDelete">
-            <summary>
-            Delete all selected appointments
-            </summary>
-        </member>
-        <member name="P:IndianHealthService.ClinicalScheduling.CGView.CGrid">
-            <summary>
-            Access the CalendarGrid associated with this view
-            </summary>
-        </member>
-        <member name="P:IndianHealthService.ClinicalScheduling.CGView.Document">
-            <summary>
-            Accesses the document associated with this view
-            </summary>
-        </member>
-        <member name="T:IndianHealthService.ClinicalScheduling.Printing">
-            <summary>
-            Class that encapsulates printing functions in Clinical Scheduling
-            </summary>
-        </member>
-        <!-- Badly formed XML comment ignored for member "M:IndianHealthService.ClinicalScheduling.Printing.PrintAppointments(IndianHealthService.ClinicalScheduling.dsPatientApptDisplay2,System.Drawing.Printing.PrintPageEventArgs,System.DateTime,System.DateTime,System.Int32,System.Int32@,System.Int32)" -->
-        <member name="M:IndianHealthService.ClinicalScheduling.Printing.PrintReminderLetter(IndianHealthService.ClinicalScheduling.dsPatientApptDisplay2.PatientApptsRow,System.Drawing.Printing.PrintPageEventArgs,System.String,System.String)">
-            <summary>
-            Print Letter to be given or mailed to the patient
-            </summary>
-            <param name="ptrow">Strongly typed PatientApptsRow to pass (just one ApptRow)</param>
-            <param name="e">You know what that is</param>
-            <param name="letter">Contains letter string</param>
-            <param name="title">Title of the letter</param>
-        </member>
-        <member name="M:IndianHealthService.ClinicalScheduling.Printing.PrintCancelLetter(IndianHealthService.ClinicalScheduling.dsRebookAppts.PatientApptsRow,System.Drawing.Printing.PrintPageEventArgs,System.String,System.String)">
-            <summary>
-            Cancellation Letter to be given or mailed to the patient
-            </summary>
-            <param name="ptRow">Strongly typed PatientApptsRow to pass (just one ApptRow)</param>
-            <param name="e">You know what that is</param>
-            <param name="letter">Contains letter string</param>
-            <param name="title">Title of the letter</param>
-        </member>
-        <member name="M:IndianHealthService.ClinicalScheduling.Printing.PrintRebookLetter(IndianHealthService.ClinicalScheduling.dsRebookAppts.PatientApptsRow,System.Drawing.Printing.PrintPageEventArgs,System.String,System.String)">
-            <summary>
-            Print rebook letters. Prints old and new appointments dates then the missive.
-            </summary>
-            <param name="ptRow">Strongly typed appointment row</param>
-            <param name="e">etc</param>
-            <param name="letter">Text of the letter to print</param>
-            <param name="title">Title to print at the top of the letter</param>
-        </member>
-        <member name="M:IndianHealthService.ClinicalScheduling.Printing.PrintMessage(System.String,System.Drawing.Printing.PrintPageEventArgs)">
-            <summary>
-            Print message on a page; typically that there are no appointments to be found.
-            Or just a test message to verify that printing works.
-            </summary>
-            <param name="msg">The exact string to print.</param>
-            <param name="e">Print Page event args</param>
-        </member>
-        <member name="M:IndianHealthService.ClinicalScheduling.Printing.PrintRoutingSlip(IndianHealthService.ClinicalScheduling.CGAppointment,System.String,System.Drawing.Printing.PrintPageEventArgs)">
-            <summary>
-            Print Routing Slip
-            </summary>
-            <param name="a">Appointment Data Structure</param>
-            <param name="title">String to print for title</param>
-            <param name="e">etc</param>
-        </member>
-        <member name="T:IndianHealthService.ClinicalScheduling.DResourceGroupItem">
-            <summary>
-            Summary description for DResourceGroup.
-            </summary>
-        </member>
-        <member name="F:IndianHealthService.ClinicalScheduling.DResourceGroupItem.components">
-            <summary>
-            Required designer variable.
-            </summary>
-        </member>
-        <member name="M:IndianHealthService.ClinicalScheduling.DResourceGroupItem.Dispose(System.Boolean)">
-            <summary>
-            Clean up any resources being used.
-            </summary>
-        </member>
-        <member name="M:IndianHealthService.ClinicalScheduling.DResourceGroupItem.InitializeComponent">
-            <summary>
-            Required method for Designer support - do not modify
-            the contents of this method with the code editor.
-            </summary>
-        </member>
-        <member name="M:IndianHealthService.ClinicalScheduling.DResourceGroupItem.UpdateDialogData(System.Boolean)">
-            <summary>
-            If b is true, moves member vars into control data
-            otherwise, moves control data into member vars
-            </summary>
-            <param name="b"></param>
-        </member>
-        <member name="P:IndianHealthService.ClinicalScheduling.DResourceGroupItem.ResourceID">
-            <summary>
-            Contains the IEN of the Resource in the BSDX_RESOURCE file
-            </summary>
-        </member>
-        <member name="P:IndianHealthService.ClinicalScheduling.DResourceGroupItem.ResourceName">
-            <summary>
-            Contains the name of the Resource
-            </summary>
-        </member>
-        <member name="T:IndianHealthService.ClinicalScheduling.DResource">
-            <summary>
-            Summary description for DResource.
-            </summary>
-        </member>
-        <member name="F:IndianHealthService.ClinicalScheduling.DResource.components">
-            <summary>
-            Required designer variable.
-            </summary>
-        </member>
-        <member name="M:IndianHealthService.ClinicalScheduling.DResource.InitializeComponent">
-            <summary>
-            Required method for Designer support - do not modify
-            the contents of this method with the code editor.
-            </summary>
-        </member>
-        <member name="M:IndianHealthService.ClinicalScheduling.DResource.UpdateDialogData(System.Boolean)">
-            <summary>
-            If b is true, moves member vars into control data
-            otherwise, moves control data into member vars
-            </summary>
-            <param name="b"></param>
-        </member>
-        <member name="M:IndianHealthService.ClinicalScheduling.DResource.Dispose(System.Boolean)">
-            <summary>
-            Clean up any resources being used.
             </summary>
         </member>
         <member name="T:IndianHealthService.ClinicalScheduling.DCheckIn">
@@ -753,82 +851,243 @@
             Appointment end time
             </summary>
         </member>
-        <member name="T:IndianHealthService.ClinicalScheduling.CGCells">
+        <member name="T:IndianHealthService.ClinicalScheduling.DAccessType">
             <summary>
-            This class was regenerated from Calendargrid.dll using Reflector.exe
-            by Sam Habiel for WorldVista. The original source code is lost.
+            Summary description for DAccessType.
             </summary>
         </member>
-        <member name="T:IndianHealthService.ClinicalScheduling.UCPatientAppts">
+        <member name="F:IndianHealthService.ClinicalScheduling.DAccessType.components">
             <summary>
-            User Control that shows patient's appointments and allows printing
-            </summary>
-        </member>
-        <member name="F:IndianHealthService.ClinicalScheduling.UCPatientAppts.components">
-            <summary> 
             Required designer variable.
             </summary>
         </member>
-        <member name="M:IndianHealthService.ClinicalScheduling.UCPatientAppts.Dispose(System.Boolean)">
-            <summary> 
-            Clean up any resources being used.
-            </summary>
-            <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
-        </member>
-        <member name="M:IndianHealthService.ClinicalScheduling.UCPatientAppts.InitializeComponent">
-            <summary> 
-            Required method for Designer support - do not modify 
-            the contents of this method with the code editor.
-            </summary>
-        </member>
-        <member name="M:IndianHealthService.ClinicalScheduling.UCPatientAppts.#ctor(IndianHealthService.ClinicalScheduling.CGDocumentManager,System.Int32)">
-            <summary>
-            Ctor - Creates control and populates data into datagridview
-            </summary>
-            <param name="docManager">Document Manager from main context</param>
-            <param name="nPatientID">Patient IEN</param>
-        </member>
-        <member name="M:IndianHealthService.ClinicalScheduling.UCPatientAppts.SetPastFilter(System.Boolean)">
-            <summary>
-            Sets the filter for the DataView on whether to show past appointments or not
-            </summary>
-            <param name="ShowPastAppts">boolean - self explanatory</param>
-        </member>
-        <member name="T:IndianHealthService.ClinicalScheduling.DSelectLetterClinics">
-             <summary>
-             Use this dialog to select resources and dates (begin and end) for their examination.
-             <example>
-             DSelectLetterClinics ds = new DSelectLetterClinics();
-             ds.InitializePage(this.m_DocManager.GlobalDataSet, "Print Clinic Cancellation Letters");
-            	ds.ShowDialog(this) 					
-            
-             //get the resource names and call the letter printer
-            	string sClinics = ds.SelectedClinics;
-            	DateTime dtBegin = ds.BeginDate;
-            	DateTime dtEnd = ds.EndDate;
-             </example>
-             </summary>
-             
-        </member>
-        <member name="M:IndianHealthService.ClinicalScheduling.DSelectLetterClinics.#ctor">
-            <summary>
-            Ctor; also sets default enter and cancel buttons
-            </summary>
-        </member>
-        <member name="M:IndianHealthService.ClinicalScheduling.DSelectLetterClinics.Dispose(System.Boolean)">
+        <member name="M:IndianHealthService.ClinicalScheduling.DAccessType.Dispose(System.Boolean)">
             <summary>
             Clean up any resources being used.
             </summary>
         </member>
-        <member name="M:IndianHealthService.ClinicalScheduling.DSelectLetterClinics.InitializeComponent">
+        <member name="M:IndianHealthService.ClinicalScheduling.DAccessType.InitializeComponent">
             <summary>
             Required method for Designer support - do not modify
             the contents of this method with the code editor.
             </summary>
         </member>
-        <member name="P:IndianHealthService.ClinicalScheduling.DSelectLetterClinics.SelectedClinics">
+        <member name="M:IndianHealthService.ClinicalScheduling.DAccessType.UpdateDialogData(System.Boolean)">
             <summary>
-            Returns the |-delimited string of selected resource id's
+            If b is true, moves member vars into control data
+            otherwise, moves control data into member vars
+            </summary>
+            <param name="b"></param>
+        </member>
+        <member name="T:IndianHealthService.ClinicalScheduling.CGSelectionChangedHandler">
+            <summary>
+            This class was regenerated from Calendargrid.dll using Reflector.exe
+            by Sam Habiel for WorldVista. The original source code is lost.
+            </summary>
+        </member>
+        <member name="T:IndianHealthService.ClinicalScheduling.CGAvailability">
+            <summary>
+            This class was regenerated from Calendargrid.dll using Reflector.exe
+            by Sam Habiel for WorldVista. The original source code is lost.
+            </summary>
+        </member>
+        <member name="T:IndianHealthService.ClinicalScheduling.Printing">
+            <summary>
+            Class that encapsulates printing functions in Clinical Scheduling
+            </summary>
+        </member>
+        <!-- Badly formed XML comment ignored for member "M:IndianHealthService.ClinicalScheduling.Printing.PrintAppointments(IndianHealthService.ClinicalScheduling.dsPatientApptDisplay2,System.Drawing.Printing.PrintPageEventArgs,System.DateTime,System.DateTime,System.Int32,System.Int32@,System.Int32)" -->
+        <member name="M:IndianHealthService.ClinicalScheduling.Printing.PrintReminderLetter(IndianHealthService.ClinicalScheduling.dsPatientApptDisplay2.PatientApptsRow,System.Drawing.Printing.PrintPageEventArgs,System.String,System.String)">
+            <summary>
+            Print Letter to be given or mailed to the patient
+            </summary>
+            <param name="ptrow">Strongly typed PatientApptsRow to pass (just one ApptRow)</param>
+            <param name="e">You know what that is</param>
+            <param name="letter">Contains letter string</param>
+            <param name="title">Title of the letter</param>
+        </member>
+        <member name="M:IndianHealthService.ClinicalScheduling.Printing.PrintCancelLetter(IndianHealthService.ClinicalScheduling.dsRebookAppts.PatientApptsRow,System.Drawing.Printing.PrintPageEventArgs,System.String,System.String)">
+            <summary>
+            Cancellation Letter to be given or mailed to the patient
+            </summary>
+            <param name="ptRow">Strongly typed PatientApptsRow to pass (just one ApptRow)</param>
+            <param name="e">You know what that is</param>
+            <param name="letter">Contains letter string</param>
+            <param name="title">Title of the letter</param>
+        </member>
+        <member name="M:IndianHealthService.ClinicalScheduling.Printing.PrintRebookLetter(IndianHealthService.ClinicalScheduling.dsRebookAppts.PatientApptsRow,System.Drawing.Printing.PrintPageEventArgs,System.String,System.String)">
+            <summary>
+            Print rebook letters. Prints old and new appointments dates then the missive.
+            </summary>
+            <param name="ptRow">Strongly typed appointment row</param>
+            <param name="e">etc</param>
+            <param name="letter">Text of the letter to print</param>
+            <param name="title">Title to print at the top of the letter</param>
+        </member>
+        <member name="M:IndianHealthService.ClinicalScheduling.Printing.PrintMessage(System.String,System.Drawing.Printing.PrintPageEventArgs)">
+            <summary>
+            Print message on a page; typically that there are no appointments to be found.
+            Or just a test message to verify that printing works.
+            </summary>
+            <param name="msg">The exact string to print.</param>
+            <param name="e">Print Page event args</param>
+        </member>
+        <member name="M:IndianHealthService.ClinicalScheduling.Printing.PrintRoutingSlip(IndianHealthService.ClinicalScheduling.CGAppointment,System.String,System.Drawing.Printing.PrintPageEventArgs)">
+            <summary>
+            Print Routing Slip
+            </summary>
+            <param name="a">Appointment Data Structure</param>
+            <param name="title">String to print for title</param>
+            <param name="e">etc</param>
+        </member>
+        <member name="T:IndianHealthService.ClinicalScheduling.DNoShow">
+            <summary>
+            Summary description for DAutoRebook.
+            </summary>
+        </member>
+        <member name="F:IndianHealthService.ClinicalScheduling.DNoShow.components">
+            <summary>
+            Required designer variable.
+            </summary>
+        </member>
+        <member name="M:IndianHealthService.ClinicalScheduling.DNoShow.UpdateDialogData(System.Boolean)">
+            <summary>
+            If b is true, moves member vars into control data
+            otherwise, moves control data into member vars
+            </summary>
+            <param name="b"></param>
+        </member>
+        <member name="M:IndianHealthService.ClinicalScheduling.DNoShow.Dispose(System.Boolean)">
+            <summary>
+            Clean up any resources being used.
+            </summary>
+        </member>
+        <member name="M:IndianHealthService.ClinicalScheduling.DNoShow.InitializeComponent">
+            <summary>
+            Required method for Designer support - do not modify
+            the contents of this method with the code editor.
+            </summary>
+        </member>
+        <member name="P:IndianHealthService.ClinicalScheduling.DNoShow.RebookAccessType">
+            <summary>
+            Sets or returns the rebook access type:  -1 = use current type, -2 = use any type, 0 = prompt for a type
+            </summary>
+        </member>
+        <member name="P:IndianHealthService.ClinicalScheduling.DNoShow.AutoRebook">
+            <summary>
+            Returns value of AutoRebook check box
+            </summary>
+        </member>
+        <member name="P:IndianHealthService.ClinicalScheduling.DNoShow.RebookStartDays">
+            <summary>
+            Sets or returns the number of days in the future to start searching for availability
+            </summary>
+        </member>
+        <member name="P:IndianHealthService.ClinicalScheduling.DNoShow.RebookMaxDays">
+            <summary>
+            Sets and returns the maximum number of days in the future to look for rebook availability
+            </summary>
+        </member>
+        <member name="T:IndianHealthService.ClinicalScheduling.DAccessGroup">
+            <summary>
+            Summary description for DAccessGroup.
+            </summary>
+        </member>
+        <member name="F:IndianHealthService.ClinicalScheduling.DAccessGroup.components">
+            <summary>
+            Required designer variable.
+            </summary>
+        </member>
+        <member name="M:IndianHealthService.ClinicalScheduling.DAccessGroup.Dispose(System.Boolean)">
+            <summary>
+            Clean up any resources being used.
+            </summary>
+        </member>
+        <member name="M:IndianHealthService.ClinicalScheduling.DAccessGroup.InitializeComponent">
+            <summary>
+            Required method for Designer support - do not modify
+            the contents of this method with the code editor.
+            </summary>
+        </member>
+        <member name="M:IndianHealthService.ClinicalScheduling.DAccessGroup.UpdateDialogData(System.Boolean)">
+            <summary>
+            If b is true, moves member vars into control data
+            otherwise, moves control data into member vars
+            </summary>
+            <param name="b"></param>
+        </member>
+        <member name="P:IndianHealthService.ClinicalScheduling.DAccessGroup.AccessGroupName">
+            <summary>
+            Gets the name of the Access Group;
+            </summary>
+        </member>
+        <member name="T:IndianHealthService.ClinicalScheduling.CGSchedLib">
+            <summary>
+            CGSchedLib contains static functions that are called from throughout the 
+            scheduling application.
+            </summary>
+        </member>
+        <member name="T:IndianHealthService.ClinicalScheduling.DCancelAppt">
+            <summary>
+            Summary description for DCancelAppt.
+            </summary>
+        </member>
+        <member name="F:IndianHealthService.ClinicalScheduling.DCancelAppt.components">
+            <summary>
+            Required designer variable.
+            </summary>
+        </member>
+        <member name="M:IndianHealthService.ClinicalScheduling.DCancelAppt.UpdateDialogData(System.Boolean)">
+            <summary>
+            If b is true, moves member vars into control data
+            otherwise, moves control data into member vars
+            </summary>
+            <param name="b"></param>
+        </member>
+        <member name="M:IndianHealthService.ClinicalScheduling.DCancelAppt.Dispose(System.Boolean)">
+            <summary>
+            Clean up any resources being used.
+            </summary>
+        </member>
+        <member name="M:IndianHealthService.ClinicalScheduling.DCancelAppt.InitializeComponent">
+            <summary>
+            Required method for Designer support - do not modify
+            the contents of this method with the code editor.
+            </summary>
+        </member>
+        <member name="P:IndianHealthService.ClinicalScheduling.DCancelAppt.RebookAccessType">
+            <summary>
+            Sets or returns the rebook access type:  -1 = use current type, -2 = use any type, 0 = prompt for a type
+            </summary>
+        </member>
+        <member name="P:IndianHealthService.ClinicalScheduling.DCancelAppt.ClinicCancelled">
+            <summary>
+            Returns true if appt cancelled by Clinic, otherwise false
+            </summary>
+        </member>
+        <member name="P:IndianHealthService.ClinicalScheduling.DCancelAppt.AutoRebook">
+            <summary>
+            Returns value of AutoRebook check box
+            </summary>
+        </member>
+        <member name="P:IndianHealthService.ClinicalScheduling.DCancelAppt.CancelReason">
+            <summary>
+            Returns internal entry in the CANCELLATION REASON file (409.2)
+            </summary>
+        </member>
+        <member name="P:IndianHealthService.ClinicalScheduling.DCancelAppt.CancelRemarks">
+            <summary>
+            Returns cancellation remarks.
+            </summary>
+        </member>
+        <member name="P:IndianHealthService.ClinicalScheduling.DCancelAppt.RebookStartDays">
+            <summary>
+            Sets or returns the number of days in the future to start searching for availability
+            </summary>
+        </member>
+        <member name="P:IndianHealthService.ClinicalScheduling.DCancelAppt.RebookMaxDays">
+            <summary>
+            Sets and returns the maximum number of days in the future to look for rebook availability
             </summary>
         </member>
         <member name="T:IndianHealthService.ClinicalScheduling.DAppointPage">
@@ -854,69 +1113,22 @@
             Clean up any resources being used.
             </summary>
         </member>
-        <member name="T:IndianHealthService.ClinicalScheduling.DAccessGroupItem">
+        <member name="T:IndianHealthService.ClinicalScheduling.CGResource">
             <summary>
-            Summary description for DAccessGroupItem.
+            This class was regenerated from Calendargrid.dll using Reflector.exe
+            by Sam Habiel for WorldVista. The original source code is lost.
             </summary>
         </member>
-        <member name="F:IndianHealthService.ClinicalScheduling.DAccessGroupItem.components">
+        <member name="T:IndianHealthService.ClinicalScheduling.CGCells">
             <summary>
-            Required designer variable.
+            This class was regenerated from Calendargrid.dll using Reflector.exe
+            by Sam Habiel for WorldVista. The original source code is lost.
             </summary>
         </member>
-        <member name="M:IndianHealthService.ClinicalScheduling.DAccessGroupItem.Dispose(System.Boolean)">
+        <member name="T:IndianHealthService.ClinicalScheduling.CGCell">
             <summary>
-            Clean up any resources being used.
-            </summary>
-        </member>
-        <member name="M:IndianHealthService.ClinicalScheduling.DAccessGroupItem.InitializeComponent">
-            <summary>
-            Required method for Designer support - do not modify
-            the contents of this method with the code editor.
-            </summary>
-        </member>
-        <member name="M:IndianHealthService.ClinicalScheduling.DAccessGroupItem.UpdateDialogData(System.Boolean)">
-            <summary>
-            If b is true, moves member vars into control data
-            otherwise, moves control data into member vars
-            </summary>
-            <param name="b"></param>
-        </member>
-        <member name="P:IndianHealthService.ClinicalScheduling.DAccessGroupItem.AccessTypeID">
-            <summary>
-            Contains the IEN of the AccessType in the BSDX_ACCESS_TYPE file
-            </summary>
-        </member>
-        <member name="P:IndianHealthService.ClinicalScheduling.DAccessGroupItem.AccessTypeName">
-            <summary>
-            Contains the name of the AccessType
-            </summary>
-        </member>
-        <member name="T:IndianHealthService.ClinicalScheduling.dInputText">
-            <summary>
-            Summary description for dInputText.
-            </summary>
-        </member>
-        <member name="F:IndianHealthService.ClinicalScheduling.dInputText.components">
-            <summary>
-            Required designer variable.
-            </summary>
-        </member>
-        <member name="M:IndianHealthService.ClinicalScheduling.dInputText.Dispose(System.Boolean)">
-            <summary>
-            Clean up any resources being used.
-            </summary>
-        </member>
-        <member name="M:IndianHealthService.ClinicalScheduling.dInputText.InitializeComponent">
-            <summary>
-            Required method for Designer support - do not modify
-            the contents of this method with the code editor.
-            </summary>
-        </member>
-        <member name="T:IndianHealthService.ClinicalScheduling.CGSchedLib">
-            <summary>
-            CGSchedLib contains static functions that are called from throughout the 
-            scheduling application.
+            This class was regenerated from Calendargrid.dll using Reflector.exe
+            by Sam Habiel for WorldVista. The original source code is lost.
             </summary>
         </member>
         <member name="T:IndianHealthService.ClinicalScheduling.CGAVView">
@@ -945,80 +1157,10 @@
             Accesses the document associated with this view
             </summary>
         </member>
-        <member name="T:IndianHealthService.ClinicalScheduling.DSelectSchedules">
-            <summary>
-            Summary description for DSelectSchedules.
-            </summary>
-        </member>
-        <member name="F:IndianHealthService.ClinicalScheduling.DSelectSchedules.components">
-            <summary>
-            Required designer variable.
-            </summary>
-        </member>
-        <member name="M:IndianHealthService.ClinicalScheduling.DSelectSchedules.Dispose(System.Boolean)">
-            <summary>
-            Clean up any resources being used.
-            </summary>
-        </member>
-        <member name="M:IndianHealthService.ClinicalScheduling.DSelectSchedules.InitializeComponent">
-            <summary>
-            Required method for Designer support - do not modify
-            the contents of this method with the code editor.
-            </summary>
-        </member>
-        <member name="P:IndianHealthService.ClinicalScheduling.DSelectSchedules.SelectedClinics">
-            <summary>
-            Returns the an ArrayList of selected resource names
-            </summary>
-        </member>
-        <member name="T:IndianHealthService.ClinicalScheduling.DAccessBlock">
+        <member name="T:IndianHealthService.ClinicalScheduling.CGAppointmentChangedArgs">
             <summary>
             This class was regenerated from Calendargrid.dll using Reflector.exe
             by Sam Habiel for WorldVista. The original source code is lost.
-            </summary>
-        </member>
-        <member name="T:IndianHealthService.ClinicalScheduling.CGResource">
-            <summary>
-            This class was regenerated from Calendargrid.dll using Reflector.exe
-            by Sam Habiel for WorldVista. The original source code is lost.
-            </summary>
-        </member>
-        <member name="T:IndianHealthService.ClinicalScheduling.DApptSearch">
-            <summary>
-            Summary description for DApptSearch.
-            </summary>
-        </member>
-        <member name="F:IndianHealthService.ClinicalScheduling.DApptSearch.components">
-            <summary>
-            Required designer variable.
-            </summary>
-        </member>
-        <member name="M:IndianHealthService.ClinicalScheduling.DApptSearch.UpdateDialogData(System.Boolean)">
-            <summary>
-            If b is true, moves member vars into control data
-            otherwise, moves control data into member vars
-            </summary>
-            <param name="b"></param>
-        </member>
-        <member name="M:IndianHealthService.ClinicalScheduling.DApptSearch.Dispose(System.Boolean)">
-            <summary>
-            Clean up any resources being used.
-            </summary>
-        </member>
-        <member name="M:IndianHealthService.ClinicalScheduling.DApptSearch.InitializeComponent">
-            <summary>
-            Required method for Designer support - do not modify
-            the contents of this method with the code editor.
-            </summary>
-        </member>
-        <member name="P:IndianHealthService.ClinicalScheduling.DApptSearch.SelectedResource">
-            <summary>
-            Gets the resource selected by the user
-            </summary>
-        </member>
-        <member name="P:IndianHealthService.ClinicalScheduling.DApptSearch.SelectedDate">
-            <summary>
-            Gets the date selected by the user
             </summary>
         </member>
         <member name="T:IndianHealthService.ClinicalScheduling.CGDocument">
@@ -1090,6 +1232,12 @@
             Contains the beginning date of the appointment document
             </summary>
         </member>
+        <member name="T:IndianHealthService.ClinicalScheduling.DAccessBlock">
+            <summary>
+            This class was regenerated from Calendargrid.dll using Reflector.exe
+            by Sam Habiel for WorldVista. The original source code is lost.
+            </summary>
+        </member>
         <member name="T:IndianHealthService.ClinicalScheduling.dsPatientApptDisplay2">
              <summary>
             Represents a strongly typed in-memory cache of data.
@@ -1125,6 +1273,43 @@
             Row event argument class
             </summary>
         </member>
+        <member name="T:IndianHealthService.ClinicalScheduling.DSelectLetterClinics">
+             <summary>
+             Use this dialog to select resources and dates (begin and end) for their examination.
+             <example>
+             DSelectLetterClinics ds = new DSelectLetterClinics();
+             ds.InitializePage(this.m_DocManager.GlobalDataSet, "Print Clinic Cancellation Letters");
+            	ds.ShowDialog(this) 					
+            
+             //get the resource names and call the letter printer
+            	string sClinics = ds.SelectedClinics;
+            	DateTime dtBegin = ds.BeginDate;
+            	DateTime dtEnd = ds.EndDate;
+             </example>
+             </summary>
+             
+        </member>
+        <member name="M:IndianHealthService.ClinicalScheduling.DSelectLetterClinics.#ctor">
+            <summary>
+            Ctor; also sets default enter and cancel buttons
+            </summary>
+        </member>
+        <member name="M:IndianHealthService.ClinicalScheduling.DSelectLetterClinics.Dispose(System.Boolean)">
+            <summary>
+            Clean up any resources being used.
+            </summary>
+        </member>
+        <member name="M:IndianHealthService.ClinicalScheduling.DSelectLetterClinics.InitializeComponent">
+            <summary>
+            Required method for Designer support - do not modify
+            the contents of this method with the code editor.
+            </summary>
+        </member>
+        <member name="P:IndianHealthService.ClinicalScheduling.DSelectLetterClinics.SelectedClinics">
+            <summary>
+            Returns the |-delimited string of selected resource id's
+            </summary>
+        </member>
         <member name="T:IndianHealthService.ClinicalScheduling.DCopyAppts">
             <summary>
             Summary description for DCopyAppts.
@@ -1141,190 +1326,10 @@
             the contents of this method with the code editor.
             </summary>
         </member>
-        <member name="T:IndianHealthService.ClinicalScheduling.CGCell">
-            <summary>
-            This class was regenerated from Calendargrid.dll using Reflector.exe
-            by Sam Habiel for WorldVista. The original source code is lost.
-            </summary>
-        </member>
         <member name="T:IndianHealthService.ClinicalScheduling.CGAppointmentChangedHandler">
             <summary>
             This class was regenerated from Calendargrid.dll using Reflector.exe
             by Sam Habiel for WorldVista. The original source code is lost.
-            </summary>
-        </member>
-        <member name="T:IndianHealthService.ClinicalScheduling.DSplash">
-            <summary>
-            Summary description for DSplash.
-            </summary>
-        </member>
-        <member name="F:IndianHealthService.ClinicalScheduling.DSplash.components">
-            <summary>
-            Required designer variable.
-            </summary>
-        </member>
-        <member name="M:IndianHealthService.ClinicalScheduling.DSplash.Dispose(System.Boolean)">
-            <summary>
-            Clean up any resources being used.
-            </summary>
-        </member>
-        <member name="M:IndianHealthService.ClinicalScheduling.DSplash.InitializeComponent">
-            <summary>
-            Required method for Designer support - do not modify
-            the contents of this method with the code editor.
-            </summary>
-        </member>
-        <member name="P:IndianHealthService.ClinicalScheduling.DSplash.Status">
-            <summary>
-            Gets or sets the value of the Status displayed on the splash screen
-            </summary>
-        </member>
-        <member name="T:IndianHealthService.ClinicalScheduling.CGSelectionChangedArgs">
-            <summary>
-            This class was regenerated from Calendargrid.dll using Reflector.exe
-            by Sam Habiel for WorldVista. The original source code is lost.
-            </summary>
-        </member>
-        <member name="T:IndianHealthService.ClinicalScheduling.CGAppointmentChangedArgs">
-            <summary>
-            This class was regenerated from Calendargrid.dll using Reflector.exe
-            by Sam Habiel for WorldVista. The original source code is lost.
-            </summary>
-        </member>
-        <member name="T:IndianHealthService.ClinicalScheduling.CGRange">
-            <summary>
-            This class was regenerated from Calendargrid.dll using Reflector.exe
-            by Sam Habiel for WorldVista. The original source code is lost.
-            </summary>
-        </member>
-        <member name="T:IndianHealthService.ClinicalScheduling.CGDocumentManager">
-            <summary>
-            Summary description for DocumentManager.
-            </summary>
-        </member>
-        <member name="M:IndianHealthService.ClinicalScheduling.CGDocumentManager.Dispose(System.Boolean)">
-            <summary>
-            Clean up any resources being used.
-            </summary>
-        </member>
-        <member name="M:IndianHealthService.ClinicalScheduling.CGDocumentManager.GetViewByResource(System.Collections.ArrayList)">
-            <summary>
-            Return the first view having a resource array matching sResourceArray
-            </summary>
-            <param name="sResourceArray"></param>
-            <returns></returns>
-        </member>
-        <member name="M:IndianHealthService.ClinicalScheduling.CGDocumentManager.UpdateViews(System.String,System.String)">
-            <summary>
-            Propogate availability updates to all sRresource's doc/views 
-            </summary>
-        </member>
-        <member name="M:IndianHealthService.ClinicalScheduling.CGDocumentManager.UpdateViews">
-            <summary>
-            Propogate availability updates to all doc/views 
-            </summary>
-        </member>
-        <member name="M:IndianHealthService.ClinicalScheduling.CGDocumentManager.CloseAllViews(IndianHealthService.ClinicalScheduling.CGDocument)">
-            <summary>
-            Calls each view associated with document Doc and closes it.
-            </summary>		
-        </member>
-        <member name="M:IndianHealthService.ClinicalScheduling.CGDocumentManager.CloseAllViews(IndianHealthService.ClinicalScheduling.CGAVDocument)">
-            <summary>
-            Calls each view associated with Availability Doc and closes it.
-            </summary>		
-        </member>
-        <member name="P:IndianHealthService.ClinicalScheduling.CGDocumentManager.ConnectInfo">
-            <summary>
-            Returns the document manager's BMXNetConnectInfo member
-            </summary>
-        </member>
-        <member name="P:IndianHealthService.ClinicalScheduling.CGDocumentManager.ScheduleManager">
-            <summary>
-            True if the current user holds the BSDXZMGR or XUPROGMODE keys in RPMS
-            </summary>
-        </member>
-        <member name="P:IndianHealthService.ClinicalScheduling.CGDocumentManager.WindowText">
-            <summary>
-            Holds the user and division
-            </summary>
-        </member>
-        <member name="P:IndianHealthService.ClinicalScheduling.CGDocumentManager.GlobalDataSet">
-            <summary>
-            This dataset contains tables used by the entire application
-            </summary>		
-        </member>
-        <member name="P:IndianHealthService.ClinicalScheduling.CGDocumentManager.Current">
-            <summary>
-            Returns the single CGDocumentManager object
-            </summary>
-        </member>
-        <member name="P:IndianHealthService.ClinicalScheduling.CGDocumentManager.Views">
-            <summary>
-            Returns the list of currently opened documents
-            </summary>
-        </member>
-        <member name="P:IndianHealthService.ClinicalScheduling.CGDocumentManager.AvailabilityViews">
-            <summary>
-            Returns the list of currently opened CGAVViews
-            </summary>
-        </member>
-        <member name="T:IndianHealthService.ClinicalScheduling.CGAVDocument">
-            <summary>
-            Contains array of availability blocks for a scheduling resource
-            </summary>
-        </member>
-        <member name="M:IndianHealthService.ClinicalScheduling.CGAVDocument.CreateAppointmentAuto(IndianHealthService.ClinicalScheduling.CGAppointment)">
-            <summary>
-            Called by LoadTemplate to create Access Block
-            Returns the IEN of the availability block in the RPMS BSDX AVAILABILITY file.
-            </summary>
-        </member>
-        <member name="M:IndianHealthService.ClinicalScheduling.CGAVDocument.RefreshDaysSchedule">
-            <summary>
-            Update availability block schedule based on info in RPMS
-            </summary>
-        </member>
-        <member name="M:IndianHealthService.ClinicalScheduling.CGAVDocument.WeekNeedsRefresh(System.Int32,System.DateTime,System.DateTime@,System.DateTime@)">
-            <summary>
-            Given a selected date,
-            Calculates StartDay and End Day and returns them in output params.  
-            nWeeks == number of Weeks to display
-            nColumnCount is number of days displayed per week.  If 5 columns, begin on
-            Monday, if 7 Columns, begin on Sunday
-            
-            Returns TRUE if the document's data needs refreshing based on 
-            this newly selected date.
-            </summary>
-        </member>
-        <member name="M:IndianHealthService.ClinicalScheduling.CGAVDocument.UpdateAllViews">
-            <summary>
-            Calls each AVview associated with this AVdocument and tells it to update itself
-            </summary>
-        </member>
-        <member name="P:IndianHealthService.ClinicalScheduling.CGAVDocument.ResourceID">
-            <summary>
-            Resource IEN in ^BSDXRES
-            </summary>
-        </member>
-        <member name="P:IndianHealthService.ClinicalScheduling.CGAVDocument.Resources">
-            <summary>
-            The list of Resource names
-            </summary>
-        </member>
-        <member name="P:IndianHealthService.ClinicalScheduling.CGAVDocument.AVBlocks">
-            <summary>
-            Contains the hashtable of Availability Blocks
-            </summary>
-        </member>
-        <member name="P:IndianHealthService.ClinicalScheduling.CGAVDocument.SelectedDate">
-            <summary>
-            Holds the date selected by the user in CGView.dateTimePicker1
-            </summary>
-        </member>
-        <member name="P:IndianHealthService.ClinicalScheduling.CGAVDocument.StartDate">
-            <summary>
-            Contains the beginning date of the appointment document
             </summary>
         </member>
     </members>
