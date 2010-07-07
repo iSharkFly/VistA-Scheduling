@@ -2289,6 +2289,9 @@ namespace IndianHealthService.ClinicalScheduling
 			}
 		}
 
+        /// <summary>
+        /// This is how you set how the grid will look
+        /// </summary>
 		public void UpdateArrays()
 		{
 			Debug.Assert(this.InvokeRequired == false,"CGView.UpdateArrays InvokeRequired");
@@ -2298,7 +2301,7 @@ namespace IndianHealthService.ClinicalScheduling
 				this.calendarGrid1.AvailabilityArray = this.m_Document.AvailabilityArray;
 				this.calendarGrid1.Resources = this.m_Document.Resources;
                 // this.calendarGrid1.Columns = 7; //test
-                this.calendarGrid1.StartDate = DateTime.Parse("10-10-2007"); // another test
+                // this.calendarGrid1.StartDate = DateTime.Parse("10-10-2007"); // another test
 				this.calendarGrid1.OnUpdateArrays(); // this draws the Calendar
 				this.lblResource.Text = this.m_Document.DocName;
 				this.calendarGrid1.Invalidate();

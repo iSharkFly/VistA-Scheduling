@@ -268,6 +268,11 @@
             Delete all selected appointments
             </summary>
         </member>
+        <member name="M:IndianHealthService.ClinicalScheduling.CGView.UpdateArrays">
+            <summary>
+            This is how you set how the grid will look
+            </summary>
+        </member>
         <member name="P:IndianHealthService.ClinicalScheduling.CGView.CGrid">
             <summary>
             Access the CalendarGrid associated with this view
