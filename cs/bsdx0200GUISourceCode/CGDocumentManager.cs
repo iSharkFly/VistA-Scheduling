@@ -33,6 +33,9 @@ namespace IndianHealthService.ClinicalScheduling
         //Encoding string (empty by default)
         private string                      m_Encoding="";
 
+        //Data Access Layer
+        private DAL                         _dal = null;
+
 		//M Connection member variables
 		private DataSet									m_dsGlobal = null;
 		private System.ComponentModel.IContainer		components = null;
@@ -176,6 +179,11 @@ namespace IndianHealthService.ClinicalScheduling
 			}
 		}
 
+        public DAL DAL
+        {
+            get { return this._dal; }
+        }
+
 
 		#endregion
 
@@ -205,13 +213,6 @@ namespace IndianHealthService.ClinicalScheduling
 
 		private void InitializeComponent()
 		{
-			// 
-			// CGDocumentManager
-			// 
-			this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
-			this.ClientSize = new System.Drawing.Size(292, 266);
-			this.Name = "CGDocumentManager";
-
 		}
 
 
@@ -230,6 +231,7 @@ namespace IndianHealthService.ClinicalScheduling
 		private void InitializeApp(bool bReLogin)
 		{
             m_ConnectInfo = new BMXNetConnectInfo(m_Encoding); // Encoding is "" unless passed in command line
+            _dal = new DAL(m_ConnectInfo);   // Data access layer
             //m_ConnectInfo.bmxNetLib.StartLog();    //This line turns on logging of messages
             CDocMgrEventDelegate = new BMXNetConnectInfo.BMXNetEventDelegate(CDocMgrEventHandler);
             m_ConnectInfo.BMXNetEvent += CDocMgrEventDelegate;
@@ -320,10 +322,12 @@ namespace IndianHealthService.ClinicalScheduling
 				//Version info
 				m_ds.SetStatus("Getting Version Info...");
                 m_ds.Refresh();
-                String sCmd = "BMX VERSION INFO^BSDX^";
-                this.m_ConnectInfo.RPMSDataTable(sCmd, "VersionInfo", m_dsGlobal);
 
-				//Keep the following commented code for future use:
+                DataTable ver = _dal.GetVersion("BSDX"); //sCmd, "VersionInfo", m_dsGlobal);
+                ver.TableName = "VersionInfo";
+                m_dsGlobal.Tables.Add(ver);
+
+                //Keep the following commented code for future use:
 				//How to extract the version numbers:
                 //DataTable dtVersion = m_dsGlobal.Tables["VersionInfo"];
                 //Debug.Assert(dtVersion.Rows.Count == 1);
@@ -434,12 +438,6 @@ namespace IndianHealthService.ClinicalScheduling
             }
 		}
 
-		public void LoadAccessTypesTable()
-		{
-			string sCommandText = "SELECT * FROM BSDX_ACCESS_TYPE";
-			ConnectInfo.RPMSDataTable(sCommandText, "AccessTypes", m_dsGlobal);
-			Debug.Write("LoadGlobalRecordsets -- AccessTypes loaded\n");
-		}
 
 		public void LoadAccessGroupsTable()
 		{
@@ -454,14 +452,6 @@ namespace IndianHealthService.ClinicalScheduling
 			ConnectInfo.RPMSDataTable(sCommandText, "AccessGroupType", m_dsGlobal);
 			Debug.Write("LoadGlobalRecordsets -- AccessGroupTypes loaded\n");
 		}
-
-        //TODO:REMOVE THIS
-		/*public void LoadClinicSetupTable()
-		{
-			string sCommandText = "BSDX CLINIC SETUP";
-			ConnectInfo.RPMSDataTable(sCommandText, "ClinicSetupParameters", m_dsGlobal);
-			Debug.Write("LoadGlobalRecordsets -- ClinicSetupParameters loaded\n");
-		}*/
 
 		public void LoadBSDXResourcesTable()
 		{
@@ -520,33 +510,33 @@ namespace IndianHealthService.ClinicalScheduling
 
 		private bool LoadGlobalRecordsets() 
 		{
-			//Schedule User Info
-			string sCommandText = "BSDX SCHEDULING USER INFO^" + m_ConnectInfo.DUZ;
-			DataTable dtUser = ConnectInfo.RPMSDataTable(sCommandText, "SchedulingUser", m_dsGlobal);
+			
+            string sCommandText;
 
+            //Schedule User Info
+			DataTable dtUser = _dal.GetUserInfo(m_ConnectInfo.DUZ);
+            dtUser.TableName = "SchedulingUser";
+            m_dsGlobal.Tables.Add(dtUser);
 			Debug.Assert(dtUser.Rows.Count == 1);
+
+            // Only one row and one column named "MANAGER". Set local var m_bSchedManager to true if Manager.
 			DataRow rUser = dtUser.Rows[0];
 			Object oUser = rUser["MANAGER"];
 			string sUser = oUser.ToString();
 			m_bSchedManager = (sUser == "YES")?true:false;
 
-			//AccessTypes
-			LoadAccessTypesTable();
-
-			//Build Primary Key for AccessTypes table
-			DataTable dtTypes = m_dsGlobal.Tables["AccessTypes"];
-			DataColumn dcKey = dtTypes.Columns["BMXIEN"];
-			DataColumn[] dcKeys = new DataColumn[1];
-			dcKeys[0] = dcKey;
-			dtTypes.PrimaryKey = dcKeys;
+            //Get Access Types
+            DataTable dtAccessTypes = _dal.GetAccessTypes();
+            dtAccessTypes.TableName = "AccessTypes";
+            m_dsGlobal.Tables.Add(dtAccessTypes);
 
 			//AccessGroups
 			LoadAccessGroupsTable();
 
 			//Build Primary Key for AccessGroup table
 			DataTable dtGroups = m_dsGlobal.Tables["AccessGroup"];
-			dcKey = dtGroups.Columns["ACCESS_GROUP"];
-			dcKeys = new DataColumn[1];
+            DataColumn dcKey = dtGroups.Columns["ACCESS_GROUP"];
+            DataColumn[] dcKeys = new DataColumn[1];
 			dcKeys[0] = dcKey;
 			dtGroups.PrimaryKey = dcKeys;
 
@@ -1043,20 +1033,32 @@ namespace IndianHealthService.ClinicalScheduling
 		{
 			//Retrieves a recordset from RPMS
 			string			sErrorMessage = "";
+            DataTable dtOut;
+
+#if TRACE
+            DateTime sendTime = DateTime.Now;
+#endif
 			try
 			{
 				System.IntPtr pHandle = this.Handle;
-				DataTable dtOut;
 				RPMSDataTableDelegate rdtd = new RPMSDataTableDelegate(ConnectInfo.RPMSDataTable);
-				//dtOut = (DataTable) this.Invoke(rdtd, new object[] {sSQL, sTableName});
-                dtOut = ConnectInfo.RPMSDataTable(sSQL, sTableName);
-				return dtOut;
+				dtOut = (DataTable) this.Invoke(rdtd, new object[] {sSQL, sTableName});
 			}
+
 			catch (Exception ex)
 			{
 				sErrorMessage = "CGDocumentManager.RPMSDataTable error: " + ex.Message;
 				throw ex;
 			}
+
+#if TRACE
+            DateTime receiveTime = DateTime.Now;
+            TimeSpan executionTime = receiveTime - sendTime;
+            Debug.Write("CGDocumentManager::RPMSDataTable Execution Time: " + executionTime.Milliseconds + " ms.\n");
+#endif
+
+            return dtOut;
+
 		}
 
 		public void ChangeDivision(System.Windows.Forms.Form frmCaller)

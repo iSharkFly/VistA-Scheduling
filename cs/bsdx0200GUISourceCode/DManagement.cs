@@ -1883,14 +1883,26 @@ namespace IndianHealthService.ClinicalScheduling
 					throw new Exception((string) dr["ERRORTEXT"]);
 				}
 
-				m_DocManager.LoadAccessTypesTable();
-				m_DocManager.UpdateViews();
+                RefreshAccessTypesTables();
 			}
 			catch (Exception ex)
 			{
 				MessageBox.Show(ex.Message);
 			}
 		}
+
+        private void RefreshAccessTypesTables()
+        {
+            m_dsGlobal.Tables["AccessTypes"].Clear();
+            m_dsGlobal.Tables["AccessGroupType"].Clear();
+            DataTable dt1 = m_DocManager.DAL.GetAccessTypes();
+            m_dsGlobal.Tables["AccessTypes"].Merge(dt1);
+            m_dsGlobal.Tables.Add(dt1);
+            //Fix Groups
+            //m_DocManager.LoadAccessTypesTable();
+            m_DocManager.LoadAccessGroupTypesTable();
+            m_DocManager.UpdateViews();
+        }
 
 		private void cmdAddAT_Click(object sender, System.EventArgs e)
 		{
@@ -1927,8 +1939,8 @@ namespace IndianHealthService.ClinicalScheduling
 					throw new Exception((string) dr["ERRORTEXT"]);
 				}
 
-				m_DocManager.LoadAccessTypesTable();
-				m_DocManager.UpdateViews();
+                RefreshAccessTypesTables();
+
 			}
 			catch (Exception ex)
 			{
@@ -2186,12 +2198,8 @@ namespace IndianHealthService.ClinicalScheduling
 
 				this.cmdRemoveAccessGroup.Enabled = true;
 
-				m_dsGlobal.Tables["AccessTypes"].Clear();
-				m_dsGlobal.Tables["AccessGroupType"].Clear();
-				m_DocManager.LoadAccessTypesTable();
-				m_DocManager.LoadAccessGroupTypesTable();
-			
-				m_DocManager.UpdateViews();
+                RefreshAccessTypesTables();
+
 			}
 			catch (Exception ex)
 			{
