@@ -497,6 +497,7 @@
             // Move the base point from the client screen to the scrolling region top-left corner.
             g.TranslateTransform((float) base.AutoScrollPosition.X, (float) base.AutoScrollPosition.Y);
 
+            // This for loop draws the time scale (although I haven't completely traced it out)
             // For each row except the first one (i starts from 1 rather than zero)
             for (int i = 1; i < num4; i++)
             {
@@ -544,13 +545,18 @@
                 Rectangle layoutRectangle = new Rectangle(rect.X + ((rect.Width * 2) / 3), rectangle2.Top, rect.Width / 3, rectangle2.Height);
                 // At in this rectangle, write the minutes. Horizontal Ctr and Right Justified to Rectangle
                 g.DrawString(s, this.m_fCell, Brushes.Black, layoutRectangle, this.m_sfRight);
+                // Draw Line from two points, just under the time we have just written
                 Point point2 = new Point(rect.X + ((rect.Width * 2) / 3), rectangle2.Bottom);
                 Point point3 = new Point(rect.Right, rectangle2.Bottom);
                 g.DrawLine(pen, point2, point3);
+                // Increment the minutes with the time scale
                 num5 += this.m_nTimeScale;
+                // If miniutes reaches 60, reset to zero
                 num5 = (num5 >= 60) ? 0 : num5;
+                // When we reach the bottom (num4 - 1 is # of rows) and we are not scrolling
                 if ((i == (num4 - 1)) && !this.m_bScroll)
                 {
+                    // Fill the last cell with Gray (?)
                     g.TranslateTransform((float) -base.AutoScrollPosition.X, (float) -base.AutoScrollPosition.Y);
                     rect = new Rectangle(0, 0, this.m_col0Width, this.m_cellHeight);
                     g.FillRectangle(Brushes.LightGray, rect);
@@ -558,16 +564,20 @@
                     g.TranslateTransform((float) base.AutoScrollPosition.X, (float) base.AutoScrollPosition.Y);
                 }
             }
+            
+            //This for loop draws the cells
+            //Start from the bottom (num4 is # of rows) and go down to the zeroth row (ie date row/resource row)
             for (int j = num4; j > -1; j--)
             {
+                // For each column - 1 (we start at 1, not zero-->We drew the first column anyways in the 1st loop)
                 for (int k = 1; k < nColumns; k++)
                 {
-                    int num12 = 0;
-                    if (k == 1)
+                    int num12 = 0;  // X-axis position
+                    if (k == 1)     // If we are at the first column, start at 100px (default)
                     {
                         num12 = this.m_col0Width;
                     }
-                    if (k > 1)
+                    if (k > 1)      // 
                     {
                         num12 = this.m_col0Width + (this.m_cellWidth * (k - 1));
                     }
