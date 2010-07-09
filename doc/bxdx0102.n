@@ -19,11 +19,11 @@ For a Virgin WorldVistA 6-08 release install the following in this order:
 
 Client (download from https://trac.opensourcevista.net/browser/Scheduling/trunk/cs/bsdx0200GUISourceCode/bin/Release):
 ClinicalScheduling.exe
-BMXNet20.dll
+BMXNet21.dll
 
 Client does not need installation. Both files have to be located in the same folder.
 
-For users who used a previous version, you only need to download and install BSDX 1.2 kids and ClinicalScheduling.exe.
+For users who used a previous version, you only need to download and install BSDX 1.2 kids and ClinicalScheduling.exe plus the BMXNet21.dll library.
 
 Post-installation tasks:
 After installation, complete the following tasks to configure Windows Scheduling:
