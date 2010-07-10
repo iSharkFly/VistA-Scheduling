@@ -52,18 +52,20 @@ namespace IndianHealthService.ClinicalScheduling
 				{
 					throw new Exception("At least one clinic must be selected.");
 				}
-                _dtBegin = dtBegin;
-                _dtEnd = dtEnd;
-				string sBegin = dtBegin.ToShortDateString();
-				string sEnd = dtEnd.ToShortDateString();
-				this.Text="Clinic Schedules";
 
-				string sSql = "BSDX CLINIC LETTERS^" + sClinicList + "^" + sBegin + "^" + sEnd;
-                string sSql2 = "BSDX RESOURCE LETTERS^" + sClinicList;
+                _dtBegin = dtBegin; // Global variable to use in Printing method below
+                _dtEnd = dtEnd; // ditto
 
+                this.Text="Clinic Schedules";
+
+                // Get Data
+                DataTable PatientAppts = docManager.DAL.GetClinicSchedules(sClinicList, dtBegin, dtEnd);
+                DataTable Resources = docManager.DAL.GetResourceLetters(sClinicList);
+
+                // Merge tables into typed dataset
                 _dsApptDisplay = new dsPatientApptDisplay2();
-                _dsApptDisplay.BSDXResource.Merge(docManager.RPMSDataTable(sSql2, "Resources"));
-                _dsApptDisplay.PatientAppts.Merge(docManager.RPMSDataTable(sSql, "PatientAppts"));
+                _dsApptDisplay.PatientAppts.Merge(PatientAppts);
+                _dsApptDisplay.BSDXResource.Merge(Resources);
 
                 this.PrintPreviewControl.Document = printAppts;
             }
@@ -80,6 +82,7 @@ namespace IndianHealthService.ClinicalScheduling
         /// <param name="sClinicList">Clinics for which to print</param>
         /// <param name="dtBegin">Beginning Date</param>
         /// <param name="dtEnd">End Date</param>
+        /// working on moving this over...
         public void InitializeFormRebookLetters(CGDocumentManager docManager,
 			string sClinicList,
 		    DateTime dtBegin,
