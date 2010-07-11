@@ -34,10 +34,10 @@ namespace IndianHealthService.ClinicalScheduling
 				if ((i+1) < saryResNames.Count)
 					sResName += "|";
 			}
-			string sStart;
-			string sEnd;
-			sStart = StartTime.ToString("M-d-yyyy");
-			sEnd = EndTime.ToString("M-d-yyyy@HH:m");
+			
+			
+            string sStart = FMDateTime.Create(StartTime).DateOnly.FMDateString;
+            string sEnd = FMDateTime.Create(EndTime).FMDateString;
 			string sSql = "BSDX CREATE APPT SCHEDULE^" + sResName + "^" + sStart + "^" + sEnd ;
 			DataTable dtRet = docManager.RPMSDataTable(sSql, "AppointmentSchedule");
 			return dtRet;

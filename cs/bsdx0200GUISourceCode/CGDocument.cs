@@ -205,7 +205,7 @@ namespace IndianHealthService.ClinicalScheduling
 
 				this.m_appointments.ClearAllAppointments();
 
-                //  calls RPC to (presumably--not sure yet) get appointments
+                //  calls RPC to get appointments
 				rAppointmentSchedule = CGSchedLib.CreateAppointmentSchedule(m_DocManager, m_sResourcesArray, this.m_dStartDate, this.m_dEndDate);
 				
                 // Datatable dumper into Debug Log (nice to know that this exists)

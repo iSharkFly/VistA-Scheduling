@@ -392,13 +392,14 @@ namespace IndianHealthService.ClinicalScheduling
             // mnuPrintReminderLetters
             // 
             this.mnuPrintReminderLetters.Index = 10;
-            this.mnuPrintReminderLetters.Shortcut = System.Windows.Forms.Shortcut.CtrlR;
+            this.mnuPrintReminderLetters.Shortcut = System.Windows.Forms.Shortcut.CtrlI;
             this.mnuPrintReminderLetters.Text = "Print Rem&inder Letters";
             this.mnuPrintReminderLetters.Click += new System.EventHandler(this.mnuPrintReminderLetters_Click);
             // 
             // mnuPrintRebookLetters
             // 
             this.mnuPrintRebookLetters.Index = 11;
+            this.mnuPrintRebookLetters.Shortcut = System.Windows.Forms.Shortcut.CtrlR;
             this.mnuPrintRebookLetters.Text = "Print &Rebook Letters";
             this.mnuPrintRebookLetters.Click += new System.EventHandler(this.mnuPrintRebookLetters_Click);
             // 
@@ -650,7 +651,7 @@ namespace IndianHealthService.ClinicalScheduling
             this.tvSchedules.HotTracking = true;
             this.tvSchedules.Location = new System.Drawing.Point(0, 0);
             this.tvSchedules.Name = "tvSchedules";
-            this.tvSchedules.Size = new System.Drawing.Size(128, 369);
+            this.tvSchedules.Size = new System.Drawing.Size(128, 479);
             this.tvSchedules.Sorted = true;
             this.tvSchedules.TabIndex = 1;
             this.tvSchedules.DoubleClick += new System.EventHandler(this.tvSchedules_DoubleClick);
@@ -696,9 +697,9 @@ namespace IndianHealthService.ClinicalScheduling
             // 
             this.panelRight.Controls.Add(this.panelClip);
             this.panelRight.Dock = System.Windows.Forms.DockStyle.Right;
-            this.panelRight.Location = new System.Drawing.Point(807, 0);
+            this.panelRight.Location = new System.Drawing.Point(941, 0);
             this.panelRight.Name = "panelRight";
-            this.panelRight.Size = new System.Drawing.Size(128, 369);
+            this.panelRight.Size = new System.Drawing.Size(128, 479);
             this.panelRight.TabIndex = 3;
             this.panelRight.Visible = false;
             // 
@@ -764,7 +765,7 @@ namespace IndianHealthService.ClinicalScheduling
             this.panelTop.Dock = System.Windows.Forms.DockStyle.Top;
             this.panelTop.Location = new System.Drawing.Point(128, 0);
             this.panelTop.Name = "panelTop";
-            this.panelTop.Size = new System.Drawing.Size(679, 24);
+            this.panelTop.Size = new System.Drawing.Size(813, 24);
             this.panelTop.TabIndex = 6;
             // 
             // dateTimePicker1
@@ -772,7 +773,7 @@ namespace IndianHealthService.ClinicalScheduling
             this.dateTimePicker1.Dock = System.Windows.Forms.DockStyle.Right;
             this.dateTimePicker1.DropDownAlign = System.Windows.Forms.LeftRightAlignment.Right;
             this.dateTimePicker1.Format = System.Windows.Forms.DateTimePickerFormat.Short;
-            this.dateTimePicker1.Location = new System.Drawing.Point(551, 0);
+            this.dateTimePicker1.Location = new System.Drawing.Point(685, 0);
             this.dateTimePicker1.Name = "dateTimePicker1";
             this.dateTimePicker1.Size = new System.Drawing.Size(128, 20);
             this.dateTimePicker1.TabIndex = 1;
@@ -794,7 +795,7 @@ namespace IndianHealthService.ClinicalScheduling
             this.panelCenter.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panelCenter.Location = new System.Drawing.Point(136, 24);
             this.panelCenter.Name = "panelCenter";
-            this.panelCenter.Size = new System.Drawing.Size(668, 321);
+            this.panelCenter.Size = new System.Drawing.Size(802, 431);
             this.panelCenter.TabIndex = 7;
             // 
             // calendarGrid1
@@ -816,7 +817,7 @@ namespace IndianHealthService.ClinicalScheduling
             this.calendarGrid1.Name = "calendarGrid1";
             this.calendarGrid1.Resources = ((System.Collections.ArrayList)(resources.GetObject("calendarGrid1.Resources")));
             this.calendarGrid1.SelectedAppointment = 0;
-            this.calendarGrid1.Size = new System.Drawing.Size(668, 321);
+            this.calendarGrid1.Size = new System.Drawing.Size(802, 431);
             this.calendarGrid1.StartDate = new System.DateTime(2003, 1, 27, 0, 0, 0, 0);
             this.calendarGrid1.TabIndex = 0;
             this.calendarGrid1.TimeScale = 20;
@@ -908,9 +909,9 @@ namespace IndianHealthService.ClinicalScheduling
             // 
             this.panelBottom.Controls.Add(this.statusBar1);
             this.panelBottom.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panelBottom.Location = new System.Drawing.Point(136, 345);
+            this.panelBottom.Location = new System.Drawing.Point(136, 455);
             this.panelBottom.Name = "panelBottom";
-            this.panelBottom.Size = new System.Drawing.Size(668, 24);
+            this.panelBottom.Size = new System.Drawing.Size(802, 24);
             this.panelBottom.TabIndex = 8;
             // 
             // statusBar1
@@ -918,7 +919,7 @@ namespace IndianHealthService.ClinicalScheduling
             this.statusBar1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.statusBar1.Location = new System.Drawing.Point(0, 0);
             this.statusBar1.Name = "statusBar1";
-            this.statusBar1.Size = new System.Drawing.Size(668, 24);
+            this.statusBar1.Size = new System.Drawing.Size(802, 24);
             this.statusBar1.SizingGrip = false;
             this.statusBar1.TabIndex = 0;
             // 
@@ -926,16 +927,16 @@ namespace IndianHealthService.ClinicalScheduling
             // 
             this.splitter1.Location = new System.Drawing.Point(128, 24);
             this.splitter1.Name = "splitter1";
-            this.splitter1.Size = new System.Drawing.Size(8, 345);
+            this.splitter1.Size = new System.Drawing.Size(8, 455);
             this.splitter1.TabIndex = 9;
             this.splitter1.TabStop = false;
             // 
             // splitter2
             // 
             this.splitter2.Dock = System.Windows.Forms.DockStyle.Right;
-            this.splitter2.Location = new System.Drawing.Point(804, 24);
+            this.splitter2.Location = new System.Drawing.Point(938, 24);
             this.splitter2.Name = "splitter2";
-            this.splitter2.Size = new System.Drawing.Size(3, 345);
+            this.splitter2.Size = new System.Drawing.Size(3, 455);
             this.splitter2.TabIndex = 10;
             this.splitter2.TabStop = false;
             // 
@@ -947,7 +948,7 @@ namespace IndianHealthService.ClinicalScheduling
             // CGView
             // 
             this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
-            this.ClientSize = new System.Drawing.Size(935, 369);
+            this.ClientSize = new System.Drawing.Size(1069, 479);
             this.Controls.Add(this.panelCenter);
             this.Controls.Add(this.panelBottom);
             this.Controls.Add(this.splitter2);

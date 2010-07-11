@@ -93,7 +93,6 @@ namespace IndianHealthService.ClinicalScheduling
         /// ^I00010RESOURCEID^T00030APPT_MADE_BY^D00020DATE_APPT_MADE^T00250NOTE^T00030STREET^T00030CITY
         /// ^T00030STATE^T00030ZIP^T00030HOMEPHONE^D00030OldApptDate
         ///</returns>
-        /// <remarks>Not sure if this works yet</remarks>
         /// <remarks>Mirrors dsRebookAppts.PatientAppt Schema. Can merge table into schema.</remarks>
         public DataTable GetRebookedAppointments(string sClinicList, DateTime BeginDate, DateTime EndDate)
         {
@@ -102,6 +101,21 @@ namespace IndianHealthService.ClinicalScheduling
             string cmd = String.Format("BSDX REBOOK CLINIC LIST^{0}^{1}^{2}", sClinicList, sBegin, sEnd);
             return RPMSDataTable(cmd, "");
         }
+
+        public DataTable GetRebookedAppointments(string sApptList)
+        {
+            string cmd = String.Format("BSDX REBOOK LIST^{0}", sApptList);
+            return RPMSDataTable(cmd, "");
+        }
+
+        public DataTable GetCancelledAppointments(string sClinicList, DateTime BeginDate, DateTime EndDate)
+        {
+            string sBegin = FMDateTime.Create(BeginDate).DateOnly.FMDateString;
+            string sEnd = FMDateTime.Create(EndDate).DateOnly.FMDateString;
+            string cmd = String.Format("BSDX CANCEL CLINIC LIST^{0}^{1}^{2}", sClinicList, sBegin, sEnd);
+            return RPMSDataTable(cmd, "");
+        }
+
 
         /// <summary>
         /// Workhorse

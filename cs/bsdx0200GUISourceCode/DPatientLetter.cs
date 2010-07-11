@@ -7,7 +7,7 @@ using System.Drawing;
 namespace IndianHealthService.ClinicalScheduling
 {
 	/// <summary>
-	/// Summary description for DPatientLetter.
+	/// Handles Printing of letters (Reminder, Rebook, Cancellation) and a Report. Contains a Print Preview dialog.
 	/// </summary>
 	public class DPatientLetter : System.Windows.Forms.PrintPreviewDialog
     {
@@ -17,6 +17,8 @@ namespace IndianHealthService.ClinicalScheduling
         private System.ComponentModel.Container components = null;
         private System.Drawing.Printing.PrintDocument printAppts;
         private System.Drawing.Printing.PrintDocument printReminderLetters;
+        private System.Drawing.Printing.PrintDocument printCancelLetters;
+        private System.Drawing.Printing.PrintDocument printRebookLetters;
 
 		#region Fields
         DateTime _dtBegin, _dtEnd; //global fields to use in passing to printing method
@@ -27,12 +29,53 @@ namespace IndianHealthService.ClinicalScheduling
         int _currentApptPrinting = 0;
         int _pageNumber = 0;
         
-        //dataset to load the results of queries into and set to print routines
+        //typed datasets to load the results of queries into and set to print routines
         dsPatientApptDisplay2 _dsApptDisplay;
-        private PrintDocument printCancelLetters;
-        private PrintDocument printRebookLetters;
         dsRebookAppts _dsRebookAppts;
+
 		#endregion Fields
+
+        #region Windows Form Designer generated code
+        /// <summary>
+        /// Required method for Designer support - do not modify
+        /// the contents of this method with the code editor.
+        /// </summary>
+        private void InitializeComponent()
+        {
+            this.printAppts = new System.Drawing.Printing.PrintDocument();
+            this.printReminderLetters = new System.Drawing.Printing.PrintDocument();
+            this.printCancelLetters = new System.Drawing.Printing.PrintDocument();
+            this.printRebookLetters = new System.Drawing.Printing.PrintDocument();
+            this.SuspendLayout();
+            // 
+            // printAppts
+            // 
+            this.printAppts.PrintPage += new System.Drawing.Printing.PrintPageEventHandler(this.printAppts_PrintPage);
+            // 
+            // printReminderLetters
+            // 
+            this.printReminderLetters.PrintPage += new System.Drawing.Printing.PrintPageEventHandler(this.printReminderLetters_PrintPage);
+            // 
+            // printCancelLetters
+            // 
+            this.printCancelLetters.PrintPage += new System.Drawing.Printing.PrintPageEventHandler(this.printCancelLetters_PrintPage);
+            // 
+            // printRebookLetters
+            // 
+            this.printRebookLetters.PrintPage += new System.Drawing.Printing.PrintPageEventHandler(this.printRebookLetters_PrintPage);
+            // 
+            // DPatientLetter
+            // 
+            this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
+            this.ClientSize = new System.Drawing.Size(648, 398);
+            this.Name = "DPatientLetter";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
+            this.Text = "Patient Letter";
+            this.ResumeLayout(false);
+
+        }
+        #endregion
+
 
 		/// <summary>
 		/// Print Clinic Schedules
@@ -82,7 +125,6 @@ namespace IndianHealthService.ClinicalScheduling
         /// <param name="sClinicList">Clinics for which to print</param>
         /// <param name="dtBegin">Beginning Date</param>
         /// <param name="dtEnd">End Date</param>
-        /// working on moving this over...
         public void InitializeFormRebookLetters(CGDocumentManager docManager,
 			string sClinicList,
 		    DateTime dtBegin,
@@ -95,16 +137,13 @@ namespace IndianHealthService.ClinicalScheduling
 					throw new Exception("At least one clinic must be selected.");
 				}
 
-                string sBegin = dtBegin.ToString("M/d/yyyy@HH:mm");
-                string sEnd = dtEnd.ToString("M/d/yyyy@HH:mm");
-
                 //Call RPC to get list of appt ids that have been rebooked for these clinics on these dates
-                string sSql1 = "BSDX REBOOK CLINIC LIST^" + sClinicList + "^" + sBegin + "^" + sEnd;				
-				string sSql2 = "BSDX RESOURCE LETTERS^" + sClinicList;
+                DataTable PatientAppts = docManager.DAL.GetRebookedAppointments(sClinicList, dtBegin, dtEnd);
+                DataTable Resources = docManager.DAL.GetResourceLetters(sClinicList);
 
                 _dsRebookAppts = new dsRebookAppts();
-                _dsRebookAppts.PatientAppts.Merge(docManager.RPMSDataTable(sSql1, "PatientAppts"));
-                _dsRebookAppts.BSDXResource.Merge(docManager.RPMSDataTable(sSql2, "Resources"));
+                _dsRebookAppts.PatientAppts.Merge(PatientAppts);
+                _dsRebookAppts.BSDXResource.Merge(Resources);
 
             }
 			catch (Exception ex)
@@ -133,14 +172,12 @@ namespace IndianHealthService.ClinicalScheduling
                     throw new Exception("At least one clinic must be selected.");
                 }
 
-                string sSql1 = "BSDX REBOOK LIST^" + sApptIDList;
-                string sSql2 = "BSDX RESOURCE LETTERS^" + sClinicList;
+                DataTable PatientAppts = docManager.DAL.GetRebookedAppointments(sApptIDList);
+                DataTable Resources = docManager.DAL.GetResourceLetters(sClinicList);
 
                 _dsRebookAppts = new dsRebookAppts();
-                _dsRebookAppts.PatientAppts.Merge(docManager.RPMSDataTable(sSql1, "PatientAppts"));
-                _dsRebookAppts.BSDXResource.Merge(docManager.RPMSDataTable(sSql2, "Resources"));
-
-
+                _dsRebookAppts.PatientAppts.Merge(PatientAppts);
+                _dsRebookAppts.BSDXResource.Merge(Resources);
             }
             catch (Exception ex)
             {
@@ -168,18 +205,14 @@ namespace IndianHealthService.ClinicalScheduling
 				{
 					throw new Exception("At least one clinic must be selected.");
 				}
-
-                string sBegin = dtBegin.ToString("M/d/yyyy@HH:mm");
-                string sEnd = dtEnd.ToString("M/d/yyyy@HH:mm");
-
-                //Call RPC to get list of appt ids that have been cancelled for these clinics on these dates
-                string sSql1 = "BSDX CANCEL CLINIC LIST^" + sClinicList + "^" + sBegin + "^" + sEnd;
-				string sSql2 = "BSDX RESOURCE LETTERS^" + sClinicList;
-
+                
+                DataTable PatientAppts = docManager.DAL.GetCancelledAppointments(sClinicList, dtBegin, dtEnd);
+                DataTable Resources = docManager.DAL.GetResourceLetters(sClinicList);
+                
                 _dsRebookAppts = new dsRebookAppts();
-                _dsRebookAppts.PatientAppts.Merge(docManager.RPMSDataTable(sSql1, "PatientAppts"));
-                _dsRebookAppts.BSDXResource.Merge(docManager.RPMSDataTable(sSql2, "Resources"));
-
+                _dsRebookAppts.PatientAppts.Merge(PatientAppts);
+                _dsRebookAppts.BSDXResource.Merge(Resources);
+                
                 PrintPreviewControl.Document = printCancelLetters;
 
 			}
@@ -207,18 +240,20 @@ namespace IndianHealthService.ClinicalScheduling
 					throw new Exception("At least one clinic must be selected.");
 				}
 
+                // Global variables to use in printing routine down below
                 _dtBegin = dtBegin;
                 _dtEnd = dtEnd;
-                string sBegin = dtBegin.ToShortDateString();
-                string sEnd = dtEnd.ToShortDateString();
-                this.Text = "Clinic Schedules";
 
-                string sSql = "BSDX CLINIC LETTERS^" + sClinicList + "^" + sBegin + "^" + sEnd;
-                string sSql2 = "BSDX RESOURCE LETTERS^" + sClinicList;
+                this.Text = "Reminder Letters";
 
+                // Get Data
+                DataTable PatientAppts = docManager.DAL.GetClinicSchedules(sClinicList, dtBegin, dtEnd);
+                DataTable Resources = docManager.DAL.GetResourceLetters(sClinicList);
+
+                // Merge tables into typed dataset
                 _dsApptDisplay = new dsPatientApptDisplay2();
-                _dsApptDisplay.BSDXResource.Merge(docManager.RPMSDataTable(sSql2, "Resources"));
-                _dsApptDisplay.PatientAppts.Merge(docManager.RPMSDataTable(sSql, "PatientAppts"));
+                _dsApptDisplay.PatientAppts.Merge(PatientAppts);
+                _dsApptDisplay.BSDXResource.Merge(Resources);
 
                 this.PrintPreviewControl.Document = printReminderLetters;
 				
@@ -259,46 +294,6 @@ namespace IndianHealthService.ClinicalScheduling
 			base.Dispose( disposing );
 		}
 
-		#region Windows Form Designer generated code
-		/// <summary>
-		/// Required method for Designer support - do not modify
-		/// the contents of this method with the code editor.
-		/// </summary>
-		private void InitializeComponent()
-		{
-            this.printAppts = new System.Drawing.Printing.PrintDocument();
-            this.printReminderLetters = new System.Drawing.Printing.PrintDocument();
-            this.printCancelLetters = new System.Drawing.Printing.PrintDocument();
-            this.printRebookLetters = new System.Drawing.Printing.PrintDocument();
-            this.SuspendLayout();
-            // 
-            // printAppts
-            // 
-            this.printAppts.PrintPage += new System.Drawing.Printing.PrintPageEventHandler(this.printAppts_PrintPage);
-            // 
-            // printReminderLetters
-            // 
-            this.printReminderLetters.PrintPage += new System.Drawing.Printing.PrintPageEventHandler(this.printReminderLetters_PrintPage);
-            // 
-            // printCancelLetters
-            // 
-            this.printCancelLetters.PrintPage += new System.Drawing.Printing.PrintPageEventHandler(this.printCancelLetters_PrintPage);
-            // 
-            // printRebookLetters
-            // 
-            this.printRebookLetters.PrintPage += new System.Drawing.Printing.PrintPageEventHandler(this.printRebookLetters_PrintPage);
-            // 
-            // DPatientLetter
-            // 
-            this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
-            this.ClientSize = new System.Drawing.Size(648, 398);
-            this.Name = "DPatientLetter";
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Patient Letter";
-            this.ResumeLayout(false);
-
-		}
-		#endregion
 
         private void printAppts_PrintPage(object sender, System.Drawing.Printing.PrintPageEventArgs e)
         {
