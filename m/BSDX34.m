@@ -1,4 +1,4 @@
-BSDX34	; IHS/OIT/HMW - WINDOWS SCHEDULING RPCS ; 5/21/10 9:56pm
+BSDX34	; IHS/OIT/HMW - WINDOWS SCHEDULING RPCS ; 7/11/10 11:28am
 	;;2.0;IHS WINDOWS SCHEDULING;;NOV 01, 2007
 	;
 	;
@@ -38,20 +38,19 @@ RBCLIN(BSDXY,BSDXCLST,BSDXBEG,BSDXEND)	;EP
 	;between dates BSDXBEG and BSDXEND for each clinic in BSDXCLST.
 	;Used in generating rebook letters for a clinic
 	;BSDXCLST is a |-delimited list of BSDX RESOURCE iens.  (The last |-piece is null, so discard it.)
-	;BSDXBEG and BSDXEND are in external date form.
 	;Called by BSDX REBOOK CLINIC LIST and BSDX CANCEL CLINIC LIST via entry point CANCLIN above
-	;
+	;Jul 11 2010 (smh):
+    ;for i18n, pass BSDXBEG and BSDXEND in FM format.
 	;
 	S X="RBERR^BSDX34",@^%ZOSF("TRAP")
 	;
 	S BSDXY="^BSDXTMP("_$J_")"
 	N %DT,Y,BSDXJ,BSDXCID,BSDXCLN,BSDXSTRT,BSDXAID,BSDXNOD,BSDXLIST,BSDX,BSDY
 	;Convert beginning and ending dates
-	;
-	S X=BSDXBEG,%DT="XT" D ^%DT S BSDXBEG=$P(Y,"."),BSDXBEG=BSDXBEG-1,BSDXBEG=BSDXBEG_".9999"
-	I Y=-1 D RBERR Q
-	S X=BSDXEND,%DT="XT" D ^%DT S BSDXEND=$P(Y,"."),BSDXEND=BSDXEND_".9999"
-	I Y=-1 D RBERR Q
+	;TODO: Validation of date to make sure it's a right FM Date
+	S BSDXBEG=BSDXBEG-1,BSDXBEG=BSDXBEG_".9999"
+	S BSDXEND=BSDXEND_".9999"
+    ;
 	I BSDXCLST="" D RBERR Q
 	;
 	;
