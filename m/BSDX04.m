@@ -1,4 +1,4 @@
-BSDX04	; IHS/OIT/HMW - WINDOWS SCHEDULING RPCS ; 
+BSDX04	; IHS/OIT/HMW - WINDOWS SCHEDULING RPCS ;  ; 7/11/10 6:14pm
 	;;2.0;IHS WINDOWS SCHEDULING;;NOV 01, 2007
 	;
 	;
@@ -23,6 +23,12 @@ CASSCH(BSDXY,BSDXRES,BSDXSTART,BSDXEND,BSDXTYPES,BSDXSRCH)	;EP
 	;and to search for availability in the Find Appointment function
 	;
 	;BSDXRES is resource name
+    ;
+    ;//smh
+    ; BSDXSTART and BSDXEND both passed in FM Format.
+    ; BSDXSTART is the Date Portion of FM Date
+    ; BSDXEND -- pass date and h,m,s as well
+    ;//smh
 	;
 	;BSDXTYPES is |-delimited list of Access Type Names
 	;If BSDXTYPES is "" then the screen passes all types.
@@ -58,13 +64,6 @@ CASSCH(BSDXY,BSDXRES,BSDXSTART,BSDXEND,BSDXTYPES,BSDXSRCH)	;EP
 	;
 	D
 	. S BSDXBS=0
-	. S:BSDXSTART["@0000" BSDXSTART=$P(BSDXSTART,"@")
-	. S:BSDXEND["@0000" BSDXEND=$P(BSDXEND,"@")
-	. ;S:BSDXEND["@0:00" BSDXEND=$P(BSDXEND,"@")
-	. S %DT="T",X=BSDXSTART D ^%DT S BSDXSTART=Y
-	. I BSDXSTART=-1 S ^BSDXTMP($J,1)=$C(31) Q
-	. S %DT="T",X=BSDXEND D ^%DT S BSDXEND=Y
-	. I BSDXEND=-1 S ^BSDXTMP($J,1)=$C(31) Q
 	. S BSDXRESN=BSDXRES
 	. Q:BSDXRESN=""
 	. Q:'$D(^BSDXRES("B",BSDXRESN))
