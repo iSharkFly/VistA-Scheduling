@@ -98,13 +98,12 @@
             this.panel1.Name = "panel1";
             this.panel1.Size = new Size(0x192, 40);
             this.panel1.TabIndex = 2;
-            this.cmdCancel.DialogResult = DialogResult.Cancel;
             this.cmdCancel.Location = new Point(0x120, 8);
             this.cmdCancel.Name = "cmdCancel";
             this.cmdCancel.Size = new Size(0x40, 0x18);
             this.cmdCancel.TabIndex = 1;
             this.cmdCancel.Text = "Cancel";
-            this.cmdOK.DialogResult = DialogResult.OK;
+
             this.cmdOK.Location = new Point(0xd0, 8);
             this.cmdOK.Name = "cmdOK";
             this.cmdOK.Size = new Size(0x40, 0x18);
@@ -252,6 +251,8 @@
             this.cboAccessTypeFilter.DataSource = view;
             this.cboAccessTypeFilter.DisplayMember = "ACCESS_GROUP";
             this.cboAccessTypeFilter.SelectedIndex = this.cboAccessTypeFilter.Items.Count - 1;
+            this.cmdCancel.DialogResult = DialogResult.Cancel;
+            this.cmdOK.DialogResult = DialogResult.OK;
             this.UpdateDialogData(true);
         }
 
@@ -276,6 +277,8 @@
             this.cboAccessTypeFilter.DisplayMember = "ACCESS_GROUP";
             this.cboAccessTypeFilter.SelectedIndex = this.cboAccessTypeFilter.Items.Count - 1;
             this.m_pAppt.AccessTypeID = 0;
+            this.cmdCancel.DialogResult = DialogResult.Cancel;
+            this.cmdOK.DialogResult = DialogResult.OK;
             this.UpdateDialogData(true);
         }
 

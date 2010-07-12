@@ -25,6 +25,14 @@ namespace IndianHealthService.ClinicalScheduling
 
 		}
 
+        /// <summary>
+        /// Gets appointments from VISTA to display in Grid
+        /// </summary>
+        /// <param name="docManager"></param>
+        /// <param name="saryResNames"></param>
+        /// <param name="StartTime"></param>
+        /// <param name="EndTime"></param>
+        /// <returns></returns>
 		public static DataTable CreateAppointmentSchedule(CGDocumentManager docManager, ArrayList saryResNames, DateTime StartTime, DateTime EndTime)
 		{
 			string sResName = "";
@@ -119,13 +127,16 @@ namespace IndianHealthService.ClinicalScheduling
 			return rsOut;
 		}		
 
+
 		public static DataTable CreateAssignedTypeSchedule(CGDocumentManager docManager, string sResourceName, DateTime StartTime, DateTime EndTime, ScheduleType stType)
 		{
 
 			string sStart;
 			string sEnd;
-			sStart = StartTime.ToString("M-d-yyyy");
-			sEnd = EndTime.ToString("M-d-yyyy");
+			//sStart = StartTime.ToString("M-d-yyyy");
+            sStart = FMDateTime.Create(StartTime).DateOnly.FMDateString;
+			//sEnd = EndTime.ToString("M-d-yyyy");
+            sEnd = FMDateTime.Create(EndTime).DateOnly.FMDateString;
 //			string sSource = (stType == ScheduleType.Resource ? "ST_RESOURCE" : "ST_CLINIC");
 			string sSql = "BSDX TYPE BLOCKS OVERLAP^" + sStart + "^" + sEnd + "^" + sResourceName ;//+ "^" + sSource;
 
@@ -283,8 +294,10 @@ namespace IndianHealthService.ClinicalScheduling
 	
 			string sStart;
 			string sEnd;
-			sStart = StartTime.ToString("M-d-yyyy");
-			sEnd = EndTime.ToString("M-d-yyyy@H:mm");
+			//sStart = StartTime.ToString("M-d-yyyy"); smh
+            sStart = FMDateTime.Create(StartTime).DateOnly.FMDateString;
+			//sEnd = EndTime.ToString("M-d-yyyy@H:mm"); smh
+            sEnd = FMDateTime.Create(EndTime).FMDateString;
 			string sSql = "BSDX CREATE ASGND SLOT SCHED^" + sResourceName + "^" + sStart + "^" + sEnd + "^" + sApptTypeIDs + "^" + sSearchInfo; //+ "^" + sSTType ;
 
 			DataTable dtRet = docManager.RPMSDataTable(sSql, "AssignedSlotSchedule");
@@ -358,8 +371,10 @@ namespace IndianHealthService.ClinicalScheduling
 
 			string sStart;
 			string sEnd;
-			sStart = StartTime.ToString("M-d-yyyy");
-			sEnd = EndTime.ToString("M-d-yyyy");
+			//sStart = StartTime.ToString("M-d-yyyy");
+            sStart = FMDateTime.Create(StartTime).DateOnly.FMDateString;
+			//sEnd = EndTime.ToString("M-d-yyyy");
+            sEnd = FMDateTime.Create(EndTime).DateOnly.FMDateString;
 
 			string sSTType = (stType == ScheduleType.Resource ? "ST_RESOURCE" : "ST_CLINIC");
 			string sSql = "BSDX APPT BLOCKS OVERLAP^" + sStart + "^" + sEnd + "^" + sResourceName ;//+ "^"  + sSTType;
