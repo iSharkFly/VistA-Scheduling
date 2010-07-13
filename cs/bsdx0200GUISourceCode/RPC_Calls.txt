@@ -38,7 +38,7 @@ Find all ""BSDX ", Subfolders, Find Results 1, "Current Project"
  # CGSchedLib.cs(41):			string sSql = "BSDX CREATE APPT SCHEDULE^" + sResName + "^" + sStart + "^" + sEnd ;
  # CGSchedLib.cs(130):			string sSql = "BSDX TYPE BLOCKS OVERLAP^" + sStart + "^" + sEnd + "^" + sResourceName ;//+ "^" + sSource;
  # CGSchedLib.cs(288):			string sSql = "BSDX CREATE ASGND SLOT SCHED^" + sResourceName + "^" + sStart + "^" + sEnd + "^" + sApptTypeIDs + "^" + sSearchInfo; //+ "^" + sSTType ;
- * CGSchedLib.cs(365):			string sSql = "BSDX APPT BLOCKS OVERLAP^" + sStart + "^" + sEnd + "^" + sResourceName ;//+ "^"  + sSTType;
+ # CGSchedLib.cs(365):			string sSql = "BSDX APPT BLOCKS OVERLAP^" + sStart + "^" + sEnd + "^" + sResourceName ;//+ "^"  + sSTType;
   CGView.cs(172):				if (e.BMXEvent != "BSDX SCHEDULE")
   CGView.cs(1804):					RaiseRPMSEvent("BSDX SCHEDULE" , m_Document.DocName);
   CGView.cs(1926):					RaiseRPMSEvent("BSDX SCHEDULE" , m_Document.DocName);
@@ -57,7 +57,7 @@ Find all ""BSDX ", Subfolders, Find Results 1, "Current Project"
   DAL.cs(115):            string cmd = String.Format("BSDX CANCEL CLINIC LIST^{0}^{1}^{2}", sClinicList, sBegin, sEnd);
   DAppointPage.cs(578):				sSql = "BSDX GET BASIC REG INFO^" + m_sPatientIEN;
   DCheckIn.cs(218):                string sCommandText = "BSDX HOSP LOC PROVIDERS^" + nHospLoc;
-*  DCopyAppts.cs(189):				string sSql = "BSDX COPY APPOINTMENTS^" + m_ResourceID + "^" + m_HospLocationID + "^" + m_dtBegin.ToShortDateString() + "^" + m_dtEnd.ToShortDateString();
+ # DCopyAppts.cs(189):				string sSql = "BSDX COPY APPOINTMENTS^" + m_ResourceID + "^" + m_HospLocationID + "^" + m_dtBegin.ToShortDateString() + "^" + m_dtEnd.ToShortDateString();
   DCopyAppts.cs(227):				string sSql = "BSDX COPY APPOINTMENT CANCEL^" + m_sTask;
   DCopyAppts.cs(253):                //string sSql = "BSDX COPY APPOINTMENT STATUS^" + m_sTask;
   DManagement.cs(144):			m_DocManager.ConnectInfo.SubscribeEvent("BSDX WORKSTATION REPORT");
