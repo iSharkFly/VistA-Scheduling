@@ -432,7 +432,7 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\BMX\bmx_0200scr\BMX2\BMXNet\BMXNet.csproj">
+    <ProjectReference Include="..\..\..\bmx_rep\BMX2\BMXNet\BMXNet.csproj">
       <Project>{DE8E4CC9-4F3A-4E32-8DFE-EE5692E8FC45}</Project>
       <Name>BMXNet</Name>
     </ProjectReference>

@@ -1,22 +1,22 @@
 Find all ""BSDX ", Subfolders, Find Results 1, "Current Project"
   CGAVDocument.cs(196):				string sSql = "BSDX CANCEL AVAILABILITY^" + nApptID.ToString();
- * CGAVDocument.cs(235):				string sSql = "BSDX ADD NEW AVAILABILITY^" + sStart + "^" + sEnd + "^" + sTypeID + "^" + sResource + "^" +  sSlots + "^" + sNote;
- * CGAVDocument.cs(303):				string sSql = "BSDX ADD NEW AVAILABILITY^" + sStart + "^" + sEnd + "^" + sTypeID + "^" + sResource + "^" +  sSlots + "^" + sNote;
+ # CGAVDocument.cs(235):				string sSql = "BSDX ADD NEW AVAILABILITY^" + sStart + "^" + sEnd + "^" + sTypeID + "^" + sResource + "^" +  sSlots + "^" + sNote;
+ # CGAVDocument.cs(303):				string sSql = "BSDX ADD NEW AVAILABILITY^" + sStart + "^" + sEnd + "^" + sTypeID + "^" + sResource + "^" +  sSlots + "^" + sNote;
   CGAVView.cs(622)://				sSql = "BSDX RAISE EVENT^" + sEvent + "^" + sParams + "^^";
   CGAVView.cs(669):				RaiseRPMSEvent("BSDX SCHEDULE", m_Document.DocName);
   CGAVView.cs(728):				RaiseRPMSEvent("BSDX SCHEDULE", m_Document.DocName);
   CGAVView.cs(771):					RaiseRPMSEvent("BSDX SCHEDULE", m_Document.DocName);
   CGAVView.cs(906):				RaiseRPMSEvent("BSDX SCHEDULE", m_Document.DocName);
- * CGAVView.cs(1015):					string sSql = "BSDX CANCEL AV BY DATE^" + sResourceID + "^" + sStart + "^" + sEnd;
+ # CGAVView.cs(1015):					string sSql = "BSDX CANCEL AV BY DATE^" + sResourceID + "^" + sStart + "^" + sEnd;
   CGAVView.cs(1051):					RaiseRPMSEvent("BSDX SCHEDULE", m_Document.DocName);
   CGAVView.cs(1265):				RaiseRPMSEvent("BSDX SCHEDULE", m_Document.DocName);
   CGAVView.cs(1267):					RaiseRPMSEvent("BSDX SCHEDULE", m_Document.DocName);
- * CGDocument.cs(745):			string sSql = "BSDX ADD NEW APPOINTMENT^" + sStart + "^" + sEnd + "^" + sPatID + "^" + sResource + "^" + sLen + "^" + sNote + "^" + sApptID ;
+ # CGDocument.cs(745):			string sSql = "BSDX ADD NEW APPOINTMENT^" + sStart + "^" + sEnd + "^" + sPatID + "^" + sResource + "^" + sLen + "^" + sNote + "^" + sApptID ;
   CGDocument.cs(771):				string sSql = "BSDX EDIT APPOINTMENT^" + nApptID.ToString() + "^" + sNote;
   CGDocument.cs(804):			string sSql = "BSDX CHECKIN APPOINTMENT^" + nApptID.ToString() + "^" + sCheckIn + "^";
   CGDocument.cs(833):			string sSql = "BSDX CANCEL APPOINTMENT^" + nApptID.ToString();
- * CGDocument.cs(917):				string sSql = "BSDX REBOOK NEXT BLOCK^" + dStart.ToString("M/d/yyyy@H:mm")+ "^" + a.Resource + "^" + nAVType.ToString();
-  CGDocument.cs(996):			string sSql = "BSDX REBOOK SET^" + sApptKey + "^" + sRebookedTo;
+ # CGDocument.cs(917):				string sSql = "BSDX REBOOK NEXT BLOCK^" + dStart.ToString("M/d/yyyy@H:mm")+ "^" + a.Resource + "^" + nAVType.ToString();
+ # CGDocument.cs(996):			string sSql = "BSDX REBOOK SET^" + sApptKey + "^" + sRebookedTo;
   CGDocument.cs(1013):			string sSql = "BSDX NOSHOW^" + nApptID.ToString();
   CGDocumentManager.cs(59):			if (e.BMXEvent == "BSDX CALL WORKSTATIONS")
   CGDocumentManager.cs(67):				_current.m_ConnectInfo.RaiseEvent("BSDX WORKSTATION REPORT", sParam, true);

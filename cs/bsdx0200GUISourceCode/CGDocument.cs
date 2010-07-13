@@ -719,8 +719,13 @@ namespace IndianHealthService.ClinicalScheduling
 			string sLen;
 			string sApptID;
 
-			sStart = rApptInfo.StartTime.ToString("M-d-yyyy@HH:mm");
-			sEnd = rApptInfo.EndTime.ToString("M-d-yyyy@HH:mm");
+			//sStart = rApptInfo.StartTime.ToString("M-d-yyyy@HH:mm");
+			//sEnd = rApptInfo.EndTime.ToString("M-d-yyyy@HH:mm");
+
+            // i18n code -- Use culture neutral FMDates
+            sStart = FMDateTime.Create(rApptInfo.StartTime).FMDateString;
+            sEnd = FMDateTime.Create(rApptInfo.EndTime).FMDateString;
+
 			TimeSpan sp = rApptInfo.EndTime - rApptInfo.StartTime;
 			sLen = sp.TotalMinutes.ToString();
 			sPatID = rApptInfo.PatientID.ToString();
@@ -911,10 +916,12 @@ namespace IndianHealthService.ClinicalScheduling
 			bool bFound = false;
 
 			DateTime dStart = a.StartTime.AddDays(nMinimumDays);
+            // v 1.3 i18n support - FM Date passed insated of American Date
+            string sStart = FMDateTime.Create(dStart).DateOnly.FMDateString;
 			DateTime dEnd = dStart.AddDays(nIncrement);
 			do
 			{	
-				string sSql = "BSDX REBOOK NEXT BLOCK^" + dStart.ToString("M/d/yyyy@H:mm")+ "^" + a.Resource + "^" + nAVType.ToString();
+				string sSql = "BSDX REBOOK NEXT BLOCK^" + sStart + "^" + a.Resource + "^" + nAVType.ToString();
 				DataTable dtNextBlock = this.DocManager.RPMSDataTable(sSql, "NextBlock");
 				Debug.Assert(dtNextBlock.Rows.Count == 1);
 				DataRow drNextBlockRow = dtNextBlock.Rows[0];
@@ -992,7 +999,9 @@ namespace IndianHealthService.ClinicalScheduling
 		private void SetAutoRebook(CGAppointment a, DateTime dtRebookedTo)
 		{
 			string sApptKey = a.AppointmentKey.ToString();
-			string sRebookedTo = dtRebookedTo.ToString("M/d/yyyy@HH:mm");
+			//string sRebookedTo = dtRebookedTo.ToString("M/d/yyyy@HH:mm");
+            // i18n
+            string sRebookedTo = FMDateTime.Create(dtRebookedTo).FMDateString;
 			string sSql = "BSDX REBOOK SET^" + sApptKey + "^" + sRebookedTo;
 			System.Data.DataTable dtRebook = m_DocManager.RPMSDataTable(sSql, "AutoRebook");
 

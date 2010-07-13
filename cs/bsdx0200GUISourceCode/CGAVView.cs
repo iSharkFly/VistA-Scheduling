@@ -1008,9 +1008,11 @@ namespace IndianHealthService.ClinicalScheduling
 				for (int j=1; j < nWeeksToApply + 1; j++)
 				{
 					//Convert start and end to string
-					string sStart = dtStart.ToString("M/d/yyyy");
-					string sEnd = dtEnd.ToString("M/d/yyyy");
-
+					//string sStart = dtStart.ToString("M/d/yyyy");
+					//string sEnd = dtEnd.ToString("M/d/yyyy");
+                    //i18n
+                    string sStart = FMDateTime.Create(dtStart).DateOnly.FMDateString;
+                    string sEnd = FMDateTime.Create(dtEnd).DateOnly.FMDateString;
 					//Cancel all existing access blocks in the date range
 					string sSql = "BSDX CANCEL AV BY DATE^" + sResourceID + "^" + sStart + "^" + sEnd;
 					dt = this.m_DocManager.RPMSDataTable(sSql, "Cancelled");

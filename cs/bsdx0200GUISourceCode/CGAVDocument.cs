@@ -219,9 +219,12 @@ namespace IndianHealthService.ClinicalScheduling
 				string sTypeID;
 				string sSlots;
 
-				sStart = rApptInfo.StartTime.ToString("M-d-yyyy@HH:mm");
-				sEnd = rApptInfo.EndTime.ToString("M-d-yyyy@HH:mm");
-				sNote = rApptInfo.Note;
+				//sStart = rApptInfo.StartTime.ToString("M-d-yyyy@HH:mm");
+				//sEnd = rApptInfo.EndTime.ToString("M-d-yyyy@HH:mm");
+                // i18n support
+                sStart = FMDateTime.Create(rApptInfo.StartTime).FMDateString;
+                sEnd = FMDateTime.Create(rApptInfo.EndTime).FMDateString;
+                sNote = rApptInfo.Note;
 				sResource = rApptInfo.Resource;
 				sTypeID = rApptInfo.AccessTypeID.ToString();
 				sSlots = rApptInfo.Slots.ToString();
@@ -233,7 +236,7 @@ namespace IndianHealthService.ClinicalScheduling
 				aCopy.IsAccessBlock = true;
 
 				string sSql = "BSDX ADD NEW AVAILABILITY^" + sStart + "^" + sEnd + "^" + sTypeID + "^" + sResource + "^" +  sSlots + "^" + sNote;
-				DataTable dtAppt =m_DocManager.RPMSDataTable(sSql, "NewAvailability");
+				DataTable dtAppt = m_DocManager.RPMSDataTable(sSql, "NewAvailability");
 
 				int nApptID;
 				int nErrorID;
@@ -272,8 +275,11 @@ namespace IndianHealthService.ClinicalScheduling
 				string sTypeID;
 				string sSlots;
 
-				sStart = rApptInfo.StartTime.ToString("M-d-yyyy@HH:mm");
-				sEnd = rApptInfo.EndTime.ToString("M-d-yyyy@HH:mm");
+				//sStart = rApptInfo.StartTime.ToString("M-d-yyyy@HH:mm");
+				//sEnd = rApptInfo.EndTime.ToString("M-d-yyyy@HH:mm");
+                // i18n support
+                sStart = FMDateTime.Create(rApptInfo.StartTime).FMDateString;
+                sEnd = FMDateTime.Create(rApptInfo.EndTime).FMDateString;
 				sNote = rApptInfo.Note;
 				sResource = rApptInfo.Resource;
 				sTypeID = rApptInfo.AccessTypeID.ToString();
