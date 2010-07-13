@@ -1,6 +1,10 @@
-BSDX33	; IHS/OIT/HMW - WINDOWS SCHEDULING RPCS ; 7/11/10 11:38am
-	;;2.0;IHS WINDOWS SCHEDULING;;NOV 01, 2007
+BSDX33	; IHS/OIT/HMW - WINDOWS SCHEDULING RPCS ; 7/6/10 8:43am
+	;;1.3;IHS WINDOWS SCHEDULING;;NOV 01, 2007
     ; Mods by WV/STAR
+    ;
+    ; July 13, 2010
+    ; v 1.3 adds fixes Rebooking behavior in application
+    ; also adds i18 support - Dates passed in FM format from application
 	;
 	;
 	Q
@@ -12,7 +16,7 @@ RBNEXTD(BSDXY,BSDXDATE,BSDXRES,BSDXTPID)	;EP
 	;
 RBNEXT(BSDXY,BSDXDATE,BSDXRES,BSDXTPID)	;EP
 	;Called by BSDX REBOOK NEXT BLOCK to find
-	;the next ACCESS BLOCK in resource BSDXRES after BSDXSTART
+	;the next ACCESS BLOCK in resource BSDXRES after BSDXDATE
 	;Returns 1 in ERRORID and date in NEXTBLOCK if a block was found or NULL in NEXTBLOCK of no date found
 	;Otherwise, returns 0 and error message in ERRORTEXT
 	;If BSDXTPID = 0 then any access type match
@@ -27,9 +31,11 @@ RBNEXT(BSDXY,BSDXDATE,BSDXRES,BSDXTPID)	;EP
 	I '$D(^BSDXRES("B",BSDXRES)) D ERR2("BSDX REBOOK NEXT BLOCK: Invalid resource name") Q
 	S BSDXRESD=$O(^BSDXRES("B",BSDXRES,0))
 	I '+BSDXRESD D ERR2("BSDX REBOOK NEXT BLOCK: Invalid resource name") Q
-	S X=BSDXDATE,%DT="XT" D ^%DT
-	I Y=-1 D ERR2(1,"BSDX REBOOK NEXT BLOCK: Invalid datetime") Q
-	S BSDXDATE=$P(Y,".")
+	;
+    ; S X=BSDXDATE,%DT="XT" D ^%DT
+	; I Y=-1 D ERR2(1,"BSDX REBOOK NEXT BLOCK: Invalid datetime") Q
+	;
+    ; S BSDXDATE=$P(Y,".")
 	;
 	S BSDXFND=0
 	F  S BSDXDATE=$O(^BSDXAB("ARSCT",BSDXRESD,BSDXDATE)) Q:'+BSDXDATE  D  Q:BSDXFND
@@ -73,9 +79,10 @@ SETRBK(BSDXY,BSDXAPPT,BSDXDATE)	;EP
 	;
 	I '+BSDXAPPT
 	I '$D(^BSDXAPPT(BSDXAPPT,0)) D ERR(1,"BSDX REBOOK SET: Invalid appointment ID") Q
-	S X=BSDXDATE,%DT="XT" D ^%DT
-	I Y=-1 D ERR(1,"BSDX REBOOK SET: Invalid rebook datetime") Q
-	S BSDXDATE=Y
+	; i18n (v 1.3)
+    ;S X=BSDXDATE,%DT="XT" D ^%DT
+	;I Y=-1 D ERR(1,"BSDX REBOOK SET: Invalid rebook datetime") Q
+	;S BSDXDATE=Y
 	S BSDXIENS=BSDXAPPT_","
 	S BSDXFDA(9002018.4,BSDXIENS,.11)=BSDXDATE
 	;
