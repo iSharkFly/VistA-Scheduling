@@ -1,4 +1,4 @@
-BSDX29	; IHS/OIT/HMW - WINDOWS SCHEDULING RPCS ;
+BSDX29	; IHS/OIT/HMW - WINDOWS SCHEDULING RPCS ; 7/13/10 9:47am
 	;;2.0;IHS WINDOWS SCHEDULING;;NOV 01, 2007
 	;
 	;
@@ -13,6 +13,8 @@ BSDXCP(BSDXY,BSDXRES,BSDX44,BSDXBEG,BSDXEND)	;EP
 	;Beginning with appointments on day BSDXBEG and ending on BSDXEND, inclusive
 	;
 	;Returns ADO Recordset formatted fields containing count of records copied and error message:
+    ;
+    ; July 13 2010: D dates (BEG and END) from US format to FM Dates for i18n
 	;
 	;
 	S BSDXY="^BSDXTMP("_$J_")"
@@ -22,11 +24,11 @@ BSDXCP(BSDXY,BSDXRES,BSDX44,BSDXBEG,BSDXEND)	;EP
 	S ^BSDXTMP($J,0)="T00010TASK_NUMBER^T00020ERRORID"_$C(30)
 	;
 	;Convert beginning and ending dates
+    ;
+    ;TODO:Validate FM Dates coming through
 	;
-	S X=BSDXBEG,%DT="X" D ^%DT S BSDXBEG=$P(Y,"."),BSDXBEG=BSDXBEG-1
-	I Y=-1 D ERR(BSDXI,0,"Routine: BSDX29, Error: Invalid Date") Q
-	S X=BSDXEND,%DT="X" D ^%DT S BSDXEND=$P(Y,"."),BSDXEND=BSDXEND+1
-	I Y=-1 D ERR(BSDXI,0,"Routine: BSDX29, Error: Invalid Date") Q
+	S BSDXBEG=BSDXBEG-1
+	S BSDXEND=BSDXEND+1
 	;
 	S ZTRTN="ZTM^BSDX29",ZTDTH=$H,ZTDESC="COPY PATIENT APPTS"
 	S ZTSAVE("BSDXBEG")="",ZTSAVE("BSDXEND")="",ZTSAVE("BSDX44")="",ZTSAVE("BSDXRES")=""
