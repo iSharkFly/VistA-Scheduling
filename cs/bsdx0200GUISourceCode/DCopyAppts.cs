@@ -23,6 +23,9 @@ namespace IndianHealthService.ClinicalScheduling
 		private System.Windows.Forms.Label lblProgress;
 		private System.ComponentModel.IContainer components;
 
+        delegate DataTable RPMSDataTableDelegate(string CommandString, string TableName);
+
+
         #region Fields
         private DateTime			m_dtBegin;
 		private DateTime			m_dtEnd;
@@ -186,10 +189,20 @@ namespace IndianHealthService.ClinicalScheduling
 				//this.timerPoll.Stop();
 				lblProgress.Text = "Starting Process... \r\n";
 
-				string sSql = "BSDX COPY APPOINTMENTS^" + m_ResourceID + "^" + m_HospLocationID + "^" + m_dtBegin.ToShortDateString() + "^" + m_dtEnd.ToShortDateString();
-				DataTable dt = m_DocManager.RPMSDataTable(sSql, "ApptCopy");
-				Debug.Assert(dt.Rows.Count == 1);
+                string sFMBeginDate = FMDateTime.Create(m_dtBegin).DateOnly.FMDateString;
+                string sFMEndDate = FMDateTime.Create(m_dtEnd).DateOnly.FMDateString;
 
+                //smh - i18n
+                //string sSql = "BSDX COPY APPOINTMENTS^" + m_ResourceID + "^" + m_HospLocationID + "^" + m_dtBegin.ToShortDateString() + "^" + m_dtEnd.ToShortDateString();
+                string sSql = "BSDX COPY APPOINTMENTS^" + m_ResourceID + "^" + m_HospLocationID + "^" + sFMBeginDate + "^" + sFMEndDate;
+
+				//DataTable dt = m_DocManager.RPMSDataTable(sSql, "ApptCopy");
+				//Debug.Assert(dt.Rows.Count == 1);
+
+                // TODO (later): delegate is supposed to support cross thread communication -- but this doesn't work.
+                RPMSDataTableDelegate d = new RPMSDataTableDelegate(m_DocManager.RPMSDataTable);
+                DataTable dt = d.Invoke(sSql, "ApptCopy");
+                Debug.Assert(dt.Rows.Count == 1);
 
 				DataRow dr = dt.Rows[0];
 				m_sTask = "0";
