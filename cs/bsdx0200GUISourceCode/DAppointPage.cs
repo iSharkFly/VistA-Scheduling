@@ -36,7 +36,7 @@ namespace IndianHealthService.ClinicalScheduling
 		private System.Windows.Forms.TextBox txtPhoneHome;
         private System.Windows.Forms.GroupBox groupBox1;
 		private System.Windows.Forms.Label label6;
-		private System.Windows.Forms.TextBox txtSSN;
+		private System.Windows.Forms.TextBox txtPID;
 		private System.Windows.Forms.Label label5;
 		private System.Windows.Forms.TextBox txtDOB;
 		private System.Windows.Forms.Label label2;
@@ -93,13 +93,19 @@ namespace IndianHealthService.ClinicalScheduling
             this.label14 = new System.Windows.Forms.Label();
             this.txtHRN = new System.Windows.Forms.TextBox();
             this.label6 = new System.Windows.Forms.Label();
-            this.txtSSN = new System.Windows.Forms.TextBox();
+            this.txtPID = new System.Windows.Forms.TextBox();
             this.label5 = new System.Windows.Forms.Label();
             this.txtDOB = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
             this.txtPatientName = new System.Windows.Forms.TextBox();
             this.tabPatientInfo = new System.Windows.Forms.TabPage();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.label17 = new System.Windows.Forms.Label();
+            this.txtEmail = new System.Windows.Forms.TextBox();
+            this.label16 = new System.Windows.Forms.Label();
+            this.txtPhoneCell = new System.Windows.Forms.TextBox();
+            this.label7 = new System.Windows.Forms.Label();
+            this.txtCountry = new System.Windows.Forms.TextBox();
             this.label12 = new System.Windows.Forms.Label();
             this.txtPhoneOffice = new System.Windows.Forms.TextBox();
             this.label13 = new System.Windows.Forms.Label();
@@ -118,12 +124,6 @@ namespace IndianHealthService.ClinicalScheduling
             this.patientApptsBindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.dsPatientApptDisplay2BindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.dsPatientApptDisplay2 = new IndianHealthService.ClinicalScheduling.dsPatientApptDisplay2();
-            this.label7 = new System.Windows.Forms.Label();
-            this.txtCountry = new System.Windows.Forms.TextBox();
-            this.label16 = new System.Windows.Forms.Label();
-            this.txtPhoneCell = new System.Windows.Forms.TextBox();
-            this.label17 = new System.Windows.Forms.Label();
-            this.txtEmail = new System.Windows.Forms.TextBox();
             this.tabControl1.SuspendLayout();
             this.tabAppointment.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -260,7 +260,7 @@ namespace IndianHealthService.ClinicalScheduling
             this.groupBox1.Controls.Add(this.label14);
             this.groupBox1.Controls.Add(this.txtHRN);
             this.groupBox1.Controls.Add(this.label6);
-            this.groupBox1.Controls.Add(this.txtSSN);
+            this.groupBox1.Controls.Add(this.txtPID);
             this.groupBox1.Controls.Add(this.label5);
             this.groupBox1.Controls.Add(this.txtDOB);
             this.groupBox1.Controls.Add(this.label2);
@@ -295,16 +295,16 @@ namespace IndianHealthService.ClinicalScheduling
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(40, 16);
             this.label6.TabIndex = 9;
-            this.label6.Text = "SSN:";
+            this.label6.Text = "ID:";
             this.label6.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
-            // txtSSN
+            // txtPID
             // 
-            this.txtSSN.Location = new System.Drawing.Point(272, 40);
-            this.txtSSN.Name = "txtSSN";
-            this.txtSSN.ReadOnly = true;
-            this.txtSSN.Size = new System.Drawing.Size(161, 20);
-            this.txtSSN.TabIndex = 8;
+            this.txtPID.Location = new System.Drawing.Point(272, 40);
+            this.txtPID.Name = "txtPID";
+            this.txtPID.ReadOnly = true;
+            this.txtPID.Size = new System.Drawing.Size(161, 20);
+            this.txtPID.TabIndex = 8;
             // 
             // label5
             // 
@@ -375,6 +375,57 @@ namespace IndianHealthService.ClinicalScheduling
             this.groupBox2.TabIndex = 1;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Address";
+            // 
+            // label17
+            // 
+            this.label17.Location = new System.Drawing.Point(224, 94);
+            this.label17.Name = "label17";
+            this.label17.Size = new System.Drawing.Size(40, 16);
+            this.label17.TabIndex = 29;
+            this.label17.Text = "E-Mail:";
+            this.label17.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // txtEmail
+            // 
+            this.txtEmail.Location = new System.Drawing.Point(267, 94);
+            this.txtEmail.Name = "txtEmail";
+            this.txtEmail.ReadOnly = true;
+            this.txtEmail.Size = new System.Drawing.Size(166, 20);
+            this.txtEmail.TabIndex = 28;
+            // 
+            // label16
+            // 
+            this.label16.Location = new System.Drawing.Point(19, 142);
+            this.label16.Name = "label16";
+            this.label16.Size = new System.Drawing.Size(69, 16);
+            this.label16.TabIndex = 27;
+            this.label16.Text = "Phone (Cell):";
+            this.label16.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // txtPhoneCell
+            // 
+            this.txtPhoneCell.Location = new System.Drawing.Point(91, 142);
+            this.txtPhoneCell.Name = "txtPhoneCell";
+            this.txtPhoneCell.ReadOnly = true;
+            this.txtPhoneCell.Size = new System.Drawing.Size(120, 20);
+            this.txtPhoneCell.TabIndex = 26;
+            // 
+            // label7
+            // 
+            this.label7.Location = new System.Drawing.Point(33, 94);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(55, 16);
+            this.label7.TabIndex = 25;
+            this.label7.Text = "Country:";
+            this.label7.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // txtCountry
+            // 
+            this.txtCountry.Location = new System.Drawing.Point(91, 94);
+            this.txtCountry.Name = "txtCountry";
+            this.txtCountry.ReadOnly = true;
+            this.txtCountry.Size = new System.Drawing.Size(120, 20);
+            this.txtCountry.TabIndex = 24;
             // 
             // label12
             // 
@@ -522,57 +573,6 @@ namespace IndianHealthService.ClinicalScheduling
             this.dsPatientApptDisplay2.DataSetName = "dsPatientApptDisplay2";
             this.dsPatientApptDisplay2.SchemaSerializationMode = System.Data.SchemaSerializationMode.IncludeSchema;
             // 
-            // label7
-            // 
-            this.label7.Location = new System.Drawing.Point(33, 94);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(55, 16);
-            this.label7.TabIndex = 25;
-            this.label7.Text = "Country:";
-            this.label7.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            // 
-            // txtCountry
-            // 
-            this.txtCountry.Location = new System.Drawing.Point(91, 94);
-            this.txtCountry.Name = "txtCountry";
-            this.txtCountry.ReadOnly = true;
-            this.txtCountry.Size = new System.Drawing.Size(120, 20);
-            this.txtCountry.TabIndex = 24;
-            // 
-            // label16
-            // 
-            this.label16.Location = new System.Drawing.Point(19, 142);
-            this.label16.Name = "label16";
-            this.label16.Size = new System.Drawing.Size(69, 16);
-            this.label16.TabIndex = 27;
-            this.label16.Text = "Phone (Cell):";
-            this.label16.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            // 
-            // txtPhoneCell
-            // 
-            this.txtPhoneCell.Location = new System.Drawing.Point(91, 142);
-            this.txtPhoneCell.Name = "txtPhoneCell";
-            this.txtPhoneCell.ReadOnly = true;
-            this.txtPhoneCell.Size = new System.Drawing.Size(120, 20);
-            this.txtPhoneCell.TabIndex = 26;
-            // 
-            // label17
-            // 
-            this.label17.Location = new System.Drawing.Point(224, 94);
-            this.label17.Name = "label17";
-            this.label17.Size = new System.Drawing.Size(40, 16);
-            this.label17.TabIndex = 29;
-            this.label17.Text = "E-Mail:";
-            this.label17.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            // 
-            // txtEmail
-            // 
-            this.txtEmail.Location = new System.Drawing.Point(267, 94);
-            this.txtEmail.Name = "txtEmail";
-            this.txtEmail.ReadOnly = true;
-            this.txtEmail.Size = new System.Drawing.Size(166, 20);
-            this.txtEmail.TabIndex = 28;
-            // 
             // DAppointPage
             // 
             this.AcceptButton = this.cmdOK;
@@ -611,7 +611,7 @@ namespace IndianHealthService.ClinicalScheduling
 		private string			m_sPatientHRN;
 		private string			m_sPatientIEN;
 		private string			m_sPatientDOB;
-		private string			m_sPatientSSN;
+		private string			m_sPatientPID;
 
 		private string			m_sCity;
 		private string			m_sPhoneHome;
@@ -657,7 +657,7 @@ namespace IndianHealthService.ClinicalScheduling
 				this.m_sPatientName = r["NAME"].ToString();
 				this.m_sPatientHRN = r["HRN"].ToString();
 				this.m_sPatientIEN = r["IEN"].ToString();
-				this.m_sPatientSSN = r["SSN"].ToString();
+                this.m_sPatientPID = r["PID"].ToString();
 				DateTime dDob =(DateTime) r["DOB"]; //what if it's null?
 				this.m_sPatientDOB = dDob.ToShortDateString();
 				this.m_sStreet = r["STREET"].ToString();
@@ -700,7 +700,7 @@ namespace IndianHealthService.ClinicalScheduling
 				txtPatientName.Text = m_sPatientName;
 				txtPhoneHome.Text = this.m_sPhoneHome;
 				txtPhoneOffice.Text = this.m_sPhoneOffice;
-				txtSSN.Text = this.m_sPatientSSN;
+				txtPID.Text = this.m_sPatientPID;
 				txtState.Text = this.m_sState;
 				txtStreet.Text = this.m_sStreet;
 				txtZip.Text = this.m_sZip;
@@ -767,6 +767,7 @@ namespace IndianHealthService.ClinicalScheduling
 		}
 
 		#endregion //Properties
+
 
 	} //end Class
 }
