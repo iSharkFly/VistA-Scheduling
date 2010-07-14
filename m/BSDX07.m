@@ -1,4 +1,4 @@
-BSDX07	; IHS/OIT/HMW - WINDOWS SCHEDULING RPCS ;  ; 7/6/10 6:13am
+BSDX07	; IHS/OIT/HMW - WINDOWS SCHEDULING RPCS ;  ; 7/6/10 4:28pm
 	;;2.0;IHS WINDOWS SCHEDULING;;NOV 01, 2007
     ; v1.3 July 13 2010 - Add support i18n - Dates input as FM dates, not US.
 	;
@@ -110,9 +110,11 @@ STRIP(BSDXZ)	;Replace control characters with spaces
 BSDXADD(BSDXSTART,BSDXEND,BSDXPATID,BSDXRESD,BSDXATID)	;ADD BSDX APPOINTMENT ENTRY
 	;Returns ien in BSDXAPPT or 0 if failed
 	;Create entry in BSDX APPOINTMENT
+    ; BSDXSTART and BSDXEND need to be stored as numeric, not string
+    ; So 3090713.0900 is incorrect --> it should be 3090713.09
 	N BSDXAPPTID
-	S BSDXFDA(9002018.4,"+1,",.01)=BSDXSTART
-	S BSDXFDA(9002018.4,"+1,",.02)=BSDXEND
+	S BSDXFDA(9002018.4,"+1,",.01)=+BSDXSTART  ; smh fix bug stores as string
+	S BSDXFDA(9002018.4,"+1,",.02)=+BSDXEND
 	S BSDXFDA(9002018.4,"+1,",.05)=BSDXPATID
 	S BSDXFDA(9002018.4,"+1,",.07)=BSDXRESD
 	S BSDXFDA(9002018.4,"+1,",.08)=$G(DUZ)
