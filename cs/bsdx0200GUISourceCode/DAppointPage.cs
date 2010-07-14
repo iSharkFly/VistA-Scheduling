@@ -56,6 +56,12 @@ namespace IndianHealthService.ClinicalScheduling
         private BindingSource dsPatientApptDisplay2BindingSource;
         private dsPatientApptDisplay2 dsPatientApptDisplay2;
         private BindingSource patientApptsBindingSource;
+        private Label label17;
+        private TextBox txtEmail;
+        private Label label16;
+        private TextBox txtPhoneCell;
+        private Label label7;
+        private TextBox txtCountry;
         private IContainer components;
 
 		public DAppointPage()
@@ -112,6 +118,12 @@ namespace IndianHealthService.ClinicalScheduling
             this.patientApptsBindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.dsPatientApptDisplay2BindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.dsPatientApptDisplay2 = new IndianHealthService.ClinicalScheduling.dsPatientApptDisplay2();
+            this.label7 = new System.Windows.Forms.Label();
+            this.txtCountry = new System.Windows.Forms.TextBox();
+            this.label16 = new System.Windows.Forms.Label();
+            this.txtPhoneCell = new System.Windows.Forms.TextBox();
+            this.label17 = new System.Windows.Forms.Label();
+            this.txtEmail = new System.Windows.Forms.TextBox();
             this.tabControl1.SuspendLayout();
             this.tabAppointment.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -339,6 +351,12 @@ namespace IndianHealthService.ClinicalScheduling
             // 
             // groupBox2
             // 
+            this.groupBox2.Controls.Add(this.label17);
+            this.groupBox2.Controls.Add(this.txtEmail);
+            this.groupBox2.Controls.Add(this.label16);
+            this.groupBox2.Controls.Add(this.txtPhoneCell);
+            this.groupBox2.Controls.Add(this.label7);
+            this.groupBox2.Controls.Add(this.txtCountry);
             this.groupBox2.Controls.Add(this.label12);
             this.groupBox2.Controls.Add(this.txtPhoneOffice);
             this.groupBox2.Controls.Add(this.label13);
@@ -353,40 +371,40 @@ namespace IndianHealthService.ClinicalScheduling
             this.groupBox2.Controls.Add(this.txtStreet);
             this.groupBox2.Location = new System.Drawing.Point(8, 16);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(444, 128);
+            this.groupBox2.Size = new System.Drawing.Size(444, 198);
             this.groupBox2.TabIndex = 1;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Address";
             // 
             // label12
             // 
-            this.label12.Location = new System.Drawing.Point(224, 96);
+            this.label12.Location = new System.Drawing.Point(2, 166);
             this.label12.Name = "label12";
-            this.label12.Size = new System.Drawing.Size(40, 16);
+            this.label12.Size = new System.Drawing.Size(86, 14);
             this.label12.TabIndex = 23;
-            this.label12.Text = "Ofc:";
+            this.label12.Text = "Phone (Office):";
             this.label12.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // txtPhoneOffice
             // 
-            this.txtPhoneOffice.Location = new System.Drawing.Point(272, 96);
+            this.txtPhoneOffice.Location = new System.Drawing.Point(91, 166);
             this.txtPhoneOffice.Name = "txtPhoneOffice";
             this.txtPhoneOffice.ReadOnly = true;
-            this.txtPhoneOffice.Size = new System.Drawing.Size(166, 20);
+            this.txtPhoneOffice.Size = new System.Drawing.Size(120, 20);
             this.txtPhoneOffice.TabIndex = 22;
             // 
             // label13
             // 
-            this.label13.Location = new System.Drawing.Point(8, 96);
+            this.label13.Location = new System.Drawing.Point(5, 118);
             this.label13.Name = "label13";
-            this.label13.Size = new System.Drawing.Size(88, 16);
+            this.label13.Size = new System.Drawing.Size(83, 16);
             this.label13.TabIndex = 21;
             this.label13.Text = "Phone (Home):";
             this.label13.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // txtPhoneHome
             // 
-            this.txtPhoneHome.Location = new System.Drawing.Point(96, 96);
+            this.txtPhoneHome.Location = new System.Drawing.Point(91, 118);
             this.txtPhoneHome.Name = "txtPhoneHome";
             this.txtPhoneHome.ReadOnly = true;
             this.txtPhoneHome.Size = new System.Drawing.Size(120, 20);
@@ -394,7 +412,7 @@ namespace IndianHealthService.ClinicalScheduling
             // 
             // txtCity
             // 
-            this.txtCity.Location = new System.Drawing.Point(96, 48);
+            this.txtCity.Location = new System.Drawing.Point(91, 46);
             this.txtCity.Name = "txtCity";
             this.txtCity.ReadOnly = true;
             this.txtCity.Size = new System.Drawing.Size(342, 20);
@@ -402,16 +420,16 @@ namespace IndianHealthService.ClinicalScheduling
             // 
             // label8
             // 
-            this.label8.Location = new System.Drawing.Point(16, 48);
+            this.label8.Location = new System.Drawing.Point(52, 46);
             this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(72, 16);
+            this.label8.Size = new System.Drawing.Size(36, 16);
             this.label8.TabIndex = 19;
             this.label8.Text = "City:";
             this.label8.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // label9
             // 
-            this.label9.Location = new System.Drawing.Point(224, 72);
+            this.label9.Location = new System.Drawing.Point(224, 70);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(40, 16);
             this.label9.TabIndex = 17;
@@ -420,7 +438,7 @@ namespace IndianHealthService.ClinicalScheduling
             // 
             // txtZip
             // 
-            this.txtZip.Location = new System.Drawing.Point(272, 72);
+            this.txtZip.Location = new System.Drawing.Point(267, 70);
             this.txtZip.Name = "txtZip";
             this.txtZip.ReadOnly = true;
             this.txtZip.Size = new System.Drawing.Size(166, 20);
@@ -428,16 +446,16 @@ namespace IndianHealthService.ClinicalScheduling
             // 
             // label10
             // 
-            this.label10.Location = new System.Drawing.Point(56, 72);
+            this.label10.Location = new System.Drawing.Point(47, 70);
             this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(40, 16);
+            this.label10.Size = new System.Drawing.Size(41, 16);
             this.label10.TabIndex = 15;
             this.label10.Text = "State:";
             this.label10.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // txtState
             // 
-            this.txtState.Location = new System.Drawing.Point(96, 72);
+            this.txtState.Location = new System.Drawing.Point(91, 70);
             this.txtState.Name = "txtState";
             this.txtState.ReadOnly = true;
             this.txtState.Size = new System.Drawing.Size(120, 20);
@@ -445,16 +463,16 @@ namespace IndianHealthService.ClinicalScheduling
             // 
             // label11
             // 
-            this.label11.Location = new System.Drawing.Point(56, 22);
+            this.label11.Location = new System.Drawing.Point(47, 22);
             this.label11.Name = "label11";
-            this.label11.Size = new System.Drawing.Size(40, 16);
+            this.label11.Size = new System.Drawing.Size(41, 16);
             this.label11.TabIndex = 13;
             this.label11.Text = "Street:";
             this.label11.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // txtStreet
             // 
-            this.txtStreet.Location = new System.Drawing.Point(96, 22);
+            this.txtStreet.Location = new System.Drawing.Point(91, 22);
             this.txtStreet.Name = "txtStreet";
             this.txtStreet.ReadOnly = true;
             this.txtStreet.Size = new System.Drawing.Size(342, 20);
@@ -503,6 +521,57 @@ namespace IndianHealthService.ClinicalScheduling
             // 
             this.dsPatientApptDisplay2.DataSetName = "dsPatientApptDisplay2";
             this.dsPatientApptDisplay2.SchemaSerializationMode = System.Data.SchemaSerializationMode.IncludeSchema;
+            // 
+            // label7
+            // 
+            this.label7.Location = new System.Drawing.Point(33, 94);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(55, 16);
+            this.label7.TabIndex = 25;
+            this.label7.Text = "Country:";
+            this.label7.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // txtCountry
+            // 
+            this.txtCountry.Location = new System.Drawing.Point(91, 94);
+            this.txtCountry.Name = "txtCountry";
+            this.txtCountry.ReadOnly = true;
+            this.txtCountry.Size = new System.Drawing.Size(120, 20);
+            this.txtCountry.TabIndex = 24;
+            // 
+            // label16
+            // 
+            this.label16.Location = new System.Drawing.Point(19, 142);
+            this.label16.Name = "label16";
+            this.label16.Size = new System.Drawing.Size(69, 16);
+            this.label16.TabIndex = 27;
+            this.label16.Text = "Phone (Cell):";
+            this.label16.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // txtPhoneCell
+            // 
+            this.txtPhoneCell.Location = new System.Drawing.Point(91, 142);
+            this.txtPhoneCell.Name = "txtPhoneCell";
+            this.txtPhoneCell.ReadOnly = true;
+            this.txtPhoneCell.Size = new System.Drawing.Size(120, 20);
+            this.txtPhoneCell.TabIndex = 26;
+            // 
+            // label17
+            // 
+            this.label17.Location = new System.Drawing.Point(224, 94);
+            this.label17.Name = "label17";
+            this.label17.Size = new System.Drawing.Size(40, 16);
+            this.label17.TabIndex = 29;
+            this.label17.Text = "E-Mail:";
+            this.label17.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // txtEmail
+            // 
+            this.txtEmail.Location = new System.Drawing.Point(267, 94);
+            this.txtEmail.Name = "txtEmail";
+            this.txtEmail.ReadOnly = true;
+            this.txtEmail.Size = new System.Drawing.Size(166, 20);
+            this.txtEmail.TabIndex = 28;
             // 
             // DAppointPage
             // 
@@ -556,6 +625,10 @@ namespace IndianHealthService.ClinicalScheduling
 		private int				m_nDuration;
 		private string			m_sClinic;
 
+        private string          m_sPhoneCell;
+        private string          m_sEmail;
+        private string          m_sCountry;
+
 		#endregion //fields
 
 		#region Methods
@@ -593,7 +666,9 @@ namespace IndianHealthService.ClinicalScheduling
 				this.m_sState = r["STATE"].ToString();
 				this.m_sZip = r["ZIP"].ToString();
 				this.m_sPhoneHome = r["HOMEPHONE"].ToString();
-
+                this.m_sEmail = r["EMAIL ADDRESS"].ToString();
+                this.m_sPhoneCell = r["PHONE NUMBER [CELLULAR]"].ToString();
+                this.m_sCountry = r["COUNTRY"].ToString();
 				this.UpdateDialogData(true);
                 Control UC = new UCPatientAppts(m_DocManager, int.Parse(m_sPatientIEN));
                 UC.Dock = DockStyle.Fill;
@@ -629,6 +704,9 @@ namespace IndianHealthService.ClinicalScheduling
 				txtState.Text = this.m_sState;
 				txtStreet.Text = this.m_sStreet;
 				txtZip.Text = this.m_sZip;
+                txtEmail.Text = this.m_sEmail;
+                txtPhoneCell.Text = this.m_sPhoneCell;
+                txtCountry.Text = this.m_sCountry;
 
 			}
 			else //move control data into member vars
