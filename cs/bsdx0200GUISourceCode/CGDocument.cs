@@ -665,9 +665,10 @@ namespace IndianHealthService.ClinicalScheduling
 		{
 			DateTime OldStartDay = m_dStartDate;
 			DateTime OldEndDay = m_dEndDate;
-			int nWeekDay = (int) SelectedDate.DayOfWeek; //0 == Sunday
+            int nStartWeekDay = (int)System.Globalization.CultureInfo.CurrentCulture.DateTimeFormat.FirstDayOfWeek;
+            int nWeekDay = (int) SelectedDate.DayOfWeek; //0 == Sunday
 
-			int nOff = 1;
+			int nOff = (nStartWeekDay + 1) % 7;
 			TimeSpan ts = new TimeSpan(nWeekDay - nOff,0,0,0); //d,h,m,s
 
 			if (m_nColumnCount == 1) 

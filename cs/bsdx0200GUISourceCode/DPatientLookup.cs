@@ -167,7 +167,7 @@ namespace IndianHealthService.ClinicalScheduling
 		private string				m_sPatientHRN = "";
 		private string				m_sPatientIEN;
 		private string				m_sPatientDOB;
-		private string				m_sPatientSSN;
+		private string				m_sPatientPID;
 
 		#endregion //Fields
 
@@ -228,7 +228,7 @@ namespace IndianHealthService.ClinicalScheduling
 					txtSearch.Text = this.m_sPatientName;
 					this.m_sPatientHRN = r["HRN"].ToString();
 					this.m_sPatientIEN = r["IEN"].ToString();
-					this.m_sPatientSSN = r["SSN"].ToString();
+					this.m_sPatientPID = r["PID"].ToString();
 					this.cmdOK.Enabled = true;
 					this.AcceptButton = cmdOK;
 					this.cmdOK.Focus();
@@ -240,10 +240,10 @@ namespace IndianHealthService.ClinicalScheduling
 					string sPat = r["NAME"].ToString();
 					ListViewItem lv = new ListViewItem(sPat);
 					lv.SubItems.Add(r["HRN"].ToString());
-					lv.SubItems.Add(r["SSN"].ToString());
+					lv.SubItems.Add(r["PID"].ToString());
 					DateTime d = Convert.ToDateTime(r["DOB"]);
-					string sFormat = "MM/dd/yyyy";
-					string sDob = d.ToString(sFormat);
+					string sFormat = System.Globalization.DateTimeFormatInfo.CurrentInfo.ShortDatePattern;
+                    string sDob = d.ToString(sFormat);
 					lv.SubItems.Add(sDob);
 					lv.SubItems.Add((r["IEN"].ToString()));
 					lvwPatients.Items.Add(lv);
@@ -253,7 +253,7 @@ namespace IndianHealthService.ClinicalScheduling
 				int w =-1;
 				lvwPatients.Columns.Add("Name", w, HorizontalAlignment.Left);
 				lvwPatients.Columns.Add("HRN", w, HorizontalAlignment.Left);
-				lvwPatients.Columns.Add("SSN", w, HorizontalAlignment.Left);
+				lvwPatients.Columns.Add("PID", w, HorizontalAlignment.Left);
 				lvwPatients.Columns.Add("DOB",w, HorizontalAlignment.Left);
 
 				lvwPatients.Columns[0].Width = -1;
@@ -291,7 +291,7 @@ namespace IndianHealthService.ClinicalScheduling
 			m_sPatientIEN = v.SubItems[4].Text;
 			m_sPatientHRN = v.SubItems[1].Text;
 			m_sPatientDOB = v.SubItems[3].Text;
-			m_sPatientSSN = v.SubItems[2].Text;
+			m_sPatientPID = v.SubItems[2].Text;
 			this.txtSearch.Text = m_sPatientName;
 			this.cmdOK.Enabled = true;
 			this.cmdOK.Focus();
