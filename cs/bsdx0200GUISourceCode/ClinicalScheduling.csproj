@@ -137,9 +137,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
-    <None Include="CGView.cd" />
-    <None Include="ClassDiagram1.cd" />
-    <None Include="ClassDiagram2.cd" />
     <None Include="dsPatientApptDisplay2.xsc">
       <DependentUpon>dsPatientApptDisplay2.xsd</DependentUpon>
     </None>
@@ -158,7 +155,6 @@
     <None Include="dsRebookAppts.xsx">
       <DependentUpon>dsRebookAppts.xsd</DependentUpon>
     </None>
-    <Content Include="App.ico" />
     <Content Include="dsPatientApptDisplay2.xsd">
       <Generator>MSDataSetGenerator</Generator>
       <LastGenOutput>dsPatientApptDisplay2.Designer.cs</LastGenOutput>

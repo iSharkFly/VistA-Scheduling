@@ -1,9 +1,0 @@
-download
-BMXNet.dll
-I
-CalendarGrid.dll
-I
-ClinicalScheduling.exe
-I
-ClinicalScheduling.exe.conig
-A
