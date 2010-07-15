@@ -1,10 +1,12 @@
-BSDX33	; IHS/OIT/HMW - WINDOWS SCHEDULING RPCS ; 7/6/10 8:43am
+BSDX33	; IHS/OIT/HMW - WINDOWS SCHEDULING RPCS ; 7/15/10 12:33pm
 	;;1.3;IHS WINDOWS SCHEDULING;;NOV 01, 2007
     ; Mods by WV/STAR
     ;
+    ; Change Log:
     ; July 13, 2010
-    ; v 1.3 adds fixes Rebooking behavior in application
+    ; v 1.3 adds fixes Rebooking behavior in application (see RBNEXT)
     ; also adds i18 support - Dates passed in FM format from application
+    ; in tag SETRBK and RBNEXT
 	;
 	;
 	Q
@@ -32,6 +34,7 @@ RBNEXT(BSDXY,BSDXDATE,BSDXRES,BSDXTPID)	;EP
 	S BSDXRESD=$O(^BSDXRES("B",BSDXRES,0))
 	I '+BSDXRESD D ERR2("BSDX REBOOK NEXT BLOCK: Invalid resource name") Q
 	;
+    ; i18n fix
     ; S X=BSDXDATE,%DT="XT" D ^%DT
 	; I Y=-1 D ERR2(1,"BSDX REBOOK NEXT BLOCK: Invalid datetime") Q
 	;
@@ -49,7 +52,7 @@ RBNEXT(BSDXY,BSDXDATE,BSDXRES,BSDXTPID)	;EP
 	I BSDXFND=0 S BSDXFND=""
 	E  S Y=BSDXFND X ^DD("DD") S BSDXFND=Y
 	S BSDXI=BSDXI+1
-    ;//smh - bug: Need to replace @ in FM date for C# to recognize it
+    ;//smh - bug (V 1.3): Need to replace @ in FM date for C# to recognize it
     S BSDXFND=$TR(BSDXFND,"@"," ")
     ;//smh end fix
 	S ^BSDXTMP($J,BSDXI)="1^"_BSDXFND_"^"_$C(30)_$C(31)
@@ -64,7 +67,7 @@ SETRBK(BSDXY,BSDXAPPT,BSDXDATE)	;EP
 	;
 	;Sets rebook date into appointment
 	;BSDXAPPT - Appointment ID
-	;BSDXDATE - Rebook Datetime in external format
+	;BSDXDATE - Rebook Datetime in internal format
 	;Called by BSDX REBOOK SET
 	;
 	;ErrorID:
@@ -84,7 +87,7 @@ SETRBK(BSDXY,BSDXAPPT,BSDXDATE)	;EP
 	;I Y=-1 D ERR(1,"BSDX REBOOK SET: Invalid rebook datetime") Q
 	;S BSDXDATE=Y
 	S BSDXIENS=BSDXAPPT_","
-	S BSDXFDA(9002018.4,BSDXIENS,.11)=BSDXDATE
+	S BSDXFDA(9002018.4,BSDXIENS,.11)=+BSDXDATE
 	;
 	K BSDXMSG
 	D FILE^DIE("","BSDXFDA","BSDXMSG")

@@ -1,9 +1,12 @@
-BSDX05	; IHS/OIT/HMW - WINDOWS SCHEDULING RPCS ; 7/11/10 6:28pm
+BSDX05	; IHS/OIT/HMW - WINDOWS SCHEDULING RPCS ; 7/15/10 12:51pm
 	;;2.0;IHS WINDOWS SCHEDULING;;NOV 01, 2007
 	;
+    ; Change Log:
+    ; UJO/SMH - July 11 2010: pass FM Dates for Start and End rather than US Dates
 	;
 APBLKOV(BSDXY,BSDXSTART,BSDXEND,BSDXRES)	 ;EP
 	;Called by BSDX APPT BLOCKS OVERLAP
+    ; July 11 2010 - pass FM Dates for Start and End rather than US Dates
 	;(Duplicates old qryAppointmentBlocksOverlapB)
 	;BSDXRES is resource name
 	;

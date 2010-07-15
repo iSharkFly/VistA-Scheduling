@@ -1,0 +1,74 @@
+------------------------------------------------------------------------
+r849 | sam | 2010-07-10 18:32:30 +0300 (Sat, 10 Jul 2010) | 1 line
+Changed paths:
+#   M /Scheduling/trunk/m/BSDX27.m
+
+Updated BSDX27 - Receives FM dates rather than regular dates to support i18n
+------------------------------------------------------------------------
+r851 | sam | 2010-07-11 17:11:26 +0300 (Sun, 11 Jul 2010) | 1 line
+Changed paths:
+#   M /Scheduling/trunk/m/BSDX02.m
+#   M /Scheduling/trunk/m/BSDX33.m
+#   M /Scheduling/trunk/m/BSDX34.m
+
+Fixes to support i18n (Receive FM dates from C# instead of culture specific date).Also, fix for Rebooking. Now it works.
+------------------------------------------------------------------------
+r854 | sam | 2010-07-12 17:25:21 +0300 (Mon, 12 Jul 2010) | 1 line
+Changed paths:
+#   M /Scheduling/trunk/m/BSDX04.m
+#   M /Scheduling/trunk/m/BSDX05.m
+#   M /Scheduling/trunk/m/BSDX06.m
+
+More changes
+------------------------------------------------------------------------
+r858 | sam | 2010-07-13 09:58:25 +0300 (Tue, 13 Jul 2010) | 1 line
+Changed paths:
+   M /Scheduling/trunk/m/BSDX29.m
+
+changes to BSDX29 for i18n
+------------------------------------------------------------------------
+r861 | sam | 2010-07-13 12:05:30 +0300 (Tue, 13 Jul 2010) | 1 line
+Changed paths:
+   M /Scheduling/trunk/m/BSDX01.m
+
+Test update
+------------------------------------------------------------------------
+r862 | sam | 2010-07-13 12:07:13 +0300 (Tue, 13 Jul 2010) | 1 line
+Changed paths:
+   M /Scheduling/trunk/m/BSDX01.m
+
+Test update
+------------------------------------------------------------------------
+r863 | sam | 2010-07-13 16:04:57 +0300 (Tue, 13 Jul 2010) | 1 line
+Changed paths:
+   M /Scheduling/trunk/m/BSDX07.m
+   M /Scheduling/trunk/m/BSDX12.m
+   M /Scheduling/trunk/m/BSDX13.m
+   M /Scheduling/trunk/m/BSDX33.m
+
+more i18n work
+------------------------------------------------------------------------
+r865 | sam | 2010-07-14 11:20:30 +0300 (Wed, 14 Jul 2010) | 1 line
+Changed paths:
+   M /Scheduling/trunk/m/BSDX09.m
+
+Routine to pull extra registration data
+------------------------------------------------------------------------
+r867 | sam | 2010-07-14 15:08:39 +0300 (Wed, 14 Jul 2010) | 6 lines
+Changed paths:
+   M /Scheduling/trunk/m/BSDX07.m
+   M /Scheduling/trunk/m/BSDX28.m
+
+Two updates: Search by Primary ID now enabled;
+bug in make appointment code that causes storage of non-canonical 
+appointment times (3091103.0900 e.g. rather than 3091103.09). causes a 
+problem when retrieving appointments.
+
+
+------------------------------------------------------------------------
+r871 | sam | 2010-07-14 15:55:40 +0300 (Wed, 14 Jul 2010) | 1 line
+Changed paths:
+   M /Scheduling/trunk/m/BSDX09.m
+
+PID added insted of SNN
+------------------------------------------------------------------------

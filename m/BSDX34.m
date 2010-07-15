@@ -1,6 +1,9 @@
-BSDX34	; IHS/OIT/HMW - WINDOWS SCHEDULING RPCS ; 7/11/10 11:28am
-	;;2.0;IHS WINDOWS SCHEDULING;;NOV 01, 2007
-	;
+BSDX34	; IHS/OIT/HMW - WINDOWS SCHEDULING RPCS ; 7/15/10 12:37pm
+	;;1.3;IHS WINDOWS SCHEDULING;;NOV 01, 2007
+    ;
+    ; Change Log:
+    ; July 10 2010: 
+	; CANCLIN AND RBCLIN: Dates passed in FM format for i18n
 	;
 	Q
 	;
@@ -24,7 +27,7 @@ CANCLIN(BSDXY,BSDXCLST,BSDXBEG,BSDXEND)	;EP
 	;between dates BSDXBEG and BSDXEND for each clinic in BSDXCLST.
 	;Used in generating cancellation letters for a clinic
 	;BSDXCLST is a |-delimited list of BSDX RESOURCE iens.  (The last |-piece is null, so discard it.)
-	;BSDXBEG and BSDXEND are in external date form.
+    ;v 1.3 BSDXBEG and BSDXEND are in fm format
 	;Called by BSDX CANCEL CLINIC LIST
 	N BSDXCAN
 	S BSDXCAN=1
@@ -48,6 +51,8 @@ RBCLIN(BSDXY,BSDXCLST,BSDXBEG,BSDXEND)	;EP
 	N %DT,Y,BSDXJ,BSDXCID,BSDXCLN,BSDXSTRT,BSDXAID,BSDXNOD,BSDXLIST,BSDX,BSDY
 	;Convert beginning and ending dates
 	;TODO: Validation of date to make sure it's a right FM Date
+    S BSDXBEG=$P(BSDXBEG,".")
+    S BSDXEND=$P(BSDXEND,".")
 	S BSDXBEG=BSDXBEG-1,BSDXBEG=BSDXBEG_".9999"
 	S BSDXEND=BSDXEND_".9999"
     ;
