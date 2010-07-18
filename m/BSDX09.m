@@ -1,7 +1,14 @@
-BSDX09	; IHS/OIT/HMW - WINDOWS SCHEDULING RPCS ; 
-	;;2.0;IHS WINDOWS SCHEDULING;**local**;NOV 01, 2007
-	;;local mods by WV/SMH
+BSDX09	; IHS/OIT/HMW - WINDOWS SCHEDULING RPCS ;  ; 7/18/10 2:26pm
+	;;1.3;IHS WINDOWS SCHEDULING;;NOV 01, 2007
 	;
+    ; Change Log:
+    ; UJO/TH - v 1.3 on 3100714 - Extra Demographics:
+    ; - Email
+    ; - Cell Phone
+    ; - Country
+    ; - + refactoring of routine
+	; 
+    ; UJO/TH - v 1.3 on 3100715 - Change SSN to PID and get PID field instead
 	;
 GETREGA(BSDXRET,BSDXPAT)	       ;EP
 	;
@@ -9,8 +16,8 @@ GETREGA(BSDXRET,BSDXPAT)	       ;EP
 	;   10 HOMEPHONE^OFCPHONE^MSGPHONE^
 	;   13 NOK NAME^RELATIONSHIP^PHONE^STREET^CITY^STATE^ZIP
 	;   20 DATAREVIEWED^
-	; removed/smh;   21 Medicare#^Suffix
 	;   21 RegistrationComments
+    ;   22 EMAIL ADDRESS^PHONE NUMBER [CELLULAR]^COUNTRY
 	;
 	;For patient with ien BSDXPAT
 	;K ^BSDXTMP($J)
@@ -57,7 +64,7 @@ GETREGA(BSDXRET,BSDXPAT)	       ;EP
 	S $P(BSDXY,U,21)=""
 	S BSDXNOD=^DPT(+BSDXPAT,0)
 	S $P(BSDXY,"^",6)=$P(BSDXNOD,U) ;NAME
-	S $P(BSDXY,"^",8)=$$GET1^DIQ(2,BSDXPAT,"PRIMARY LONG ID")
+	S $P(BSDXY,"^",8)=$$GET1^DIQ(2,BSDXPAT,"PRIMARY LONG ID") ;PID
 	S Y=$P(BSDXNOD,U,3) I Y]""  X ^DD("DD") S Y=$TR(Y,"@"," ")
 	S $P(BSDXY,"^",7)=Y ;DOB
 	S $P(BSDXY,"^",9)=""

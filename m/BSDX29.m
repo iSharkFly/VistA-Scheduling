@@ -1,6 +1,9 @@
-BSDX29	; IHS/OIT/HMW - WINDOWS SCHEDULING RPCS ; 7/13/10 9:47am
-	;;2.0;IHS WINDOWS SCHEDULING;;NOV 01, 2007
-	;
+BSDX29	; IHS/OIT/HMW - WINDOWS SCHEDULING RPCS ; 7/18/10 2:03pm
+	;;1.3;IHS WINDOWS SCHEDULING;;NOV 01, 2007
+    ; 
+    ; Change Log:
+    ; v1.3 by WV/SMH on 3100713
+	; - Beginning and Ending dates passed as FM Dates
 	;
 BSDXCPD(BSDXY,BSDXRES,BSDX44,BSDXBEG,BSDXEND)	;EP
 	;Entry point for debugging

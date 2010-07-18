@@ -23,34 +23,34 @@ More changes
 ------------------------------------------------------------------------
 r858 | sam | 2010-07-13 09:58:25 +0300 (Tue, 13 Jul 2010) | 1 line
 Changed paths:
-   M /Scheduling/trunk/m/BSDX29.m
+#   M /Scheduling/trunk/m/BSDX29.m
 
 changes to BSDX29 for i18n
 ------------------------------------------------------------------------
 r861 | sam | 2010-07-13 12:05:30 +0300 (Tue, 13 Jul 2010) | 1 line
 Changed paths:
-   M /Scheduling/trunk/m/BSDX01.m
+#   M /Scheduling/trunk/m/BSDX01.m
 
 Test update
 ------------------------------------------------------------------------
 r862 | sam | 2010-07-13 12:07:13 +0300 (Tue, 13 Jul 2010) | 1 line
 Changed paths:
-   M /Scheduling/trunk/m/BSDX01.m
+#   M /Scheduling/trunk/m/BSDX01.m
 
 Test update
 ------------------------------------------------------------------------
 r863 | sam | 2010-07-13 16:04:57 +0300 (Tue, 13 Jul 2010) | 1 line
 Changed paths:
-   M /Scheduling/trunk/m/BSDX07.m
-   M /Scheduling/trunk/m/BSDX12.m
-   M /Scheduling/trunk/m/BSDX13.m
-   M /Scheduling/trunk/m/BSDX33.m
+#   M /Scheduling/trunk/m/BSDX07.m
+#   M /Scheduling/trunk/m/BSDX12.m
+#   M /Scheduling/trunk/m/BSDX13.m
+#   M /Scheduling/trunk/m/BSDX33.m
 
 more i18n work
 ------------------------------------------------------------------------
 r865 | sam | 2010-07-14 11:20:30 +0300 (Wed, 14 Jul 2010) | 1 line
 Changed paths:
-   M /Scheduling/trunk/m/BSDX09.m
+#   M /Scheduling/trunk/m/BSDX09.m
 
 Routine to pull extra registration data
 ------------------------------------------------------------------------
@@ -68,7 +68,7 @@ problem when retrieving appointments.
 ------------------------------------------------------------------------
 r871 | sam | 2010-07-14 15:55:40 +0300 (Wed, 14 Jul 2010) | 1 line
 Changed paths:
-   M /Scheduling/trunk/m/BSDX09.m
+#   M /Scheduling/trunk/m/BSDX09.m
 
 PID added insted of SNN
 ------------------------------------------------------------------------

@@ -1,8 +1,8 @@
-BSDX13	; IHS/OIT/HMW - WINDOWS SCHEDULING RPCS ; 7/6/10 7:24am
+BSDX13	; IHS/OIT/HMW - WINDOWS SCHEDULING RPCS ; 7/18/10 2:17pm
 	;;1.3;IHS WINDOWS SCHEDULING;;NOV 01, 2007
-    ; V 1.3 - i18n support - Dates passed to Routine as FM Date
-	;
-	;
+    ;
+    ; Change Log:
+    ; V 1.3 - i18n support - Dates passed to Routine as FM Date - WV/SMH
 	Q
 AVDELDTD(BSDXY,BSDXRESD,BSDXSTART,BSDXEND)	;EP
 	;Entry point for debugging

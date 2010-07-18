@@ -1,9 +1,12 @@
-BSDX28	; IHS/OIT/HMW - WINDOWS SCHEDULING RPCS ; 7/6/10 3:55pm
-	;;2.0;IHS WINDOWS SCHEDULING;;NOV 01, 2007
-	;
+BSDX28	; IHS/OIT/HMW - WINDOWS SCHEDULING RPCS ; 7/18/10 2:30pm
+	;;1.3;IHS WINDOWS SCHEDULING;;NOV 01, 2007
+	; 
+    ; Change Log:
 	; HMW 3050721 Added test for inactivated record
-    ; SMH 3100714 add PID search, return PID instead of SSN
-    ; Change Error trap to new style.
+    ; V1.3 WV/SMH 3100714 
+    ; - add PID search
+    ; - return PID instead of SSN (change header and logic)
+    ; - Change Error trap to new style.
 	;
 PTLOOKRS(BSDXY,BSDXP,BSDXC)	 ;EP Patient Lookup
 	;
