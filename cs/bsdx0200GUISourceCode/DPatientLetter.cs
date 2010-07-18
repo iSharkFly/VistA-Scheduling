@@ -316,7 +316,14 @@ namespace IndianHealthService.ClinicalScheduling
                 //reset _currentApptPrinting
                 _currentApptPrinting = 0;
                 e.HasMorePages = true;
-            }            
+                return;
+            }
+
+            // if neither of these conditions is true, then we are done with printing.
+            // So reset counters for next one. Fixes ticket #15 on https://trac.opensourcevista.net/ticket/15
+            _currentResourcePrinting = 0;
+            _currentApptPrinting = 0;
+            _pageNumber = 0;
         }
 
         private void printReminderLetters_PrintPage(object sender, PrintPageEventArgs e)
@@ -335,8 +342,14 @@ namespace IndianHealthService.ClinicalScheduling
                 ClinicalScheduling.Printing.PrintReminderLetter(_dsApptDisplay.PatientAppts[_currentApptPrinting], e, c.LETTER_TEXT, "Reminder Letter");
                 _currentApptPrinting++;
                 if (_currentApptPrinting < _dsApptDisplay.PatientAppts.Count)
+                {
                     e.HasMorePages = true;
+                    return;
+                }
             }
+
+            // If we reach this point, we need to reset the counter (ticket #15 on https://trac.opensourcevista.net/ticket/15) 
+ 	        _currentApptPrinting = 0; 
             
         }
 
@@ -356,9 +369,13 @@ namespace IndianHealthService.ClinicalScheduling
                 ClinicalScheduling.Printing.PrintCancelLetter(_dsRebookAppts.PatientAppts[_currentApptPrinting], e, c.CLINIC_CANCELLATION_LETTER, "Cancellation Letter");
                 _currentApptPrinting++;
                 if (_currentApptPrinting < _dsRebookAppts.PatientAppts.Count)
+                {
                     e.HasMorePages = true;
+                    return;
+                }
             }
-
+            // If we reach this point, we need to reset the counter (ticket #15 on https://trac.opensourcevista.net/ticket/15) 
+            _currentApptPrinting = 0; 
         }
 
         private void printRebookLetters_PrintPage(object sender, PrintPageEventArgs e)
@@ -378,8 +395,13 @@ namespace IndianHealthService.ClinicalScheduling
                 ClinicalScheduling.Printing.PrintRebookLetter(_dsRebookAppts.PatientAppts[_currentApptPrinting], e, c.NO_SHOW_LETTER, "Rebook Letter");
                 _currentApptPrinting++;
                 if (_currentApptPrinting < _dsRebookAppts.PatientAppts.Count)
+                {
                     e.HasMorePages = true;
+                    return;
+                }
             }
+            // If we reach this point, we need to reset the counter (ticket #15 on https://trac.opensourcevista.net/ticket/15) 
+            _currentApptPrinting = 0; 
         }
 	}
 }
