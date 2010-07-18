@@ -654,8 +654,10 @@ namespace IndianHealthService.ClinicalScheduling
 		/// Given a selected date,
 		/// Calculates StartDay and End Day and returns them in output params.  
 		/// nWeeks == number of Weeks to display
-		/// nColumnCount is number of days displayed per week.  If 5 columns, begin on
-		/// Monday, if 7 Columns, begin on Sunday
+		/// nColumnCount is number of days displayed per week.  
+        /// If 5 columns, begin on Second Day of Week
+		/// If 7 Columns, begin on First Day of Week
+        /// (this is a change from the hardcoded behavior for US-based calendars)
 		/// 
 		/// Returns TRUE if the document's data needs refreshing based on 
 		/// this newly selected date.
@@ -665,10 +667,12 @@ namespace IndianHealthService.ClinicalScheduling
 		{
 			DateTime OldStartDay = m_dStartDate;
 			DateTime OldEndDay = m_dEndDate;
+            // Week start based on machine locale
             int nStartWeekDay = (int)System.Globalization.CultureInfo.CurrentCulture.DateTimeFormat.FirstDayOfWeek;
             int nWeekDay = (int) SelectedDate.DayOfWeek; //0 == Sunday
 
-			int nOff = (nStartWeekDay + 1) % 7;
+			// this offset gets approrpriate day based on locale.
+            int nOff = (nStartWeekDay + 1) % 7;
 			TimeSpan ts = new TimeSpan(nWeekDay - nOff,0,0,0); //d,h,m,s
 
 			if (m_nColumnCount == 1) 
