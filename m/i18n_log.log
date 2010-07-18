@@ -56,8 +56,8 @@ Routine to pull extra registration data
 ------------------------------------------------------------------------
 r867 | sam | 2010-07-14 15:08:39 +0300 (Wed, 14 Jul 2010) | 6 lines
 Changed paths:
-   M /Scheduling/trunk/m/BSDX07.m
-   M /Scheduling/trunk/m/BSDX28.m
+#   M /Scheduling/trunk/m/BSDX07.m
+#   M /Scheduling/trunk/m/BSDX28.m
 
 Two updates: Search by Primary ID now enabled;
 bug in make appointment code that causes storage of non-canonical 
