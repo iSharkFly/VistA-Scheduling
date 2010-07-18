@@ -1,8 +1,8 @@
 BSDX29	; IHS/OIT/HMW - WINDOWS SCHEDULING RPCS ; 7/18/10 2:03pm
-	;;1.3;IHS WINDOWS SCHEDULING;;NOV 01, 2007
-    ; 
-    ; Change Log:
-    ; v1.3 by WV/SMH on 3100713
+	;;1.3T1;BSDX;;Jul 18, 2010
+	   ; 
+	   ; Change Log:
+	   ; v1.3 by WV/SMH on 3100713
 	; - Beginning and Ending dates passed as FM Dates
 	;
 BSDXCPD(BSDXY,BSDXRES,BSDX44,BSDXBEG,BSDXEND)	;EP
@@ -16,8 +16,8 @@ BSDXCP(BSDXY,BSDXRES,BSDX44,BSDXBEG,BSDXEND)	;EP
 	;Beginning with appointments on day BSDXBEG and ending on BSDXEND, inclusive
 	;
 	;Returns ADO Recordset formatted fields containing count of records copied and error message:
-    ;
-    ; July 13 2010: D dates (BEG and END) from US format to FM Dates for i18n
+	   ;
+	   ; July 13 2010: D dates (BEG and END) from US format to FM Dates for i18n
 	;
 	;
 	S BSDXY="^BSDXTMP("_$J_")"
@@ -27,8 +27,8 @@ BSDXCP(BSDXY,BSDXRES,BSDX44,BSDXBEG,BSDXEND)	;EP
 	S ^BSDXTMP($J,0)="T00010TASK_NUMBER^T00020ERRORID"_$C(30)
 	;
 	;Convert beginning and ending dates
-    ;
-    ;TODO:Validate FM Dates coming through
+	   ;
+	   ;TODO:Validate FM Dates coming through
 	;
 	S BSDXBEG=BSDXBEG-1
 	S BSDXEND=BSDXEND+1

@@ -1,8 +1,8 @@
 BSDX27	; IHS/OIT/HMW - WINDOWS SCHEDULING RPCS ; 7/15/10 12:22pm
-	;;1.3;IHS WINDOWS SCHEDULING;;NOV 01, 2007
-    ; 
-    ; Change Log: July 15, 2010
-    ; UJO/SMH - i18n: FM Dates passed into routine for Clinic Letters - CLDISP tag
+	;;1.3T1;BSDX;;Jul 18, 2010
+	   ; 
+	   ; Change Log: July 15, 2010
+	   ; UJO/SMH - i18n: FM Dates passed into routine for Clinic Letters - CLDISP tag
 	;
 	;
 	Q
@@ -184,8 +184,8 @@ CLDISP(BSDXY,BSDXCLST,BSDXBEG,BSDXEND)	;EP
 	;BSDXBEG and BSDXEND are in external date form.
 	;Called by BSDX CLINIC LETTERS
 	;
-    ; July 10, 2010 -- to support i18n, we pass dates from client in
-    ; locale-neutral Fileman format. No need to convert it.
+	   ; July 10, 2010 -- to support i18n, we pass dates from client in
+	   ; locale-neutral Fileman format. No need to convert it.
 	N BSDXI,BSDXNOD,BSDXNAM,BSDXDOB,BSDXHRN,BSDXSEX,BSDXCID,BSDXCNOD,BSDXDT
 	N BSDXJ,BSDXAID,BSDXPAT,BSDXPNOD,BSDXCLN,BSDXCLRK,BSDXMADE,BSDXNOT,BSDXLIN
 	N BSDXSTRT

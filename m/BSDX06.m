@@ -1,8 +1,8 @@
 BSDX06	; IHS/OIT/HMW - WINDOWS SCHEDULING RPCS ; 7/15/10 4:51pm
-	;;1.3;IHS WINDOWS SCHEDULING;;NOV 01, 2007
-    ; Change Log:
-    ; UJO/SMH: July 15 2010: Change in BSDXSTART and BSDXEND: get
-    ; dates in FM format for i18n
+	;;1.3T1;BSDX;;Jul 18, 2010
+	   ; Change Log:
+	   ; UJO/SMH: July 15 2010: Change in BSDXSTART and BSDXEND: get
+	   ; dates in FM format for i18n
 	;
 	;
 TPBLKOV(BSDXY,BSDXSTART,BSDXEND,BSDXRES)	 ;EP

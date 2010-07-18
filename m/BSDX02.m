@@ -1,8 +1,8 @@
 BSDX02	; IHS/OIT/HMW - WINDOWS SCHEDULING RPCS ; 7/15/10 12:25pm
-	;;1.3;IHS WINDOWS SCHEDULING;;NOV 01, 2007
-    ; 
-    ; Change Log
-    ; July 15 2010: UJO/SMH - Pass FM dates in instead of US dates for i18n
+	;;1.3T1;BSDX;;Jul 18, 2010
+	   ; 
+	   ; Change Log
+	   ; July 15 2010: UJO/SMH - Pass FM dates in instead of US dates for i18n
 	;
 	;
 CRSCHD(BSDXY,BSDXRES,BSDXSTART,BSDXEND)	;EP
@@ -34,7 +34,7 @@ CRSCH(BSDXY,BSDXRES,BSDXSTART,BSDXEND,BSDXWKIN)	    ;
 	; I BSDXSTART=-1 S ^BSDXTMP($J,1)=$C(31) Q
 	; S %DT="T",X=BSDXEND D ^%DT S BSDXEND=Y
 	; I BSDXEND=-1 S ^BSDXTMP($J,1)=$C(31) Q
-    ;
+	   ;
 	S BSDXI=0
 	D STRES
 	;

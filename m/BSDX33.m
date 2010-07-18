@@ -1,12 +1,12 @@
 BSDX33	; IHS/OIT/HMW - WINDOWS SCHEDULING RPCS ; 7/15/10 12:33pm
-	;;1.3;IHS WINDOWS SCHEDULING;;NOV 01, 2007
-    ; Mods by WV/STAR
-    ;
-    ; Change Log:
-    ; July 13, 2010
-    ; v 1.3 adds fixes Rebooking behavior in application (see RBNEXT)
-    ; also adds i18 support - Dates passed in FM format from application
-    ; in tag SETRBK and RBNEXT
+	;;1.3T1;BSDX;;Jul 18, 2010
+	   ; Mods by WV/STAR
+	   ;
+	   ; Change Log:
+	   ; July 13, 2010
+	   ; v 1.3 adds fixes Rebooking behavior in application (see RBNEXT)
+	   ; also adds i18 support - Dates passed in FM format from application
+	   ; in tag SETRBK and RBNEXT
 	;
 	;
 	Q
@@ -34,11 +34,11 @@ RBNEXT(BSDXY,BSDXDATE,BSDXRES,BSDXTPID)	;EP
 	S BSDXRESD=$O(^BSDXRES("B",BSDXRES,0))
 	I '+BSDXRESD D ERR2("BSDX REBOOK NEXT BLOCK: Invalid resource name") Q
 	;
-    ; i18n fix
-    ; S X=BSDXDATE,%DT="XT" D ^%DT
+	   ; i18n fix
+	   ; S X=BSDXDATE,%DT="XT" D ^%DT
 	; I Y=-1 D ERR2(1,"BSDX REBOOK NEXT BLOCK: Invalid datetime") Q
 	;
-    ; S BSDXDATE=$P(Y,".")
+	   ; S BSDXDATE=$P(Y,".")
 	;
 	S BSDXFND=0
 	F  S BSDXDATE=$O(^BSDXAB("ARSCT",BSDXRESD,BSDXDATE)) Q:'+BSDXDATE  D  Q:BSDXFND
@@ -52,9 +52,9 @@ RBNEXT(BSDXY,BSDXDATE,BSDXRES,BSDXTPID)	;EP
 	I BSDXFND=0 S BSDXFND=""
 	E  S Y=BSDXFND X ^DD("DD") S BSDXFND=Y
 	S BSDXI=BSDXI+1
-    ;//smh - bug (V 1.3): Need to replace @ in FM date for C# to recognize it
-    S BSDXFND=$TR(BSDXFND,"@"," ")
-    ;//smh end fix
+	   ;//smh - bug (V 1.3): Need to replace @ in FM date for C# to recognize it
+	   S BSDXFND=$TR(BSDXFND,"@"," ")
+	   ;//smh end fix
 	S ^BSDXTMP($J,BSDXI)="1^"_BSDXFND_"^"_$C(30)_$C(31)
 	Q
 SETRBKD(BSDXY,BSDXAPPT,BSDXDATE)	;EP
@@ -83,7 +83,7 @@ SETRBK(BSDXY,BSDXAPPT,BSDXDATE)	;EP
 	I '+BSDXAPPT
 	I '$D(^BSDXAPPT(BSDXAPPT,0)) D ERR(1,"BSDX REBOOK SET: Invalid appointment ID") Q
 	; i18n (v 1.3)
-    ;S X=BSDXDATE,%DT="XT" D ^%DT
+	   ;S X=BSDXDATE,%DT="XT" D ^%DT
 	;I Y=-1 D ERR(1,"BSDX REBOOK SET: Invalid rebook datetime") Q
 	;S BSDXDATE=Y
 	S BSDXIENS=BSDXAPPT_","

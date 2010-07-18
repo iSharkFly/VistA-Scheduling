@@ -1,9 +1,9 @@
 BSDX07	; IHS/OIT/HMW - WINDOWS SCHEDULING RPCS ;  ; 7/18/10 2:11pm
-	;;2.0;IHS WINDOWS SCHEDULING;;NOV 01, 2007
-    ;
-    ; Change Log:
-    ; UJO/SMH
-    ; v1.3 July 13 2010 - Add support i18n - Dates input as FM dates, not US.
+	;;1.3T1;BSDX;;Jul 18, 2010
+	   ;
+	   ; Change Log:
+	   ; UJO/SMH
+	   ; v1.3 July 13 2010 - Add support i18n - Dates input as FM dates, not US.
 	;
 	;
 APPADDD(BSDXY,BSDXSTART,BSDXEND,BSDXPATID,BSDXRES,BSDXLEN,BSDXNOTE,BSDXATID)	;EP
@@ -44,7 +44,7 @@ ENDBG	;BSDX ADD NEW APPOINTMENT^3091122.0930^3091122.1000^370^2^PEDIATRICIAN,DEM
 	L +^BSDXAPPT(BSDXPATID):5 I '$T D ERR(BSDXI+1,"Another user is working with this patient's record.  Please try again later") Q
 	;
 	TSTART
-    ; v1.3 - date passed in as FM Date, not US date.
+	   ; v1.3 - date passed in as FM Date, not US date.
 	;Check input data for errors
 	; S:BSDXSTART["@0000" BSDXSTART=$P(BSDXSTART,"@")
 	; S:BSDXEND["@0000" BSDXEND=$P(BSDXEND,"@")
@@ -52,11 +52,11 @@ ENDBG	;BSDX ADD NEW APPOINTMENT^3091122.0930^3091122.1000^370^2^PEDIATRICIAN,DEM
 	; I BSDXSTART=-1 D ERR(BSDXI+1,"BSDX07 Error: Invalid Start Time") Q
 	; S %DT="T",X=BSDXEND D ^%DT S BSDXEND=Y
 	; I BSDXEND=-1 D ERR(BSDXI+1,"BSDX07 Error: Invalid End Time") Q
-    ;
-    ; If C# sends the dates with extra zeros, remove them
+	   ;
+	   ; If C# sends the dates with extra zeros, remove them
 	S BSDXSTART=+BSDXSTART,BSDXEND=+BSDXEND
-    ;
-    I $L(BSDXEND,".")=1 D ERR(BSDXI+1,"BSDX07 Error: Invalid End Time") Q
+	   ;
+	   I $L(BSDXEND,".")=1 D ERR(BSDXI+1,"BSDX07 Error: Invalid End Time") Q
 	I BSDXSTART>BSDXEND S BSDXTMP=BSDXEND,BSDXEND=BSDXSTART,BSDXSTART=BSDXTMP
 	I '+BSDXPATID,'$D(^DPT(BSDXPATID,0)) D ERR(BSDXI+1,"BSDX07 Error: Invalid Patient ID") Q
 	;Validate Resource entry
@@ -177,7 +177,7 @@ ADDEVT3(BSDXRES)	;
 	;
 ERR(BSDXI,BSDXERR)	;Error processing
 	D ^%ZTER ;XXX: remove after we figure out the cause of error
-    S BSDXI=BSDXI+1
+	   S BSDXI=BSDXI+1
 	S BSDXERR=$TR(BSDXERR,"^","~")
 	TROLLBACK
 	S ^BSDXTMP($J,BSDXI)="0^"_BSDXERR_$C(30)

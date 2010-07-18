@@ -1,5 +1,5 @@
 BSDX2E	;IHS/OIT/MJL - ENVIRONMENT CHECK FOR WINDOWS SCHEDULING [7/18/10 4:30pm]
-	;;2.0;IHS WINDOWS SCHEDULING;;NOV 01, 2007
+	;;1.3T1;BSDX;;Jul 18, 2010
 	;
 	S LINE="",$P(LINE,"*",81)=""
 	S XPDNOQUE="NO QUE"  ;NO QUEUING ALLOWED
@@ -59,52 +59,52 @@ PATCHCK(XPXPCH)	;
 	;
 V0200	;EP Version 1.3 PostInit
 	;Add Protocol items to SDAM APPOINTMENT EVENTS protocol
-    ;Remove protocols known to cause problems from SDAM APPOINTMENT EVENTS
+	   ;Remove protocols known to cause problems from SDAM APPOINTMENT EVENTS
 	;
 	N BSDXDA,BSDXFDA,BSDXDA1,BSDXSEQ,BSDXDAT,BSDXNOD,BSDXIEN,BSDXMSG
-    ;
-    ; 1st, add the BSDX event protocols
-    ; Get SDAM APPOINTMENT EVENTS IEN in 101
+	   ;
+	   ; 1st, add the BSDX event protocols
+	   ; Get SDAM APPOINTMENT EVENTS IEN in 101
 	S BSDXDA=$O(^ORD(101,"B","SDAM APPOINTMENT EVENTS",0))
 	Q:'+BSDXDA
-    ; Add each of those protocols unless they already exist.
+	   ; Add each of those protocols unless they already exist.
 	S BSDXDAT="BSDX ADD APPOINTMENT;10.2^BSDX CANCEL APPOINTMENT;10.4^BSDX CHECKIN APPOINTMENT;10.6^BSDX NOSHOW APPOINTMENT;10.8"
-    ; For each
-    F J=1:1:$L(BSDXDAT,U) D
+	   ; For each
+	   F J=1:1:$L(BSDXDAT,U) D
 	. K BSDXIEN,BSDXMSG,BSDXFDA
-    . ; Get Item
+	   . ; Get Item
 	. S BSDXNOD=$P(BSDXDAT,U,J)
 	. ; Get Item Name (BSDX ADD APPOINTMENT)
-    . S BSDXDA1=$P(BSDXNOD,";")
-    . ; Get Item Sequence (10.2)
+	   . S BSDXDA1=$P(BSDXNOD,";")
+	   . ; Get Item Sequence (10.2)
 	. S BSDXSEQ=$P(BSDXNOD,";",2)
-    . ; Get Item Reference (Item is already in the protocol file)
+	   . ; Get Item Reference (Item is already in the protocol file)
 	. S BSDXDA1=$O(^ORD(101,"B",BSDXDA1,0))
-    . ; Quit if not found
+	   . ; Quit if not found
 	. Q:'+BSDXDA1
-    . ; Quit if already exists in the SDAM protocol
+	   . ; Quit if already exists in the SDAM protocol
 	. Q:$D(^ORD(101,BSDXDA,10,"B",BSDXDA1))
-    . ; Go ahead and save it.
+	   . ; Go ahead and save it.
 	. S BSDXFDA(101.01,"+1,"_BSDXDA_",",".01")=BSDXDA1
 	. S BSDXFDA(101.01,"+1,"_BSDXDA_",","3")=BSDXSEQ
 	. D UPDATE^DIE("","BSDXFDA","BSDXIEN","BSDXMSG")
-    . ; Error message
-    . I $D(BSDXMSG) W $C(7),"Error: ",BSDXMSG("DIERR",1,"TEXT",1)
-    ;
-    ; Remove nassssty protocols ORU PATIENT MOVMT and DVBA C&P SCHD EVENT
-    ; SDAM APPOINTMENT EVENTS IENS for use in FIND1^DIC
-    N SDEVTIENS S SDEVTIENS=","_BSDXDA_","
-    ; Subfile entry for ORU...
-    N ORUIEN S ORUIEN=$$FIND1^DIC(101.01,SDEVTIENS,"","ORU PATIENT MOVMT")
-    ; Subfile entry for DVBA...
-    N DVBAIEN S DVBAIEN=$$FIND1^DIC(101.01,SDEVTIENS,"","DVBA C&P SCHD EVENT")
-    ; Deletion code
-    N BSDXFDA,BSDXMSG
-    S:ORUIEN>0 BSDXFDA(101.01,ORUIEN_SDEVTIENS,.01)="@"
-    S:DVBAIEN>0 BSDXFDA(101.01,DVBAIEN_SDEVTIENS,.01)="@"
-    D:$D(BSDXFDA) FILE^DIE("","BSDXFDA","BSDXMSG")
-    ; If error
-    I $D(BSDXMSG) W $C(7),"Error: ",BSDXMSG("DIERR",1,"TEXT",1)
+	   . ; Error message
+	   . I $D(BSDXMSG) W $C(7),"Error: ",BSDXMSG("DIERR",1,"TEXT",1)
+	   ;
+	   ; Remove nassssty protocols ORU PATIENT MOVMT and DVBA C&P SCHD EVENT
+	   ; SDAM APPOINTMENT EVENTS IENS for use in FIND1^DIC
+	   N SDEVTIENS S SDEVTIENS=","_BSDXDA_","
+	   ; Subfile entry for ORU...
+	   N ORUIEN S ORUIEN=$$FIND1^DIC(101.01,SDEVTIENS,"","ORU PATIENT MOVMT")
+	   ; Subfile entry for DVBA...
+	   N DVBAIEN S DVBAIEN=$$FIND1^DIC(101.01,SDEVTIENS,"","DVBA C&P SCHD EVENT")
+	   ; Deletion code
+	   N BSDXFDA,BSDXMSG
+	   S:ORUIEN>0 BSDXFDA(101.01,ORUIEN_SDEVTIENS,.01)="@"
+	   S:DVBAIEN>0 BSDXFDA(101.01,DVBAIEN_SDEVTIENS,.01)="@"
+	   D:$D(BSDXFDA) FILE^DIE("","BSDXFDA","BSDXMSG")
+	   ; If error
+	   I $D(BSDXMSG) W $C(7),"Error: ",BSDXMSG("DIERR",1,"TEXT",1)
 	QUIT
 	;
 SORRY(XPX)	;

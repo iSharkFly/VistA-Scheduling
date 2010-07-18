@@ -1,14 +1,14 @@
 BSDX09	; IHS/OIT/HMW - WINDOWS SCHEDULING RPCS ;  ; 7/18/10 2:26pm
-	;;1.3;IHS WINDOWS SCHEDULING;;NOV 01, 2007
+	;;1.3T1;BSDX;;Jul 18, 2010
 	;
-    ; Change Log:
-    ; UJO/TH - v 1.3 on 3100714 - Extra Demographics:
-    ; - Email
-    ; - Cell Phone
-    ; - Country
-    ; - + refactoring of routine
+	   ; Change Log:
+	   ; UJO/TH - v 1.3 on 3100714 - Extra Demographics:
+	   ; - Email
+	   ; - Cell Phone
+	   ; - Country
+	   ; - + refactoring of routine
 	; 
-    ; UJO/TH - v 1.3 on 3100715 - Change SSN to PID and get PID field instead
+	   ; UJO/TH - v 1.3 on 3100715 - Change SSN to PID and get PID field instead
 	;
 GETREGA(BSDXRET,BSDXPAT)	       ;EP
 	;
@@ -17,7 +17,7 @@ GETREGA(BSDXRET,BSDXPAT)	       ;EP
 	;   13 NOK NAME^RELATIONSHIP^PHONE^STREET^CITY^STATE^ZIP
 	;   20 DATAREVIEWED^
 	;   21 RegistrationComments
-    ;   22 EMAIL ADDRESS^PHONE NUMBER [CELLULAR]^COUNTRY
+	   ;   22 EMAIL ADDRESS^PHONE NUMBER [CELLULAR]^COUNTRY
 	;
 	;For patient with ien BSDXPAT
 	;K ^BSDXTMP($J)

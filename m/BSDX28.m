@@ -1,12 +1,12 @@
 BSDX28	; IHS/OIT/HMW - WINDOWS SCHEDULING RPCS ; 7/18/10 2:30pm
-	;;1.3;IHS WINDOWS SCHEDULING;;NOV 01, 2007
+	;;1.3T1;BSDX;;Jul 18, 2010
 	; 
-    ; Change Log:
+	   ; Change Log:
 	; HMW 3050721 Added test for inactivated record
-    ; V1.3 WV/SMH 3100714 
-    ; - add PID search
-    ; - return PID instead of SSN (change header and logic)
-    ; - Change Error trap to new style.
+	   ; V1.3 WV/SMH 3100714 
+	   ; - add PID search
+	   ; - return PID instead of SSN (change header and logic)
+	   ; - Change Error trap to new style.
 	;
 PTLOOKRS(BSDXY,BSDXP,BSDXC)	 ;EP Patient Lookup
 	;
@@ -14,11 +14,11 @@ PTLOOKRS(BSDXY,BSDXP,BSDXC)	 ;EP Patient Lookup
 	;Supports DOB Lookup, Primary Long ID lookup
 	;
 	N $ET S $ET="G ERROR^BSDX28"
-    ; rm ctrl chars
+	   ; rm ctrl chars
 	S BSDXP=$TR(BSDXP,$C(13),"")
 	S BSDXP=$TR(BSDXP,$C(10),"")
 	S BSDXP=$TR(BSDXP,$C(9),"")
-    ; num of pts to find
+	   ; num of pts to find
 	S:BSDXC="" BSDXC=10
 	N BSDXHRN,BSDXZ,BSDXDLIM,BSDXRET,BSDXDPT,BSDXRET,BSDXIEN,BSDXFILE
 	N BSDXIENS,BSDXFIELDS,BSDXFLAGS,BSDXVALUE,BSDXNUMBER,BSDXINDEXES,BSDXSCREEN
@@ -27,25 +27,25 @@ PTLOOKRS(BSDXY,BSDXP,BSDXC)	 ;EP Patient Lookup
 	S BSDXRET="T00030NAME^T00030HRN^T00030PID^D00030DOB^T00030IEN"_$C(30)
 	I '+$G(DUZ) S BSDXY=BSDXRET_$C(31) Q
 	I '$D(DUZ(2)) S BSDXY=BSDXRET_$C(31) Q
-
-PID ;PID Lookup
-    ; If this ID exists, go get it. If "UJOPID" index doesn't exist,
-    ; won't work anyways.
-    I $D(^DPT("UJOPID",BSDXP)) DO  SET BSDXY=BSDXRET_$C(31) QUIT
-    . S BSDXIEN=$O(^DPT("UJOPID",BSDXP,""))
-    . Q:'$D(^DPT(BSDXIEN,0))
-    . S BSDXDPT=$G(^DPT(BSDXIEN,0))
-    . S BSDXZ=$P(BSDXDPT,U) ;NAME
-    . S BSDXHRN=$P($G(^AUPNPAT(BSDXIEN,41,DUZ(2),0)),U,2) ;CHART
-    . I BSDXHRN="" Q  ;NO CHART AT THIS DUZ2
-    . ; Inactivated Chart get an *
-    . I $P($G(^AUPNPAT(BSDXIEN,41,DUZ(2),0)),U,3) S BSDXHRN=BSDXHRN_"(*)" Q
-    . S $P(BSDXZ,BSDXDLIM,2)=BSDXHRN
-    . S $P(BSDXZ,BSDXDLIM,3)=$P(^DPT(BSDXIEN,.36),U,3) ;PID
-    . S Y=$P(BSDXDPT,U,3) X ^DD("DD")
-    . S $P(BSDXZ,BSDXDLIM,4)=Y ;DOB
-    . S $P(BSDXZ,BSDXDLIM,5)=BSDXIEN
-    . S BSDXRET=BSDXRET_BSDXZ_$C(30)
+	
+PID	;PID Lookup
+	   ; If this ID exists, go get it. If "UJOPID" index doesn't exist,
+	   ; won't work anyways.
+	   I $D(^DPT("UJOPID",BSDXP)) DO  SET BSDXY=BSDXRET_$C(31) QUIT
+	   . S BSDXIEN=$O(^DPT("UJOPID",BSDXP,""))
+	   . Q:'$D(^DPT(BSDXIEN,0))
+	   . S BSDXDPT=$G(^DPT(BSDXIEN,0))
+	   . S BSDXZ=$P(BSDXDPT,U) ;NAME
+	   . S BSDXHRN=$P($G(^AUPNPAT(BSDXIEN,41,DUZ(2),0)),U,2) ;CHART
+	   . I BSDXHRN="" Q  ;NO CHART AT THIS DUZ2
+	   . ; Inactivated Chart get an *
+	   . I $P($G(^AUPNPAT(BSDXIEN,41,DUZ(2),0)),U,3) S BSDXHRN=BSDXHRN_"(*)" Q
+	   . S $P(BSDXZ,BSDXDLIM,2)=BSDXHRN
+	   . S $P(BSDXZ,BSDXDLIM,3)=$P(^DPT(BSDXIEN,.36),U,3) ;PID
+	   . S Y=$P(BSDXDPT,U,3) X ^DD("DD")
+	   . S $P(BSDXZ,BSDXDLIM,4)=Y ;DOB
+	   . S $P(BSDXZ,BSDXDLIM,5)=BSDXIEN
+	   . S BSDXRET=BSDXRET_BSDXZ_$C(30)
 	;
 DOB	;DOB Lookup
 	I +DUZ(2),((BSDXP?1.2N1"/"1.2N1"/"1.4N)!(BSDXP?1.2N1" "1.2N1" "1.4N)!(BSDXP?1.2N1"-"1.2N1"-"1.4N)) D  S BSDXY=BSDXRET_$C(31) Q
@@ -59,7 +59,7 @@ DOB	;DOB Lookup
 	. . I BSDXHRN="" Q  ;NO CHART AT THIS DUZ2
 	. . I $P($G(^AUPNPAT(BSDXIEN,41,DUZ(2),0)),U,3) S BSDXHRN=BSDXHRN_"(*)" Q  ;HMW 20050721 Record Inactivated
 	. . S $P(BSDXZ,BSDXDLIM,2)=BSDXHRN
-    . . S $P(BSDXZ,BSDXDLIM,3)=$P(^DPT(BSDXIEN,.36),U,3) ;PID
+	   . . S $P(BSDXZ,BSDXDLIM,3)=$P(^DPT(BSDXIEN,.36),U,3) ;PID
 	. . S Y=$P(BSDXDPT,U,3) X ^DD("DD")
 	. . S $P(BSDXZ,BSDXDLIM,4)=Y ;DOB
 	. . S $P(BSDXZ,BSDXDLIM,5)=BSDXIEN
@@ -67,8 +67,8 @@ DOB	;DOB Lookup
 	. . Q
 	. Q
 	;
-CHART
-    ;Chart# Lookup
+CHART	
+	   ;Chart# Lookup
 	I +DUZ(2),BSDXP]"",$D(^AUPNPAT("D",BSDXP)) D  S BSDXY=BSDXRET_$C(31) Q
 	. S BSDXIEN=0 F  S BSDXIEN=$O(^AUPNPAT("D",BSDXP,BSDXIEN)) Q:'+BSDXIEN  I $D(^AUPNPAT("D",BSDXP,BSDXIEN,DUZ(2))) D  Q
 	. . Q:'$D(^DPT(BSDXIEN,0))
@@ -77,14 +77,14 @@ CHART
 	. . S BSDXHRN=BSDXP ;CHART
 	. . I $D(^AUPNPAT(BSDXIEN,41,DUZ(2),0)),$P(^(0),U,3) S BSDXHRN=BSDXHRN_"(*)" Q  ;HMW 20050721 Record Inactivated
 	. . S $P(BSDXZ,BSDXDLIM,2)=BSDXHRN
-    . . S $P(BSDXZ,BSDXDLIM,3)=$P(^DPT(BSDXIEN,.36),U,3) ;PID
+	   . . S $P(BSDXZ,BSDXDLIM,3)=$P(^DPT(BSDXIEN,.36),U,3) ;PID
 	. . S Y=$P(BSDXDPT,U,3) X ^DD("DD")
 	. . S $P(BSDXZ,BSDXDLIM,4)=Y ;DOB
 	. . S $P(BSDXZ,BSDXDLIM,5)=BSDXIEN
 	. . S BSDXRET=BSDXRET_BSDXZ_$C(30)
 	. . Q
 	. Q
-    ;
+	   ;
 SSN	;SSN Lookup
 	I (BSDXP?9N)!(BSDXP?3N1"-"2N1"-"4N),$D(^DPT("SSN",BSDXP)) D  S BSDXY=BSDXRET_$C(31) Q
 	. S BSDXIEN=0 F  S BSDXIEN=$O(^DPT("SSN",BSDXP,BSDXIEN)) Q:'+BSDXIEN  D  Q
@@ -95,7 +95,7 @@ SSN	;SSN Lookup
 	. . I BSDXHRN="" Q  ;NO CHART AT THIS DUZ2
 	. . I $P($G(^AUPNPAT(BSDXIEN,41,DUZ(2),0)),U,3) S BSDXHRN=BSDXHRN_"(*)" Q  ;HMW 20050721 Record Inactivated
 	. . S $P(BSDXZ,BSDXDLIM,2)=BSDXHRN
-    . . S $P(BSDXZ,BSDXDLIM,3)=$P(^DPT(BSDXIEN,.36),U,3) ;PID
+	   . . S $P(BSDXZ,BSDXDLIM,3)=$P(^DPT(BSDXIEN,.36),U,3) ;PID
 	. . S Y=$P(BSDXDPT,U,3) X ^DD("DD")
 	. . S $P(BSDXZ,BSDXDLIM,4)=Y ;DOB
 	. . S $P(BSDXZ,BSDXDLIM,5)=BSDXIEN
@@ -125,7 +125,7 @@ SSN	;SSN Lookup
 	. I $P($G(^AUPNPAT(BSDXIEN,41,DUZ(2),0)),U,3) S BSDXHRN=BSDXHRN_"(*)" Q  ;HMW 20050721 Record Inactivated
 	. S $P(BSDXZ,BSDXDLIM,2)=BSDXHRN
 	. S BSDXDPT=$G(^DPT(BSDXIEN,0))
-    . S $P(BSDXZ,BSDXDLIM,3)=$P(^DPT(BSDXIEN,.36),U,3) ;PID
+	   . S $P(BSDXZ,BSDXDLIM,3)=$P(^DPT(BSDXIEN,.36),U,3) ;PID
 	. S Y=$P(BSDXDPT,U,3) X ^DD("DD")
 	. S $P(BSDXZ,BSDXDLIM,4)=Y ;DOB
 	. S $P(BSDXZ,BSDXDLIM,5)=BSDXIEN

@@ -1,8 +1,8 @@
 BSDX04	; IHS/OIT/HMW - WINDOWS SCHEDULING RPCS ;  ; 7/15/10 12:44pm
-	;;1.3;IHS WINDOWS SCHEDULING;;NOV 01, 2007
-    ; Change Log:
-    ; July 11 2010: Pass BSDXSTART and END as FM dates rather than US formatted dates
-    ;       for i18n
+	;;1.3T1;BSDX;;Jul 18, 2010
+	   ; Change Log:
+	   ; July 11 2010: Pass BSDXSTART and END as FM dates rather than US formatted dates
+	   ;       for i18n
 	;
 	;
 CASSCHD(BSDXY,BSDXRES,BSDXSTART,BSDXEND,BSDXTYPES,BSDXSRCH)	;EP
@@ -26,12 +26,12 @@ CASSCH(BSDXY,BSDXRES,BSDXSTART,BSDXEND,BSDXTYPES,BSDXSRCH)	;EP
 	;and to search for availability in the Find Appointment function
 	;
 	;BSDXRES is resource name
-    ;
-    ;//smh
-    ; BSDXSTART and BSDXEND both passed in FM Format.
-    ; BSDXSTART is the Date Portion of FM Date
-    ; BSDXEND -- pass date and h,m,s as well
-    ;//smh
+	   ;
+	   ;//smh
+	   ; BSDXSTART and BSDXEND both passed in FM Format.
+	   ; BSDXSTART is the Date Portion of FM Date
+	   ; BSDXEND -- pass date and h,m,s as well
+	   ;//smh
 	;
 	;BSDXTYPES is |-delimited list of Access Type Names
 	;If BSDXTYPES is "" then the screen passes all types.

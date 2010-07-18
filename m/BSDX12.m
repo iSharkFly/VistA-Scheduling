@@ -1,9 +1,9 @@
 BSDX12	; IHS/OIT/HMW - WINDOWS SCHEDULING RPCS ; 7/18/10 2:14pm
-	;;1.3;IHS WINDOWS SCHEDULING;;NOV 01, 2007
-    ; 
-    ; Change Log:
-    ; v 1.3 - i18n support - 3100718
-    ; BSDXSTART and BSDXEND passed in FM Dates, not US dates
+	;;1.3T1;BSDX;;Jul 18, 2010
+	   ; 
+	   ; Change Log:
+	   ; v 1.3 - i18n support - 3100718
+	   ; BSDXSTART and BSDXEND passed in FM Dates, not US dates
 	;
 	;
 AVADD(BSDXY,BSDXSTART,BSDXEND,BSDXTYPID,BSDXRES,BSDXSLOTS,BSDXNOTE)	 ;EP
@@ -25,16 +25,16 @@ AVADD(BSDXY,BSDXSTART,BSDXEND,BSDXTYPID,BSDXRES,BSDXSLOTS,BSDXNOTE)	 ;EP
 	S BSDXY="^BSDXTMP("_$J_")"
 	S ^BSDXTMP($J,0)="I00020AVAILABILITYID^I00020ERRORID"_$C(30)
 	;Check input data for errors
-    ; i18n - FM Dates passed in
+	   ; i18n - FM Dates passed in
 	; S:BSDXSTART["@0000" BSDXSTART=$P(BSDXSTART,"@")
 	; S:BSDXEND["@0000" BSDXEND=$P(BSDXEND,"@")
 	; S %DT="T",X=BSDXSTART D ^%DT S BSDXSTART=Y
 	; I BSDXSTART=-1 D ERR(70) Q
 	; S %DT="T",X=BSDXEND D ^%DT S BSDXEND=Y
 	; I BSDXEND=-1 D ERR(70) Q
-    ; Make sure dates are canonical and don't contain extra zeros
-    S BSDXSTART=+BSDXSTART,BSDXEND=+BSDXEND
-    ;
+	   ; Make sure dates are canonical and don't contain extra zeros
+	   S BSDXSTART=+BSDXSTART,BSDXEND=+BSDXEND
+	   ;
 	I $L(BSDXEND,".")=1 D ERR(70) Q
 	I BSDXSTART>BSDXEND S BSDXTMP=BSDXEND,BSDXEND=BSDXSTART,BSDXSTART=BSDXTMP
 	;Validate Access Type
