@@ -2130,22 +2130,7 @@ namespace IndianHealthService.ClinicalScheduling
 				appt.Resource = sResource;
 				appt.HealthRecordNumber = dPat.HealthRecordNumber;
 
-				/*
-				 * 8-10-05 Copied overbook prompt for walkin
-				 * to this position in order to check just prior
-				 * to calling CreateAppointment
-				*/
 				this.Document.RefreshDocument();
-				m_nSlots = m_Document.SlotsAvailable(dStart, dEnd, sResource, out sAccessType, out sAvailabilityMessage);
-
-				if (m_nSlots < 1)
-				{
-					DialogResult dr = MessageBox.Show(this, "There are no slots available at the selected time.  Do you want to overbook this appointment?", "Clinical Scheduling",MessageBoxButtons.YesNo);
-					if (dr != DialogResult.Yes)
-					{
-						return;
-					}
-				}
 
 				//Call Document to add a walkin appointment
 				int nApptID = this.Document.CreateAppointment(appt, true);

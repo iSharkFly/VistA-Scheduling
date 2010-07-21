@@ -542,7 +542,7 @@ namespace IndianHealthService.ClinicalScheduling
 			//Datasource the HOSPITAL LOCATION combo box
 			DataTable dtHospLoc = dsGlobal.Tables["HospitalLocation"];
 			m_dvHospLoc = new DataView(dtHospLoc);
-			m_dvHospLoc.Sort = "HOSPITAL_LOCATION_ID ASC";
+            m_dvHospLoc.Sort = "HOSPITAL_LOCATION_ID ASC";
 			int nFind = m_dvHospLoc.Find((int) 0);
 			if (nFind < 0)
 			{
@@ -552,6 +552,7 @@ namespace IndianHealthService.ClinicalScheduling
 				drv["HOSPITAL_LOCATION_ID"]=0;
 				drv.EndEdit();
 			}
+            m_dvHospLoc.Sort = "HOSPITAL_LOCATION ASC";
 
 //			DataTable dtClinicParams = dsGlobal.Tables["ClinicSetupParameters"];
 //			m_dvClinicParams = new DataView(dtClinicParams);
