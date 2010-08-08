@@ -208,6 +208,7 @@ namespace IndianHealthService.ClinicalScheduling
 			//ResourceGroup
 			m_dtResourceGroup = m_dsGlobal.Tables["ResourceGroup"];
 			m_dvResourceGroup = new DataView(m_dtResourceGroup);
+            m_dvResourceGroup.Sort = "RESOURCE_GROUP ASC";
 			this.grdResourceGroup.DataSource = m_dvResourceGroup;
 
 			//Create DataGridTableStyle for ResourceGroup table
@@ -258,6 +259,7 @@ namespace IndianHealthService.ClinicalScheduling
 			//Access Types
 			m_dtAccessTypes = m_dsGlobal.Tables["AccessTypes"];
 			m_dvAccessTypes = new DataView(m_dtAccessTypes);
+            m_dvAccessTypes.Sort = "ACCESS_TYPE_NAME ASC";
 			this.grdAccessTypes.DataSource = m_dvAccessTypes;
 
 			// Create DataGridTableStyle for AccessTypes table  
@@ -285,6 +287,7 @@ namespace IndianHealthService.ClinicalScheduling
 			//Access Groups
 			m_dtAccessGroup = m_dsGlobal.Tables["AccessGroup"];
 			m_dvAccessGroup = new DataView(m_dtAccessGroup);
+            m_dvAccessGroup.Sort = "ACCESS_GROUP ASC";
 			this.grdAccessGroups.DataSource = m_dvAccessGroup;
 
 			// Create DataGridTableStyle for AccessGroup table  

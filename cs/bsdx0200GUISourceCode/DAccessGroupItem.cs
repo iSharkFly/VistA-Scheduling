@@ -59,77 +59,77 @@ namespace IndianHealthService.ClinicalScheduling
 		/// </summary>
 		private void InitializeComponent()
 		{
-			this.pnlPageBottom = new System.Windows.Forms.Panel();
-			this.cmdCancel = new System.Windows.Forms.Button();
-			this.cmdOK = new System.Windows.Forms.Button();
-			this.label1 = new System.Windows.Forms.Label();
-			this.cboAccessType = new System.Windows.Forms.ComboBox();
-			this.pnlPageBottom.SuspendLayout();
-			this.SuspendLayout();
-			// 
-			// pnlPageBottom
-			// 
-			this.pnlPageBottom.Controls.AddRange(new System.Windows.Forms.Control[] {
-																						this.cmdCancel,
-																						this.cmdOK});
-			this.pnlPageBottom.Dock = System.Windows.Forms.DockStyle.Bottom;
-			this.pnlPageBottom.Location = new System.Drawing.Point(0, 112);
-			this.pnlPageBottom.Name = "pnlPageBottom";
-			this.pnlPageBottom.Size = new System.Drawing.Size(472, 40);
-			this.pnlPageBottom.TabIndex = 6;
-			// 
-			// cmdCancel
-			// 
-			this.cmdCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-			this.cmdCancel.Location = new System.Drawing.Point(376, 8);
-			this.cmdCancel.Name = "cmdCancel";
-			this.cmdCancel.Size = new System.Drawing.Size(56, 24);
-			this.cmdCancel.TabIndex = 2;
-			this.cmdCancel.Text = "Cancel";
-			// 
-			// cmdOK
-			// 
-			this.cmdOK.DialogResult = System.Windows.Forms.DialogResult.OK;
-			this.cmdOK.Location = new System.Drawing.Point(296, 8);
-			this.cmdOK.Name = "cmdOK";
-			this.cmdOK.Size = new System.Drawing.Size(64, 24);
-			this.cmdOK.TabIndex = 1;
-			this.cmdOK.Text = "OK";
-			this.cmdOK.Click += new System.EventHandler(this.cmdOK_Click);
-			// 
-			// label1
-			// 
-			this.label1.Location = new System.Drawing.Point(24, 40);
-			this.label1.Name = "label1";
-			this.label1.Size = new System.Drawing.Size(120, 16);
-			this.label1.TabIndex = 10;
-			this.label1.Text = "Select Access Type:";
-			this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-			// 
-			// cboAccessType
-			// 
-			this.cboAccessType.Location = new System.Drawing.Point(152, 40);
-			this.cboAccessType.Name = "cboAccessType";
-			this.cboAccessType.Size = new System.Drawing.Size(248, 21);
-			this.cboAccessType.TabIndex = 9;
-			this.cboAccessType.Text = "cboAccessType";
-			// 
-			// DAccessGroupItem
-			// 
-			this.AcceptButton = this.cmdOK;
-			this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
-			this.CancelButton = this.cmdCancel;
-			this.ClientSize = new System.Drawing.Size(472, 152);
-			this.Controls.AddRange(new System.Windows.Forms.Control[] {
-																		  this.label1,
-																		  this.cboAccessType,
-																		  this.pnlPageBottom});
-			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
-			this.Name = "DAccessGroupItem";
-			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-			this.Text = "DAccessGroupItem";
-			this.pnlPageBottom.ResumeLayout(false);
-			this.ResumeLayout(false);
+            this.pnlPageBottom = new System.Windows.Forms.Panel();
+            this.cmdCancel = new System.Windows.Forms.Button();
+            this.cmdOK = new System.Windows.Forms.Button();
+            this.label1 = new System.Windows.Forms.Label();
+            this.cboAccessType = new System.Windows.Forms.ComboBox();
+            this.pnlPageBottom.SuspendLayout();
+            this.SuspendLayout();
+            // 
+            // pnlPageBottom
+            // 
+            this.pnlPageBottom.Controls.Add(this.cmdCancel);
+            this.pnlPageBottom.Controls.Add(this.cmdOK);
+            this.pnlPageBottom.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.pnlPageBottom.Location = new System.Drawing.Point(0, 112);
+            this.pnlPageBottom.Name = "pnlPageBottom";
+            this.pnlPageBottom.Size = new System.Drawing.Size(472, 40);
+            this.pnlPageBottom.TabIndex = 6;
+            // 
+            // cmdCancel
+            // 
+            this.cmdCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            this.cmdCancel.Location = new System.Drawing.Point(376, 8);
+            this.cmdCancel.Name = "cmdCancel";
+            this.cmdCancel.Size = new System.Drawing.Size(56, 24);
+            this.cmdCancel.TabIndex = 2;
+            this.cmdCancel.Text = "Cancel";
+            // 
+            // cmdOK
+            // 
+            this.cmdOK.DialogResult = System.Windows.Forms.DialogResult.OK;
+            this.cmdOK.Location = new System.Drawing.Point(296, 8);
+            this.cmdOK.Name = "cmdOK";
+            this.cmdOK.Size = new System.Drawing.Size(64, 24);
+            this.cmdOK.TabIndex = 1;
+            this.cmdOK.Text = "OK";
+            this.cmdOK.Click += new System.EventHandler(this.cmdOK_Click);
+            // 
+            // label1
+            // 
+            this.label1.Location = new System.Drawing.Point(24, 40);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(120, 16);
+            this.label1.TabIndex = 10;
+            this.label1.Text = "Select Access Type:";
+            this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // cboAccessType
+            // 
+            this.cboAccessType.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.SuggestAppend;
+            this.cboAccessType.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems;
+            this.cboAccessType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cboAccessType.Location = new System.Drawing.Point(152, 40);
+            this.cboAccessType.Name = "cboAccessType";
+            this.cboAccessType.Size = new System.Drawing.Size(248, 21);
+            this.cboAccessType.TabIndex = 9;
+            // 
+            // DAccessGroupItem
+            // 
+            this.AcceptButton = this.cmdOK;
+            this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
+            this.CancelButton = this.cmdCancel;
+            this.ClientSize = new System.Drawing.Size(472, 152);
+            this.Controls.Add(this.label1);
+            this.Controls.Add(this.cboAccessType);
+            this.Controls.Add(this.pnlPageBottom);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+            this.Name = "DAccessGroupItem";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
+            this.Text = "DAccessGroupItem";
+            this.pnlPageBottom.ResumeLayout(false);
+            this.ResumeLayout(false);
 
 		}
 		#endregion
@@ -146,6 +146,7 @@ namespace IndianHealthService.ClinicalScheduling
 			//Datasource the ACCESS GROUP combo box
 			DataTable dtAccessType = dsGlobal.Tables["AccessTypes"];
 			DataView dvAccessType = new DataView(dtAccessType);
+            dvAccessType.Sort = "ACCESS_TYPE_NAME ASC";
 
 
 			cboAccessType.DataSource = dvAccessType;
@@ -207,6 +208,7 @@ namespace IndianHealthService.ClinicalScheduling
 			}
 		}
 		#endregion Properties
+
 
 	}
 }

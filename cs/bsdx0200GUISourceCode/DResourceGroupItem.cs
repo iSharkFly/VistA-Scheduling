@@ -59,77 +59,77 @@ namespace IndianHealthService.ClinicalScheduling
 		/// </summary>
 		private void InitializeComponent()
 		{
-			this.pnlPageBottom = new System.Windows.Forms.Panel();
-			this.cmdCancel = new System.Windows.Forms.Button();
-			this.cmdOK = new System.Windows.Forms.Button();
-			this.label1 = new System.Windows.Forms.Label();
-			this.cboResource = new System.Windows.Forms.ComboBox();
-			this.pnlPageBottom.SuspendLayout();
-			this.SuspendLayout();
-			// 
-			// pnlPageBottom
-			// 
-			this.pnlPageBottom.Controls.AddRange(new System.Windows.Forms.Control[] {
-																						this.cmdCancel,
-																						this.cmdOK});
-			this.pnlPageBottom.Dock = System.Windows.Forms.DockStyle.Bottom;
-			this.pnlPageBottom.Location = new System.Drawing.Point(0, 112);
-			this.pnlPageBottom.Name = "pnlPageBottom";
-			this.pnlPageBottom.Size = new System.Drawing.Size(456, 40);
-			this.pnlPageBottom.TabIndex = 5;
-			// 
-			// cmdCancel
-			// 
-			this.cmdCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-			this.cmdCancel.Location = new System.Drawing.Point(376, 8);
-			this.cmdCancel.Name = "cmdCancel";
-			this.cmdCancel.Size = new System.Drawing.Size(56, 24);
-			this.cmdCancel.TabIndex = 2;
-			this.cmdCancel.Text = "Cancel";
-			// 
-			// cmdOK
-			// 
-			this.cmdOK.DialogResult = System.Windows.Forms.DialogResult.OK;
-			this.cmdOK.Location = new System.Drawing.Point(296, 8);
-			this.cmdOK.Name = "cmdOK";
-			this.cmdOK.Size = new System.Drawing.Size(64, 24);
-			this.cmdOK.TabIndex = 1;
-			this.cmdOK.Text = "OK";
-			this.cmdOK.Click += new System.EventHandler(this.cmdOK_Click);
-			// 
-			// label1
-			// 
-			this.label1.Location = new System.Drawing.Point(40, 40);
-			this.label1.Name = "label1";
-			this.label1.Size = new System.Drawing.Size(96, 16);
-			this.label1.TabIndex = 8;
-			this.label1.Text = "Select Resource:";
-			this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-			// 
-			// cboResource
-			// 
-			this.cboResource.Location = new System.Drawing.Point(144, 40);
-			this.cboResource.Name = "cboResource";
-			this.cboResource.Size = new System.Drawing.Size(248, 21);
-			this.cboResource.TabIndex = 7;
-			this.cboResource.Text = "cboResource";
-			// 
-			// DResourceGroupItem
-			// 
-			this.AcceptButton = this.cmdOK;
-			this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
-			this.CancelButton = this.cmdCancel;
-			this.ClientSize = new System.Drawing.Size(456, 152);
-			this.Controls.AddRange(new System.Windows.Forms.Control[] {
-																		  this.label1,
-																		  this.cboResource,
-																		  this.pnlPageBottom});
-			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
-			this.Name = "DResourceGroupItem";
-			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-			this.Text = "DResourceGroupItem";
-			this.pnlPageBottom.ResumeLayout(false);
-			this.ResumeLayout(false);
+            this.pnlPageBottom = new System.Windows.Forms.Panel();
+            this.cmdCancel = new System.Windows.Forms.Button();
+            this.cmdOK = new System.Windows.Forms.Button();
+            this.label1 = new System.Windows.Forms.Label();
+            this.cboResource = new System.Windows.Forms.ComboBox();
+            this.pnlPageBottom.SuspendLayout();
+            this.SuspendLayout();
+            // 
+            // pnlPageBottom
+            // 
+            this.pnlPageBottom.Controls.Add(this.cmdCancel);
+            this.pnlPageBottom.Controls.Add(this.cmdOK);
+            this.pnlPageBottom.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.pnlPageBottom.Location = new System.Drawing.Point(0, 112);
+            this.pnlPageBottom.Name = "pnlPageBottom";
+            this.pnlPageBottom.Size = new System.Drawing.Size(456, 40);
+            this.pnlPageBottom.TabIndex = 5;
+            // 
+            // cmdCancel
+            // 
+            this.cmdCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            this.cmdCancel.Location = new System.Drawing.Point(376, 8);
+            this.cmdCancel.Name = "cmdCancel";
+            this.cmdCancel.Size = new System.Drawing.Size(56, 24);
+            this.cmdCancel.TabIndex = 2;
+            this.cmdCancel.Text = "Cancel";
+            // 
+            // cmdOK
+            // 
+            this.cmdOK.DialogResult = System.Windows.Forms.DialogResult.OK;
+            this.cmdOK.Location = new System.Drawing.Point(296, 8);
+            this.cmdOK.Name = "cmdOK";
+            this.cmdOK.Size = new System.Drawing.Size(64, 24);
+            this.cmdOK.TabIndex = 1;
+            this.cmdOK.Text = "OK";
+            this.cmdOK.Click += new System.EventHandler(this.cmdOK_Click);
+            // 
+            // label1
+            // 
+            this.label1.Location = new System.Drawing.Point(40, 40);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(96, 16);
+            this.label1.TabIndex = 8;
+            this.label1.Text = "Select Resource:";
+            this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // cboResource
+            // 
+            this.cboResource.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.SuggestAppend;
+            this.cboResource.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems;
+            this.cboResource.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cboResource.Location = new System.Drawing.Point(144, 40);
+            this.cboResource.Name = "cboResource";
+            this.cboResource.Size = new System.Drawing.Size(248, 21);
+            this.cboResource.TabIndex = 7;
+            // 
+            // DResourceGroupItem
+            // 
+            this.AcceptButton = this.cmdOK;
+            this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
+            this.CancelButton = this.cmdCancel;
+            this.ClientSize = new System.Drawing.Size(456, 152);
+            this.Controls.Add(this.label1);
+            this.Controls.Add(this.cboResource);
+            this.Controls.Add(this.pnlPageBottom);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+            this.Name = "DResourceGroupItem";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
+            this.Text = "DResourceGroupItem";
+            this.pnlPageBottom.ResumeLayout(false);
+            this.ResumeLayout(false);
 
 		}
 		#endregion
@@ -150,7 +150,7 @@ namespace IndianHealthService.ClinicalScheduling
 			//Datasource the RESOURCE combo box
 			DataTable dtResource = dsGlobal.Tables["Resources"];
 			DataView dvResource = new DataView(dtResource);
-
+            dvResource.Sort = "RESOURCE_NAME ASC";
 
 			cboResource.DataSource = dvResource;
 			cboResource.DisplayMember = "RESOURCE_NAME";

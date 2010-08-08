@@ -64,150 +64,151 @@ namespace IndianHealthService.ClinicalScheduling
 		/// </summary>
 		private void InitializeComponent()
 		{
-			this.cboScheduleUser = new System.Windows.Forms.ComboBox();
-			this.label1 = new System.Windows.Forms.Label();
-			this.pnlPageBottom = new System.Windows.Forms.Panel();
-			this.cmdCancel = new System.Windows.Forms.Button();
-			this.cmdOK = new System.Windows.Forms.Button();
-			this.pnlDescription = new System.Windows.Forms.Panel();
-			this.grpDescriptionResourceGroup = new System.Windows.Forms.GroupBox();
-			this.lblDescriptionResourceGroup = new System.Windows.Forms.Label();
-			this.chkModifySchedule = new System.Windows.Forms.CheckBox();
-			this.chkOverbook = new System.Windows.Forms.CheckBox();
-			this.chkAppointments = new System.Windows.Forms.CheckBox();
-			this.pnlPageBottom.SuspendLayout();
-			this.pnlDescription.SuspendLayout();
-			this.grpDescriptionResourceGroup.SuspendLayout();
-			this.SuspendLayout();
-			// 
-			// cboScheduleUser
-			// 
-			this.cboScheduleUser.Location = new System.Drawing.Point(144, 32);
-			this.cboScheduleUser.Name = "cboScheduleUser";
-			this.cboScheduleUser.Size = new System.Drawing.Size(248, 21);
-			this.cboScheduleUser.TabIndex = 0;
-			this.cboScheduleUser.Text = "cboScheduleUser";
-			this.cboScheduleUser.SelectedIndexChanged += new System.EventHandler(this.cboScheduleUser_SelectedIndexChanged);
-			// 
-			// label1
-			// 
-			this.label1.Location = new System.Drawing.Point(16, 32);
-			this.label1.Name = "label1";
-			this.label1.Size = new System.Drawing.Size(120, 16);
-			this.label1.TabIndex = 1;
-			this.label1.Text = "Select Resource User:";
-			this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-			// 
-			// pnlPageBottom
-			// 
-			this.pnlPageBottom.Controls.Add(this.cmdCancel);
-			this.pnlPageBottom.Controls.Add(this.cmdOK);
-			this.pnlPageBottom.Dock = System.Windows.Forms.DockStyle.Bottom;
-			this.pnlPageBottom.Location = new System.Drawing.Point(0, 254);
-			this.pnlPageBottom.Name = "pnlPageBottom";
-			this.pnlPageBottom.Size = new System.Drawing.Size(448, 40);
-			this.pnlPageBottom.TabIndex = 4;
-			// 
-			// cmdCancel
-			// 
-			this.cmdCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-			this.cmdCancel.Location = new System.Drawing.Point(376, 8);
-			this.cmdCancel.Name = "cmdCancel";
-			this.cmdCancel.Size = new System.Drawing.Size(56, 24);
-			this.cmdCancel.TabIndex = 2;
-			this.cmdCancel.Text = "Cancel";
-			// 
-			// cmdOK
-			// 
-			this.cmdOK.DialogResult = System.Windows.Forms.DialogResult.OK;
-			this.cmdOK.Location = new System.Drawing.Point(296, 8);
-			this.cmdOK.Name = "cmdOK";
-			this.cmdOK.Size = new System.Drawing.Size(64, 24);
-			this.cmdOK.TabIndex = 1;
-			this.cmdOK.Text = "OK";
-			this.cmdOK.Click += new System.EventHandler(this.cmdOK_Click);
-			// 
-			// pnlDescription
-			// 
-			this.pnlDescription.Controls.Add(this.grpDescriptionResourceGroup);
-			this.pnlDescription.Dock = System.Windows.Forms.DockStyle.Bottom;
-			this.pnlDescription.Location = new System.Drawing.Point(0, 182);
-			this.pnlDescription.Name = "pnlDescription";
-			this.pnlDescription.Size = new System.Drawing.Size(448, 72);
-			this.pnlDescription.TabIndex = 5;
-			// 
-			// grpDescriptionResourceGroup
-			// 
-			this.grpDescriptionResourceGroup.Controls.Add(this.lblDescriptionResourceGroup);
-			this.grpDescriptionResourceGroup.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.grpDescriptionResourceGroup.Location = new System.Drawing.Point(0, 0);
-			this.grpDescriptionResourceGroup.Name = "grpDescriptionResourceGroup";
-			this.grpDescriptionResourceGroup.Size = new System.Drawing.Size(448, 72);
-			this.grpDescriptionResourceGroup.TabIndex = 1;
-			this.grpDescriptionResourceGroup.TabStop = false;
-			this.grpDescriptionResourceGroup.Text = "Description";
-			// 
-			// lblDescriptionResourceGroup
-			// 
-			this.lblDescriptionResourceGroup.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.lblDescriptionResourceGroup.Location = new System.Drawing.Point(3, 16);
-			this.lblDescriptionResourceGroup.Name = "lblDescriptionResourceGroup";
-			this.lblDescriptionResourceGroup.Size = new System.Drawing.Size(442, 53);
-			this.lblDescriptionResourceGroup.TabIndex = 0;
-			this.lblDescriptionResourceGroup.Text = "Use this panel to assign user access to Resources.  Only users who have the BSDXZ" +
-				"MENU key in VistA will appear in the selection list.  If Modify Schedule is check" +
-				"ed, then the user will be able to add and edit the resource\'s availability.";
-			// 
-			// chkModifySchedule
-			// 
-			this.chkModifySchedule.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-			this.chkModifySchedule.Location = new System.Drawing.Point(96, 136);
-			this.chkModifySchedule.Name = "chkModifySchedule";
-			this.chkModifySchedule.Size = new System.Drawing.Size(152, 16);
-			this.chkModifySchedule.TabIndex = 7;
-			this.chkModifySchedule.Text = "Modify Clinic Availability:";
-			this.chkModifySchedule.CheckedChanged += new System.EventHandler(this.chkModifySchedule_CheckedChanged);
-			// 
-			// chkOverbook
-			// 
-			this.chkOverbook.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-			this.chkOverbook.Location = new System.Drawing.Point(160, 104);
-			this.chkOverbook.Name = "chkOverbook";
-			this.chkOverbook.Size = new System.Drawing.Size(88, 16);
-			this.chkOverbook.TabIndex = 8;
-			this.chkOverbook.Text = "Overbook:";
-			this.chkOverbook.CheckedChanged += new System.EventHandler(this.chkOverbook_CheckedChanged);
-			// 
-			// chkAppointments
-			// 
-			this.chkAppointments.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-			this.chkAppointments.Location = new System.Drawing.Point(40, 72);
-			this.chkAppointments.Name = "chkAppointments";
-			this.chkAppointments.Size = new System.Drawing.Size(208, 16);
-			this.chkAppointments.TabIndex = 9;
-			this.chkAppointments.Text = "Add, Edit and Delete appointments:";
-			this.chkAppointments.CheckedChanged += new System.EventHandler(this.chkAppointments_CheckedChanged);
-			// 
-			// DResourceUser
-			// 
-			this.AcceptButton = this.cmdOK;
-			this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
-			this.CancelButton = this.cmdCancel;
-			this.ClientSize = new System.Drawing.Size(448, 294);
-			this.Controls.Add(this.chkAppointments);
-			this.Controls.Add(this.chkOverbook);
-			this.Controls.Add(this.chkModifySchedule);
-			this.Controls.Add(this.pnlDescription);
-			this.Controls.Add(this.pnlPageBottom);
-			this.Controls.Add(this.label1);
-			this.Controls.Add(this.cboScheduleUser);
-			this.Name = "DResourceUser";
-			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-			this.Text = "DResourceUser";
-			this.pnlPageBottom.ResumeLayout(false);
-			this.pnlDescription.ResumeLayout(false);
-			this.grpDescriptionResourceGroup.ResumeLayout(false);
-			this.ResumeLayout(false);
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(DResourceUser));
+            this.cboScheduleUser = new System.Windows.Forms.ComboBox();
+            this.label1 = new System.Windows.Forms.Label();
+            this.pnlPageBottom = new System.Windows.Forms.Panel();
+            this.cmdCancel = new System.Windows.Forms.Button();
+            this.cmdOK = new System.Windows.Forms.Button();
+            this.pnlDescription = new System.Windows.Forms.Panel();
+            this.grpDescriptionResourceGroup = new System.Windows.Forms.GroupBox();
+            this.lblDescriptionResourceGroup = new System.Windows.Forms.Label();
+            this.chkModifySchedule = new System.Windows.Forms.CheckBox();
+            this.chkOverbook = new System.Windows.Forms.CheckBox();
+            this.chkAppointments = new System.Windows.Forms.CheckBox();
+            this.pnlPageBottom.SuspendLayout();
+            this.pnlDescription.SuspendLayout();
+            this.grpDescriptionResourceGroup.SuspendLayout();
+            this.SuspendLayout();
+            // 
+            // cboScheduleUser
+            // 
+            this.cboScheduleUser.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.SuggestAppend;
+            this.cboScheduleUser.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems;
+            this.cboScheduleUser.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cboScheduleUser.Location = new System.Drawing.Point(144, 32);
+            this.cboScheduleUser.Name = "cboScheduleUser";
+            this.cboScheduleUser.Size = new System.Drawing.Size(248, 21);
+            this.cboScheduleUser.TabIndex = 0;
+            this.cboScheduleUser.SelectedIndexChanged += new System.EventHandler(this.cboScheduleUser_SelectedIndexChanged);
+            // 
+            // label1
+            // 
+            this.label1.Location = new System.Drawing.Point(16, 32);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(120, 16);
+            this.label1.TabIndex = 1;
+            this.label1.Text = "Select Resource User:";
+            this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // pnlPageBottom
+            // 
+            this.pnlPageBottom.Controls.Add(this.cmdCancel);
+            this.pnlPageBottom.Controls.Add(this.cmdOK);
+            this.pnlPageBottom.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.pnlPageBottom.Location = new System.Drawing.Point(0, 254);
+            this.pnlPageBottom.Name = "pnlPageBottom";
+            this.pnlPageBottom.Size = new System.Drawing.Size(448, 40);
+            this.pnlPageBottom.TabIndex = 4;
+            // 
+            // cmdCancel
+            // 
+            this.cmdCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            this.cmdCancel.Location = new System.Drawing.Point(376, 8);
+            this.cmdCancel.Name = "cmdCancel";
+            this.cmdCancel.Size = new System.Drawing.Size(56, 24);
+            this.cmdCancel.TabIndex = 6;
+            this.cmdCancel.Text = "Cancel";
+            // 
+            // cmdOK
+            // 
+            this.cmdOK.DialogResult = System.Windows.Forms.DialogResult.OK;
+            this.cmdOK.Location = new System.Drawing.Point(296, 8);
+            this.cmdOK.Name = "cmdOK";
+            this.cmdOK.Size = new System.Drawing.Size(64, 24);
+            this.cmdOK.TabIndex = 5;
+            this.cmdOK.Text = "OK";
+            this.cmdOK.Click += new System.EventHandler(this.cmdOK_Click);
+            // 
+            // pnlDescription
+            // 
+            this.pnlDescription.Controls.Add(this.grpDescriptionResourceGroup);
+            this.pnlDescription.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.pnlDescription.Location = new System.Drawing.Point(0, 182);
+            this.pnlDescription.Name = "pnlDescription";
+            this.pnlDescription.Size = new System.Drawing.Size(448, 72);
+            this.pnlDescription.TabIndex = 5;
+            // 
+            // grpDescriptionResourceGroup
+            // 
+            this.grpDescriptionResourceGroup.Controls.Add(this.lblDescriptionResourceGroup);
+            this.grpDescriptionResourceGroup.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.grpDescriptionResourceGroup.Location = new System.Drawing.Point(0, 0);
+            this.grpDescriptionResourceGroup.Name = "grpDescriptionResourceGroup";
+            this.grpDescriptionResourceGroup.Size = new System.Drawing.Size(448, 72);
+            this.grpDescriptionResourceGroup.TabIndex = 1;
+            this.grpDescriptionResourceGroup.TabStop = false;
+            this.grpDescriptionResourceGroup.Text = "Description";
+            // 
+            // lblDescriptionResourceGroup
+            // 
+            this.lblDescriptionResourceGroup.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lblDescriptionResourceGroup.Location = new System.Drawing.Point(3, 16);
+            this.lblDescriptionResourceGroup.Name = "lblDescriptionResourceGroup";
+            this.lblDescriptionResourceGroup.Size = new System.Drawing.Size(442, 53);
+            this.lblDescriptionResourceGroup.TabIndex = 0;
+            this.lblDescriptionResourceGroup.Text = resources.GetString("lblDescriptionResourceGroup.Text");
+            // 
+            // chkModifySchedule
+            // 
+            this.chkModifySchedule.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.chkModifySchedule.Location = new System.Drawing.Point(96, 136);
+            this.chkModifySchedule.Name = "chkModifySchedule";
+            this.chkModifySchedule.Size = new System.Drawing.Size(152, 16);
+            this.chkModifySchedule.TabIndex = 4;
+            this.chkModifySchedule.Text = "Modify Clinic Availability:";
+            this.chkModifySchedule.CheckedChanged += new System.EventHandler(this.chkModifySchedule_CheckedChanged);
+            // 
+            // chkOverbook
+            // 
+            this.chkOverbook.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.chkOverbook.Location = new System.Drawing.Point(160, 104);
+            this.chkOverbook.Name = "chkOverbook";
+            this.chkOverbook.Size = new System.Drawing.Size(88, 16);
+            this.chkOverbook.TabIndex = 3;
+            this.chkOverbook.Text = "Overbook:";
+            this.chkOverbook.CheckedChanged += new System.EventHandler(this.chkOverbook_CheckedChanged);
+            // 
+            // chkAppointments
+            // 
+            this.chkAppointments.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.chkAppointments.Location = new System.Drawing.Point(40, 72);
+            this.chkAppointments.Name = "chkAppointments";
+            this.chkAppointments.Size = new System.Drawing.Size(208, 16);
+            this.chkAppointments.TabIndex = 2;
+            this.chkAppointments.Text = "Add, Edit and Delete appointments:";
+            this.chkAppointments.CheckedChanged += new System.EventHandler(this.chkAppointments_CheckedChanged);
+            // 
+            // DResourceUser
+            // 
+            this.AcceptButton = this.cmdOK;
+            this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
+            this.CancelButton = this.cmdCancel;
+            this.ClientSize = new System.Drawing.Size(448, 294);
+            this.Controls.Add(this.chkAppointments);
+            this.Controls.Add(this.chkOverbook);
+            this.Controls.Add(this.chkModifySchedule);
+            this.Controls.Add(this.pnlDescription);
+            this.Controls.Add(this.pnlPageBottom);
+            this.Controls.Add(this.label1);
+            this.Controls.Add(this.cboScheduleUser);
+            this.Name = "DResourceUser";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
+            this.Text = "DResourceUser";
+            this.pnlPageBottom.ResumeLayout(false);
+            this.pnlDescription.ResumeLayout(false);
+            this.grpDescriptionResourceGroup.ResumeLayout(false);
+            this.ResumeLayout(false);
 
 		}
 		#endregion
