@@ -658,39 +658,42 @@
             DateTime startTime = a.StartTime;
             DateTime endTime = a.EndTime;
             string resource = a.Resource;
-            int num = 0;
-            int num2 = 0;
-            int num3 = 0;
-            int num4 = 0;
-            int num5 = 0;
+            int originX = 0;
+            int originY = 0;
+            int recHeight = 0;
+            int recWidth = 0;
+            int columnToPutAppt = 0;
             Rectangle rectangle = new Rectangle();
-            int totalMinutes = (int) startTime.TimeOfDay.TotalMinutes;
-            int num7 = (int) endTime.TimeOfDay.TotalMinutes;
+            int startTotalMinutesoffset = (int) startTime.TimeOfDay.TotalMinutes;
+            int endTotalMinutesoffset = (int) endTime.TimeOfDay.TotalMinutes;
+            // if grid has more than one reource
             if (this.m_sResourcesArray.Count > 1)
             {
-                num5 = (int) this.m_ColumnInfoTable[resource];
-                num5++;
+                // get zero based index
+                columnToPutAppt = (int) this.m_ColumnInfoTable[resource];
+                // increment to 1 based index
+                columnToPutAppt++;
             }
             else
             {
-                num5 = ((int) (startTime.DayOfWeek - this.m_dtStart.DayOfWeek)) + 1;
+                columnToPutAppt = (startTime - this.m_dtStart).Days + 1;
             }
-            if (num5 < 1)
+            if (columnToPutAppt < 1)
             {
                 bRet = false;
                 return rectangle;
             }
-            num = col0Width + (cellWidth * (num5 - 1));
-            int num8 = totalMinutes + this.m_nTimeScale;
-            int num9 = (num7 > 0) ? num7 : 0x5a0;
-            num9 -= totalMinutes;
-            num2 = (cellHeight * num8) / this.m_nTimeScale;
-            num3 = (cellHeight * num9) / this.m_nTimeScale;
-            num4 = cellWidth;
-            rectangle.X = num;
-            rectangle.Y = num2;
-            rectangle.Width = num4;
-            rectangle.Height = num3;
+            originX = col0Width + (cellWidth * (columnToPutAppt - 1));
+            int num8 = startTotalMinutesoffset + this.m_nTimeScale;
+            int num9 = (endTotalMinutesoffset > 0) ? endTotalMinutesoffset : 0x5a0;
+            num9 -= startTotalMinutesoffset;
+            originY = (cellHeight * num8) / this.m_nTimeScale;
+            recHeight = (cellHeight * num9) / this.m_nTimeScale;
+            recWidth = cellWidth;
+            rectangle.X = originX;
+            rectangle.Y = originY;
+            rectangle.Width = recWidth;
+            rectangle.Height = recHeight;
             bRet = true;
             return rectangle;
         }

@@ -41,6 +41,8 @@
 
         public override string ToString()
         {
+            //StringFormat sf = new StringFormat();
+            //sf.SetDigitSubstitution(System.Threading.Thread.CurrentThread.CurrentCulture.LCID, StringDigitSubstitute.National);
             string patientName = "";
             if (this.m_bAccessBlock)
             {

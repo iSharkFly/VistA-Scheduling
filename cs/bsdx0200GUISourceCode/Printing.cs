@@ -85,7 +85,7 @@ namespace IndianHealthService.ClinicalScheduling
                 dsPatientApptDisplay2.PatientApptsRow a = (dsPatientApptDisplay2.PatientApptsRow)appts[apptPrinting];
                 
                 StringBuilder apptPrintStr = new StringBuilder(200); 
-                apptPrintStr.AppendLine(a.ApptDate.ToString() + "\t" + a.Name + "(" + a.Sex + ")" + "\t" + "DOB: " + a.DOB.ToString("dd-MMM-yyyy") + "\t" + "ID: " + a.HRN);
+                apptPrintStr.AppendLine(a.ApptDate.ToString() + "\t" + a.Name + " (" + a.Sex + ")" + "\t" + "DOB: " + a.DOB.ToShortDateString() + "\t" + "ID: " + a.HRN);
                 apptPrintStr.AppendLine("P: " + a.HOMEPHONE + "\t" + "Address: " + a.STREET + ", " + a.CITY + ", " + a.STATE + " " + a.ZIP);
                 apptPrintStr.AppendLine("Note: " + a.NOTE);
                 apptPrintStr.AppendLine("Appointment made by " + a.APPT_MADE_BY + " on " + a.DATE_APPT_MADE);
@@ -157,8 +157,13 @@ namespace IndianHealthService.ClinicalScheduling
             printArea.Y += strHeight;
             printArea.Height -= strHeight;
 
+            //Text Direction
+            StringFormat sf2 = new StringFormat();
+            if (System.Threading.Thread.CurrentThread.CurrentCulture.TextInfo.IsRightToLeft)
+                sf2.FormatFlags = StringFormatFlags.DirectionRightToLeft;
+
             // write missive
-            g.DrawString(letter, fBody, Brushes.Black, printArea);
+            g.DrawString(letter, fBody, Brushes.Black, printArea, sf2);
 
             //print Address in lower left corner for windowed envolopes
             printArea.Location = new Point(e.MarginBounds.X, (int)(e.PageBounds.Height * 0.66));
@@ -208,8 +213,13 @@ namespace IndianHealthService.ClinicalScheduling
             printArea.Y += strHeight;
             printArea.Height -= strHeight;
 
+            //Text Direction
+            StringFormat sf2 = new StringFormat();
+            if (System.Threading.Thread.CurrentThread.CurrentCulture.TextInfo.IsRightToLeft)
+                sf2.FormatFlags = StringFormatFlags.DirectionRightToLeft;
+            
             // write missive
-            g.DrawString(letter, fBody, Brushes.Black, printArea);
+            g.DrawString(letter, fBody, Brushes.Black, printArea, sf2);
 
             //print Address in lower left corner for windowed envolopes
             printArea.Location = new Point(e.MarginBounds.X, (int)(e.PageBounds.Height * 0.66));
@@ -260,8 +270,13 @@ namespace IndianHealthService.ClinicalScheduling
             printArea.Y += strHeight;
             printArea.Height -= strHeight;
 
+            //Text Direction
+            StringFormat sf2 = new StringFormat();
+            if (System.Threading.Thread.CurrentThread.CurrentCulture.TextInfo.IsRightToLeft)
+                sf2.FormatFlags = StringFormatFlags.DirectionRightToLeft;
+
             // write missive
-            g.DrawString(letter, fBody, Brushes.Black, printArea);
+            g.DrawString(letter, fBody, Brushes.Black, printArea, sf2);
 
             //print Address in lower left corner for windowed envolopes
             printArea.Location = new Point(e.MarginBounds.X, (int)(e.PageBounds.Height * 0.66));
@@ -312,13 +327,17 @@ namespace IndianHealthService.ClinicalScheduling
 
             // draw underline
             g.DrawLine(Pens.Black, printArea.Location, new Point(printArea.Right, printArea.Y));
+
+            // move down
             printArea.Y += 15;
             printArea.Height -= 15;
 
             //construct what to print
-            string toprint = "Patient: " + a.PatientName + "\t" + "ID: " + a.PatientID;
+            string toprint = "Patient: " + a.PatientName + "\t" + "ID: " + a.HealthRecordNumber;
             toprint += "\n\n";
-            toprint += "Appointment Time: " + a.StartTime.ToLongDateString() + " " + a.StartTime.ToLongTimeString();
+            toprint += "Clinic: " + a.Resource;
+            toprint += "\n\n";
+            toprint += "Appointment Time: " + a.StartTime;
             toprint += "\n\n";
             toprint += "Notes:\n" + a.Note;
 
