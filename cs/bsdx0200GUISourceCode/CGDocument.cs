@@ -667,8 +667,8 @@ namespace IndianHealthService.ClinicalScheduling
 		{
 			DateTime OldStartDay = m_dStartDate;
 			DateTime OldEndDay = m_dEndDate;
-            // Week start based on machine locale
-            int nStartWeekDay = (int)System.Globalization.CultureInfo.CurrentCulture.DateTimeFormat.FirstDayOfWeek;
+            // Week start based on thread locale
+            int nStartWeekDay = (int)System.Threading.Thread.CurrentThread.CurrentCulture.DateTimeFormat.FirstDayOfWeek;
             int nWeekDay = (int) SelectedDate.DayOfWeek; //0 == Sunday
 
 			// this offset gets approrpriate day based on locale.

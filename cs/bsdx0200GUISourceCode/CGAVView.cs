@@ -866,6 +866,14 @@ namespace IndianHealthService.ClinicalScheduling
             this.mnu5Day.Click += new System.EventHandler(this.dateTimePicker1_ValueChanged); // MJL 1/17/2007
             this.mnu7Day.Click += new System.EventHandler(this.dateTimePicker1_ValueChanged);
 
+            //Set start date
+            DateTime startDate,endDate;
+            Document.WeekNeedsRefresh(1, DateTime.Today, out startDate, out endDate);
+            this.StartDate = startDate;
+            //Draw the calendar
+            this.calendarGrid1.OnUpdateArrays();
+            this.calendarGrid1.Invalidate();
+
 		}
 
 		private void CGAVView_Closing(object sender, System.ComponentModel.CancelEventArgs e)
