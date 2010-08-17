@@ -669,29 +669,43 @@ namespace IndianHealthService.ClinicalScheduling
 			DateTime OldEndDay = m_dEndDate;
             // Week start based on thread locale
             int nStartWeekDay = (int)System.Threading.Thread.CurrentThread.CurrentCulture.DateTimeFormat.FirstDayOfWeek;
+            // Current Day
             int nWeekDay = (int) SelectedDate.DayOfWeek; //0 == Sunday
 
 			// this offset gets approrpriate day based on locale.
             int nOff = (nStartWeekDay + 1) % 7;
 			TimeSpan ts = new TimeSpan(nWeekDay - nOff,0,0,0); //d,h,m,s
 
-			if (m_nColumnCount == 1) 
+            // if ts is negative, we will jump to the next week in the logic.
+            // to show the correct week, add 7. Confusing, I know.
+            if (ts < new TimeSpan() ) ts = ts + new TimeSpan(7,0,0,0);
+
+			if (m_nColumnCount == 1) // if one column start and end on the same day.
 			{
 				ts = new TimeSpan(0,23,59,59);
 				WeekStartDay = SelectedDate;
+                WeekEndDay = WeekStartDay + ts;
 			}
-			else 
-			{
-				WeekStartDay = SelectedDate - ts;
-				if (m_nColumnCount == 7)
-				{
-					ts = new TimeSpan(1,0,0,0);
-					WeekStartDay -= ts;
-				}
-				int nEnd = (m_nColumnCount == 7) ? 1 : 3;
-				ts = new TimeSpan((7* nWeeks) - nEnd, 23, 59,59);
-			}
-			WeekEndDay = WeekStartDay + ts;
+            else if (m_nColumnCount == 5 || m_nColumnCount == 0) // if 5 column start (or default) at the 2nd day of this week and end in 4:23:59:59 days.
+            {
+                // if picked day is start of week (Sunday in US), start in the next day since that's the first day of work week
+                // else, just substract the calculated time span to get to the start of week (first work day)
+                WeekStartDay = (nWeekDay == nStartWeekDay) ? SelectedDate + new TimeSpan(1,0,0,0): SelectedDate - ts;
+                // End day calculation
+                int nEnd = 3;
+                ts = new TimeSpan((7 * nWeeks) - nEnd, 23, 59, 59);
+                WeekEndDay = WeekStartDay + ts;
+            }
+            else // if 7 column start at the 1st day of this week and end in 6:23:59:59 days.
+            {
+                // if picked day is start of week, use that. Otherwise, go to the fist work day and substract one to get to start of week.
+                WeekStartDay = (nWeekDay == nStartWeekDay) ? SelectedDate : SelectedDate - ts - new TimeSpan(1,0,0,0);
+                // End day calculation
+                int nEnd = 1;
+                ts = new TimeSpan((7 * nWeeks) - nEnd, 23, 59, 59);
+                WeekEndDay = WeekStartDay + ts;
+            }
+
 			bool bRet = (( WeekStartDay.Date != OldStartDay.Date) || (WeekEndDay.Date != OldEndDay.Date));
 			return bRet;
 		}
