@@ -224,7 +224,9 @@ namespace IndianHealthService.ClinicalScheduling
             this.lblDescriptionResourceGroup.Name = "lblDescriptionResourceGroup";
             this.lblDescriptionResourceGroup.Size = new System.Drawing.Size(434, 61);
             this.lblDescriptionResourceGroup.TabIndex = 0;
-            this.lblDescriptionResourceGroup.Text = "Use this panel to define an access pattern for future clinic availability.";
+            this.lblDescriptionResourceGroup.Text = "Use this panel to define an access pattern for future clinic availability.\r\nMAKE " +
+                "SURE TO SELECT 5 or 7 day view first depending on which view you used to save th" +
+                "e selected Access Template.";
             // 
             // cmdSelectTemplate
             // 
