@@ -337,6 +337,13 @@ namespace IndianHealthService.ClinicalScheduling
                 //string sBuild = rVersion["BUILD"].ToString();
                 //decimal fBuild = Convert.ToDecimal(sBuild);
 
+                //Change encoding
+                if (m_Encoding == String.Empty)
+                {
+                    string utf8_server_support = m_ConnectInfo.bmxNetLib.TransmitRPC("BMX UTF-8", "");
+                    if (utf8_server_support == "1")
+                        m_ConnectInfo.bmxNetLib.Encoder = System.Text.UTF8Encoding.UTF8;
+                }
 				//Set application context
 				m_ds.SetStatus("Setting Application Context to BSDXRPC...");
                 m_ds.Refresh();
