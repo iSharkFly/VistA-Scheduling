@@ -1,5 +1,5 @@
 BSDX09	; IHS/OIT/HMW - WINDOWS SCHEDULING RPCS ;  ; 8/16/10 4:28pm
-	;;1.3T1;BSDX;;Jul 18, 2010
+	;;1.4;BSDX;;Sep 07, 2010
 	;
 	   ; Change Log:
 	   ; UJO/TH - v 1.3 on 3100714 - Extra Demographics:
@@ -12,7 +12,7 @@ BSDX09	; IHS/OIT/HMW - WINDOWS SCHEDULING RPCS ;  ; 8/16/10 4:28pm
 	;
 GETREGA(BSDXRET,BSDXPAT)	       ;EP
 	;
-    ; See below for the returned fields
+	   ; See below for the returned fields
 	;
 	;For patient with ien BSDXPAT
 	;K ^BSDXTMP($J)

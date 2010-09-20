@@ -1,5 +1,5 @@
-BSDX01	; IHS/OIT/HMW - WINDOWS SCHEDULING RPCS ; 7/18/10 2:04pm
-	;;1.3T1;BSDX;;Jul 18, 2010
+BSDX01	; IHS/OIT/HMW - WINDOWS SCHEDULING RPCS ; 9/15/10 9:09pm
+	;;1.4;BSDX;;Sep 07, 2010
 	;
 	;
 SUINFOD(BSDXY,BSDXDUZ)	;EP Debugging entry point
@@ -119,7 +119,12 @@ RESUSR(BSDXY,BSDXDUZ)	;EP
 	S BSDXRES=0 F  S BSDXRES=$O(^BSDXRES(BSDXRES)) Q:'+BSDXRES  D
 	. Q:'$D(^BSDXRES(BSDXRES,0))
 	. S BSDXRNOD=^BSDXRES(BSDXRES,0)
-	. ;Q:$P(BSDXRNOD,U,2)=1  ;Inactive resources not filtered
+	. N BSDXSC S BSDXSC=$P(BSDXRNOD,U,4)  ; Hospital Location
+    . ; super line... if tied to hospital location,
+    . ; Hosp location exists, AND 4th piece isn't the same as
+    . ; DUZ(2), quit. Filters based on Divisions.
+    . ; . I +BSDXSC,$D(^SC(BSDXSC,0)),$P(^SC(BSDXSC,0),U,4)'=DUZ(2) QUIT
+    . ;Q:$P(BSDXRNOD,U,2)=1  ;Inactive resources not filtered
 	. ;S BSDXRDAT=$P(BSDXRNOD,U,1,4)
 	. K BSDXRDAT
 	. F BSDX=1:1:4 S $P(BSDXRDAT,U,BSDX)=$P(BSDXRNOD,U,BSDX)
