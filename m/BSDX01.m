@@ -1,5 +1,11 @@
-BSDX01	; IHS/OIT/HMW - WINDOWS SCHEDULING RPCS ; 9/16/10 9:54am
+BSDX01	; IHS/OIT/HMW - WINDOWS SCHEDULING RPCS ; 9/28/10 4:47pm
 	;;1.4;BSDX;;Sep 07, 2010
+    ; Change Log:
+    ; V 1.4.1 (Sep 28 2010): Separate user divisions based on $$INDIV.
+    ; Affects:
+    ; - RESUSR
+    ; - DEPUSR
+    ; - DEPRES
 	;
 	;
 SUINFOD(BSDXY,BSDXDUZ)	;EP Debugging entry point
@@ -38,8 +44,10 @@ DEPUSRD(BSDXY,BSDXDUZ)	;EP Debugging entry point
 DEPUSR(BSDXY,BSDXDUZ)	 ;EP
 	;Called by BSDX RESOURCE GROUPS BY USER
 	;Returns ADO Recordset with all ACTIVE resource group names to which user has access
-	;based on entries in BSDX RESOURCE USER file
+	;based on entries in BSDX RESOURCE USER file (Say this again for myself: Groups ONLY!!)
 	;If BSDXDUZ=0 then returns all department names for current DUZ
+    ;What is returned depends if it is in the same divsion as the hosptial location if it is linked
+    ;if not linked, always returned.
 	;If user BSDXDUZ possesses the key BSDXZMGR or XUPROGMODE
 	;then ALL resource group names are returned regardless of whether any active resources
 	;are associated with the group or not.
@@ -61,7 +69,8 @@ DEPUSR(BSDXY,BSDXDUZ)	 ;EP
 	;$O THRU AC XREF OF BSDX RESOURCE USER
 	I 'BSDXMGR,$D(^BSDXRSU("AC",BSDXDUZ)) S BSDXIEN=0 F  S BSDXIEN=$O(^BSDXRSU("AC",BSDXDUZ,BSDXIEN)) Q:'+BSDXIEN  D
 	. S BSDXRES=$P(^BSDXRSU(BSDXIEN,0),U)
-	. Q:'$D(^BSDXDEPT("AB",BSDXRES))
+	. Q:'$D(^BSDXDEPT("AB",BSDXRES))  ; If not part of a group, quit ("AB" is the whole file index for the resource multiple in Group file)
+    . Q:'$$INDIV2(BSDXRES)  ; If not in the same division as user, quit
 	. S BSDXRNOD=^BSDXRES(BSDXRES,0)
 	. ;QUIT if the resource is inactive
 	. Q:$P(BSDXRNOD,U,2)=1
@@ -177,6 +186,7 @@ DEPRES(BSDXY,BSDXDUZ)	;EP
 	;Called by BSDX GROUP RESOURCE
 	;Returns ADO Recordset with all ACTIVE GROUP/RESOURCE combinations
 	;to which user has access based on entries in BSDX RESOURCE USER file
+    ;by Division (set in DUZ(2))
 	;If BSDXDUZ=0 then returns all ACTIVE GROUP/RESOURCE combinations for current DUZ
 	;If user BSDXDUZ possesses the key BSDXZMGR or XUPROGMODE
 	;then ALL ACTIVE resource group names are returned
@@ -197,7 +207,8 @@ DEPRES(BSDXY,BSDXDUZ)	;EP
 	;$O THRU AC XREF OF BSDX RESOURCE USER
 	I 'BSDXMGR,$D(^BSDXRSU("AC",BSDXDUZ))  S BSDXIEN=0 F  S BSDXIEN=$O(^BSDXRSU("AC",BSDXDUZ,BSDXIEN)) Q:'+BSDXIEN  D
 	. S BSDXRES=$P(^BSDXRSU(BSDXIEN,0),U)
-	. Q:'$D(^BSDXDEPT("AB",BSDXRES))
+	. Q:'$D(^BSDXDEPT("AB",BSDXRES))  ; Quit if Resource isn't part of any Group
+    . Q:'$$INDIV2(BSDXRES)  ; Quit if Resource isn't in same division as user.
 	. S BSDXRNOD=$G(^BSDXRES(BSDXRES,0))
 	. Q:BSDXRNOD=""
 	. ;QUIT if the resource is inactive
@@ -219,9 +230,10 @@ DEPRES(BSDXY,BSDXDUZ)	;EP
 	. S BSDXDEPN=$P(BSDXNOD,U)
 	. S BSDXRES=0 F  S BSDXRES=$O(^BSDXDEPT(BSDXIEN,1,BSDXRES)) Q:'+BSDXRES  D
 	. . N BSDXRESD
-	. . Q:'$D(^BSDXDEPT(BSDXIEN,1,BSDXRES,0))
+	. . Q:'$D(^BSDXDEPT(BSDXIEN,1,BSDXRES,0))  ; Quit if zero node is invalid in multiple
 	. . S BSDXRESD=$P(^BSDXDEPT(BSDXIEN,1,BSDXRES,0),"^")
-	. . Q:'$D(^BSDXRES(BSDXRESD,0))
+	. . Q:'$D(^BSDXRES(BSDXRESD,0))  ; Quit if zero node of resouce file is invalid
+    . . Q:'$$INDIV2(BSDXRESD)  ; Quit if resource is not in the same division
 	. . S BSDXRNOD=$G(^BSDXRES(BSDXRESD,0))
 	. . Q:BSDXRNOD=""
 	. . ;QUIT if the resource is inactive
@@ -256,6 +268,8 @@ APSEC(BSDXKEY,BSDXDUZ)	;EP - Return TRUE (1) if user has keys BSDXKEY or XUPROGM
 	I '$D(^VA(200,BSDXDUZ,51,BSDXIEN,0)) Q 0
 	Q 1
 INDIV(BSDXSC) ; PEP - Is ^SC clinic in the same DUZ(2) as user?
+    ; Input: BSDXSC - Hospital Location IEN
+    ; Output: True or False
     I '+BSDXSC QUIT 1  ;If not tied to clinic, yes
     I '$D(^SC(BSDXSC,0)) QUIT 1 ; If Clinic does not exist, yes
     ; Jump to Division:Medical Center Division:Inst File Pointer for
@@ -265,6 +279,10 @@ INDIV(BSDXSC) ; PEP - Is ^SC clinic in the same DUZ(2) as user?
     I DIV=DUZ(2) Q 1 ; If same, then User is in same Div as Clinic
     E  Q 0 ; Otherwise, no
     QUIT
+INDIV2(BSDXRES) ; PEP - Is Resource in the same DUZ(2) as user?
+    ; Input BSDXRES - BSDX RESOURCE IEN
+    ; Output: True of False
+    Q $$INDIV($P($G(^BSDXRES(BSDXRES,0)),U,4)) ; Extract Hospital Location and send to $$INDIV
 UnitTestINDIV
     W "Testing if they are the same",!
     S DUZ(2)=67
@@ -278,4 +296,12 @@ UnitTestINDIV
     S DUZ(2)=899
     I $$INDIV(1) W "ERROR",!
     I $$INDIV(2) W "ERROR",!
+    QUIT
+UnitTestINDIV2
+    W "Testing if they are the same",!
+    S DUZ(2)=69
+    I $$INDIV2(22)'=0 W "ERROR",!
+    I $$INDIV2(25)'=1 W "ERROR",!
+    I $$INDIV2(26)'=1 W "ERROR",!
+    I $$INDIV2(27)'=1 W "ERROR",!
     QUIT

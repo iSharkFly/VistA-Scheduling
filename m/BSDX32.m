@@ -19,6 +19,7 @@ HOSPLOCD(BSDXY)	;EP Debugging entry point
 	;
 HOSPLOC(BSDXY)	;EP
 	;Called by BSDX HOSPITAL LOCATION
+    ;Returns all hospital locations that are active AND in the same division as the user
 	;
 	N BSDXI,BSDXIEN,BSDXNOD,BSDXNAM,BSDXINA,BSDXREA,BSDXSCOD
 	D ^XBKVAR S X="ERROR^BSDX32",@^%ZOSF("TRAP")
@@ -32,6 +33,7 @@ HOSPLOC(BSDXY)	;EP
 	. S BSDXIEN=$O(^SC("B",BSDXNAM,0))
 	. Q:'+BSDXIEN>0
 	. Q:'$D(^SC(+BSDXIEN,0))
+    . Q:'$$INDIV^BSDX01(+BSDXIEN)  ; if not in the same division, quit
 	. S BSDXINA=$$GET1^DIQ(44,BSDXIEN_",",2505) ;INACTIVATE
 	. S BSDXREA=$$GET1^DIQ(44,BSDXIEN_",",2506) ;REACTIVATE
 	. I BSDXINA]""&(BSDXREA="") Q  ;Clinic is inactivated and has no reactivate date
