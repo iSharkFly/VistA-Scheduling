@@ -2094,6 +2094,13 @@ namespace IndianHealthService.ClinicalScheduling
 					return;
 				}
 
+                // Added check for making Walk-ins in the past. 9/28/2010
+                if (dStart.Date < DateTime.Today.Date)
+                {
+                    var result = MessageBox.Show("Are you sure you want to make a Walk-in in the past?", "Windows Scheduling", MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button2);
+                    if (result == DialogResult.No) return;
+                }
+
 				/*
 				 * 8-10-05 Added overbook prompt for walkin
 				*/
@@ -2171,7 +2178,14 @@ namespace IndianHealthService.ClinicalScheduling
 				bool bRet = this.calendarGrid1.GetSelectedTime(out dStart, out dEnd, out sResource);
 				if (bRet == false)
 					return;
-				
+
+                // Added check for making Walk-ins in the past. 9/28/2010
+                if (dStart.Date < DateTime.Today.Date)
+                {
+                    var result = MessageBox.Show("Are you sure you want to make an appointment in the past?", "Windows Scheduling", MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button2);
+                    if (result == DialogResult.No) return;
+                }
+
 				//Test dStart for Holiday
 				DataView dvHoliday = new DataView(this.DocManager.GlobalDataSet.Tables["HOLIDAY"]);
 				dvHoliday.Sort="DATE ASC";
@@ -2656,6 +2670,13 @@ namespace IndianHealthService.ClinicalScheduling
 					return;
 				}
 
+                // Added check for making Walk-ins/appts in the past. 9/28/2010 //smh
+                if (e.StartTime < DateTime.Today.Date)
+                {
+                    var result = MessageBox.Show("Are you sure you want to make an appointment in the past?", "Windows Scheduling", MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button2);
+                    if (result == DialogResult.No) return;
+                }
+
 				if (EditAppointmentEnabled(e.Resource) == false)
 					return;
 				if (EditAppointmentEnabled(e.Appointment.Resource) == false)
@@ -2707,8 +2728,9 @@ namespace IndianHealthService.ClinicalScheduling
 				e.Appointment.AccessTypeID = e.AccessTypeID;
 				m_Document.CreateAppointment(e.Appointment);
 			
-				string sError = AppointmentDeleteOne(e.Appointment.AppointmentKey);
-				if (sError != "")
+				
+                string sError = AppointmentDeleteOne(e.Appointment.AppointmentKey);
+                if (sError != "")
 				{
 					MessageBox.Show(sError);
 					return;
@@ -2865,6 +2887,14 @@ namespace IndianHealthService.ClinicalScheduling
 				bModAppts = (bool) this.m_htChangeAppts[e.Resource.ToString()];
 				if (bModAppts == false)
 					return;
+
+                // Added check for making Walk-ins/appts in the past. 9/28/2010 //smh
+                if (e.StartTime < DateTime.Today.Date)
+                {
+                    var result = MessageBox.Show("Are you sure you want to make an appointment in the past?", "Windows Scheduling", MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button2);
+                    if (result == DialogResult.No) return;
+                }
+
 
 				bOverbook = (bool) this.m_htOverbook[e.Resource.ToString()];
 				bModSchedule =  (bool) this.m_htModifySchedule[e.Resource.ToString()];

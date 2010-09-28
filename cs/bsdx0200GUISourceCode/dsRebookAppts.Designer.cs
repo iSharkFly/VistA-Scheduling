@@ -327,7 +327,7 @@ namespace IndianHealthService.ClinicalScheduling {
         ///</summary>
         [global::System.Serializable()]
         [global::System.Xml.Serialization.XmlSchemaProviderAttribute("GetTypedTableSchema")]
-        public partial class PatientApptsDataTable : global::System.Data.TypedTableBase<PatientApptsRow> {
+        public partial class PatientApptsDataTable : global::System.Data.DataTable, global::System.Collections.IEnumerable {
             
             private global::System.Data.DataColumn columnName;
             
@@ -616,6 +616,12 @@ namespace IndianHealthService.ClinicalScheduling {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public virtual global::System.Collections.IEnumerator GetEnumerator() {
+                return this.Rows.GetEnumerator();
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public override global::System.Data.DataTable Clone() {
                 PatientApptsDataTable cln = ((PatientApptsDataTable)(base.Clone()));
                 cln.InitVars();
@@ -818,7 +824,7 @@ namespace IndianHealthService.ClinicalScheduling {
         ///</summary>
         [global::System.Serializable()]
         [global::System.Xml.Serialization.XmlSchemaProviderAttribute("GetTypedTableSchema")]
-        public partial class BSDXResourceDataTable : global::System.Data.TypedTableBase<BSDXResourceRow> {
+        public partial class BSDXResourceDataTable : global::System.Data.DataTable, global::System.Collections.IEnumerable {
             
             private global::System.Data.DataColumn columnRESOURCEID;
             
@@ -951,6 +957,12 @@ namespace IndianHealthService.ClinicalScheduling {
                 rowBSDXResourceRow.ItemArray = columnValuesArray;
                 this.Rows.Add(rowBSDXResourceRow);
                 return rowBSDXResourceRow;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public virtual global::System.Collections.IEnumerator GetEnumerator() {
+                return this.Rows.GetEnumerator();
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
