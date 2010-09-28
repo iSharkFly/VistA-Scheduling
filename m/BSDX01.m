@@ -1,4 +1,4 @@
-BSDX01	; IHS/OIT/HMW - WINDOWS SCHEDULING RPCS ; 9/15/10 9:09pm
+BSDX01	; IHS/OIT/HMW - WINDOWS SCHEDULING RPCS ; 9/16/10 9:54am
 	;;1.4;BSDX;;Sep 07, 2010
 	;
 	;
@@ -120,13 +120,10 @@ RESUSR(BSDXY,BSDXDUZ)	;EP
 	. Q:'$D(^BSDXRES(BSDXRES,0))
 	. S BSDXRNOD=^BSDXRES(BSDXRES,0)
 	. N BSDXSC S BSDXSC=$P(BSDXRNOD,U,4)  ; Hospital Location
-    . ; super line... if tied to hospital location,
-    . ; Hosp location exists, AND 4th piece isn't the same as
-    . ; DUZ(2), quit. Filters based on Divisions.
-    . ; . I +BSDXSC,$D(^SC(BSDXSC,0)),$P(^SC(BSDXSC,0),U,4)'=DUZ(2) QUIT
     . ;Q:$P(BSDXRNOD,U,2)=1  ;Inactive resources not filtered
 	. ;S BSDXRDAT=$P(BSDXRNOD,U,1,4)
-	. K BSDXRDAT
+	. I '$$INDIV(BSDXSC) QUIT  ; If not in division, quit
+    . K BSDXRDAT
 	. F BSDX=1:1:4 S $P(BSDXRDAT,U,BSDX)=$P(BSDXRNOD,U,BSDX)
 	. S BSDXRDAT=BSDXRES_U_BSDXRDAT
 	. ;Get letter text from wp field
@@ -258,3 +255,27 @@ APSEC(BSDXKEY,BSDXDUZ)	;EP - Return TRUE (1) if user has keys BSDXKEY or XUPROGM
 	I '+BSDXIEN Q 0
 	I '$D(^VA(200,BSDXDUZ,51,BSDXIEN,0)) Q 0
 	Q 1
+INDIV(BSDXSC) ; PEP - Is ^SC clinic in the same DUZ(2) as user?
+    I '+BSDXSC QUIT 1  ;If not tied to clinic, yes
+    I '$D(^SC(BSDXSC,0)) QUIT 1 ; If Clinic does not exist, yes
+    ; Jump to Division:Medical Center Division:Inst File Pointer for
+    ; Institution IEN (and get its internal value)
+    N DIV S DIV=$$GET1^DIQ(44,BSDXSC_",","3.5:.07","I")
+    I DIV="" Q 1 ; If clinic has no division, consider it avial to user.
+    I DIV=DUZ(2) Q 1 ; If same, then User is in same Div as Clinic
+    E  Q 0 ; Otherwise, no
+    QUIT
+UnitTestINDIV
+    W "Testing if they are the same",!
+    S DUZ(2)=67
+    I '$$INDIV(1) W "ERROR",!
+    I '$$INDIV(2) W "ERROR",!
+    W "Testing if Div not defined in 44, should be true",!
+    I '$$INDIV(3) W "ERROR",!
+    W "Testing empty string. Should be true",!
+    I '$$INDIV("") W "ERROR",!
+    W "Testing if they are different",!
+    S DUZ(2)=899
+    I $$INDIV(1) W "ERROR",!
+    I $$INDIV(2) W "ERROR",!
+    QUIT
