@@ -1,16 +1,7 @@
-BSDX01	; IHS/OIT/HMW - WINDOWS SCHEDULING RPCS ; 9/28/10 4:47pm
+BSDX01	; IHS/OIT/HMW - WINDOWS SCHEDULING RPCS ; 9/29/10 10:20am
 	;;1.4;BSDX;;Sep 07, 2010
-    ; Change Log:
-    ; V 1.4.1 (Sep 28 2010): Separate user divisions based on $$INDIV.
-    ; Affects:
-    ; - RESUSR
-    ; - DEPUSR
-    ; - DEPRES
-	;
 	;
 SUINFOD(BSDXY,BSDXDUZ)	;EP Debugging entry point
-	;
-	;
 	;D DEBUG^%Serenji("SUINFO^BSDX01(.BSDXY,BSDXDUZ)")
 	;
 	Q
@@ -46,7 +37,6 @@ DEPUSR(BSDXY,BSDXDUZ)	 ;EP
 	;Returns ADO Recordset with all ACTIVE resource group names to which user has access
 	;based on entries in BSDX RESOURCE USER file (Say this again for myself: Groups ONLY!!)
 	;If BSDXDUZ=0 then returns all department names for current DUZ
-    ;What is returned depends if it is in the same divsion as the hosptial location if it is linked
     ;if not linked, always returned.
 	;If user BSDXDUZ possesses the key BSDXZMGR or XUPROGMODE
 	;then ALL resource group names are returned regardless of whether any active resources
@@ -70,7 +60,7 @@ DEPUSR(BSDXY,BSDXDUZ)	 ;EP
 	I 'BSDXMGR,$D(^BSDXRSU("AC",BSDXDUZ)) S BSDXIEN=0 F  S BSDXIEN=$O(^BSDXRSU("AC",BSDXDUZ,BSDXIEN)) Q:'+BSDXIEN  D
 	. S BSDXRES=$P(^BSDXRSU(BSDXIEN,0),U)
 	. Q:'$D(^BSDXDEPT("AB",BSDXRES))  ; If not part of a group, quit ("AB" is the whole file index for the resource multiple in Group file)
-    . Q:'$$INDIV2(BSDXRES)  ; If not in the same division as user, quit
+    . ; Q:'$$INDIV2(BSDXRES)  ; If not in the same division as user, quit
 	. S BSDXRNOD=^BSDXRES(BSDXRES,0)
 	. ;QUIT if the resource is inactive
 	. Q:$P(BSDXRNOD,U,2)=1
@@ -131,7 +121,7 @@ RESUSR(BSDXY,BSDXDUZ)	;EP
 	. N BSDXSC S BSDXSC=$P(BSDXRNOD,U,4)  ; Hospital Location
     . ;Q:$P(BSDXRNOD,U,2)=1  ;Inactive resources not filtered
 	. ;S BSDXRDAT=$P(BSDXRNOD,U,1,4)
-	. I '$$INDIV(BSDXSC) QUIT  ; If not in division, quit
+	. ;I '$$INDIV(BSDXSC) QUIT  ; If not in division, quit
     . K BSDXRDAT
 	. F BSDX=1:1:4 S $P(BSDXRDAT,U,BSDX)=$P(BSDXRNOD,U,BSDX)
 	. S BSDXRDAT=BSDXRES_U_BSDXRDAT
@@ -186,7 +176,6 @@ DEPRES(BSDXY,BSDXDUZ)	;EP
 	;Called by BSDX GROUP RESOURCE
 	;Returns ADO Recordset with all ACTIVE GROUP/RESOURCE combinations
 	;to which user has access based on entries in BSDX RESOURCE USER file
-    ;by Division (set in DUZ(2))
 	;If BSDXDUZ=0 then returns all ACTIVE GROUP/RESOURCE combinations for current DUZ
 	;If user BSDXDUZ possesses the key BSDXZMGR or XUPROGMODE
 	;then ALL ACTIVE resource group names are returned
@@ -208,7 +197,7 @@ DEPRES(BSDXY,BSDXDUZ)	;EP
 	I 'BSDXMGR,$D(^BSDXRSU("AC",BSDXDUZ))  S BSDXIEN=0 F  S BSDXIEN=$O(^BSDXRSU("AC",BSDXDUZ,BSDXIEN)) Q:'+BSDXIEN  D
 	. S BSDXRES=$P(^BSDXRSU(BSDXIEN,0),U)
 	. Q:'$D(^BSDXDEPT("AB",BSDXRES))  ; Quit if Resource isn't part of any Group
-    . Q:'$$INDIV2(BSDXRES)  ; Quit if Resource isn't in same division as user.
+    . ;Q:'$$INDIV2(BSDXRES)  ; Quit if Resource isn't in same division as user.
 	. S BSDXRNOD=$G(^BSDXRES(BSDXRES,0))
 	. Q:BSDXRNOD=""
 	. ;QUIT if the resource is inactive
@@ -233,7 +222,7 @@ DEPRES(BSDXY,BSDXDUZ)	;EP
 	. . Q:'$D(^BSDXDEPT(BSDXIEN,1,BSDXRES,0))  ; Quit if zero node is invalid in multiple
 	. . S BSDXRESD=$P(^BSDXDEPT(BSDXIEN,1,BSDXRES,0),"^")
 	. . Q:'$D(^BSDXRES(BSDXRESD,0))  ; Quit if zero node of resouce file is invalid
-    . . Q:'$$INDIV2(BSDXRESD)  ; Quit if resource is not in the same division
+    . . ;Q:'$$INDIV2(BSDXRESD)  ; Quit if resource is not in the same division
 	. . S BSDXRNOD=$G(^BSDXRES(BSDXRESD,0))
 	. . Q:BSDXRNOD=""
 	. . ;QUIT if the resource is inactive
