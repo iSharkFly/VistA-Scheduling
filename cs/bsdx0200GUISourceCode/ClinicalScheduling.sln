@@ -1,9 +1,8 @@
-﻿
-Microsoft Visual Studio Solution File, Format Version 10.00
-# Visual C# Express 2008
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual C# Express 2010
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClinicalScheduling", "ClinicalScheduling.csproj", "{8C05C4F7-FE81-479F-87A0-44E04C7F6E0F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BMXNet", "..\..\..\BMX\bmx_0200scr\BMX2\BMXNet\BMXNet.csproj", "{DE8E4CC9-4F3A-4E32-8DFE-EE5692E8FC45}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BMXNet", "..\bmx\BMXNet\BMXNet.csproj", "{DE8E4CC9-4F3A-4E32-8DFE-EE5692E8FC45}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,12 +10,11 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{8C05C4F7-FE81-479F-87A0-44E04C7F6E0F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{8C05C4F7-FE81-479F-87A0-44E04C7F6E0F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8C05C4F7-FE81-479F-87A0-44E04C7F6E0F}.Debug|Any CPU.ActiveCfg = Release|Any CPU
+		{8C05C4F7-FE81-479F-87A0-44E04C7F6E0F}.Debug|Any CPU.Build.0 = Release|Any CPU
 		{8C05C4F7-FE81-479F-87A0-44E04C7F6E0F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{8C05C4F7-FE81-479F-87A0-44E04C7F6E0F}.Release|Any CPU.Build.0 = Release|Any CPU
-		{DE8E4CC9-4F3A-4E32-8DFE-EE5692E8FC45}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{DE8E4CC9-4F3A-4E32-8DFE-EE5692E8FC45}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DE8E4CC9-4F3A-4E32-8DFE-EE5692E8FC45}.Debug|Any CPU.ActiveCfg = Release|Any CPU
+		{DE8E4CC9-4F3A-4E32-8DFE-EE5692E8FC45}.Debug|Any CPU.Build.0 = Release|Any CPU
 		{DE8E4CC9-4F3A-4E32-8DFE-EE5692E8FC45}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DE8E4CC9-4F3A-4E32-8DFE-EE5692E8FC45}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
