@@ -1,0 +1,3 @@
+This software is licensed by me, Sam Habiel, its only current programmer for VISTA, under LGPL.
+
+See LGPL here: http://www.gnu.org/licenses/lgpl.html

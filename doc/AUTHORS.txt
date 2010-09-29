@@ -1,0 +1,3 @@
+The original software was written by Indian Health Service Programmers for RPMS. Notably, Horace Whitt.
+
+Ported by Sam Habiel to VISTA.
