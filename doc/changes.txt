@@ -1,0 +1,25 @@
+References to RPMS across the Manual
+
+Section 2.7: There are short keys now. Eg Ctrl+1; Ctrl+5.
+Section 3.3.3: Same thing.
+Section 4.3: You can search by the following:
+- SSN
+- Primary ID
+- Date of Birth
+- Health Record Number
+Screenshot 4-13: Different.
+ - View EHR button no longer there as this doesn't work on VISTA.
+ - View appointments substituted by a list of appointments.
+ - Fields are different.
+Screenshot 4-16: Different.
+ - Dialogs are re-arranged.
+Section 4.10: Change reference to PCC to PCE.
+Screenshot 4-19: Incorrect. Adds Default Provider.
+Section 5.1: All screenshots are different.
+Section 5.3: All screenshots are different. Some instructions need to be different.
+6.1.2.3: Shortcuts are available.
+6.1.5.2: Step 7: Starting Week (Monday): That should just be "Starting Week". I had to change the code for that since it didn't work for Jordan.
+6.2.1.3: Screenshot and manual are incorrect. Users need the key BSDXZMENU not access to PIMS to be visible in the drop down list. To be honest, the program still says the incorrect thing.
+Screenshot 6-45: Dialog changed. Description above and below needs to be adjusted.
+Section 8: Up to you whether you want to include.
+Section 11: Change, obviously
