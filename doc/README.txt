@@ -67,9 +67,23 @@ If you need to use PIMS clinics, here is how you do the set-up:
 8. Create slots for each of the clinics. You can save them as files and re-use them.
 
 Known Bugs:
-- Users booking appointments at exactly the same time for the same clinic doesn't work properly.
+- Users booking appointments at exactly the same time for the same clinic doesn't work properly (concurrency issues).
 - Various usability issues that are apparent in the program. E.g. you need to click before you right click, drag and drop has no visiual assist to show what you are dragging and where to, etc.
 - Remaining slots calculation does not work properly if you have more than 1 slot per access block.
+- Find Appointments function is not operational in Scheduling GUI
+- IDs in Scheduling GUI reflect the HRN not the Primary ID
+- Cannot cancel a walk-in appointment in Scheduling...
+- No handling of invalid access c ode whicn saving access slots.
+- Saving access slots causes program to freeze until it's done: need to be Async
+- No Ctrl-C & Ctrl-V handling
+- No Insert & Delete button handling
+- After applying access templates, the access blocks screen doesn't refresh itself.
+- Grids don't respond to mouse wheel movement.
+- Default open location for Apply Template is inappropriate. Should be the last folder navigated.
+- Drag and drop plus delete Message Boxes on Access Blocks editor are unnecessary.
+- Appointment drag and drop to the same time at a different clinic doesn't work (complains that the patient already has an appointment at this time).
+- Appointment drap and drop between different windoes doesn't cancel the original appointment.
+
 
 Other Bugs:
 Put them on the trac server where you got this software.
