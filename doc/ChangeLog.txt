@@ -1,0 +1,97 @@
+Nov 2009: First commit into svn of Alpha Version of Scheduling GUI (v2.2)
+
+V2.2
+Version downgraded to 1.0 to reflect state of software.
+
+v1.1 (released June 7 2010)
+- Removed references to "View EHR" from ctxCalendarGrid and DAppointPage.
+- Remove references to IHS; typically "IHS Clinical Scheduling" becomes "Clinical Scheduling"
+- Remove the non-functioning CalendarGrid.dll and associated project files.
+- Add the code from CalendarGrid.dll generated using reflector.exe to ClinicalScheduling.csproj
+- Removed user-interface references to RPMS.
+- Fixes in BSDX27 referring to a routine that doesn't exist in VISTA. References changed to BSDXAPI.
+- Reworked DAppointPage. 
+- Removed dependence of DPatientApptDisplay on Crystal Reports. 
+- Added UserControl UCPatientAppts to encapsulate functionality of DPatientApptDisplay; right now it does not include printing. 
+- DAppointPage now uses UCPatientAppts to provide functionality of seeing patient's previous appointments. DPatientApptDisplay does not yet, but will soon.
+- Better printing in UCPatientAppts.
+- Removal of Crystal Reports
+- Partial Rework of Clinic Patient List report
+- Other reports that used Crystal don't work yet.
+- Fixes for Strongly typed DataTables (change the RESOURCEID from uint to int) to support table merge from untyped table.
+- Support for command line arguments: /s= for server /p= for port /a= for access code /v= for verify code. Only the following combinations work: none; /s and /p; /s, /p, /a, /v (/e added later for encoding in v1.4).
+- Tiny bug fixes to fix compile errors
+- Some debugging code to attach the program to the console to print messages.
+- Letters:
+-- Cancellation letters now work.
+-- Initial work on Rebook Letters.
+- Provided framework for Rebook letters; but they don't work.
+- Added the appointment dates to the printed letters.
+- Made more keyboard shortcuts on the main menu.
+- New kids build for all above
+
+v1.2 (released June 19 2010):
+- CGView: Added various shortcuts keys for menus; removed extra overbook prompt after booking if doing an overbook. You already get one before booking.
+- CGDocumentManager: Mickey mouse connection check to prevent prompting for access and verify if there's no connection to VISTA.
+- CGDocumentManager: Test SQL statement to retrieve Hospital Locations and default providers associated with them. (doesn't work, moved to new routine later).
+- Remove garbage file {85FE etc}.rpt
+- DCheckIn.cs: Handling of providers for hospital locations (HL). If provider(s) assigned to HL linked to resource, they are brought over and if a default one is in VISTA, it's picked as the default in the combobox. If no default, combobox defaults to <None>. If resource not linked to HL, then all providers in system brought over, and combobox default is <None>.
+- CGDocumentManager.cs: Remove loading of ClinicSetupParameters file. File doesn't exist in VISTA.
+- DResource.cs: Remove handling of same file.
+- New Routine BSDXGPRV to get providers associated with hospital location
+- Support for Routing Slip printing.
+- Version change from 1.1 to 1.2 in preparation for release.
+- Printing.cs: Addition of PrintRoutingSlip method.
+- CGView.cs: Handling of printing of routing slip if chosen in DCheckIn.cs
+- CGView.cs: New context option to re-print routing slip
+- DCheckIn.cs: toolTip1 to explain that routing slip will print on the default printer.
+- New kids build
+
+v1.3 (released August 18th 2010):
+- Support for multiple encodings.
+- Some refactoring of code into DAL.cs for Data Access.
+- Addition of Fileman date code (not used yet).
+- Removal of .config and .xml file from bin/Release/
+- Removal of BMXNet20.dll to replace with BMXNet21.dll for multiple encoding support
+- Updated mulitple routines and C# files - Send FM dates from VISTA rather than regular dates to support i18n (platform independent dates)
+- Fix pre-existing bug in rebooking. Now it works.
+- Printing from the print preview window just printed empty lists. Now fixed. (also in branch 1.2.1).
+- Updated Appointment Page and routine:
+- Adds the following fields in Contact Info tab:
+-- 1. Cell Phone
+-- 2. Email address
+-- 3. Country
+- Search by Primary ID now works.
+- Start of week now machine culture sensitive (default always 1 day after start of week per culture). Change in CGDocument.cs
+- Removal of SSN references in DPatientLookup.cs
+- Updated kids post-init to remove harmful entries to GUI scheduling in protocol file from SDAM APPOINTMENT EVENTS
+- New KIDS build
+
+v1.4 (released September 17 2010):
+- Make combo boxes in DManagement searchable (in MS Lingo AutoComplete).
+- Make sure that all DManagement lists and combo boxes are sorted.
+- Fix bug of not showing appointments in 7 day view if arabic locale on machine.
+- Fix printing of routing slip (add clinic and fix appointment time and HRN)
+- Add RTL support for letters printed in Arabic Locale.
+- StartDate for CGAVView, 1st try.
+- CGDocument uses StartDate from Current thread locale rather than current culture. Enables controlling the behavior of the Scheduling GUI via thread locale.
+- CGAVDocument contains changes for start day of grid based on weekday locale and colummns
+- CGAVView: Shortcut keys; correct updating when number of columns is changed in grid
+- CGDocument: changes for start day of grid. Modified algorithm.
+- DAccessTemplate: Takes any weekday now for applying a template, not just Monday. Then calculation of start day is done in CGAVView based on locale in the same algorithm that the rest of the GUI uses.
+- DAppointPage: Now says Mobile/Cell instead of Cell Phone.
+- Added a note in the DAccessTemplate to say that you have to select the right 5 or 7 day view based on what you originally saved.
+- Support for checking encoding on the server (if supports UTF-8 and encoding not specified, uses UTF-8; otherwise uses what locale says).
+- /e encoding start-up flag now supported.
+
+v1.4.1 (released September 29th 2010)
+- Drag and drop is fixed. It reference a non-existent cancellation reason, so it failed.
+- If a patient has a Patient Cancelled appointment, scheduling the patient at the same time doesn't work anymore.
+- MAKE^BSDXAPI occasionally failed. Use of Old Fileman API not successful. New Fileman API seems to work better in MAKE for filing data into patient subfile of appointment subfile of Hosp Location file.
+- Logging into the right division didn't work properly. Now it does. Required changes in BMX.
+- Appointments in Past now trigger a warning.
+- Change Project file format to VS 2010.
+- More extensive notes files.
+- New Kids build.
+
+
