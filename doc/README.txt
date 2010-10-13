@@ -73,16 +73,18 @@ Known Bugs:
 - Find Appointments function is not operational in Scheduling GUI
 - IDs in Scheduling GUI reflect the HRN not the Primary ID
 - Cannot cancel a walk-in appointment in Scheduling...
-- No handling of invalid access c ode whicn saving access slots.
+- No handling of invalid access code when saving access slots.
 - Saving access slots causes program to freeze until it's done: need to be Async
 - No Ctrl-C & Ctrl-V handling
 - No Insert & Delete button handling
 - After applying access templates, the access blocks screen doesn't refresh itself.
+- Logic to remove old access blocks does not work. Only workaround is to remove them manually.
+- Transactions fail when a restart is attempted (Oroville's system only).
 - Grids don't respond to mouse wheel movement.
 - Default open location for Apply Template is inappropriate. Should be the last folder navigated.
 - Drag and drop plus delete Message Boxes on Access Blocks editor are unnecessary.
 - Appointment drag and drop to the same time at a different clinic doesn't work (complains that the patient already has an appointment at this time).
-- Appointment drap and drop between different windoes doesn't cancel the original appointment.
+- Appointment drap and drop between different windows doesn't cancel the original appointment.
 
 
 Other Bugs:
