@@ -1,15 +1,17 @@
-BSDX09	; IHS/OIT/HMW - WINDOWS SCHEDULING RPCS ;  ; 8/16/10 4:28pm
-	;;1.41;BSDX;;Sep 29, 2010
+BSDX09	; IHS/OIT/HMW - WINDOWS SCHEDULING RPCS ;  ; 10/20/10 4:16pm
+	;;1.41;BSDX;;Sep 07, 2010;Build 7
 	;
-	   ; Change Log:
-	   ; UJO/TH - v 1.3 on 3100714 - Extra Demographics:
-	   ; - Email
-	   ; - Cell Phone
-	   ; - Country
-	   ; - + refactoring of routine
+	; Change Log:
+	; UJO/TH - v 1.3 on 3100714 - Extra Demographics:
+	; - Email
+	; - Cell Phone
+	; - Country
+	; - + refactoring of routine
 	; 
-	   ; UJO/TH - v 1.3 on 3100715 - Change SSN to PID and get PID field instead
+	; UJO/TH - v 1.3 on 3100715 - Change SSN to PID and get PID field instead
 	;
+    ; UJO/TH - v 1.42 on 3101020 - Add Sex field.
+    ;
 GETREGA(BSDXRET,BSDXPAT)	       ;EP
 	;
 	   ; See below for the returned fields
@@ -44,6 +46,7 @@ GETREGA(BSDXRET,BSDXPAT)	       ;EP
 	S $P(@OUT,U,22)="T00050EMAIL ADDRESS"
 	S $P(@OUT,U,23)="T00020PHONE NUMBER [CELLULAR]"
 	S $P(@OUT,U,24)="T00030COUNTRY"
+	S $P(@OUT,U,25)="T00030SEX"
 	S $E(@OUT,$L(@OUT)+1)=$C(30)
 	;
 	;
@@ -73,6 +76,7 @@ GETREGA(BSDXRET,BSDXPAT)	       ;EP
 	S $P(BSDXY,"^",22)=$$GET1^DIQ(2,BSDXPAT,"EMAIL ADDRESS")
 	S $P(BSDXY,"^",23)=$$GET1^DIQ(2,BSDXPAT,"PHONE NUMBER [CELLULAR]")
 	S $P(BSDXY,"^",24)=$$GET1^DIQ(2,BSDXPAT,"COUNTRY:DESCRIPTION")
+	S $P(BSDXY,"^",25)=$$GET1^DIQ(2,BSDXPAT,"SEX")
 	N BSDXBEG,BSDXEND,BSDXLEN,BSDXI
 	S BSDXLEN=$L(BSDXY)
 	S BSDXBEG=0,BSDXI=2
