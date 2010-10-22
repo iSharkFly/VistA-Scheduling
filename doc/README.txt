@@ -90,3 +90,8 @@ Known Bugs:
 Other Bugs:
 Put them on the trac server where you got this software.
 
+Enhancement requests:
+- Show Appointment Status in patient information windows. In other words show if the appointment is a future, checked-in, checked-out, or canceled status. (Oroville)
+- Allow all users to access all clinics by default (EHS/PHH)
+- Summary Schedule report based on Clinic Schedule report. Remove Phone, Address, Appointment Made By, and on fields.
+
