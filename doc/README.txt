@@ -85,6 +85,7 @@ Known Bugs:
 - Drag and drop plus delete Message Boxes on Access Blocks editor are unnecessary.
 - Appointment drag and drop to the same time at a different clinic doesn't work (complains that the patient already has an appointment at this time).
 - Appointment drap and drop between different windows doesn't cancel the original appointment.
+- Rebooking under certain conditions causes system hangs. Two issues: Program doesn't increment requested available appointment from VISTA, and doesn't deal properly with an appointment that doesn't have a access type (ie an appointment that is not in an Access block).
 
 
 Other Bugs:
