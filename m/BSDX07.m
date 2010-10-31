@@ -1,4 +1,4 @@
-BSDX07 ; IHS/OIT/HMW - WINDOWS SCHEDULING RPCS  ; 10/4/10 6:22pm
+BSDX07 ; IHS/OIT/HMW - WINDOWS SCHEDULING RPCS  ; 10/24/10 12:07am
 	;;1.42;BSDX;;Sep 29, 2010
 	;
 	; Change Log:
@@ -6,96 +6,184 @@ BSDX07 ; IHS/OIT/HMW - WINDOWS SCHEDULING RPCS  ; 10/4/10 6:22pm
 	; v1.3 July 13 2010 - Add support i18n - Dates input as FM dates, not US.
     ; v1.42 Oct 22 2010 - Transaction now restartable by providing arguments
     ;   thanks to Rick Marshall and Zach Gonzalez at Oroville.
-	;
-	;
+	; v1.42 Oct 30 2010 - Extensive refactoring.
+    ;
+    ; Error Reference:
+    ; -1: Patient Record is locked. This means something is wrong!!!!
+    ; -2: Start Time is not a valid Fileman date
+    ; -3: End Time is not a valid Fileman date
+    ; -4: End Time does not have time inside of it.
+	; -5: BSDXPATID is not numeric
+    ; -6: Patient Does not exist in ^DPT
+    ; -7: Resource Name does not exist in B index of BSDX RESOURCE
+    ; -8: Resouce doesn't exist in ^BSDXRES
+    ; -9: Couldn't add appointment to BSDX APPOINTMENT
+    ; -10: Couldn't add appointment to files 2 and/or 44
+    ; -100: Mumps Error
+
 APPADDD(BSDXY,BSDXSTART,BSDXEND,BSDXPATID,BSDXRES,BSDXLEN,BSDXNOTE,BSDXATID)	;EP
 	;Entry point for debugging
 	D DEBUG^%Serenji("APPADD^BSDX07(.BSDXY,BSDXSTART,BSDXEND,BSDXPATID,BSDXRES,BSDXLEN,BSDXNOTE,BSDXATID)")
 	Q
 	;
+UT ; Unit Tests
+    N ZZZ
+    ; Test for bad start date
+    D APPADD(.ZZZ,2100123,3100123.3,2,"Dr Office",30,"Sam's Note",1)
+    I +$P(^BSDXTMP($J,1),U,2)'=-2 W "Error in -2",!
+    ; Test for bad end date
+    D APPADD(.ZZZ,3100123,2100123.3,2,"Dr Office",30,"Sam's Note",1)
+    I +$P(^BSDXTMP($J,1),U,2)'=-3 W "Error in -3",!
+    ; Test for end date without time
+    D APPADD(.ZZZ,3100123.1,3100123,2,"Dr Office",30,"Sam's Note",1)
+    I +$P(^BSDXTMP($J,1),U,2)'=-4 W "Error in -4",!
+    ; Test for mumps error
+    S bsdxdie=1
+    D APPADD(.ZZZ,3100123.09,3100123.093,2,"Dr Office",30,"Sam's Note",1)
+    I +$P(^BSDXTMP($J,1),U,2)'=-100 W "Error in -100: M Error",!
+    K bsdxdie
+    ; Test for TRESTART
+    s bsdxrestart=1
+    D APPADD(.ZZZ,3100123.09,3100123.093,3,"Dr Office",30,"Sam's Note",1)
+    I +$P(^BSDXTMP($J,1),U,2)'=0&(+$P(^BSDXTMP($J,1),U,2)'=-10) W "Error in TRESTART",!
+    k bsdxrestart
+    ; Test for non-numeric patient
+    D APPADD(.ZZZ,3100123.09,3100123.093,"CAT,DOG","Dr Office",30,"Sam's Note",1)
+    I +$P(^BSDXTMP($J,1),U,2)'=-5 W "Error in -5",!
+    ; Test for a non-existent patient
+    D APPADD(.ZZZ,3100123.09,3100123.093,8989898989,"Dr Office",30,"Sam's Note",1)
+    I +$P(^BSDXTMP($J,1),U,2)'=-6 W "Error in -6",!
+    ; Test for a non-existent resource name
+    D APPADD(.ZZZ,3100123.09,3100123.093,3,"lkajsflkjsadf",30,"Sam's Note",1)
+    I +$P(^BSDXTMP($J,1),U,2)'=-7 W "Error in -7",!
+    ; Test for corrupted resource
+    ; Can't test for -8 since it requires DB corruption
+    ; Test for inability to add appointment to BSDX Appointment
+    ; Also requires something wrong in the DB
+    ; Test for inability to add appointment to 2,44
+    ; Test by creating a duplicate appointment
+    D APPADD(.ZZZ,3100123.09,3100123.093,3,"Dr Office",30,"Sam's Note",1)
+    D APPADD(.ZZZ,3100123.09,3100123.093,1,"Dr Office",30,"Sam's Note",1)
+    I +$P(^BSDXTMP($J,1),U,2)'=-10 W "Error in -10",!
+    QUIT
+    ; 
 APPADD(BSDXY,BSDXSTART,BSDXEND,BSDXPATID,BSDXRES,BSDXLEN,BSDXNOTE,BSDXATID)	;EP
-	;Called by BSDX ADD NEW APPOINTMENT
-	;Add new appointment
-	;BSDXRES is ResourceName
+	;Called by RPC: BSDX ADD NEW APPOINTMENT
+	;
+    ;Add new appointment to 3 files
+    ; - BSDX APPOINTMENT
+    ; - Hosp Location Appointment SubSubfile if Resource is linked to clinic
+    ; - Patient Appointment Subfile if Resource is linked to clinic
+    ;
+	;Paramters:
+    ;BSDXY: Global Return (RPC must be set to Global Array)
+    ;BSDXSTART: FM Start Date
+    ;BSDXEND: FM End Date
+    ;BSDXPATID: Patient DFN
+    ;BSDXRES is ResourceName in BSDX RESOURCE file (not IEN)
 	;BSDXLEN is the appointment duration in minutes
+    ;BSDXNOTE is the Appiontment Note
 	;BSDXATID is used for 2 purposes:
 	; if BSDXATID = "WALKIN" then BSDAPI is called to create a walkin appt.
 	; if BSDXATID = a number, then it is the access type id (used for rebooking)
 	;
-	;Create entry in BSDX APPOINTMENT
-	;Returns recordset having fields
+	;Return:
+    ; ADO.net Recordset having fields:
 	; AppointmentID and ErrorNumber
 	;
 	;Test lines:
-    ;BSDX ADD NEW APPOINTMENT^3091122.0930^3091122.1000^370^2^PEDIATRICIAN,DEMO^EXAM^SCRATCH NOTE
-	;
-	;Lock BSDX node
-	L +^BSDXAPPT(BSDXPATID):5 I '$T D ERR(BSDXI+1,"Another user is working with this patient's record.  Please try again later") Q
-	;
-    ;Restartable Transaction; restore paramters when starting.
-    TSTART (BSDXY,BSDXSTART,BSDXEND,BSDXPATID,BSDXRES,BSDXLEN,BSDXNOTE,BSDXATID):T="BSDX ADD NEW APPOINTMENT^BSDX07"
+    ;BSDX ADD NEW APPOINTMENT^3091122.0930^3091122.1000^370^Dr Office^30^EXAM^WALKIN
     ;
-	N BSDXERR,BSDXIEN,BSDXDEP,BSDXI,BSDXJ,BSDXAPPTI,BSDXDJ,BSDXRESD,BSDXRNOD,BSDXSCD,BSDXC,BSDXERR,BSDXWKIN
+    ; Return Array; set Return and clear array
+	S BSDXY=$NA(^BSDXTMP($J))
+    K ^BSDXTMP($J)
+    ; $ET
+	N $ET S $ET="G ETRAP^BSDX07"
+	; Counter
+	N BSDXI S BSDXI=0
+	; Lock BSDX node, only to synchronize access to the globals.
+    ; It's not expected that the error will ever happen as no filing
+    ; is supposed to take 5 seconds.
+    L +^BSDXAPPT(BSDXPATID):5 I '$T D ERR(BSDXI,"-1~Patient record is locked. Please contact technical support.") Q
+	; Header Node
+    S ^BSDXTMP($J,BSDXI)="I00020APPOINTMENTID^T00020ERRORID"_$C(30)
+    ;Restartable Transaction; restore paramters when starting.
+    ; (Params restored are what's passed here + BSDXI)
+    TSTART (BSDXY,BSDXSTART,BSDXEND,BSDXPATID,BSDXRES,BSDXLEN,BSDXNOTE,BSDXATID,BSDXI):T="BSDX ADD NEW APPOINTMENT^BSDX07"
+    ;
+    ; Turn off SDAM APPT PROTOCOL BSDX Entries
 	N BSDXNOEV
 	S BSDXNOEV=1 ;Don't execute BSDX ADD APPOINTMENT protocol
-	K ^BSDXTMP($J)
-	S X="ETRAP^BSDX07",@^%ZOSF("TRAP")
-	S BSDXERR=0
-	S BSDXI=0
-	S BSDXY="^BSDXTMP("_$J_")"
-	S ^BSDXTMP($J,BSDXI)="I00020APPOINTMENTID^T00020ERRORID"_$C(30)
-	S BSDXI=BSDXI+1
-	; v1.3 - date passed in as FM Date, not US date.
-	;Check input data for errors
-	; S:BSDXSTART["@0000" BSDXSTART=$P(BSDXSTART,"@")
-	; S:BSDXEND["@0000" BSDXEND=$P(BSDXEND,"@")
-	; S %DT="T",X=BSDXSTART D ^%DT S BSDXSTART=Y
-	; I BSDXSTART=-1 D ERR(BSDXI+1,"BSDX07 Error: Invalid Start Time") Q
-	; S %DT="T",X=BSDXEND D ^%DT S BSDXEND=Y
-	; I BSDXEND=-1 D ERR(BSDXI+1,"BSDX07 Error: Invalid End Time") Q
-	   ;
-	   ; If C# sends the dates with extra zeros, remove them
+	;
+    ; Set Error Message to be empty
+    N BSDXERR S BSDXERR=0
+	;
+    ;;;test for error inside transaction. See if %ZTER works
+    I $G(bsdxdie) S X=1/0
+    ;;;test
+    ;;;test for TRESTART
+    I $G(bsdxrestart) K bsdxrestart TRESTART
+    ;;;test
+    ;
+    ; -- Start and End Date Processing --
+	; If C# sends the dates with extra zeros, remove them
 	S BSDXSTART=+BSDXSTART,BSDXEND=+BSDXEND
-	   ;
-	   I $L(BSDXEND,".")=1 D ERR(BSDXI+1,"BSDX07 Error: Invalid End Time") Q
-	I BSDXSTART>BSDXEND S BSDXTMP=BSDXEND,BSDXEND=BSDXSTART,BSDXSTART=BSDXTMP
-	I '+BSDXPATID,'$D(^DPT(BSDXPATID,0)) D ERR(BSDXI+1,"BSDX07 Error: Invalid Patient ID") Q
-	;Validate Resource entry
-	S BSDXERR=0 K BSDXRESD
-	I '$D(^BSDXRES("B",BSDXRES)) D ERR(BSDXI+1,"BSDX07 Error: Invalid Resource ID") Q
+	; Are the dates valid? Must be FM Dates > than 2010
+    I BSDXSTART'>3100000 D ERR(BSDXI,"-2~BSDX07 Error: Invalid Start Time") Q
+    I BSDXEND'>3100000 D ERR(BSDXI,"-3~BSDX07 Error: Invalid End Time") Q
+    ; If Ending date doesn't have a time, this is an error
+	I $L(BSDXEND,".")=1 D ERR(BSDXI,"-4~BSDX07 Error: Invalid End Time") Q
+	; If the Start Date is greater than the end date, swap dates
+    N BSDXTMP
+    I BSDXSTART>BSDXEND S BSDXTMP=BSDXEND,BSDXEND=BSDXSTART,BSDXSTART=BSDXTMP
+    ;
+	; Check if the patient exists:
+    ; - DFN valid number?
+    ; - Valid Patient in file 2?
+    I '+BSDXPATID D ERR(BSDXI,"-5~BSDX07 Error: Invalid Patient ID") Q 
+    I '$D(^DPT(BSDXPATID,0)) D ERR(BSDXI,"-6~BSDX07 Error: Invalid Patient ID") Q
+	;
+    ;Validate Resource entry
+	I '$D(^BSDXRES("B",BSDXRES)) D ERR(BSDXI,"-7~BSDX07 Error: Invalid Resource ID") Q
+	N BSDXRESD ; Resource IEN
 	S BSDXRESD=$O(^BSDXRES("B",BSDXRES,0))
-	S BSDXWKIN=0
+	N BSDXRNOD ; Resouce zero node
+    S BSDXRNOD=$G(^BSDXRES(BSDXRESD,0))
+	I BSDXRNOD="" D ERR(BSDXI,"-8~BSDX07 Error: invalid Resource entry.") Q
+	;
+    ; Walk-in (Unscheduled) Appointment?
+    N BSDXWKIN S BSDXWKIN=0
 	I BSDXATID="WALKIN" S BSDXWKIN=1
+    ; Reset Access Type ID if it doesn't say "WALKIN" and isn't a number
 	I BSDXATID'?.N&(BSDXATID'="WALKIN") S BSDXATID=""
 	;
-	S BSDXAPPTID=$$BSDXADD(BSDXSTART,BSDXEND,BSDXPATID,BSDXRESD,BSDXATID)
-	I 'BSDXAPPTID D ERR(BSDXI+1,"BSDX07 Error: Unable to add appointment to BSDX APPOINTMENT file.") Q
+    ; Done with all checks, let's make appointment in BSDX APPOINTMENT
+	N BSDXAPPTID
+    S BSDXAPPTID=$$BSDXADD(BSDXSTART,BSDXEND,BSDXPATID,BSDXRESD,BSDXATID)
+	I 'BSDXAPPTID D ERR(BSDXI,"-9~BSDX07 Error: Unable to add appointment to BSDX APPOINTMENT file.") Q
 	I BSDXNOTE]"" D BSDXWP(BSDXAPPTID,BSDXNOTE)
 	;
-	;Create RPMS Appointment
-	S BSDXRNOD=$G(^BSDXRES(BSDXRESD,0))
-	;I BSDXRNOD="" D ERR(BSDXI+1,"BSDX07 Error: Unable to add appointment -- invalid Resource entry."),BSDXDEL(BSDXAPPTID) Q
-	I BSDXRNOD="" D ERR(BSDXI+1,"BSDX07 Error: Unable to add appointment -- invalid Resource entry.") Q
-	S BSDXSCD=$P(BSDXRNOD,U,4)
-	;I +BSDXSCD,$D(^SC(BSDXSCD,0)) D  I +BSDXERR D ERR(BSDXI+1,"BSDX07 Error: Unable to make appointment.  MAKE^BSDAPI returned error code: "_BSDXERR),BSDXDEL(BSDXAPPTID) Q
-	I +BSDXSCD,$D(^SC(BSDXSCD,0)) D  I +BSDXERR D ERR(BSDXI+1,"BSDX07 Error: Unable to make appointment.  MAKE^BSDAPI returned error code: "_BSDXERR) Q
-	. S BSDXC("PAT")=BSDXPATID
+	; Then Create Subfiles in 2/44 Appointment
+	N BSDXSCD S BSDXSCD=$P(BSDXRNOD,U,4)  ; Hosp Location IEN
+    ; Only if we have a valid Hosp Loc can we make an appointment
+	I +BSDXSCD,$D(^SC(BSDXSCD,0)) D  I +BSDXERR D ERR(BSDXI,"-10~BSDX07 Error: ~MAKE^BSDAPI returned error code: "_BSDXERR) Q
+	. N BSDXC
+    . S BSDXC("PAT")=BSDXPATID
 	. S BSDXC("CLN")=BSDXSCD
 	. S BSDXC("TYP")=3 ;3 for scheduled appts, 4 for walkins
 	. S:BSDXWKIN BSDXC("TYP")=4
 	. S BSDXC("ADT")=BSDXSTART
 	. S BSDXC("LEN")=BSDXLEN
 	. S BSDXC("OI")=$E($G(BSDXNOTE),1,150) ;File 44 has 150 character limit on OTHER field
-	. S BSDXC("OI")=$TR(BSDXC("OI"),";"," ") ;No semicolons allowed by MAKE^BSDAPI
+	. S BSDXC("OI")=$TR(BSDXC("OI"),";"," ") ;No semicolons allowed by MAKE^BSDXAPI
 	. S BSDXC("OI")=$$STRIP(BSDXC("OI")) ;Strip control characters from note
 	. S BSDXC("USR")=DUZ
 	. S BSDXERR=$$MAKE^BSDXAPI(.BSDXC)
 	. Q:BSDXERR
+	. ;Update RPMS Clinic availability
 	. D AVUPDT(BSDXSCD,BSDXSTART,BSDXLEN)
-	. ;L
 	. Q
 	;
-	;Update RPMS Clinic availability
 	;Return Recordset
 	TCOMMIT
 	L -^BSDXAPPT(BSDXPATID)
@@ -124,11 +212,10 @@ BSDXADD(BSDXSTART,BSDXEND,BSDXPATID,BSDXRESD,BSDXATID)	;ADD BSDX APPOINTMENT ENT
 	S BSDXFDA(9002018.4,"+1,",.05)=BSDXPATID
 	S BSDXFDA(9002018.4,"+1,",.07)=BSDXRESD
 	S BSDXFDA(9002018.4,"+1,",.08)=$G(DUZ)
-	;S BSDXFDA(9002018.4,"+1,",.09)=$G(DT) ;MJL 1/25/2007
 	S BSDXFDA(9002018.4,"+1,",.09)=$$NOW^XLFDT
 	S:BSDXATID="WALKIN" BSDXFDA(9002018.4,"+1,",.13)="y"
 	S:BSDXATID?.N BSDXFDA(9002018.4,"+1,",.06)=BSDXATID
-	K BSDXIEN,BSDXMSG
+	N BSDXIEN,BSDXMSG
 	D UPDATE^DIE("","BSDXFDA","BSDXIEN","BSDXMSG")
 	S BSDXAPPTID=+$G(BSDXIEN(1))
 	Q BSDXAPPTID
@@ -177,21 +264,24 @@ ADDEVT3(BSDXRES)	;
 	Q
 	;
 ERR(BSDXI,BSDXERR)	;Error processing
-	D ^%ZTER ;XXX: remove after we figure out the cause of error
-	   S BSDXI=BSDXI+1
+	S BSDXI=BSDXI+1
 	S BSDXERR=$TR(BSDXERR,"^","~")
-	TROLLBACK
+	I $TL>0 TROLLBACK
 	S ^BSDXTMP($J,BSDXI)="0^"_BSDXERR_$C(30)
 	S BSDXI=BSDXI+1
 	S ^BSDXTMP($J,BSDXI)=$C(31)
-	L
+	L -^BSDXAPPT(BSDXPATID)
 	Q
 	;
 ETRAP	;EP Error trap entry
-	D ^%ZTER
-	I '$D(BSDXI) N BSDXI S BSDXI=999999
-	S BSDXI=BSDXI+1
-	D ERR(BSDXI,"BSDX07 Error: "_$G(%ZTERROR))
+	N $ET S $ET="D ^%ZTER HALT"  ; Emergency Error Trap
+    ; Rollback, otherwise ^XTER will be empty from future rollback
+    I $TL>0 TROLLBACK 
+    D ^%ZTER
+    S $EC=""  ; Clear Error
+	; Log error message and send to client
+    I '$D(BSDXI) N BSDXI S BSDXI=0
+	D ERR(BSDXI,"-100~BSDX07 Error: "_$G(%ZTERZE))
 	Q
 	;
 DAY	;;^SUN^MON^TUES^WEDNES^THURS^FRI^SATUR
