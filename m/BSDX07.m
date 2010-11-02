@@ -1,4 +1,4 @@
-BSDX07 ; IHS/OIT/HMW - WINDOWS SCHEDULING RPCS  ; 10/24/10 12:07am
+BSDX07 ; IHS/OIT/HMW - WINDOWS SCHEDULING RPCS  ; 10/31/10 9:38am
 	;;1.42;BSDX;;Sep 29, 2010
 	;
 	; Change Log:
@@ -63,8 +63,16 @@ UT ; Unit Tests
     ; Test for inability to add appointment to 2,44
     ; Test by creating a duplicate appointment
     D APPADD(.ZZZ,3100123.09,3100123.093,3,"Dr Office",30,"Sam's Note",1)
-    D APPADD(.ZZZ,3100123.09,3100123.093,1,"Dr Office",30,"Sam's Note",1)
+    D APPADD(.ZZZ,3100123.09,3100123.093,3,"Dr Office",30,"Sam's Note",1)
     I +$P(^BSDXTMP($J,1),U,2)'=-10 W "Error in -10",!
+    ; Test for normality:
+    D APPADD(.ZZZ,3110123.09,3110123.093,3,"Dr Office",30,"Sam's Note",1)
+    ; Does Appt exist?
+    N APPID S APPID=+$P(^BSDXTMP($J,1),U)
+    I 'APPID W "Error Making Appt-1" QUIT
+    I +^BSDXAPPT(APPID,0)'=3110123.09 W "Error Making Appt-2"
+    I '$D(^DPT(3,"S",3110123.09)) W "Error Making Appt-3"
+    I '$D(^SC(2,"S",3110123.09)) W "Error Making Appt-4"
     QUIT
     ; 
 APPADD(BSDXY,BSDXSTART,BSDXEND,BSDXPATID,BSDXRES,BSDXLEN,BSDXNOTE,BSDXATID)	;EP
