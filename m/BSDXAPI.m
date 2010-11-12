@@ -1,11 +1,13 @@
-BSDXAPI	; IHS/ANMC/LJF - SCHEDULING APIs ; 9/28/10 12:36pm
-	;;1.41;BSDX;;Sep 29, 2010;Build 7
+BSDXAPI	; IHS/ANMC/LJF - SCHEDULING APIs ; 11/2/10 4:36pm
+	;;1.42;BSDX;;Sep 29, 2010;Build 7
 	;Orignal routine is BSDAPI by IHS/LJF, HMW, and MAW
 	;local mods (many) by WV/SMH
 	;Move to BSDX namespace as BSDXAPI from BSDAPI by WV/SMH
 	; Change History:
 	; - Fixed errors having to do uncanceling patient appointments if it was a patient cancelled appointment.
 	; - Use new style Fileman API for storing appointments in file 44 in $$MAKE due to problems with legacy API.
+    ; 2010-11-12:
+    ; - Changed ="C" to ["C" in SCIEN. Cancelled appointments can be "PC" as well. 
 	;
 MAKE1(DFN,CLIN,TYP,DATE,LEN,INFO)	; Simplified PEP w/ parameters for $$MAKE - making appointment
 	; Call like this for DFN 23435 having an appointment at Hospital Location 33
@@ -258,7 +260,7 @@ CI(PAT,CLINIC,DATE,SDIEN)	;PEP; -- returns 1 if appt already checked-in
 SCIEN(PAT,CLINIC,DATE)	;PEP; returns ien for appt in ^SC
 	NEW X,IEN
 	S X=0 F  S X=$O(^SC(CLINIC,"S",DATE,1,X)) Q:'X  Q:$G(IEN)  D
-	. Q:$P($G(^SC(CLINIC,"S",DATE,1,X,0)),U,9)="C"  ;cancelled
+	. Q:$P($G(^SC(CLINIC,"S",DATE,1,X,0)),U,9)["C"  ;cancelled
 	 . I +$G(^SC(CLINIC,"S",DATE,1,X,0))=PAT S IEN=X
 	Q $G(IEN)
 	;
