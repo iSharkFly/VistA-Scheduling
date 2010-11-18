@@ -79,7 +79,7 @@ Known Bugs:
 - No Insert & Delete button handling
 - After applying access templates, the access blocks screen doesn't refresh itself.
 - Logic to remove old access blocks does not work. Only workaround is to remove them manually.
-- Transactions fail when a restart is attempted (Oroville's system only).
+- Transactions fail when a restart is attempted (High volume GT.M systems only).
 - Grids don't respond to mouse wheel movement.
 - Default open location for Apply Template is inappropriate. Should be the last folder navigated.
 - Drag and drop plus delete Message Boxes on Access Blocks editor are unnecessary.
