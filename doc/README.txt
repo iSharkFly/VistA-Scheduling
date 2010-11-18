@@ -90,6 +90,7 @@ Known Bugs:
 - If you click on the print button in the View Appointments User Control (visible in the Make Appointment dialog) and the patient doesn't have any appointments (new patient), there is an error.
 - Program doesn't count walk-in appointments as part of slot calculations. I.e., doesn't consider walk-in's to count against the number of slots for a specific time.
 - For 1 day view, it shows yesterday's appointments if the time difference is less than one day between today's appointment and yesterday's appointment. This is a problem with the Calendar Grid drawing code.
+- Updating Note with Edit Appointment context menu only updates it in the BSDX APPOINTMENT file, not in file 44 (Hosp Location) "S" node.
 
 Other Bugs:
 Put them on the trac server where you got this software.
