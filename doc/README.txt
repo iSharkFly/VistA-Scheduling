@@ -86,7 +86,10 @@ Known Bugs:
 - Appointment drag and drop to the same time at a different clinic doesn't work (complains that the patient already has an appointment at this time).
 - Appointment drap and drop between different windows doesn't cancel the original appointment.
 - Rebooking under certain conditions causes system hangs. Two issues: Program doesn't increment requested available appointment from VISTA, and doesn't deal properly with an appointment that doesn't have a access type (ie an appointment that is not in an Access block).
-
+- Speed issues
+- If you click on the print button in the View Appointments User Control (visible in the Make Appointment dialog) and the patient doesn't have any appointments (new patient), there is an error.
+- Program doesn't count walk-in appointments as part of slot calculations. I.e., doesn't consider walk-in's to count against the number of slots for a specific time.
+- For 1 day view, it shows yesterday's appointments if the time difference is less than one day between today's appointment and yesterday's appointment. This is a problem with the Calendar Grid drawing code.
 
 Other Bugs:
 Put them on the trac server where you got this software.
@@ -95,4 +98,5 @@ Enhancement requests:
 - Show Appointment Status in patient information windows. In other words show if the appointment is a future, checked-in, checked-out, or canceled status. (Oroville)
 - Allow all users to access all clinics by default (EHS/PHH)
 - Summary Schedule report based on Clinic Schedule report. Remove Phone, Address, Appointment Made By, and on fields.
-
+- Print Appointment Letter when Appointment is made (PHH Users workflow).
+- Make printing an extensible module for end user customization (Oroville and PHH)
