@@ -676,6 +676,8 @@
             }
             else
             {
+                //columnToPutAppt = (startTime - this.m_dtStart).Days + 1;
+                //test sam
                 columnToPutAppt = (startTime - this.m_dtStart).Days + 1;
             }
             if (columnToPutAppt < 1)

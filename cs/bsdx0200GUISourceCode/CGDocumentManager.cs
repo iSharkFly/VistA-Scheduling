@@ -1034,7 +1034,7 @@ namespace IndianHealthService.ClinicalScheduling
 
 		}
 
-		delegate DataTable RPMSDataTableDelegate(string CommandString, string TableName);
+		public delegate DataTable RPMSDataTableDelegate(string CommandString, string TableName);
 
 		public DataTable RPMSDataTable(string sSQL, string sTableName)
 		{
@@ -1047,7 +1047,7 @@ namespace IndianHealthService.ClinicalScheduling
 #endif
 			try
 			{
-				System.IntPtr pHandle = this.Handle;
+				//System.IntPtr pHandle = this.Handle;
 				RPMSDataTableDelegate rdtd = new RPMSDataTableDelegate(ConnectInfo.RPMSDataTable);
 				dtOut = (DataTable) this.Invoke(rdtd, new object[] {sSQL, sTableName});
 			}

@@ -67,6 +67,7 @@ namespace IndianHealthService.ClinicalScheduling
             this.menuItem1 = new System.Windows.Forms.MenuItem();
             this.mnuLoadTemplate = new System.Windows.Forms.MenuItem();
             this.mnuSaveTemplate = new System.Windows.Forms.MenuItem();
+            this.mnuDeleteAllAppointments = new System.Windows.Forms.MenuItem();
             this.menuItem6 = new System.Windows.Forms.MenuItem();
             this.mnuSchedulingManagment = new System.Windows.Forms.MenuItem();
             this.menuItem5 = new System.Windows.Forms.MenuItem();
@@ -89,6 +90,7 @@ namespace IndianHealthService.ClinicalScheduling
             this.mnuHelp = new System.Windows.Forms.MenuItem();
             this.mnuHelpAbout = new System.Windows.Forms.MenuItem();
             this.splitter1 = new System.Windows.Forms.Splitter();
+            this.saveAccessBlocksWorker = new System.ComponentModel.BackgroundWorker();
             this.calendarGrid1 = new IndianHealthService.ClinicalScheduling.CalendarGrid();
             this.panelRight.SuspendLayout();
             this.panelClip.SuspendLayout();
@@ -103,7 +105,7 @@ namespace IndianHealthService.ClinicalScheduling
             this.panelRight.Dock = System.Windows.Forms.DockStyle.Right;
             this.panelRight.Location = new System.Drawing.Point(728, 0);
             this.panelRight.Name = "panelRight";
-            this.panelRight.Size = new System.Drawing.Size(120, 412);
+            this.panelRight.Size = new System.Drawing.Size(120, 393);
             this.panelRight.TabIndex = 1;
             // 
             // panelClip
@@ -124,12 +126,12 @@ namespace IndianHealthService.ClinicalScheduling
             this.lstClip.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lstClip.Location = new System.Drawing.Point(0, 32);
             this.lstClip.Name = "lstClip";
-            this.lstClip.Size = new System.Drawing.Size(120, 407);
+            this.lstClip.Size = new System.Drawing.Size(120, 416);
             this.lstClip.TabIndex = 0;
             this.lstClip.DragDrop += new System.Windows.Forms.DragEventHandler(this.lstClip_DragDrop);
-            this.lstClip.MouseMove += new System.Windows.Forms.MouseEventHandler(this.lstClip_MouseMove);
-            this.lstClip.MouseDown += new System.Windows.Forms.MouseEventHandler(this.lstClip_MouseDown);
             this.lstClip.DragEnter += new System.Windows.Forms.DragEventHandler(this.lstClip_DragEnter);
+            this.lstClip.MouseDown += new System.Windows.Forms.MouseEventHandler(this.lstClip_MouseDown);
+            this.lstClip.MouseMove += new System.Windows.Forms.MouseEventHandler(this.lstClip_MouseMove);
             // 
             // ctxApptClipMenu
             // 
@@ -164,7 +166,7 @@ namespace IndianHealthService.ClinicalScheduling
             // 
             this.panelBottom.Controls.Add(this.statusBar1);
             this.panelBottom.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panelBottom.Location = new System.Drawing.Point(8, 388);
+            this.panelBottom.Location = new System.Drawing.Point(8, 369);
             this.panelBottom.Name = "panelBottom";
             this.panelBottom.Size = new System.Drawing.Size(720, 24);
             this.panelBottom.TabIndex = 2;
@@ -216,7 +218,7 @@ namespace IndianHealthService.ClinicalScheduling
             this.panelCenter.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panelCenter.Location = new System.Drawing.Point(8, 24);
             this.panelCenter.Name = "panelCenter";
-            this.panelCenter.Size = new System.Drawing.Size(712, 364);
+            this.panelCenter.Size = new System.Drawing.Size(712, 345);
             this.panelCenter.TabIndex = 4;
             // 
             // ctxCalendarGrid
@@ -252,7 +254,7 @@ namespace IndianHealthService.ClinicalScheduling
             this.tvSchedules.HotTracking = true;
             this.tvSchedules.Location = new System.Drawing.Point(0, 0);
             this.tvSchedules.Name = "tvSchedules";
-            this.tvSchedules.Size = new System.Drawing.Size(8, 412);
+            this.tvSchedules.Size = new System.Drawing.Size(8, 393);
             this.tvSchedules.Sorted = true;
             this.tvSchedules.TabIndex = 5;
             // 
@@ -270,6 +272,7 @@ namespace IndianHealthService.ClinicalScheduling
             this.menuItem1.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
             this.mnuLoadTemplate,
             this.mnuSaveTemplate,
+            this.mnuDeleteAllAppointments,
             this.menuItem6,
             this.mnuSchedulingManagment,
             this.menuItem5,
@@ -290,26 +293,34 @@ namespace IndianHealthService.ClinicalScheduling
             this.mnuSaveTemplate.Text = "&Save Template";
             this.mnuSaveTemplate.Click += new System.EventHandler(this.mnuSaveTemplate_Click);
             // 
+            // mnuDeleteAllAppointments
+            // 
+            this.mnuDeleteAllAppointments.Enabled = false;
+            this.mnuDeleteAllAppointments.Index = 2;
+            this.mnuDeleteAllAppointments.Shortcut = System.Windows.Forms.Shortcut.CtrlD;
+            this.mnuDeleteAllAppointments.Text = "&Delete All Appointments";
+            this.mnuDeleteAllAppointments.Click += new System.EventHandler(this.mnuDeleteAllAppointments_Click);
+            // 
             // menuItem6
             // 
-            this.menuItem6.Index = 2;
+            this.menuItem6.Index = 3;
             this.menuItem6.Text = "-";
             // 
             // mnuSchedulingManagment
             // 
-            this.mnuSchedulingManagment.Index = 3;
+            this.mnuSchedulingManagment.Index = 4;
             this.mnuSchedulingManagment.Shortcut = System.Windows.Forms.Shortcut.CtrlShiftM;
             this.mnuSchedulingManagment.Text = "Scheduling &Management";
             this.mnuSchedulingManagment.Click += new System.EventHandler(this.mnuSchedulingManagment_Click);
             // 
             // menuItem5
             // 
-            this.menuItem5.Index = 4;
+            this.menuItem5.Index = 5;
             this.menuItem5.Text = "-";
             // 
             // mnuClose
             // 
-            this.mnuClose.Index = 5;
+            this.mnuClose.Index = 6;
             this.mnuClose.Shortcut = System.Windows.Forms.Shortcut.CtrlW;
             this.mnuClose.Text = "&Close";
             this.mnuClose.Click += new System.EventHandler(this.mnuClose_Click);
@@ -445,9 +456,16 @@ namespace IndianHealthService.ClinicalScheduling
             this.splitter1.Dock = System.Windows.Forms.DockStyle.Right;
             this.splitter1.Location = new System.Drawing.Point(720, 24);
             this.splitter1.Name = "splitter1";
-            this.splitter1.Size = new System.Drawing.Size(8, 364);
+            this.splitter1.Size = new System.Drawing.Size(8, 345);
             this.splitter1.TabIndex = 6;
             this.splitter1.TabStop = false;
+            // 
+            // saveAccessBlocksWorker
+            // 
+            this.saveAccessBlocksWorker.WorkerReportsProgress = true;
+            this.saveAccessBlocksWorker.DoWork += new System.ComponentModel.DoWorkEventHandler(this.saveAccessBlocksWorker_DoWork);
+            this.saveAccessBlocksWorker.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.saveAccessBlocksWorker_ProgressChanged);
+            this.saveAccessBlocksWorker.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.saveAccessBlocksWorker_RunWorkerCompleted);
             // 
             // calendarGrid1
             // 
@@ -468,19 +486,19 @@ namespace IndianHealthService.ClinicalScheduling
             this.calendarGrid1.Name = "calendarGrid1";
             this.calendarGrid1.Resources = ((System.Collections.ArrayList)(resources.GetObject("calendarGrid1.Resources")));
             this.calendarGrid1.SelectedAppointment = 0;
-            this.calendarGrid1.Size = new System.Drawing.Size(712, 364);
+            this.calendarGrid1.Size = new System.Drawing.Size(712, 345);
             this.calendarGrid1.StartDate = new System.DateTime(2003, 1, 27, 0, 0, 0, 0);
             this.calendarGrid1.TabIndex = 2;
             this.calendarGrid1.TimeScale = 20;
-            this.calendarGrid1.DoubleClick += new System.EventHandler(this.calendarGrid1_DoubleClick);
-            this.calendarGrid1.CGSelectionChanged += new IndianHealthService.ClinicalScheduling.CGSelectionChangedHandler(this.calendarGrid1_CGSelectionChanged);
-            this.calendarGrid1.CGAppointmentChanged += new IndianHealthService.ClinicalScheduling.CGAppointmentChangedHandler(this.calendarGrid1_CGAppointmentChanged);
             this.calendarGrid1.CGAppointmentAdded += new IndianHealthService.ClinicalScheduling.CGAppointmentChangedHandler(this.calendarGrid1_CGAppointmentAdded);
+            this.calendarGrid1.CGAppointmentChanged += new IndianHealthService.ClinicalScheduling.CGAppointmentChangedHandler(this.calendarGrid1_CGAppointmentChanged);
+            this.calendarGrid1.CGSelectionChanged += new IndianHealthService.ClinicalScheduling.CGSelectionChangedHandler(this.calendarGrid1_CGSelectionChanged);
+            this.calendarGrid1.DoubleClick += new System.EventHandler(this.calendarGrid1_DoubleClick);
             // 
             // CGAVView
             // 
             this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
-            this.ClientSize = new System.Drawing.Size(848, 412);
+            this.ClientSize = new System.Drawing.Size(848, 393);
             this.Controls.Add(this.panelCenter);
             this.Controls.Add(this.splitter1);
             this.Controls.Add(this.panelTop);
@@ -491,8 +509,8 @@ namespace IndianHealthService.ClinicalScheduling
             this.Menu = this.mainMenu1;
             this.Name = "CGAVView";
             this.Text = "CGAVView";
-            this.Load += new System.EventHandler(this.CGAVView_Load);
             this.Closing += new System.ComponentModel.CancelEventHandler(this.CGAVView_Closing);
+            this.Load += new System.EventHandler(this.CGAVView_Load);
             this.panelRight.ResumeLayout(false);
             this.panelClip.ResumeLayout(false);
             this.panelBottom.ResumeLayout(false);
@@ -555,6 +573,8 @@ namespace IndianHealthService.ClinicalScheduling
 		private System.Windows.Forms.MenuItem ctxCalGridAdd;
 		private System.Windows.Forms.MenuItem ctxCalGridEdit;
 		private System.Windows.Forms.MenuItem ctxCalGridDelete;
+        private BackgroundWorker saveAccessBlocksWorker;
+        private MenuItem mnuDeleteAllAppointments;
 		private bool				m_bDragDropStart = false;
 
 		#endregion
@@ -748,6 +768,34 @@ namespace IndianHealthService.ClinicalScheduling
 			}
 		}//End AvailabilityAddNew
 
+        private void MassAppointmentDelete()
+        {
+            DialogResult msgResult = MessageBox.Show("Delete all Access Slots?", "Delete Slots?",MessageBoxButtons.YesNo);
+            if (msgResult != DialogResult.Yes) return;
+
+            CGAppointments appointments = new CGAppointments();
+            appointments = this.Document.AVBlocks;
+
+            foreach (CGAppointment a in appointments.AppointmentTable.Values)
+            {
+                int nApptID = a.AppointmentKey;
+                Debug.Assert(nApptID != 0);
+                try
+                {
+                    Document.DeleteAvailability(nApptID);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Unable to delete access block" + ex.Message, "Clinical Scheduling");
+                }
+
+            }
+
+            this.m_DocManager.UpdateViews((string)this.m_Document.Resources[0], "");
+            RaiseRPMSEvent("BSDX SCHEDULE", m_Document.DocName);
+            this.calendarGrid1.Invalidate();
+        }
+
 		private void AppointmentDelete() 
 		{
 			calendarGrid1.CGToolTip.Active = false;
@@ -755,11 +803,6 @@ namespace IndianHealthService.ClinicalScheduling
 			if (calendarGrid1.SelectedAppointments.AppointmentTable.Count > 1)
 				sMsg = " these access blocks?";
 
-			if (MessageBox.Show("Are you sure you want to delete" + sMsg, "Clinical Scheduling",  MessageBoxButtons.YesNo) != DialogResult.Yes)
-			{
-				calendarGrid1.CGToolTip.Active = true;
-				return;
-			}
 			calendarGrid1.CGToolTip.Active = true;
 
 			bool bDeleted = false;
@@ -907,9 +950,6 @@ namespace IndianHealthService.ClinicalScheduling
 			{
 //				this.DocManager.EnableAutoRefresh(false);
 
-				if (MessageBox.Show("Are you sure you want to move this access block?", "Clinical Scheduling",  MessageBoxButtons.YesNo) != DialogResult.Yes)
-					return;
-
 				m_Document.ChangeAppointmentTime(e.Appointment, e.StartTime, e.EndTime, e.Resource);
 				this.m_DocManager.UpdateViews((string) this.m_Document.Resources[0], "");
 			}
@@ -1009,71 +1049,73 @@ namespace IndianHealthService.ClinicalScheduling
 
 			try
 			{
-				OpenFileDialog openFileDialog1 = dlg.FileDialog;
-				Stream streamFile;
-				if((streamFile = openFileDialog1.OpenFile())== null)
-				{
-					MessageBox.Show("Unable to open template file.");
-					return;
-				}
+                this.saveAccessBlocksWorker.RunWorkerAsync(dlg);
+                //OpenFileDialog openFileDialog1 = dlg.FileDialog;
+                //openFileDialog1.RestoreDirectory = false; // go back to our dir
+                //Stream streamFile;
+                //if((streamFile = openFileDialog1.OpenFile())== null)
+                //{
+                //    MessageBox.Show("Unable to open template file.");
+                //    return;
+                //}
 
-				BinaryFormatter formatter = new BinaryFormatter();
-				CGAppointments cgaTemp = (CGAppointments) formatter.Deserialize(streamFile);
-				streamFile.Close();
+                //BinaryFormatter formatter = new BinaryFormatter();
+                //CGAppointments cgaTemp = (CGAppointments) formatter.Deserialize(streamFile);
+                //streamFile.Close();
 
-				DateTime dtStart = dlg.StartDate;
-                DateTime newStartDate, newEndDate;
-                this.Document.WeekNeedsRefresh(1,dtStart, out newStartDate, out newEndDate);
-                dtStart = newStartDate;
-				int nWeeksToApply = dlg.WeeksToApply;
-				DateTime dtEnd = dtStart.AddDays(6); // or 7?
+                //DateTime dtStart = dlg.StartDate;
+                //DateTime newStartDate, newEndDate;
+                //this.Document.WeekNeedsRefresh(1,dtStart, out newStartDate, out newEndDate);
+                //dtStart = newStartDate;
+                //int nWeeksToApply = dlg.WeeksToApply;
+                //DateTime dtEnd = dtStart.AddDays(6); // or 7?
 
-				string sResourceID = this.m_Document.ResourceID.ToString();
-				DataTable dt;
+                //string sResourceID = this.m_Document.ResourceID.ToString();
+                //DataTable dt;
 
-				for (int j=1; j < nWeeksToApply + 1; j++)
-				{
-					//Convert start and end to string
-					//string sStart = dtStart.ToString("M/d/yyyy");
-					//string sEnd = dtEnd.ToString("M/d/yyyy");
-                    //i18n
-                    string sStart = FMDateTime.Create(dtStart).DateOnly.FMDateString;
-                    string sEnd = FMDateTime.Create(dtEnd).DateOnly.FMDateString;
-					//Cancel all existing access blocks in the date range
-					string sSql = "BSDX CANCEL AV BY DATE^" + sResourceID + "^" + sStart + "^" + sEnd;
-					dt = this.m_DocManager.RPMSDataTable(sSql, "Cancelled");
+                //for (int j=1; j < nWeeksToApply + 1; j++)
+                //{
+                //    //Convert start and end to string
+                //    //string sStart = dtStart.ToString("M/d/yyyy");
+                //    //string sEnd = dtEnd.ToString("M/d/yyyy");
+                //    //i18n
+                //    string sStart = FMDateTime.Create(dtStart).DateOnly.FMDateString;
+                //    string sEnd = FMDateTime.Create(dtEnd).DateOnly.FMDateString;
+                //    //Cancel all existing access blocks in the date range
+                //    string sSql = "BSDX CANCEL AV BY DATE^" + sResourceID + "^" + sStart + "^" + sEnd;
+                //    dt = this.m_DocManager.RPMSDataTable(sSql, "Cancelled");
 
-					//for each CGAppointment in AVBlocks, call AddNew
-					string sResource = "";
-					sResource = (string) this.Document.Resources[0];
-					foreach (CGAppointment a in cgaTemp.AppointmentTable.Values)
-					{
-						//Change the resource to the current one
-						a.Resource = sResource;
+                //    //for each CGAppointment in AVBlocks, call AddNew
+                //    string sResource = "";
+                //    sResource = (string) this.Document.Resources[0];
+                //    foreach (CGAppointment a in cgaTemp.AppointmentTable.Values)
+                //    {
+                //        //Change the resource to the current one
+                //        a.Resource = sResource;
 
-						//Change the date to correspond to the GridColumn member
-						int col = a.GridColumn;
-						col--;
-						DateTime dBuildDate = dtStart.Date;
-						dBuildDate = dBuildDate.AddDays(col);
-						dBuildDate = dBuildDate.AddHours(a.StartTime.Hour);
-						dBuildDate = dBuildDate.AddMinutes(a.StartTime.Minute);
-						a.StartTime = dBuildDate;
-						dBuildDate = dtStart.Date;
-						dBuildDate = dBuildDate.AddDays(col);
-						dBuildDate = dBuildDate.AddHours(a.EndTime.Hour);
-						dBuildDate = dBuildDate.AddMinutes(a.EndTime.Minute);
-						a.EndTime = dBuildDate;
+                //        //Change the date to correspond to the GridColumn member
+                //        int col = a.GridColumn;
+                //        col--;
+                //        DateTime dBuildDate = dtStart.Date;
+                //        dBuildDate = dBuildDate.AddDays(col);
+                //        dBuildDate = dBuildDate.AddHours(a.StartTime.Hour);
+                //        dBuildDate = dBuildDate.AddMinutes(a.StartTime.Minute);
+                //        a.StartTime = dBuildDate;
+                //        dBuildDate = dtStart.Date;
+                //        dBuildDate = dBuildDate.AddDays(col);
+                //        dBuildDate = dBuildDate.AddHours(a.EndTime.Hour);
+                //        dBuildDate = dBuildDate.AddMinutes(a.EndTime.Minute);
+                //        a.EndTime = dBuildDate;
 
-						//Call Document to add a new appointment
-						this.Document.CreateAppointmentAuto(a);
-					}
+                //        //Call Document to add a new appointment
+                //        this.Document.CreateAppointmentAuto(a);
+                //    }
 
-					//Increment start and end
-					dtStart = dtStart.AddDays(7);
-					dtEnd = dtStart.AddDays(6);
+                //    //Increment start and end
+                //    dtStart = dtStart.AddDays(7);
+                //    dtEnd = dtStart.AddDays(6);
 
-				}//end for
+				// }//end for
 				try
 				{
 					RaiseRPMSEvent("BSDX SCHEDULE", m_Document.DocName);
@@ -1423,5 +1465,100 @@ namespace IndianHealthService.ClinicalScheduling
 			cg.AutoScrollPosition = new Point(50, nHeight);
 			cg.Invalidate();
 		}
+
+
+
+        private void saveAccessBlocksWorker_DoWork(object sender, DoWorkEventArgs e)
+        {
+            BackgroundWorker worker = (BackgroundWorker)sender;
+            DAccessTemplate dlg = (DAccessTemplate)e.Argument;
+
+            OpenFileDialog openFileDialog1 = dlg.FileDialog;
+            openFileDialog1.RestoreDirectory = false; // go back to our dir
+            Stream streamFile;
+            if ((streamFile = openFileDialog1.OpenFile()) == null)
+            {
+                MessageBox.Show("Unable to open template file.");
+                return;
+            }
+
+            BinaryFormatter formatter = new BinaryFormatter();
+            CGAppointments cgaTemp = (CGAppointments)formatter.Deserialize(streamFile);
+            streamFile.Close();
+
+            DateTime dtStart = dlg.StartDate;
+            DateTime newStartDate, newEndDate;
+            this.Document.WeekNeedsRefresh(1, dtStart, out newStartDate, out newEndDate);
+            dtStart = newStartDate;
+            int nWeeksToApply = dlg.WeeksToApply;
+            DateTime dtEnd = dtStart.AddDays(6); // or 7?
+
+            string sResourceID = this.m_Document.ResourceID.ToString();
+            DataTable dt;
+
+            for (int j = 1; j < nWeeksToApply + 1; j++)
+            {
+                float fProgressPercentage = ((float)j / (float)nWeeksToApply) * 100;
+                int iProgressPercentage = (int)fProgressPercentage;
+                worker.ReportProgress(iProgressPercentage);
+                //Convert start and end to string
+                //string sStart = dtStart.ToString("M/d/yyyy");
+                //string sEnd = dtEnd.ToString("M/d/yyyy");
+                //i18n
+                string sStart = FMDateTime.Create(dtStart).DateOnly.FMDateString;
+                string sEnd = FMDateTime.Create(dtEnd).DateOnly.FMDateString;
+                //Cancel all existing access blocks in the date range
+                string sSql = "BSDX CANCEL AV BY DATE^" + sResourceID + "^" + sStart + "^" + sEnd;
+                CGDocumentManager.RPMSDataTableDelegate d = new CGDocumentManager.RPMSDataTableDelegate(m_DocManager.RPMSDataTable);
+                //dt = this.m_DocManager.RPMSDataTable(sSql, "Cancelled");
+                dt = d(sSql, "Cancelled");
+                //for each CGAppointment in AVBlocks, call AddNew
+                string sResource = "";
+                sResource = (string)this.Document.Resources[0];
+                foreach (CGAppointment a in cgaTemp.AppointmentTable.Values)
+                {
+                    //Change the resource to the current one
+                    a.Resource = sResource;
+
+                    //Change the date to correspond to the GridColumn member
+                    int col = a.GridColumn;
+                    col--;
+                    DateTime dBuildDate = dtStart.Date;
+                    dBuildDate = dBuildDate.AddDays(col);
+                    dBuildDate = dBuildDate.AddHours(a.StartTime.Hour);
+                    dBuildDate = dBuildDate.AddMinutes(a.StartTime.Minute);
+                    a.StartTime = dBuildDate;
+                    dBuildDate = dtStart.Date;
+                    dBuildDate = dBuildDate.AddDays(col);
+                    dBuildDate = dBuildDate.AddHours(a.EndTime.Hour);
+                    dBuildDate = dBuildDate.AddMinutes(a.EndTime.Minute);
+                    a.EndTime = dBuildDate;
+
+                    //Call Document to add a new appointment
+                    this.Document.CreateAppointmentAuto(a);
+                }
+
+                //Increment start and end
+                dtStart = dtStart.AddDays(7);
+                dtEnd = dtStart.AddDays(6);
+
+            }
+
+        }
+
+        private void saveAccessBlocksWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            this.statusBar1.Text = "Done saving access blocks.";
+        }
+
+        private void saveAccessBlocksWorker_ProgressChanged(object sender, ProgressChangedEventArgs e)
+        {
+            this.statusBar1.Text = "Saving Data to VISTA. Progress: " + e.ProgressPercentage + " %";
+        }
+
+        private void mnuDeleteAllAppointments_Click(object sender, EventArgs e)
+        {
+            MassAppointmentDelete();
+        }
 	}
 }

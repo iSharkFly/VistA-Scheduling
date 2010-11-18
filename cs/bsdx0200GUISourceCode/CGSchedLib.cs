@@ -94,17 +94,20 @@ namespace IndianHealthService.ClinicalScheduling
 			}
 			
 			string sResName;
+            // for each resource
 			for (int i = 0; i < nSize; i++) 
 			{
 				sResName = saryResourceNames[i].ToString();
-
+                //Gets all the slots (or Availabities, if you like)
 				rsSlotSchedule = CGSchedLib.CreateAssignedSlotSchedule(docManager, sResName, StartTime, EndTime, saryApptTypes,/**/ stType, sSearchInfo);
 				OutputArray(rsSlotSchedule, "rsSlotSchedule");
-
+                //if we have slots
 				if (rsSlotSchedule.Rows.Count > 0 ) 
 				{
+                    // Get appointment count to substract from the slots
 					rsApptSchedule = CGSchedLib.CreateAppointmentSlotSchedule(docManager, sResName, StartTime, EndTime, stType);
 					OutputArray(rsApptSchedule, "rsApptSchedule");
+                    // Perform the substraction
 					rsTemp1 = CGSchedLib.SubtractSlotsRS2(rsSlotSchedule, rsApptSchedule, sResName);
 					OutputArray(rsTemp1, "rsTemp1");
 				}
@@ -113,6 +116,7 @@ namespace IndianHealthService.ClinicalScheduling
 					rsTemp1 = rsSlotSchedule;
 					OutputArray(rsTemp1, "rsTemp1");
 				}
+                // if only one resource was passed in, its availablility is what we want
 				if (i == 0) 
 				{
 					rsOut = rsTemp1;
@@ -585,6 +589,13 @@ namespace IndianHealthService.ClinicalScheduling
 			while (!((bDirty == false) || (rTBArray.Count == 1)));
 		}
 
+        /// <summary>
+        /// My guess is that this calculates remaining slots
+        /// </summary>
+        /// <param name="rsBlocks1"></param>
+        /// <param name="rsBlocks2"></param>
+        /// <param name="sResource"></param>
+        /// <returns></returns>
 		public static DataTable SubtractSlotsRS2(DataTable rsBlocks1, DataTable rsBlocks2, string sResource)
 		{
 			//Subtract slots in rsBlocks2 from rsBlocks1
@@ -769,7 +780,11 @@ namespace IndianHealthService.ClinicalScheduling
 			return rsCopy;
 		}//end IntersectBlocks
 
-
+        /// <summary>
+        /// Number of minutes since Jan 1 1980
+        /// </summary>
+        /// <param name="d">Date to compare</param>
+        /// <returns>Minutes as integer</returns>
 		public static int MinSince80(DateTime d)
 		{
 			//Returns the total minutes between d and 1 Jan 1980
@@ -877,6 +892,7 @@ namespace IndianHealthService.ClinicalScheduling
 			rect1.Y = CGSchedLib.MinSince80(dStart1);
 			rect1.Height = CGSchedLib.MinSince80(dEnd1) - rect1.Y;
 
+            //for each row in the availability schedule
 			foreach (DataRow r in rsBlock.Rows) 
 			{
 				dStart2 = (DateTime) r[rsBlock.Columns["START_TIME"]];

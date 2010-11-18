@@ -35,7 +35,7 @@ namespace IndianHealthService.ClinicalScheduling
 		{
 
 			UpdateDialogData(true);
-
+            //this.cmdSelectTemplate.Focus(); // Focus on first button on form
 		}
 
 		/// <summary>
@@ -112,11 +112,6 @@ namespace IndianHealthService.ClinicalScheduling
 			//Open the file dialog and pick a file
 			m_bSelectedFile = false;
 			OpenFileDialog openFileDialog1 = new OpenFileDialog();
-			string sPath = "";
-			sPath = Environment.GetFolderPath(Environment.SpecialFolder.Personal);
-
-			openFileDialog1.InitialDirectory = @"c:\" ;
-			openFileDialog1.InitialDirectory = sPath ;
 			openFileDialog1.Filter = "Schedule Template Files (*.bsdxa)|*.bsdxa|All files (*.*)|*.*" ;
 			openFileDialog1.FilterIndex = 0 ;
 			openFileDialog1.RestoreDirectory = true ;
@@ -184,7 +179,7 @@ namespace IndianHealthService.ClinicalScheduling
             this.cmdCancel.Location = new System.Drawing.Point(360, 8);
             this.cmdCancel.Name = "cmdCancel";
             this.cmdCancel.Size = new System.Drawing.Size(56, 24);
-            this.cmdCancel.TabIndex = 2;
+            this.cmdCancel.TabIndex = 5;
             this.cmdCancel.Text = "Cancel";
             // 
             // cmdOK
@@ -193,7 +188,7 @@ namespace IndianHealthService.ClinicalScheduling
             this.cmdOK.Location = new System.Drawing.Point(280, 8);
             this.cmdOK.Name = "cmdOK";
             this.cmdOK.Size = new System.Drawing.Size(64, 24);
-            this.cmdOK.TabIndex = 1;
+            this.cmdOK.TabIndex = 4;
             this.cmdOK.Text = "OK";
             this.cmdOK.Click += new System.EventHandler(this.cmdOK_Click);
             // 
@@ -233,7 +228,7 @@ namespace IndianHealthService.ClinicalScheduling
             this.cmdSelectTemplate.Location = new System.Drawing.Point(24, 40);
             this.cmdSelectTemplate.Name = "cmdSelectTemplate";
             this.cmdSelectTemplate.Size = new System.Drawing.Size(136, 32);
-            this.cmdSelectTemplate.TabIndex = 9;
+            this.cmdSelectTemplate.TabIndex = 1;
             this.cmdSelectTemplate.Text = "Select Access Template";
             this.cmdSelectTemplate.Click += new System.EventHandler(this.cmdSelectTemplate_Click);
             // 
@@ -253,7 +248,7 @@ namespace IndianHealthService.ClinicalScheduling
             this.dtpStartDate.Location = new System.Drawing.Point(176, 104);
             this.dtpStartDate.Name = "dtpStartDate";
             this.dtpStartDate.Size = new System.Drawing.Size(184, 20);
-            this.dtpStartDate.TabIndex = 11;
+            this.dtpStartDate.TabIndex = 2;
             // 
             // udWeeksToApply
             // 
@@ -270,7 +265,7 @@ namespace IndianHealthService.ClinicalScheduling
             0});
             this.udWeeksToApply.Name = "udWeeksToApply";
             this.udWeeksToApply.Size = new System.Drawing.Size(96, 20);
-            this.udWeeksToApply.TabIndex = 12;
+            this.udWeeksToApply.TabIndex = 3;
             this.udWeeksToApply.Value = new decimal(new int[] {
             1,
             0,

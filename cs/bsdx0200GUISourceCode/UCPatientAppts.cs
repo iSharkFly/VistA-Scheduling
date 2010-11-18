@@ -118,11 +118,21 @@ namespace IndianHealthService.ClinicalScheduling
 
         private void btnPrint_Click(object sender, EventArgs e)
         {
+            //Fixes bug reported by EHS. Don't print if there are no appointments as this causes null ref
+            if (dtAppt.Rows.Count == 0)
+            {
+                MessageBox.Show("No Appointments to Print", "Nothing to Print");
+                return;
+            }
+
             rowToPrint = 0; //reset row to print
             DialogResult res = printDialog1.ShowDialog();
             if (res == DialogResult.OK) this.printDialog1.Document.Print();
         }
 
+        /// <summary>
+        /// Sets default page orientation to landscape.
+        /// </summary>
         private void PrintPtAppts_QueryPageSettings(object sender, System.Drawing.Printing.QueryPageSettingsEventArgs e)
         {
             e.PageSettings.Landscape = true;
