@@ -654,10 +654,10 @@ namespace IndianHealthService.ClinicalScheduling
             this.tvSchedules.Size = new System.Drawing.Size(128, 479);
             this.tvSchedules.Sorted = true;
             this.tvSchedules.TabIndex = 1;
-            this.tvSchedules.DoubleClick += new System.EventHandler(this.tvSchedules_DoubleClick);
-            this.tvSchedules.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.tvSchedules_AfterSelect);
             this.tvSchedules.BeforeSelect += new System.Windows.Forms.TreeViewCancelEventHandler(this.tvSchedules_BeforeSelect);
+            this.tvSchedules.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.tvSchedules_AfterSelect);
             this.tvSchedules.Click += new System.EventHandler(this.tvSchedules_Click);
+            this.tvSchedules.DoubleClick += new System.EventHandler(this.tvSchedules_DoubleClick);
             // 
             // contextMenu1
             // 
@@ -721,13 +721,13 @@ namespace IndianHealthService.ClinicalScheduling
             this.lstClip.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lstClip.Location = new System.Drawing.Point(0, 32);
             this.lstClip.Name = "lstClip";
-            this.lstClip.Size = new System.Drawing.Size(128, 407);
+            this.lstClip.Size = new System.Drawing.Size(128, 416);
             this.lstClip.TabIndex = 0;
             this.lstClip.SelectedIndexChanged += new System.EventHandler(this.lstClip_SelectedIndexChanged);
             this.lstClip.DragDrop += new System.Windows.Forms.DragEventHandler(this.lstClip_DragDrop);
-            this.lstClip.MouseMove += new System.Windows.Forms.MouseEventHandler(this.lstClip_MouseMove);
-            this.lstClip.MouseDown += new System.Windows.Forms.MouseEventHandler(this.lstClip_MouseDown);
             this.lstClip.DragEnter += new System.Windows.Forms.DragEventHandler(this.lstClip_DragEnter);
+            this.lstClip.MouseDown += new System.Windows.Forms.MouseEventHandler(this.lstClip_MouseDown);
+            this.lstClip.MouseMove += new System.Windows.Forms.MouseEventHandler(this.lstClip_MouseMove);
             // 
             // ctxApptClipMenu
             // 
@@ -821,10 +821,10 @@ namespace IndianHealthService.ClinicalScheduling
             this.calendarGrid1.StartDate = new System.DateTime(2003, 1, 27, 0, 0, 0, 0);
             this.calendarGrid1.TabIndex = 0;
             this.calendarGrid1.TimeScale = 20;
-            this.calendarGrid1.DoubleClick += new System.EventHandler(this.calendarGrid1_DoubleClick);
-            this.calendarGrid1.CGSelectionChanged += new IndianHealthService.ClinicalScheduling.CGSelectionChangedHandler(this.calendarGrid1_CGSelectionChanged);
-            this.calendarGrid1.CGAppointmentChanged += new IndianHealthService.ClinicalScheduling.CGAppointmentChangedHandler(this.calendarGrid1_CGAppointmentChanged);
             this.calendarGrid1.CGAppointmentAdded += new IndianHealthService.ClinicalScheduling.CGAppointmentChangedHandler(this.calendarGrid1_CGAppointmentAdded);
+            this.calendarGrid1.CGAppointmentChanged += new IndianHealthService.ClinicalScheduling.CGAppointmentChangedHandler(this.calendarGrid1_CGAppointmentChanged);
+            this.calendarGrid1.CGSelectionChanged += new IndianHealthService.ClinicalScheduling.CGSelectionChangedHandler(this.calendarGrid1_CGSelectionChanged);
+            this.calendarGrid1.DoubleClick += new System.EventHandler(this.calendarGrid1_DoubleClick);
             // 
             // ctxCalendarGrid
             // 
@@ -961,10 +961,10 @@ namespace IndianHealthService.ClinicalScheduling
             this.Name = "CGView";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "CGView";
-            this.CursorChanged += new System.EventHandler(this.CGView_CursorChanged);
-            this.Load += new System.EventHandler(this.CGView_Load);
             this.Activated += new System.EventHandler(this.CGView_Activated);
             this.Closing += new System.ComponentModel.CancelEventHandler(this.CGView_Closing);
+            this.Load += new System.EventHandler(this.CGView_Load);
+            this.CursorChanged += new System.EventHandler(this.CGView_CursorChanged);
             this.panelRight.ResumeLayout(false);
             this.panelClip.ResumeLayout(false);
             this.panelTop.ResumeLayout(false);

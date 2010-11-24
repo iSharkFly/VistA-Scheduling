@@ -12,7 +12,7 @@
     /// <summary>
     /// This class is reponsible for rendering the Calendar Grid.
     /// </summary>
-    public class CalendarGrid : Panel
+    public class CalendarGrid : ScrollableControl
     {
         private IContainer components;
         private Font fontArial10;
