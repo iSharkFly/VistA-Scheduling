@@ -1,4 +1,4 @@
-BSDXAPI	; IHS/ANMC/LJF - SCHEDULING APIs ; 11/2/10 4:36pm
+BSDXAPI	; IHS/ANMC/LJF - SCHEDULING APIs ; 11/18/10 5:34pm
 	;;1.42;BSDX;;Sep 29, 2010;Build 7
 	;Orignal routine is BSDAPI by IHS/LJF, HMW, and MAW
 	;local mods (many) by WV/SMH
@@ -8,6 +8,8 @@ BSDXAPI	; IHS/ANMC/LJF - SCHEDULING APIs ; 11/2/10 4:36pm
 	; - Use new style Fileman API for storing appointments in file 44 in $$MAKE due to problems with legacy API.
     ; 2010-11-12:
     ; - Changed ="C" to ["C" in SCIEN. Cancelled appointments can be "PC" as well. 
+    ; 2010-12-5
+    ; Added an entry point to update the patient note in file 44.
 	;
 MAKE1(DFN,CLIN,TYP,DATE,LEN,INFO)	; Simplified PEP w/ parameters for $$MAKE - making appointment
 	; Call like this for DFN 23435 having an appointment at Hospital Location 33
@@ -275,3 +277,19 @@ CO(PAT,CLINIC,DATE,SDIEN)	;PEP; -- returns 1 if appt already checked-out
 	S X=$P($G(^SC(CLINIC,"S",DATE,1,X,"C")),U,3)
 	Q $S(X:1,1:0)
 	;
+UPDATENOTE(PAT,CLINIC,DATE,NOTE) ; PEP; Update Note in ^SC for patient's appointment @ DATE
+    ; PAT = DFN
+    ; CLINIC = SC IEN
+    ; DATE = FM Date/Time of Appointment
+    ;
+    ; Returns:
+    ; 0 if okay
+    ; -1 if failure
+    N SCIEN S SCIEN=$$SCIEN(PAT,CLINIC,DATE) ; ien of appt in ^SC
+    I SCIEN<1 QUIT "-1~No Appt can be found in file 44 for Patient "_PAT_" on "_DATE_" in clinic "_CLINIC
+    N BSDXIENS S BSDXIENS=SCIEN_","_DATE_","_CLINIC_","
+    S BSDXFDA(44.003,BSDXIENS,3)=$E(NOTE,1,150)
+    N BSDXERR
+    D FILE^DIE("","BSDXFDA","BSDXERR")
+    I $D(BSDXERR) QUIT "-1~Can't file for Pat "_PAT_" in Clinic "_CLINIC_" at "_DATE_". Fileman reported an error: "_BSDXERR("DIERR",1,"TEXT",1)
+    QUIT 0
