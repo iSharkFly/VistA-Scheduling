@@ -1030,9 +1030,7 @@ namespace IndianHealthService.ClinicalScheduling
 		{
 			/*
 			 * BSDX NOSHOW RPC Returns 1  in ERRORID if  successfully sets NOSHOW flag in BSDX APPOINTMENT and, if applicable, File 2
-			 *Otherwise, returns 0 for failure and errormessage in ERRORTXT
-			 *THIS routine returns "" if success or the message in ERRORTEXT if failed
-			 *Exceptions should be caught by caller
+			 *Otherwise, returns negative numbers for failure and errormessage in ERRORTXT
 			 *
 			 */
 			

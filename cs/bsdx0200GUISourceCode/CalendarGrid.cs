@@ -666,6 +666,14 @@
             Rectangle rectangle = new Rectangle();
             int startTotalMinutesoffset = (int) startTime.TimeOfDay.TotalMinutes;
             int endTotalMinutesoffset = (int) endTime.TimeOfDay.TotalMinutes;
+            
+            // To fix a bug with 1 day view: if the start time of appt is before Calendar Start Date, don't draw anything.
+            if (startTime < this.m_dtStart)
+            {
+                bRet = false;
+                return rectangle;
+            }
+            
             // if grid has more than one reource
             if (this.m_sResourcesArray.Count > 1)
             {
@@ -676,15 +684,14 @@
             }
             else
             {
-                //columnToPutAppt = (startTime - this.m_dtStart).Days + 1;
-                //test sam
                 columnToPutAppt = (startTime - this.m_dtStart).Days + 1;
             }
-            if (columnToPutAppt < 1)
-            {
-                bRet = false;
-                return rectangle;
-            }
+            // this if should not get tripped; it did the same function as the new first if check. 
+            //if (columnToPutAppt < 1)
+            //{
+            //    bRet = false;
+            //    return rectangle;
+            //}
             originX = col0Width + (cellWidth * (columnToPutAppt - 1));
             int num8 = startTotalMinutesoffset + this.m_nTimeScale;
             int num9 = (endTotalMinutesoffset > 0) ? endTotalMinutesoffset : 0x5a0;

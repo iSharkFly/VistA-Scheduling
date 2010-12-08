@@ -31,20 +31,38 @@ namespace IndianHealthService.ClinicalScheduling
             }
             catch (Exception ex) { MessageBox.Show(ex.Message); }
 
-            dvAppt = new DataView(dtAppt);
-            dvAppt.Sort = "ApptDate ASC";
             SetPastFilter(false);
-            dgAppts.DataSource = dvAppt;
-
+            
+            // dgAppts.DataSource = dvAppt;
         }
         /// <summary>
         /// Sets the filter for the DataView on whether to show past appointments or not
+        /// Uses LINQ. Must use .Net 3.5 or above. Hope the LINQ is self-explanatory.
         /// </summary>
         /// <param name="ShowPastAppts">boolean - self explanatory</param>
         void SetPastFilter(bool ShowPastAppts)
         {
-            if (ShowPastAppts) dvAppt.RowFilter = "";
-            else dvAppt.RowFilter = "ApptDate > " + "'" + DateTime.Today.ToShortDateString() + "'";
+            if (ShowPastAppts)
+            {
+                var uncancelledAppts = from appt in dtAppt.AsEnumerable()
+                                       orderby appt.Field<DateTime>("ApptDate")
+                                       select appt;
+
+                dvAppt = uncancelledAppts.AsDataView();
+            }
+            else
+            {
+                var uncancelledAppts = from appt in dtAppt.AsEnumerable()
+                                       where appt.Field<DateTime>("ApptDate") > DateTime.Today
+                                       orderby appt.Field<DateTime>("ApptDate")
+                                       select appt;
+
+                dvAppt = uncancelledAppts.AsDataView();
+            }
+
+            // It's strange that I have to bind it here; but look like dvAppt points to a new memory
+            // location when reassigned up above in the LINQ statement, so we have to rebind it.
+            dgAppts.DataSource = dvAppt;
         }
 
         private void chkPastAppts_CheckedChanged(object sender, EventArgs e)

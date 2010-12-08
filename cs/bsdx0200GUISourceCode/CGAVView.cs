@@ -58,6 +58,7 @@ namespace IndianHealthService.ClinicalScheduling
             this.dateTimePicker1 = new System.Windows.Forms.DateTimePicker();
             this.lblResource = new System.Windows.Forms.Label();
             this.panelCenter = new System.Windows.Forms.Panel();
+            this.calendarGrid1 = new IndianHealthService.ClinicalScheduling.CalendarGrid();
             this.ctxCalendarGrid = new System.Windows.Forms.ContextMenu();
             this.ctxCalGridAdd = new System.Windows.Forms.MenuItem();
             this.ctxCalGridEdit = new System.Windows.Forms.MenuItem();
@@ -67,7 +68,7 @@ namespace IndianHealthService.ClinicalScheduling
             this.menuItem1 = new System.Windows.Forms.MenuItem();
             this.mnuLoadTemplate = new System.Windows.Forms.MenuItem();
             this.mnuSaveTemplate = new System.Windows.Forms.MenuItem();
-            this.mnuDeleteAllAppointments = new System.Windows.Forms.MenuItem();
+            this.mnuDeleteAllSlots = new System.Windows.Forms.MenuItem();
             this.menuItem6 = new System.Windows.Forms.MenuItem();
             this.mnuSchedulingManagment = new System.Windows.Forms.MenuItem();
             this.menuItem5 = new System.Windows.Forms.MenuItem();
@@ -91,7 +92,6 @@ namespace IndianHealthService.ClinicalScheduling
             this.mnuHelpAbout = new System.Windows.Forms.MenuItem();
             this.splitter1 = new System.Windows.Forms.Splitter();
             this.saveAccessBlocksWorker = new System.ComponentModel.BackgroundWorker();
-            this.calendarGrid1 = new IndianHealthService.ClinicalScheduling.CalendarGrid();
             this.panelRight.SuspendLayout();
             this.panelClip.SuspendLayout();
             this.panelBottom.SuspendLayout();
@@ -221,6 +221,34 @@ namespace IndianHealthService.ClinicalScheduling
             this.panelCenter.Size = new System.Drawing.Size(712, 345);
             this.panelCenter.TabIndex = 4;
             // 
+            // calendarGrid1
+            // 
+            this.calendarGrid1.AllowDrop = true;
+            this.calendarGrid1.Appointments = null;
+            this.calendarGrid1.ApptDragSource = null;
+            this.calendarGrid1.AutoScroll = true;
+            this.calendarGrid1.AutoScrollMinSize = new System.Drawing.Size(600, 1898);
+            this.calendarGrid1.AvailabilityArray = null;
+            this.calendarGrid1.BackColor = System.Drawing.SystemColors.Window;
+            this.calendarGrid1.Columns = 5;
+            this.calendarGrid1.ContextMenu = this.ctxCalendarGrid;
+            this.calendarGrid1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.calendarGrid1.DrawWalkIns = true;
+            this.calendarGrid1.GridBackColor = "blue";
+            this.calendarGrid1.GridEnter = false;
+            this.calendarGrid1.Location = new System.Drawing.Point(0, 0);
+            this.calendarGrid1.Name = "calendarGrid1";
+            this.calendarGrid1.Resources = ((System.Collections.ArrayList)(resources.GetObject("calendarGrid1.Resources")));
+            this.calendarGrid1.SelectedAppointment = 0;
+            this.calendarGrid1.Size = new System.Drawing.Size(712, 345);
+            this.calendarGrid1.StartDate = new System.DateTime(2003, 1, 27, 0, 0, 0, 0);
+            this.calendarGrid1.TabIndex = 2;
+            this.calendarGrid1.TimeScale = 20;
+            this.calendarGrid1.CGAppointmentAdded += new IndianHealthService.ClinicalScheduling.CGAppointmentChangedHandler(this.calendarGrid1_CGAppointmentAdded);
+            this.calendarGrid1.CGAppointmentChanged += new IndianHealthService.ClinicalScheduling.CGAppointmentChangedHandler(this.calendarGrid1_CGAppointmentChanged);
+            this.calendarGrid1.CGSelectionChanged += new IndianHealthService.ClinicalScheduling.CGSelectionChangedHandler(this.calendarGrid1_CGSelectionChanged);
+            this.calendarGrid1.DoubleClick += new System.EventHandler(this.calendarGrid1_DoubleClick);
+            // 
             // ctxCalendarGrid
             // 
             this.ctxCalendarGrid.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
@@ -272,7 +300,7 @@ namespace IndianHealthService.ClinicalScheduling
             this.menuItem1.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
             this.mnuLoadTemplate,
             this.mnuSaveTemplate,
-            this.mnuDeleteAllAppointments,
+            this.mnuDeleteAllSlots,
             this.menuItem6,
             this.mnuSchedulingManagment,
             this.menuItem5,
@@ -293,13 +321,12 @@ namespace IndianHealthService.ClinicalScheduling
             this.mnuSaveTemplate.Text = "&Save Template";
             this.mnuSaveTemplate.Click += new System.EventHandler(this.mnuSaveTemplate_Click);
             // 
-            // mnuDeleteAllAppointments
+            // mnuDeleteAllSlots
             // 
-            this.mnuDeleteAllAppointments.Enabled = false;
-            this.mnuDeleteAllAppointments.Index = 2;
-            this.mnuDeleteAllAppointments.Shortcut = System.Windows.Forms.Shortcut.CtrlD;
-            this.mnuDeleteAllAppointments.Text = "&Delete All Appointments";
-            this.mnuDeleteAllAppointments.Click += new System.EventHandler(this.mnuDeleteAllAppointments_Click);
+            this.mnuDeleteAllSlots.Index = 2;
+            this.mnuDeleteAllSlots.Shortcut = System.Windows.Forms.Shortcut.CtrlD;
+            this.mnuDeleteAllSlots.Text = "&Delete All Slots";
+            this.mnuDeleteAllSlots.Click += new System.EventHandler(this.mnuDeleteAllSlots_Click);
             // 
             // menuItem6
             // 
@@ -467,34 +494,6 @@ namespace IndianHealthService.ClinicalScheduling
             this.saveAccessBlocksWorker.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.saveAccessBlocksWorker_ProgressChanged);
             this.saveAccessBlocksWorker.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.saveAccessBlocksWorker_RunWorkerCompleted);
             // 
-            // calendarGrid1
-            // 
-            this.calendarGrid1.AllowDrop = true;
-            this.calendarGrid1.Appointments = null;
-            this.calendarGrid1.ApptDragSource = null;
-            this.calendarGrid1.AutoScroll = true;
-            this.calendarGrid1.AutoScrollMinSize = new System.Drawing.Size(600, 1898);
-            this.calendarGrid1.AvailabilityArray = null;
-            this.calendarGrid1.BackColor = System.Drawing.SystemColors.Window;
-            this.calendarGrid1.Columns = 5;
-            this.calendarGrid1.ContextMenu = this.ctxCalendarGrid;
-            this.calendarGrid1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.calendarGrid1.DrawWalkIns = true;
-            this.calendarGrid1.GridBackColor = "blue";
-            this.calendarGrid1.GridEnter = false;
-            this.calendarGrid1.Location = new System.Drawing.Point(0, 0);
-            this.calendarGrid1.Name = "calendarGrid1";
-            this.calendarGrid1.Resources = ((System.Collections.ArrayList)(resources.GetObject("calendarGrid1.Resources")));
-            this.calendarGrid1.SelectedAppointment = 0;
-            this.calendarGrid1.Size = new System.Drawing.Size(712, 345);
-            this.calendarGrid1.StartDate = new System.DateTime(2003, 1, 27, 0, 0, 0, 0);
-            this.calendarGrid1.TabIndex = 2;
-            this.calendarGrid1.TimeScale = 20;
-            this.calendarGrid1.CGAppointmentAdded += new IndianHealthService.ClinicalScheduling.CGAppointmentChangedHandler(this.calendarGrid1_CGAppointmentAdded);
-            this.calendarGrid1.CGAppointmentChanged += new IndianHealthService.ClinicalScheduling.CGAppointmentChangedHandler(this.calendarGrid1_CGAppointmentChanged);
-            this.calendarGrid1.CGSelectionChanged += new IndianHealthService.ClinicalScheduling.CGSelectionChangedHandler(this.calendarGrid1_CGSelectionChanged);
-            this.calendarGrid1.DoubleClick += new System.EventHandler(this.calendarGrid1_DoubleClick);
-            // 
             // CGAVView
             // 
             this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
@@ -574,7 +573,7 @@ namespace IndianHealthService.ClinicalScheduling
 		private System.Windows.Forms.MenuItem ctxCalGridEdit;
 		private System.Windows.Forms.MenuItem ctxCalGridDelete;
         private BackgroundWorker saveAccessBlocksWorker;
-        private MenuItem mnuDeleteAllAppointments;
+        private MenuItem mnuDeleteAllSlots;
 		private bool				m_bDragDropStart = false;
 
 		#endregion
@@ -768,7 +767,7 @@ namespace IndianHealthService.ClinicalScheduling
 			}
 		}//End AvailabilityAddNew
 
-        private void MassAppointmentDelete()
+        private void MassSlotDelete()
         {
             DialogResult msgResult = MessageBox.Show("Delete all Access Slots?", "Delete Slots?",MessageBoxButtons.YesNo);
             if (msgResult != DialogResult.Yes) return;
@@ -1556,9 +1555,10 @@ namespace IndianHealthService.ClinicalScheduling
             this.statusBar1.Text = "Saving Data to VISTA. Progress: " + e.ProgressPercentage + " %";
         }
 
-        private void mnuDeleteAllAppointments_Click(object sender, EventArgs e)
+        private void mnuDeleteAllSlots_Click(object sender, EventArgs e)
         {
-            MassAppointmentDelete();
+
         }
+
 	}
 }
