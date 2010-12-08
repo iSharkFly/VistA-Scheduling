@@ -1,4 +1,4 @@
-BSDX26  ; IHS/OIT/HMW - WINDOWS SCHEDULING RPCS ; 11/18/10 5:36pm
+BSDX26  ; IHS/OIT/HMW - WINDOWS SCHEDULING RPCS ; 12/6/10 3:08am
     ;;1.42;BSDX;;Sep 29, 2010
     ; Change History:
     ; 3101023 - UJO/SMH - Addition of restartable transaction; relocation of tx.
@@ -33,17 +33,19 @@ UT ; Unit Tests
     N bsdxdie S bsdxdie=1
     D EDITAPT(.ZZZ,188,NOTE)
     I +^BSDXTMP($J,1)'=-100 W "ERROR IN -100",! B
+    k bsdxdie
     ; Test 5: Trestart
     N bsdxrestart S bsdxrestart=1
     N %H S %H=$H
     N NOTE S NOTE="New Note "_%H
     D EDITAPT(.ZZZ,188,NOTE)
     I ^BSDXAPPT(188,1,1,0)'=NOTE W "ERROR in TRESTART",! B
-    ; Test for Hosp Location Update
+    ; Test 6: for Hosp Location Update
     N DATE S DATE=$$NOW^XLFDT()
+    S DATE=$E(DATE,1,12) ; Just get minutes b/c of HL file input transform
     D APPADD^BSDX07(.ZZZ,DATE,DATE+.001,3,"Dr Office",30,"Old Note",1)
     N APPID S APPID=+$P(^BSDXTMP($J,1),U)
-    D EDITAPT(.ZZZ,APTID,"New Note")
+    D EDITAPT(.ZZZ,APPID,"New Note")
     I ^BSDXAPPT(APTID,1,1,0)'="New Note" W "Error in HL Section",! B
     I $P(^SC(2,"S",DATE,1,1,0),U,4)'="New Note" W "Error in HL Section",! B
     QUIT
