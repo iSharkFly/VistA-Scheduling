@@ -1,4 +1,4 @@
-BSDXAPI	; IHS/ANMC/LJF - SCHEDULING APIs ; 11/18/10 5:34pm
+BSDXAPI	; IHS/ANMC/LJF - SCHEDULING APIs ; 12/6/10 6:01am
 	;;1.42;BSDX;;Sep 29, 2010;Build 7
 	;Orignal routine is BSDAPI by IHS/LJF, HMW, and MAW
 	;local mods (many) by WV/SMH
@@ -10,6 +10,8 @@ BSDXAPI	; IHS/ANMC/LJF - SCHEDULING APIs ; 11/18/10 5:34pm
     ; - Changed ="C" to ["C" in SCIEN. Cancelled appointments can be "PC" as well. 
     ; 2010-12-5
     ; Added an entry point to update the patient note in file 44.
+    ; 2010-12-6
+    ; MAKE1 incorrectly put info field in BSDR("INFO") rather than BSDR("OI")
 	;
 MAKE1(DFN,CLIN,TYP,DATE,LEN,INFO)	; Simplified PEP w/ parameters for $$MAKE - making appointment
 	; Call like this for DFN 23435 having an appointment at Hospital Location 33
@@ -21,7 +23,7 @@ MAKE1(DFN,CLIN,TYP,DATE,LEN,INFO)	; Simplified PEP w/ parameters for $$MAKE - ma
 	S BSDR("TYP")=TYP       ;3 sched or 4 walkin
 	S BSDR("ADT")=DATE      ;Appointment date in FM format
 	S BSDR("LEN")=LEN       ;Appt len upto 240 (min)
-	S BSDR("INFO")=INFO     ;Reason for appt - up to 150 char
+	S BSDR("OI")=INFO     ;Reason for appt - up to 150 char
 	S BSDR("USR")=DUZ       ;Person who made appt - current user
 	Q $$MAKE(.BSDR)
 	;
@@ -286,7 +288,7 @@ UPDATENOTE(PAT,CLINIC,DATE,NOTE) ; PEP; Update Note in ^SC for patient's appoint
     ; 0 if okay
     ; -1 if failure
     N SCIEN S SCIEN=$$SCIEN(PAT,CLINIC,DATE) ; ien of appt in ^SC
-    I SCIEN<1 QUIT "-1~No Appt can be found in file 44 for Patient "_PAT_" on "_DATE_" in clinic "_CLINIC
+    I SCIEN<1 QUIT 0    ; Appt cancelled; cancelled appts rm'ed from file 44
     N BSDXIENS S BSDXIENS=SCIEN_","_DATE_","_CLINIC_","
     S BSDXFDA(44.003,BSDXIENS,3)=$E(NOTE,1,150)
     N BSDXERR
