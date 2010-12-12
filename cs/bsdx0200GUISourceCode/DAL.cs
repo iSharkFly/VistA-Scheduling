@@ -26,18 +26,41 @@ namespace IndianHealthService.ClinicalScheduling
             this._thisConnection = conn;
         }
         
+        /// <summary>
+        /// Get Current version from ^ nmsp + APPL(1,0)
+        /// </summary>
+        /// <param name="nmsp">Namespace to ask for. Only "BMX" and "BSDX" are supported.</param>
+        /// <returns>Datatable with the following fields:
+        /// "T00030ERROR^T00030MAJOR_VERSION^T00030MINOR_VERSION^T00030BUILD</returns>
         public DataTable GetVersion(string nmsp)
         {
             string cmd = String.Format("BMX VERSION INFO^{0}", nmsp);
             return RPMSDataTable(cmd, "");
         }
 
+        /// <summary>
+        /// Get Scheduling User Info
+        /// </summary>
+        /// <param name="DUZ">You should know what this is</param>
+        /// <returns>Datatable with one column: "MANAGER": One Row that's "YES" or "NO"</returns>
         public DataTable GetUserInfo(string DUZ)
         {
             string cmd = String.Format("BSDX SCHEDULING USER INFO^{0}", DUZ);
             return RPMSDataTable(cmd, "");
         }
 
+        /// <summary>
+        /// Get all Access Types from the BSDX ACCESS TYPE file
+        /// </summary>
+        /// <returns>DataTable with the following fields (add _ for spaces) 
+        /// ACCESS TYPE NAME (RF), [0;1]
+        /// INACTIVE (S), [0;2]
+        /// DEPARTMENT NAME (P9002018.2'), [0;3]
+        /// DISPLAY COLOR (F), [0;4]
+        /// RED (NJ3,0), [0;5]
+        /// GREEN (NJ3,0), [0;6]
+        /// BLUE (NJ3,0), [0;7]
+        ///</returns>
         public DataTable GetAccessTypes()
         {
             string sCommandText = "SELECT * FROM BSDX_ACCESS_TYPE";
@@ -102,12 +125,29 @@ namespace IndianHealthService.ClinicalScheduling
             return RPMSDataTable(cmd, "");
         }
 
+        /// <summary>
+        /// Should have documented this better when I remembered what this did!
+        /// </summary>
+        /// <param name="sApptList">| delimited list of appointment IENs in ^BSDXAPPT</param>
+        /// <returns>"T00030Name^D00020DOB^T00030Sex^T00030HRN^D00030NewApptDate^T00030Clinic^T00030TypeStatus
+        /// ^I00010RESOURCEID^T00030APPT_MADE_BY^D00020DATE_APPT_MADE^T00250NOTE^T00030STREET^T00030CITY
+        /// ^T00030STATE^T00030ZIP^T00030HOMEPHONE^D00030OldApptDate</returns>
         public DataTable GetRebookedAppointments(string sApptList)
         {
             string cmd = String.Format("BSDX REBOOK LIST^{0}", sApptList);
             return RPMSDataTable(cmd, "");
         }
 
+        /// <summary>
+        /// Really does what it says! Gets them by going through the BSDX APPOITMENT file index 
+        /// between the specified dates for the Resource.
+        /// </summary>
+        /// <param name="sClinicList">| delmited list of Resource IENs in ^BSDXRES</param>
+        /// <param name="BeginDate"></param>
+        /// <param name="EndDate"></param>
+        /// <returns>"T00030Name^D00020DOB^T00030Sex^T00030HRN^D00030NewApptDate^T00030Clinic^T00030TypeStatus
+        /// ^I00010RESOURCEID^T00030APPT_MADE_BY^D00020DATE_APPT_MADE^T00250NOTE^T00030STREET^T00030CITY
+        /// ^T00030STATE^T00030ZIP^T00030HOMEPHONE^D00030OldApptDate</returns>
         public DataTable GetCancelledAppointments(string sClinicList, DateTime BeginDate, DateTime EndDate)
         {
             string sBegin = FMDateTime.Create(BeginDate).DateOnly.FMDateString;
@@ -119,10 +159,11 @@ namespace IndianHealthService.ClinicalScheduling
         /// <summary>
         /// Delete All Slots for a Resource
         /// </summary>
-        /// <param name="sResourceID"></param>
-        /// <param name="BeginDate"></param>
-        /// <param name="EndDate"></param>
-        /// <returns></returns>
+        /// <param name="sResourceID">Integer Resource IEN in BSDX RESOURCE</param>
+        /// <param name="BeginDate">Self-Explanatory</param>
+        /// <param name="EndDate">Self-Explanatory</param>
+        /// <returns>Table with 2 columns: ERRORID & ERRORTEXT
+        /// ErrorID of -1 is A OK (successful operation); anything else is bad.</returns>
         public DataTable MassSlotDelete(string sResourceID, DateTime BeginDate, DateTime EndDate)
         {
             string sBegin = FMDateTime.Create(BeginDate).DateOnly.FMDateString;
@@ -167,8 +208,6 @@ namespace IndianHealthService.ClinicalScheduling
             return dtOut;
 
         }
-
-
     }
 }
     
