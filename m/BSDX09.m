@@ -1,5 +1,5 @@
 BSDX09	; IHS/OIT/HMW - WINDOWS SCHEDULING RPCS ;  ; 10/20/10 4:16pm
-	;;1.41;BSDX;;Sep 07, 2010;Build 7
+	;;1.42;BSDX;;Dec 07, 2010;Build 7
 	;
 	; Change Log:
 	; UJO/TH - v 1.3 on 3100714 - Extra Demographics:
@@ -10,8 +10,8 @@ BSDX09	; IHS/OIT/HMW - WINDOWS SCHEDULING RPCS ;  ; 10/20/10 4:16pm
 	; 
 	; UJO/TH - v 1.3 on 3100715 - Change SSN to PID and get PID field instead
 	;
-    ; UJO/TH - v 1.42 on 3101020 - Add Sex field.
-    ;
+	   ; UJO/TH - v 1.42 on 3101020 - Add Sex field.
+	   ;
 GETREGA(BSDXRET,BSDXPAT)	       ;EP
 	;
 	   ; See below for the returned fields

@@ -1,17 +1,22 @@
-BSDXAPI	; IHS/ANMC/LJF - SCHEDULING APIs ; 12/6/10 6:01am
-	;;1.42;BSDX;;Sep 29, 2010;Build 7
+BSDXAPI	; IHS/ANMC/LJF - SCHEDULING APIs ; 12/6/10 5:50pm
+	;;1.42;BSDX;;Dec 07, 2010;Build 7
 	;Orignal routine is BSDAPI by IHS/LJF, HMW, and MAW
 	;local mods (many) by WV/SMH
 	;Move to BSDX namespace as BSDXAPI from BSDAPI by WV/SMH
 	; Change History:
+	   ; 2010-11-5:
 	; - Fixed errors having to do uncanceling patient appointments if it was a patient cancelled appointment.
 	; - Use new style Fileman API for storing appointments in file 44 in $$MAKE due to problems with legacy API.
-    ; 2010-11-12:
-    ; - Changed ="C" to ["C" in SCIEN. Cancelled appointments can be "PC" as well. 
-    ; 2010-12-5
-    ; Added an entry point to update the patient note in file 44.
-    ; 2010-12-6
-    ; MAKE1 incorrectly put info field in BSDR("INFO") rather than BSDR("OI")
+	   ; 2010-11-12:
+	   ; - Changed ="C" to ["C" in SCIEN. Cancelled appointments can be "PC" as well. 
+	   ; 2010-12-5
+	   ; Added an entry point to update the patient note in file 44.
+	   ; 2010-12-6
+	   ; MAKE1 incorrectly put info field in BSDR("INFO") rather than BSDR("OI")
+	   ; 2010-12-8
+	   ; Removed restriction on max appt length. Even though this restriction
+	   ; exists in fileman (120 minutes), PIMS ignores it. Therefore, I 
+	   ; will ignore it here too.
 	;
 MAKE1(DFN,CLIN,TYP,DATE,LEN,INFO)	; Simplified PEP w/ parameters for $$MAKE - making appointment
 	; Call like this for DFN 23435 having an appointment at Hospital Location 33
@@ -50,7 +55,7 @@ MAKE(BSDR)	;PEP; call to store appt made
 	I $G(BSDR("ADT")) S BSDR("ADT")=+$E(BSDR("ADT"),1,12)  ;remove seconds
 	I $G(BSDR("ADT"))'?7N1".".4N Q 1_U_"Appt Date/Time error: "_$G(BSDR("ADT"))
 	;
-	I ($G(BSDR("LEN"))<5)!($G(BSDR("LEN"))>240) Q 1_U_"Appt Length error: "_$G(BSDR("LEN"))
+	;I ($G(BSDR("LEN"))<5)!($G(BSDR("LEN"))>240) Q 1_U_"Appt Length error: "_$G(BSDR("LEN")) ; v 1.42 - no check on length is done anymore. see top comments for details.
 	I '$D(^VA(200,+$G(BSDR("USR")),0)) Q 1_U_"User Who Made Appt Error: "_$G(BSDR("USR"))
 	I $D(^DPT(BSDR("PAT"),"S",BSDR("ADT"),0)),$P(^(0),U,2)'["C" Q 1_U_"Patient "_BSDR("PAT")_" already has appt at "_BSDR("ADT")
 	;
@@ -279,19 +284,19 @@ CO(PAT,CLINIC,DATE,SDIEN)	;PEP; -- returns 1 if appt already checked-out
 	S X=$P($G(^SC(CLINIC,"S",DATE,1,X,"C")),U,3)
 	Q $S(X:1,1:0)
 	;
-UPDATENOTE(PAT,CLINIC,DATE,NOTE) ; PEP; Update Note in ^SC for patient's appointment @ DATE
-    ; PAT = DFN
-    ; CLINIC = SC IEN
-    ; DATE = FM Date/Time of Appointment
-    ;
-    ; Returns:
-    ; 0 if okay
-    ; -1 if failure
-    N SCIEN S SCIEN=$$SCIEN(PAT,CLINIC,DATE) ; ien of appt in ^SC
-    I SCIEN<1 QUIT 0    ; Appt cancelled; cancelled appts rm'ed from file 44
-    N BSDXIENS S BSDXIENS=SCIEN_","_DATE_","_CLINIC_","
-    S BSDXFDA(44.003,BSDXIENS,3)=$E(NOTE,1,150)
-    N BSDXERR
-    D FILE^DIE("","BSDXFDA","BSDXERR")
-    I $D(BSDXERR) QUIT "-1~Can't file for Pat "_PAT_" in Clinic "_CLINIC_" at "_DATE_". Fileman reported an error: "_BSDXERR("DIERR",1,"TEXT",1)
-    QUIT 0
+UPDATENOTE(PAT,CLINIC,DATE,NOTE)	; PEP; Update Note in ^SC for patient's appointment @ DATE
+	   ; PAT = DFN
+	   ; CLINIC = SC IEN
+	   ; DATE = FM Date/Time of Appointment
+	   ;
+	   ; Returns:
+	   ; 0 if okay
+	   ; -1 if failure
+	   N SCIEN S SCIEN=$$SCIEN(PAT,CLINIC,DATE) ; ien of appt in ^SC
+	   I SCIEN<1 QUIT 0    ; Appt cancelled; cancelled appts rm'ed from file 44
+	   N BSDXIENS S BSDXIENS=SCIEN_","_DATE_","_CLINIC_","
+	   S BSDXFDA(44.003,BSDXIENS,3)=$E(NOTE,1,150)
+	   N BSDXERR
+	   D FILE^DIE("","BSDXFDA","BSDXERR")
+	   I $D(BSDXERR) QUIT "-1~Can't file for Pat "_PAT_" in Clinic "_CLINIC_" at "_DATE_". Fileman reported an error: "_BSDXERR("DIERR",1,"TEXT",1)
+	   QUIT 0

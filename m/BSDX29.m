@@ -1,13 +1,13 @@
-BSDX29	; IHS/OIT/HMW - WINDOWS SCHEDULING RPCS ; 12/6/10 6:05am
-	;;1.42;BSDX;;Sep 29, 2010
+BSDX29	; IHS/OIT/HMW - WINDOWS SCHEDULING RPCS ; 12/6/10 12:39pm
+	;;1.42;BSDX;;Dec 07, 2010
 	; 
 	; Change Log:
 	; v1.3 by WV/SMH on 3100713
 	; - Beginning and Ending dates passed as FM Dates
-    ; v1.42 by WV/SMH on 3101023
-    ; - Transaction moved; now restartable too.
-    ; --> Thanks to Zach Gonzalez and Rick Marshall.
-    ; - Refactoring of major portions of routine
+	   ; v1.42 by WV/SMH on 3101023
+	   ; - Transaction moved; now restartable too.
+	   ; --> Thanks to Zach Gonzalez and Rick Marshall.
+	   ; - Refactoring of major portions of routine
 	;
 BSDXCPD(BSDXY,BSDXRES,BSDX44,BSDXBEG,BSDXEND)	;EP
 	;Entry point for debugging
@@ -18,33 +18,33 @@ BSDXCPD(BSDXY,BSDXRES,BSDX44,BSDXBEG,BSDXEND)	;EP
 BSDXCP(BSDXY,BSDXRES,BSDX44,BSDXBEG,BSDXEND)	;EP
 	;Copy appointments from HOSPITAL LOCATION entry BSDX44 to BSDX RESOURCE entry BSDXRES
 	;Beginning with appointments on day BSDXBEG and ending on BSDXEND, inclusive
-    ;Called by RPC: BSDX COPY APPOINTMENTS
+	   ;Called by RPC: BSDX COPY APPOINTMENTS
 	;
-    ; Parameters:
-    ; - BSDXY: Global Return
-    ; - BSDXRES: BSDX RESOURCE to copy appointments to
-    ; - BSDX44: Hospital Location IEN to copy appointments from
-    ; - BSDXBEG: Beginning Date in FM Format
-    ; - BSDXEND: End Date in FM Format
-    ;
+	   ; Parameters:
+	   ; - BSDXY: Global Return
+	   ; - BSDXRES: BSDX RESOURCE to copy appointments to
+	   ; - BSDX44: Hospital Location IEN to copy appointments from
+	   ; - BSDXBEG: Beginning Date in FM Format
+	   ; - BSDXEND: End Date in FM Format
+	   ;
 	;Returns ADO Recordset containing TASK_NUMBER and ERRORID
 	;
-    ; Return Array
+	   ; Return Array
 	S BSDXY=$NA(^BSDXTMP($J))
-    K ^BSDXTMP($J)
-    ; $ET
-    N $ET S $ET="G ETRAP^BSDX29"
+	   K ^BSDXTMP($J)
+	   ; $ET
+	   N $ET S $ET="G ETRAP^BSDX29"
 	; Counter
-    N BSDXI S BSDXI=0
-    ; Header Node
-	S ^BSDXTMP($J,0)="T00010TASK_NUMBER^T00020ERRORID"_$C(30)
+	   N BSDXI S BSDXI=0
+	   ; Header Node
+	S ^BSDXTMP($J,0)="T00010TASK_NUMBER^T00100ERRORID"_$C(30)
 	;
-    ; Make dates inclusive; add 1 to FM dates
-    S BSDXBEG=BSDXBEG-1
+	   ; Make dates inclusive; add 1 to FM dates
+	   S BSDXBEG=BSDXBEG-1
 	S BSDXEND=BSDXEND+1
 	;
-    ; Taskman variables
-    N ZTSK,ZTRTN,ZTDTH,ZTDESC,ZTSAVE 
+	   ; Taskman variables
+	   N ZTSK,ZTRTN,ZTDTH,ZTDESC,ZTSAVE 
 	; Task Load
 	S ZTRTN="ZTM^BSDX29",ZTDTH=$H,ZTDESC="COPY PATIENT APPTS"
 	S ZTSAVE("BSDXBEG")="",ZTSAVE("BSDXEND")="",ZTSAVE("BSDX44")="",ZTSAVE("BSDXRES")=""
@@ -60,30 +60,30 @@ ZTMD	;EP - Debug entry point
 	Q
 	;
 ZTM	;EP - Taskman entry point
-    ; Variables set up in ZTSAVE above
-    ;
+	   ; Variables set up in ZTSAVE above
+	   ;
 	Q:'$D(ZTSK)
-    ; $ET
-    N $ET S $ET="G ZTMERR^BSDX29"
+	   ; $ET
+	   N $ET S $ET="G ZTMERR^BSDX29"
 	; Txn
-    TSTART (BSDXBEG,BSDXEND,BSDX44,BSDXRES):T="BSDX COPY APPOINTMENT^BSDX29"
+	   TSTART (BSDXBEG,BSDXEND,BSDX44,BSDXRES):T="BSDX COPY APPOINTMENT^BSDX29"
 	;$O through ^SC(BSDX44,"S",
 	N BSDXCNT S BSDXCNT=0  ; Count of Copied Appointments
-    N BSDXQUIT S BSDXQUIT=0  ; Quit Flag to be retrieved from an external proc
+	   N BSDXQUIT S BSDXQUIT=0  ; Quit Flag to be retrieved from an external proc
 	; Set Count
-    S ^BSDXTMP("BSDXCOPY",ZTSK)=BSDXCNT
+	   S ^BSDXTMP("BSDXCOPY",ZTSK)=BSDXCNT
 	; Loop through dates here.
-    F  S BSDXBEG=$O(^SC(BSDX44,"S",BSDXBEG)) Q:'+BSDXBEG  Q:BSDXBEG>BSDXEND  Q:BSDXQUIT  D
-    . ; Loop through Entries in each date in the subsubfile.
-    . ; Quit if we are at the end or if a remote process requests a quit.
-    . N BSDXIEN S BSDXIEN=0
+	   F  S BSDXBEG=$O(^SC(BSDX44,"S",BSDXBEG)) Q:'+BSDXBEG  Q:BSDXBEG>BSDXEND  Q:BSDXQUIT  D
+	   . ; Loop through Entries in each date in the subsubfile.
+	   . ; Quit if we are at the end or if a remote process requests a quit.
+	   . N BSDXIEN S BSDXIEN=0
 	. F  S BSDXIEN=$O(^SC(BSDX44,"S",BSDXBEG,1,BSDXIEN)) Q:'+BSDXIEN  Q:BSDXQUIT  D
 	. . N BSDXNOD S BSDXNOD=$G(^SC(BSDX44,"S",BSDXBEG,1,BSDXIEN,0)) ; Node
 	. . Q:'+BSDXNOD  ; Quit if no node
 	. . N BSDXCAN S BSDXCAN=$P(BSDXNOD,U,9) ; Cancel flag
 	. . Q:BSDXCAN="C"  ; Quit if appt cancelled
-    . . N BSDXPAT S BSDXPAT=$P(BSDXNOD,U) ; Patient
-    . . N BSDXLEN S BSDXLEN=$P(BSDXNOD,U,2) ;duration in minutes
+	   . . N BSDXPAT S BSDXPAT=$P(BSDXNOD,U) ; Patient
+	   . . N BSDXLEN S BSDXLEN=$P(BSDXNOD,U,2) ;duration in minutes
 	. . N BSDXCLRK S BSDXCLRK=$P(BSDXNOD,U,6) ;appt made by (clerk)
 	. . N BSDXMADE S BSDXMADE=$P(BSDXNOD,U,7) ;date appt made
 	. . N BSDXNOTE S BSDXNOTE=$P(BSDXNOD,U,4) ;'OTHER' field contains note
@@ -99,10 +99,10 @@ ZTM	;EP - Taskman entry point
 	;
 ZTMERR	; For now, error from TM is only in trap; not returned to client.
 	N $ET S $ET="D ^%ZTER HALT" ; Emergency Error Trap
-    ; Rollback before logging the error
-    I $TL>0 TROLLBACK
+	   ; Rollback before logging the error
+	   I $TL>0 TROLLBACK
 	D ^%ZTER
-    S $EC="" ; Clear Error
+	   S $EC="" ; Clear Error
 	QUIT
 	;
 XFER(BSDXRES,BSDXBEG,BSDXPAT,BSDXLEN,BSDXCLRK,BSDXMADE,BSDXNOTE)	;EP
@@ -147,7 +147,7 @@ XFER(BSDXRES,BSDXBEG,BSDXPAT,BSDXLEN,BSDXCLRK,BSDXMADE,BSDXNOTE)	;EP
 	;
 ERR(BSDXI,BSDXCNT,BSDXERR)	;Error processing
 	S BSDXI=BSDXI+1
-    S BSDXERR=$TR(BSDXERR,"^","~")
+	   S BSDXERR=$TR(BSDXERR,"^","~")
 	S ^BSDXTMP($J,BSDXI)=BSDXCNT_"^"_BSDXERR_$C(30)
 	S BSDXI=BSDXI+1
 	S ^BSDXTMP($J,BSDXI)=$C(31)
@@ -155,9 +155,9 @@ ERR(BSDXI,BSDXCNT,BSDXERR)	;Error processing
 	;
 ETRAP	;EP Error trap entry
 	; No Txn here. So don't rollback anything
-    N $ET S $ET="D ^%ZTER HALT" ; Emergency Error Trap
-    D ^%ZTER
-    S $EC="" ; Clear error
+	   N $ET S $ET="D ^%ZTER HALT" ; Emergency Error Trap
+	   D ^%ZTER
+	   S $EC="" ; Clear error
 	I '$D(BSDXI) N BSDXI S BSDXI=0
 	D ERR(BSDXI,$G(BSDXCNT),"~100~BSDX29, Error: "_$G(%ZTERZE))
 	Q
