@@ -94,4 +94,14 @@ v1.4.1 (released September 29th 2010)
 - More extensive notes files.
 - New Kids build.
 
-
+v1.4.2 (released December 12th 2010)
+- Finally, the transaction bugs that happens on high volume GT.M systems are fixed.
+- Fixes 1 day view drawing bug, causing yesterday's appointments to show as if they were today.
+- Updating the Note in the Edit appointment context menu now updates both BSDX APPOINTMENT file and HOSPITAL LOCATION.
+- Walk-in appointments now count towards slots left calcuations.
+- Default open location for apply template dialog is now the last folder navigated to.
+- Drag and drop and Delete Message Boxes (prompts) for users when manipulating Access Blocks have been removed (no need for them).
+- Printing from the View Apppointment user control (visible in the Make Appointment dialog) no longer causes an error if there are no appointments for patients.
+- Saving access slots is not async, but that causes other bugs because of multiple threads accessing data concurrently. It's an intermediate fix until a better saving program can be devised using BMX Updatable DataTables.
+- Access block grid now refreshes itself after access blocks are added from a template. No need to change dates to see the effect.
+- New option in Access block grid to mass delete access blocks on File menu (tied to Ctrl-D).

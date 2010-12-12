@@ -1,4 +1,4 @@
-BSDX 1.41 for WorldVista
+BSDX 1.42 for WorldVista
 Licensed under LGPL.
 
 This is a Scheduling GUI package. 
@@ -24,7 +24,7 @@ BMXNet22.dll
 
 Client does not need installation. Both files have to be located in the same folder.
 
-For users who used a previous version, you only need to download and install BSDX 1.41 kids and ClinicalScheduling.exe plus the BMXNet22.dll library. If BMX Server version is outdated, you need to install the new version.
+For users who used a previous version, you only need to download and install BSDX 1.42 kids and ClinicalScheduling.exe plus the BMXNet22.dll library. If BMX Server version is outdated, you need to install the new version.
 
 Post-installation tasks:
 After installation, complete the following tasks to configure Windows Scheduling:
@@ -35,7 +35,7 @@ assigned. The BSDXZMGR key permits access to the Scheduling Management
 menu in the client application. This menu supports the creation of clinics and
 clinic groups, assignment of users to clinics, designation of user access, and other management activities. For further details, see the User Manual.
 3. Make the BMXRPC and BSDXPRC menu options available to scheduling users.
-These options must be somewhere in the user’s path, either as a secondary option
+These options must be somewhere in the user's path, either as a secondary option
 or as members of a menu to which the user has access.
 4. Use Scheduling Management to configure 
 a. Resources (clinics)
@@ -75,15 +75,9 @@ Known Bugs:
 - IDs in Scheduling GUI reflect the HRN not the Primary ID
 - Cannot cancel a walk-in appointment in Scheduling...
 - No handling of invalid access code when saving access slots.
-- Saving access slots causes program to freeze until it's done: need to be Async
 - No Ctrl-C & Ctrl-V handling
 - No Insert & Delete button handling
-- After applying access templates, the access blocks screen doesn't refresh itself.
-- Logic to remove old access blocks does not work. Only workaround is to remove them manually.
-- Transactions fail when a restart is attempted (High volume GT.M systems only).
 - Grids don't respond to mouse wheel movement.
-- Default open location for Apply Template is inappropriate. Should be the last folder navigated.
-- Drag and drop plus delete Message Boxes on Access Blocks editor are unnecessary.
 - Appointment drag and drop to the same time at a different clinic doesn't work (complains that the patient already has an appointment at this time).
 - Appointment drap and drop between different windows doesn't cancel the original appointment.
 - Rebooking under certain conditions causes system hangs. Two issues: Program doesn't increment requested available appointment from VISTA, and doesn't deal properly with an appointment that doesn't have a access type (ie an appointment that is not in an Access block).
@@ -91,10 +85,6 @@ Known Bugs:
 - Patient Appointment List shows cancelled appointments by default and doesn't indicate in any way that they are cancelled.
 - Patient Appointment List shows the names of the resources as the VISTA PIMS clinics, not what you called them in the Scheduling GUI; only for linked resources. 
 - Speed issues
-- If you click on the print button in the View Appointments User Control (visible in the Make Appointment dialog) and the patient doesn't have any appointments (new patient), there is an error.
-- Program doesn't count walk-in appointments as part of slot calculations. I.e., doesn't consider walk-in's to count against the number of slots for a specific time.
-- For 1 day view, it shows yesterday's appointments if the time difference is less than one day between today's appointment and yesterday's appointment. This is a problem with the Calendar Grid drawing code.
-- Updating Note with Edit Appointment context menu only updates it in the BSDX APPOINTMENT file, not in file 44 (Hosp Location) "S" node.
 
 Other Bugs:
 Put them on the trac server where you got this software.
@@ -106,3 +96,4 @@ Enhancement requests:
 - Alert user if a patient already has an appointment in the same clinic for today.
 - Print Appointment Letter when Appointment is made (PHH Users workflow).
 - Make printing an extensible module for end user customization (Oroville and PHH)
+- Be able to print mutiple copies of a report (request of a PHH user).
