@@ -58,7 +58,6 @@ namespace IndianHealthService.ClinicalScheduling
             this.dateTimePicker1 = new System.Windows.Forms.DateTimePicker();
             this.lblResource = new System.Windows.Forms.Label();
             this.panelCenter = new System.Windows.Forms.Panel();
-            this.calendarGrid1 = new IndianHealthService.ClinicalScheduling.CalendarGrid();
             this.ctxCalendarGrid = new System.Windows.Forms.ContextMenu();
             this.ctxCalGridAdd = new System.Windows.Forms.MenuItem();
             this.ctxCalGridEdit = new System.Windows.Forms.MenuItem();
@@ -92,6 +91,7 @@ namespace IndianHealthService.ClinicalScheduling
             this.mnuHelpAbout = new System.Windows.Forms.MenuItem();
             this.splitter1 = new System.Windows.Forms.Splitter();
             this.saveAccessBlocksWorker = new System.ComponentModel.BackgroundWorker();
+            this.calendarGrid1 = new IndianHealthService.ClinicalScheduling.CalendarGrid();
             this.panelRight.SuspendLayout();
             this.panelClip.SuspendLayout();
             this.panelBottom.SuspendLayout();
@@ -105,7 +105,7 @@ namespace IndianHealthService.ClinicalScheduling
             this.panelRight.Dock = System.Windows.Forms.DockStyle.Right;
             this.panelRight.Location = new System.Drawing.Point(728, 0);
             this.panelRight.Name = "panelRight";
-            this.panelRight.Size = new System.Drawing.Size(120, 393);
+            this.panelRight.Size = new System.Drawing.Size(120, 364);
             this.panelRight.TabIndex = 1;
             // 
             // panelClip
@@ -166,7 +166,7 @@ namespace IndianHealthService.ClinicalScheduling
             // 
             this.panelBottom.Controls.Add(this.statusBar1);
             this.panelBottom.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panelBottom.Location = new System.Drawing.Point(8, 369);
+            this.panelBottom.Location = new System.Drawing.Point(8, 340);
             this.panelBottom.Name = "panelBottom";
             this.panelBottom.Size = new System.Drawing.Size(720, 24);
             this.panelBottom.TabIndex = 2;
@@ -218,36 +218,8 @@ namespace IndianHealthService.ClinicalScheduling
             this.panelCenter.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panelCenter.Location = new System.Drawing.Point(8, 24);
             this.panelCenter.Name = "panelCenter";
-            this.panelCenter.Size = new System.Drawing.Size(712, 345);
+            this.panelCenter.Size = new System.Drawing.Size(712, 316);
             this.panelCenter.TabIndex = 4;
-            // 
-            // calendarGrid1
-            // 
-            this.calendarGrid1.AllowDrop = true;
-            this.calendarGrid1.Appointments = null;
-            this.calendarGrid1.ApptDragSource = null;
-            this.calendarGrid1.AutoScroll = true;
-            this.calendarGrid1.AutoScrollMinSize = new System.Drawing.Size(600, 1898);
-            this.calendarGrid1.AvailabilityArray = null;
-            this.calendarGrid1.BackColor = System.Drawing.SystemColors.Window;
-            this.calendarGrid1.Columns = 5;
-            this.calendarGrid1.ContextMenu = this.ctxCalendarGrid;
-            this.calendarGrid1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.calendarGrid1.DrawWalkIns = true;
-            this.calendarGrid1.GridBackColor = "blue";
-            this.calendarGrid1.GridEnter = false;
-            this.calendarGrid1.Location = new System.Drawing.Point(0, 0);
-            this.calendarGrid1.Name = "calendarGrid1";
-            this.calendarGrid1.Resources = ((System.Collections.ArrayList)(resources.GetObject("calendarGrid1.Resources")));
-            this.calendarGrid1.SelectedAppointment = 0;
-            this.calendarGrid1.Size = new System.Drawing.Size(712, 345);
-            this.calendarGrid1.StartDate = new System.DateTime(2003, 1, 27, 0, 0, 0, 0);
-            this.calendarGrid1.TabIndex = 2;
-            this.calendarGrid1.TimeScale = 20;
-            this.calendarGrid1.CGAppointmentAdded += new IndianHealthService.ClinicalScheduling.CGAppointmentChangedHandler(this.calendarGrid1_CGAppointmentAdded);
-            this.calendarGrid1.CGAppointmentChanged += new IndianHealthService.ClinicalScheduling.CGAppointmentChangedHandler(this.calendarGrid1_CGAppointmentChanged);
-            this.calendarGrid1.CGSelectionChanged += new IndianHealthService.ClinicalScheduling.CGSelectionChangedHandler(this.calendarGrid1_CGSelectionChanged);
-            this.calendarGrid1.DoubleClick += new System.EventHandler(this.calendarGrid1_DoubleClick);
             // 
             // ctxCalendarGrid
             // 
@@ -282,7 +254,7 @@ namespace IndianHealthService.ClinicalScheduling
             this.tvSchedules.HotTracking = true;
             this.tvSchedules.Location = new System.Drawing.Point(0, 0);
             this.tvSchedules.Name = "tvSchedules";
-            this.tvSchedules.Size = new System.Drawing.Size(8, 393);
+            this.tvSchedules.Size = new System.Drawing.Size(8, 364);
             this.tvSchedules.Sorted = true;
             this.tvSchedules.TabIndex = 5;
             // 
@@ -483,7 +455,7 @@ namespace IndianHealthService.ClinicalScheduling
             this.splitter1.Dock = System.Windows.Forms.DockStyle.Right;
             this.splitter1.Location = new System.Drawing.Point(720, 24);
             this.splitter1.Name = "splitter1";
-            this.splitter1.Size = new System.Drawing.Size(8, 345);
+            this.splitter1.Size = new System.Drawing.Size(8, 316);
             this.splitter1.TabIndex = 6;
             this.splitter1.TabStop = false;
             // 
@@ -494,10 +466,38 @@ namespace IndianHealthService.ClinicalScheduling
             this.saveAccessBlocksWorker.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.saveAccessBlocksWorker_ProgressChanged);
             this.saveAccessBlocksWorker.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.saveAccessBlocksWorker_RunWorkerCompleted);
             // 
+            // calendarGrid1
+            // 
+            this.calendarGrid1.AllowDrop = true;
+            this.calendarGrid1.Appointments = null;
+            this.calendarGrid1.ApptDragSource = null;
+            this.calendarGrid1.AutoScroll = true;
+            this.calendarGrid1.AutoScrollMinSize = new System.Drawing.Size(600, 1898);
+            this.calendarGrid1.AvailabilityArray = null;
+            this.calendarGrid1.BackColor = System.Drawing.SystemColors.Window;
+            this.calendarGrid1.Columns = 5;
+            this.calendarGrid1.ContextMenu = this.ctxCalendarGrid;
+            this.calendarGrid1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.calendarGrid1.DrawWalkIns = true;
+            this.calendarGrid1.GridBackColor = "blue";
+            this.calendarGrid1.GridEnter = false;
+            this.calendarGrid1.Location = new System.Drawing.Point(0, 0);
+            this.calendarGrid1.Name = "calendarGrid1";
+            this.calendarGrid1.Resources = ((System.Collections.ArrayList)(resources.GetObject("calendarGrid1.Resources")));
+            this.calendarGrid1.SelectedAppointment = 0;
+            this.calendarGrid1.Size = new System.Drawing.Size(712, 316);
+            this.calendarGrid1.StartDate = new System.DateTime(2003, 1, 27, 0, 0, 0, 0);
+            this.calendarGrid1.TabIndex = 2;
+            this.calendarGrid1.TimeScale = 20;
+            this.calendarGrid1.CGAppointmentAdded += new IndianHealthService.ClinicalScheduling.CGAppointmentChangedHandler(this.calendarGrid1_CGAppointmentAdded);
+            this.calendarGrid1.CGAppointmentChanged += new IndianHealthService.ClinicalScheduling.CGAppointmentChangedHandler(this.calendarGrid1_CGAppointmentChanged);
+            this.calendarGrid1.CGSelectionChanged += new IndianHealthService.ClinicalScheduling.CGSelectionChangedHandler(this.calendarGrid1_CGSelectionChanged);
+            this.calendarGrid1.DoubleClick += new System.EventHandler(this.calendarGrid1_DoubleClick);
+            // 
             // CGAVView
             // 
             this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
-            this.ClientSize = new System.Drawing.Size(848, 393);
+            this.ClientSize = new System.Drawing.Size(848, 364);
             this.Controls.Add(this.panelCenter);
             this.Controls.Add(this.splitter1);
             this.Controls.Add(this.panelTop);
@@ -767,32 +767,43 @@ namespace IndianHealthService.ClinicalScheduling
 			}
 		}//End AvailabilityAddNew
 
+
+        /// <summary>
+        /// Delete All slots from certain dates in one swoop. DAL does actualy deletion.
+        /// </summary>
         private void MassSlotDelete()
         {
-            DialogResult msgResult = MessageBox.Show("Delete all Access Slots?", "Delete Slots?",MessageBoxButtons.YesNo);
-            if (msgResult != DialogResult.Yes) return;
+            // Ask users for from and to dates
+            DMassSlotDelete dMassSlotDelete = new DMassSlotDelete();
+            DialogResult res = dMassSlotDelete.ShowDialog();
 
-            CGAppointments appointments = new CGAppointments();
-            appointments = this.Document.AVBlocks;
+            // peel off if user cancelled.
+            if (res != DialogResult.OK) return;
 
-            foreach (CGAppointment a in appointments.AppointmentTable.Values)
-            {
-                int nApptID = a.AppointmentKey;
-                Debug.Assert(nApptID != 0);
-                try
-                {
-                    Document.DeleteAvailability(nApptID);
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show("Unable to delete access block" + ex.Message, "Clinical Scheduling");
-                }
+            // Get this ResourceID from here, and the start and end dates from the dialog.
+            string sResourceID = this.m_Document.ResourceID.ToString();
+            DateTime dStartDate = dMassSlotDelete.StartDate;
+            DateTime dEndDate = dMassSlotDelete.EndDate;
 
-            }
+            // Deletes Slots through DAL.
+            DataTable result = this.m_DocManager.DAL.MassSlotDelete(sResourceID, dStartDate, dEndDate);
+            
+            // One row (and only one) expected:
+            Debug.Assert(result.Rows.Count == 1);
 
-            this.m_DocManager.UpdateViews((string)this.m_Document.Resources[0], "");
+            // -1 Expected in first row, otherwise, there is an error
+            if (result.Rows[0][0].ToString() != "-1")
+                throw new ApplicationException(
+                    @"VISTA couldn't delete the slots. Contact tech support.\r\n
+                     Error Message from VISTA: " + result.Rows[0][1].ToString());
+
+            // Update Access Blocks views
+            this.Document.RefreshDaysSchedule(); // Retrieve the slots from the server
+            this.Document.UpdateAllViews(); // Recalibrate the calendar grid with the new cells
+            this.calendarGrid1.Invalidate(); // Redraw it.
+
+            // Tell other clients that slots have changed.
             RaiseRPMSEvent("BSDX SCHEDULE", m_Document.DocName);
-            this.calendarGrid1.Invalidate();
         }
 
 		private void AppointmentDelete() 
@@ -1049,6 +1060,11 @@ namespace IndianHealthService.ClinicalScheduling
 			try
 			{
                 this.saveAccessBlocksWorker.RunWorkerAsync(dlg);
+                /*
+                 * Moved to RunWorkerAsync. Leave until I think I am safe removing it.
+                 * 
+                */ 
+                
                 //OpenFileDialog openFileDialog1 = dlg.FileDialog;
                 //openFileDialog1.RestoreDirectory = false; // go back to our dir
                 //Stream streamFile;
@@ -1493,27 +1509,13 @@ namespace IndianHealthService.ClinicalScheduling
             DateTime dtEnd = dtStart.AddDays(6); // or 7?
 
             string sResourceID = this.m_Document.ResourceID.ToString();
-            DataTable dt;
 
             for (int j = 1; j < nWeeksToApply + 1; j++)
             {
-                float fProgressPercentage = ((float)j / (float)nWeeksToApply) * 100;
+                float fProgressPercentage = ((float)(j-1) / (float)nWeeksToApply) * 100;
                 int iProgressPercentage = (int)fProgressPercentage;
                 worker.ReportProgress(iProgressPercentage);
-                //Convert start and end to string
-                //string sStart = dtStart.ToString("M/d/yyyy");
-                //string sEnd = dtEnd.ToString("M/d/yyyy");
-                //i18n
-                string sStart = FMDateTime.Create(dtStart).DateOnly.FMDateString;
-                string sEnd = FMDateTime.Create(dtEnd).DateOnly.FMDateString;
-                //Cancel all existing access blocks in the date range
-                string sSql = "BSDX CANCEL AV BY DATE^" + sResourceID + "^" + sStart + "^" + sEnd;
-                CGDocumentManager.RPMSDataTableDelegate d = new CGDocumentManager.RPMSDataTableDelegate(m_DocManager.RPMSDataTable);
-                //dt = this.m_DocManager.RPMSDataTable(sSql, "Cancelled");
-                dt = d(sSql, "Cancelled");
-                //for each CGAppointment in AVBlocks, call AddNew
-                string sResource = "";
-                sResource = (string)this.Document.Resources[0];
+                string sResource = (string)this.Document.Resources[0];
                 foreach (CGAppointment a in cgaTemp.AppointmentTable.Values)
                 {
                     //Change the resource to the current one
@@ -1547,6 +1549,14 @@ namespace IndianHealthService.ClinicalScheduling
 
         private void saveAccessBlocksWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
+            // Update Access Blocks views
+            this.Document.RefreshDaysSchedule(); // Retrieve the slots from the server
+            this.Document.UpdateAllViews(); // Recalibrate the calendar grid with the new cells
+            this.calendarGrid1.Invalidate(); // Redraw it.
+
+            // Tell other clients that slots have changed.
+            RaiseRPMSEvent("BSDX SCHEDULE", m_Document.DocName);
+
             this.statusBar1.Text = "Done saving access blocks.";
         }
 
@@ -1557,7 +1567,7 @@ namespace IndianHealthService.ClinicalScheduling
 
         private void mnuDeleteAllSlots_Click(object sender, EventArgs e)
         {
-
+            MassSlotDelete();
         }
 
 	}

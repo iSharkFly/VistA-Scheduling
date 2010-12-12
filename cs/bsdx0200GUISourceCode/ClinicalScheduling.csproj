@@ -291,6 +291,12 @@
     <Compile Include="FMDateTime.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Compile>
+    <Compile Include="DMassSlotDelete.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="DMassSlotDelete.Designer.cs">
+      <DependentUpon>DMassSlotDelete.cs</DependentUpon>
+    </Compile>
     <Compile Include="Options.cs" />
     <Compile Include="Printing.cs" />
     <Compile Include="UCPatientAppts.cs">
@@ -354,6 +360,9 @@
     <EmbeddedResource Include="DManagement.resx">
       <DependentUpon>DManagement.cs</DependentUpon>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DMassSlotDelete.resx">
+      <DependentUpon>DMassSlotDelete.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="DNoShow.resx">
       <DependentUpon>DNoShow.cs</DependentUpon>

@@ -323,19 +323,37 @@ namespace IndianHealthService.ClinicalScheduling
 				m_ds.SetStatus("Getting Version Info...");
                 m_ds.Refresh();
 
-                DataTable ver = _dal.GetVersion("BSDX"); //sCmd, "VersionInfo", m_dsGlobal);
+                DataTable ver = _dal.GetVersion("BSDX");
                 ver.TableName = "VersionInfo";
                 m_dsGlobal.Tables.Add(ver);
-
-                //Keep the following commented code for future use:
+                
 				//How to extract the version numbers:
-                //DataTable dtVersion = m_dsGlobal.Tables["VersionInfo"];
-                //Debug.Assert(dtVersion.Rows.Count == 1);
-                //DataRow rVersion = dtVersion.Rows[0];
-                //string sMajor = rVersion["MAJOR_VERSION"].ToString();
-                //string sMinor = rVersion["MINOR_VERSION"].ToString();
-                //string sBuild = rVersion["BUILD"].ToString();
-                //decimal fBuild = Convert.ToDecimal(sBuild);
+                DataTable dtVersion = m_dsGlobal.Tables["VersionInfo"];
+                Debug.Assert(dtVersion.Rows.Count == 1);
+                DataRow rVersion = dtVersion.Rows[0];
+                string sMajor = rVersion["MAJOR_VERSION"].ToString();
+                string sMinor = rVersion["MINOR_VERSION"].ToString();
+                string sBuild = rVersion["BUILD"].ToString();
+                decimal fBuild = Convert.ToDecimal(sBuild);
+
+                //Make sure that the server is running the same version the client is.
+                Version x = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
+
+                //if version numbers mismatch, don't continue.
+                //TODO: For future: Include in v. 1.5
+                /*
+                if (!(x.Major.ToString() == sMajor && x.Minor.ToString() + x.Build.ToString() == sMinor))
+                {
+                    MessageBox.Show(
+                        "Server runs version " + sMajor + "." + sMinor + "\r\n" +
+                        "You are running " + x.ToString() + "\r\n\r\n" +
+                        "Major, Minor and Build versions must match",
+                        "Version Mismatch");
+                    m_ds.Close();
+                    return;
+                }
+                */
+ 
 
                 //Change encoding
                 if (m_Encoding == String.Empty)

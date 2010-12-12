@@ -116,6 +116,20 @@ namespace IndianHealthService.ClinicalScheduling
             return RPMSDataTable(cmd, "");
         }
 
+        /// <summary>
+        /// Delete All Slots for a Resource
+        /// </summary>
+        /// <param name="sResourceID"></param>
+        /// <param name="BeginDate"></param>
+        /// <param name="EndDate"></param>
+        /// <returns></returns>
+        public DataTable MassSlotDelete(string sResourceID, DateTime BeginDate, DateTime EndDate)
+        {
+            string sBegin = FMDateTime.Create(BeginDate).DateOnly.FMDateString;
+            string sEnd = FMDateTime.Create(EndDate).DateOnly.FMDateString;
+            string cmd = String.Format("BSDX CANCEL AV BY DATE^{0}^{1}^{2}", sResourceID, sBegin, sEnd);
+            return RPMSDataTable(cmd, "Cancelled");
+        }
 
         /// <summary>
         /// Workhorse

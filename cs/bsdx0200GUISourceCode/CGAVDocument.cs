@@ -554,7 +554,6 @@ namespace IndianHealthService.ClinicalScheduling
 					v.UpdateArrays();
 				}
 			}
-
 		}
 
 		#endregion
