@@ -191,9 +191,7 @@
     <Compile Include="CGDocument.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="CGDocumentManager.cs">
-      <SubType>Form</SubType>
-    </Compile>
+    <Compile Include="CGDocumentManager.cs" />
     <Compile Include="CGRange.cs" />
     <Compile Include="CGResource.cs" />
     <Compile Include="CGSchedLib.cs">

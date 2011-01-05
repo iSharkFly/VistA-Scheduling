@@ -429,7 +429,6 @@ namespace IndianHealthService.ClinicalScheduling
 				{
 					m_DocManager.ConnectInfo.LoadConnectInfo();
 				}
-				System.IntPtr pHandle = m_DocManager.Handle;
 
 				m_pAvArray.Clear();
 
