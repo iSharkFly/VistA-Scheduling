@@ -16,6 +16,7 @@ namespace IndianHealthService.ClinicalScheduling
 		private System.Windows.Forms.Label lblStatus;
         private Label lblVersion;
         private Label label2;
+        private ProgressBar progressBar1;
 		/// <summary>
 		/// Required designer variable.
 		/// </summary>
@@ -61,6 +62,7 @@ namespace IndianHealthService.ClinicalScheduling
             this.lblStatus = new System.Windows.Forms.Label();
             this.lblVersion = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
+            this.progressBar1 = new System.Windows.Forms.ProgressBar();
             this.SuspendLayout();
             // 
             // label1
@@ -109,12 +111,21 @@ namespace IndianHealthService.ClinicalScheduling
             this.label2.TabIndex = 6;
             this.label2.Text = "VISTA";
             // 
+            // progressBar1
+            // 
+            this.progressBar1.Location = new System.Drawing.Point(18, 207);
+            this.progressBar1.Name = "progressBar1";
+            this.progressBar1.Size = new System.Drawing.Size(458, 14);
+            this.progressBar1.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
+            this.progressBar1.TabIndex = 7;
+            // 
             // DSplash
             // 
             this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
             this.ClientSize = new System.Drawing.Size(488, 252);
             this.ControlBox = false;
+            this.Controls.Add(this.progressBar1);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.lblVersion);
             this.Controls.Add(this.lblStatus);
@@ -134,6 +145,7 @@ namespace IndianHealthService.ClinicalScheduling
 
         public delegate void dSetStatus(string sStatus);
         public delegate void dAny();
+        public delegate void dProgressBarSet(int number);
 		
         public void SetStatus(string sStatus)
 		{
@@ -144,9 +156,7 @@ namespace IndianHealthService.ClinicalScheduling
                 return;
             }
             
-            System.Diagnostics.Debug.Assert(this.InvokeRequired == false);
 			this.lblStatus.Text = sStatus;
-            this.Refresh();
 		}
 
 		private void DSplash_Load(object sender, System.EventArgs e)
@@ -165,6 +175,31 @@ namespace IndianHealthService.ClinicalScheduling
             dAny d = new dAny(this.Hide);
             this.Invoke(d);
         }
+
+        public void RemoteProgressBarMaxSet(int max)
+        {
+            if (this.InvokeRequired == true)
+            {
+                dProgressBarSet d = new dProgressBarSet(RemoteProgressBarMaxSet);
+                this.Invoke(d, new object[] { max });
+                return;
+            }
+
+            this.progressBar1.Maximum = max;
+        }
+
+        public void RemoteProgressBarValueSet(int val)
+        {
+            if (this.InvokeRequired == true)
+            {
+                dProgressBarSet d = new dProgressBarSet(RemoteProgressBarValueSet);
+                this.Invoke(d, new object[] { val });
+                return;
+            }
+
+            this.progressBar1.Value = val;
+        }
+
 	}
 
 

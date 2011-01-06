@@ -187,7 +187,9 @@ namespace IndianHealthService.ClinicalScheduling
             opset.Parse(args);
 
             
-            _current.InitializeApp();
+            bool isEverythingOkay = _current.InitializeApp();
+
+            if (!isEverythingOkay) return;
 
             //Create the first empty document
             CGDocument doc = new CGDocument();
@@ -250,9 +252,9 @@ namespace IndianHealthService.ClinicalScheduling
         /// <summary>
         /// See InitializeApp(bool) below
         /// </summary>
-		private void InitializeApp()
+		private bool InitializeApp()
 		{
-			InitializeApp(false);
+			return InitializeApp(false);
 		}
 
 		/// <summary>
@@ -263,7 +265,7 @@ namespace IndianHealthService.ClinicalScheduling
 		/// </summary>
 		/// <param name="bReLogin">Is the User logging in again from a currently running instance?
         /// If so, display a dialog to collect access and verify codes.</param>
-        private void InitializeApp(bool bReLogin)
+        private bool InitializeApp(bool bReLogin)
 		{
             //Set M connection info
             m_ConnectInfo = new BMXNetConnectInfo(m_Encoding); // Encoding is "" unless passed in command line
@@ -277,33 +279,33 @@ namespace IndianHealthService.ClinicalScheduling
             //Disable polling (But does this really work???? I don't see how it gets disabled)
             m_ConnectInfo.EventPollingEnabled = false;
 
-            //Show a splash screen while initializing
+            //Show a splash screen while initializing; define delegates to remote thread
             DSplash m_ds = new DSplash();
             DSplash.dSetStatus setStatusDelegate = new DSplash.dSetStatus(m_ds.SetStatus);
             DSplash.dAny closeSplashDelegate = new DSplash.dAny(m_ds.RemoteClose);
-            DSplash.dAny hideSplashDelegate = new DSplash.dAny(m_ds.RemoteHide);
+            DSplash.dProgressBarSet setMaxProgressDelegate = new DSplash.dProgressBarSet(m_ds.RemoteProgressBarMaxSet);
+            DSplash.dProgressBarSet setProgressDelegate = new DSplash.dProgressBarSet(m_ds.RemoteProgressBarValueSet);
 
+            //Start new thread for the Splash screen.
             Thread threadSplash = new Thread(new ParameterizedThreadStart(StartSplash));
-            threadSplash.IsBackground = true; //expendable -- exit even if still running.
-            threadSplash.Start(m_ds);
+            threadSplash.IsBackground = true; //expendable thread -- exit even if still running.
+            threadSplash.Name = "Splash Thread";
+            threadSplash.Start(m_ds); // pass form as parameter.
 
+            //There are 20 steps to load the application. That's max for the progress bar.
+            setMaxProgressDelegate(20);
             
-          	//m_ds.SetStatus("Loading Configuration Settings...");
-            //m_ds.Refresh();
-			//this.Activate();
-            // smh--not used System.Configuration.ConfigurationManager.GetSection("appSettings");
+            // smh--not used: System.Configuration.ConfigurationManager.GetSection("appSettings");
+            
             setStatusDelegate("Connecting to VISTA");
-            //m_ds.Refresh();
+            
 			bool bRetry = true;
 
             //Try to connect using supplied values for Server and Port
             //Why am I doing this? The library BMX net uses prompts for access and verify code
             //whether you can connect or not. Not good. So I test first whether
             //we can connect at all by doing a simple connection and disconnect.
-            //TODO: Make this more robust by sending a TCPConnect message and seeing if you get a response.
-
-            //m_ds.Refresh();
-
+            //TODO: Make this more robust by sending a TCPConnect message and seeing if you get a response
             if (m_Server != "" && m_Port != 0)
             {
                 System.Net.Sockets.TcpClient tcpClient = new System.Net.Sockets.TcpClient();
@@ -312,13 +314,16 @@ namespace IndianHealthService.ClinicalScheduling
                     tcpClient.Connect(m_Server, m_Port); // open it
                     tcpClient.Close();                  // then close it
                 }
-                catch (System.Net.Sockets.SocketException ex)
+                catch (System.Net.Sockets.SocketException)
                 {
-                    throw ex;
+                    MessageBox.Show("Cannot connect to VistA. Network Error");
+                    return false;
                 }
             }
 
-			do
+			
+            // Do block is Log-in logic
+            do
 			{
                 // login crap
                 try
@@ -346,11 +351,10 @@ namespace IndianHealthService.ClinicalScheduling
                 }
                 catch (System.Net.Sockets.SocketException)
                 {
-                    MessageBox.Show("Cannot connect to VistA. ");
+                    MessageBox.Show("Cannot connect to VistA. Network Error");
                 }
-                catch (Exception ex)
+                catch (BMXNetException ex)
                 {
-                    //m_ds.Close();
                     if (MessageBox.Show("Unable to connect to VistA.  " + ex.Message, "Clinical Scheduling", MessageBoxButtons.RetryCancel) == DialogResult.Retry)
                     {
                         bRetry = true;
@@ -360,7 +364,7 @@ namespace IndianHealthService.ClinicalScheduling
                     {
                         closeSplashDelegate();
                         bRetry = false;
-                        throw ex;
+                        return false; //tell main that it's a no go.
                     }
                 }
 			}while (bRetry == true);
@@ -369,7 +373,8 @@ namespace IndianHealthService.ClinicalScheduling
 			_current.m_dsGlobal = new DataSet("GlobalDataSet");
 
 			//Version info
-            //m_ds.Activate();
+            // Table #1
+            setProgressDelegate(1);
 			setStatusDelegate("Getting Version Info from Server...");
 
             DataTable ver = _dal.GetVersion("BSDX");
@@ -405,6 +410,8 @@ namespace IndianHealthService.ClinicalScheduling
  
 
             //Change encoding
+            // Call #2
+            setProgressDelegate(2);
             setStatusDelegate("Setting encoding...");
 
             if (m_Encoding == String.Empty)
@@ -413,7 +420,10 @@ namespace IndianHealthService.ClinicalScheduling
                 if (utf8_server_support == "1")
                     m_ConnectInfo.bmxNetLib.Encoder = System.Text.UTF8Encoding.UTF8;
             }
-			//Set application context
+			
+            //Set application context
+            // Call #3
+            setProgressDelegate(3);
 			setStatusDelegate("Setting Application Context to BSDXRPC...");
 			m_ConnectInfo.AppContext = "BSDXRPC";
 	
@@ -423,8 +433,10 @@ namespace IndianHealthService.ClinicalScheduling
 
             string sCommandText;
 
-            setStatusDelegate(statusConst + " Schedule User");
             //Schedule User Info
+            // Table #4
+            setProgressDelegate(4);
+            setStatusDelegate(statusConst + " Schedule User");
             DataTable dtUser = _dal.GetUserInfo(m_ConnectInfo.DUZ);
             dtUser.TableName = "SchedulingUser";
             m_dsGlobal.Tables.Add(dtUser);
@@ -436,14 +448,18 @@ namespace IndianHealthService.ClinicalScheduling
             string sUser = oUser.ToString();
             m_bSchedManager = (sUser == "YES") ? true : false;
 
-            setStatusDelegate(statusConst + " Access Types");
             //Get Access Types
+            // Table #5
+            setProgressDelegate(5);
+            setStatusDelegate(statusConst + " Access Types");
             DataTable dtAccessTypes = _dal.GetAccessTypes();
             dtAccessTypes.TableName = "AccessTypes";
             m_dsGlobal.Tables.Add(dtAccessTypes);
 
+            //Get Access Groups
+            // Table #6
+            setProgressDelegate(6);
             setStatusDelegate(statusConst + " Access Groups");
-            //AccessGroups
             LoadAccessGroupsTable();
 
             //Build Primary Key for AccessGroup table
@@ -453,8 +469,10 @@ namespace IndianHealthService.ClinicalScheduling
             dcKeys[0] = dcKey;
             dtGroups.PrimaryKey = dcKeys;
 
+            //Get Access Group Types (??)
+            // Table #7
+            setProgressDelegate(7);
             setStatusDelegate(statusConst + " Access Group Types");
-            //AccessGroupType
             LoadAccessGroupTypesTable();
 
             //Build Primary Key for AccessGroupType table
@@ -470,12 +488,16 @@ namespace IndianHealthService.ClinicalScheduling
                 m_dsGlobal.Tables["AccessGroupType"].Columns["ACCESS_GROUP_ID"]);	//Child
             m_dsGlobal.Relations.Add(dr);
 
-            setStatusDelegate(statusConst + " Resource Groups By User");
             //ResourceGroup Table (Resource Groups by User)
+            // Table #8
+            setProgressDelegate(8);
+            setStatusDelegate(statusConst + " Resource Groups By User");
             LoadResourceGroupTable();
 
-            setStatusDelegate(statusConst + " Resources By User");
             //Resources by user
+            // Table #9
+            setProgressDelegate(9);
+            setStatusDelegate(statusConst + " Resources By User");
             LoadBSDXResourcesTable();
 
             //Build Primary Key for Resources table
@@ -483,8 +505,10 @@ namespace IndianHealthService.ClinicalScheduling
             dc[0] = m_dsGlobal.Tables["Resources"].Columns["RESOURCEID"];
             m_dsGlobal.Tables["Resources"].PrimaryKey = dc;
 
-            setStatusDelegate(statusConst + " Group Resources");
             //GroupResources table
+            // Table #10
+            setProgressDelegate(10);
+            setStatusDelegate(statusConst + " Group Resources");
             LoadGroupResourcesTable();
 
             //Build Primary Key for ResourceGroup table
@@ -499,8 +523,10 @@ namespace IndianHealthService.ClinicalScheduling
             CGSchedLib.OutputArray(m_dsGlobal.Tables["GroupResources"], "GroupResources");
             m_dsGlobal.Relations.Add(dr);
 
-            setStatusDelegate(statusConst + " Clinics");
             //HospitalLocation table
+            //Table #11
+            setProgressDelegate(11);
+            setStatusDelegate(statusConst + " Clinics");
             //cmd.CommandText = "SELECT BMXIEN 'HOSPITAL_LOCATION_ID', NAME 'HOSPITAL_LOCATION', DEFAULT_PROVIDER, STOP_CODE_NUMBER, INACTIVATE_DATE, REACTIVATE_DATE FROM HOSPITAL_LOCATION";
             sCommandText = "BSDX HOSPITAL LOCATION";
             ConnectInfo.RPMSDataTable(sCommandText, "HospitalLocation", m_dsGlobal);
@@ -518,8 +544,10 @@ namespace IndianHealthService.ClinicalScheduling
                 m_dsGlobal.Tables["Resources"].Columns["HOSPITAL_LOCATION_ID"], false);	//Child
             m_dsGlobal.Relations.Add(dr);
 
-            setStatusDelegate(statusConst + " Schedule User");
             //Build ScheduleUser table
+            //Table #12
+            setProgressDelegate(12);
+            setStatusDelegate(statusConst + " Schedule User");
             this.LoadScheduleUserTable();
 
             //Build Primary Key for ScheduleUser table
@@ -528,8 +556,10 @@ namespace IndianHealthService.ClinicalScheduling
             dc[0] = dtTemp.Columns["USERID"];
             m_dsGlobal.Tables["ScheduleUser"].PrimaryKey = dc;
 
-            setStatusDelegate(statusConst + " Resource User");
             //Build ResourceUser table
+            //Table #13
+            setProgressDelegate(13);
+            setStatusDelegate(statusConst + " Resource User");
             this.LoadResourceUserTable();
 
             //Build Primary Key for ResourceUser table
@@ -544,21 +574,27 @@ namespace IndianHealthService.ClinicalScheduling
                 m_dsGlobal.Tables["ResourceUser"].Columns["RESOURCEID"]);	//Child
             m_dsGlobal.Relations.Add(dr);
 
-            setStatusDelegate(statusConst + " Providers");
             //Build active provider table
+            //Table #14
+            setProgressDelegate(14);
+            setStatusDelegate(statusConst + " Providers");
             sCommandText = "SELECT BMXIEN, NAME FROM NEW_PERSON WHERE INACTIVE_DATE = '' AND BMXIEN > 1";
             ConnectInfo.RPMSDataTable(sCommandText, "Provider", m_dsGlobal);
             Debug.Write("LoadGlobalRecordsets -- Provider loaded\n");
 
-            setStatusDelegate(statusConst + " Clinic Stops");
             //Build the CLINIC_STOP table
+            //Table #15
+            setProgressDelegate(15);
+            setStatusDelegate(statusConst + " Clinic Stops");
             // sCommandText = "SELECT BMXIEN, CODE, NAME FROM CLINIC_STOP"; //SMH
             sCommandText = "SELECT BMXIEN, AMIS_REPORTING_STOP_CODE, NAME FROM CLINIC_STOP";
             ConnectInfo.RPMSDataTable(sCommandText, "ClinicStop", m_dsGlobal);
             Debug.Write("LoadGlobalRecordsets -- ClinicStop loaded\n");
 
-            setStatusDelegate(statusConst + " Holiday");
             //Build the HOLIDAY table
+            //Table #16
+            setProgressDelegate(16);
+            setStatusDelegate(statusConst + " Holiday");
             sCommandText = "SELECT NAME, DATE FROM HOLIDAY WHERE DATE > '" + DateTime.Today.ToShortDateString() + "'";
             ConnectInfo.RPMSDataTable(sCommandText, "HOLIDAY", m_dsGlobal);
             Debug.Write("LoadingGlobalRecordsets -- Holidays loaded\n");
@@ -567,17 +603,27 @@ namespace IndianHealthService.ClinicalScheduling
             //Save the xml schema
             //m_dsGlobal.WriteXmlSchema(@"..\..\csSchema20060526.xsd");
             //----------------------------------------------
-            
 
+            setStatusDelegate("Setting Receive Timeout");
             _current.m_ConnectInfo.ReceiveTimeout = 30000; //30-second timeout
 
 #if DEBUG
             _current.m_ConnectInfo.ReceiveTimeout = 600000; //longer timeout for debugging
 #endif 
-			_current.m_ConnectInfo.SubscribeEvent("BSDX SCHEDULE");
-			_current.m_ConnectInfo.SubscribeEvent("BSDX CALL WORKSTATIONS");
-			_current.m_ConnectInfo.SubscribeEvent("BSDX ADMIN MESSAGE");
-			_current.m_ConnectInfo.SubscribeEvent("BSDX ADMIN SHUTDOWN");
+			// Event Subsriptions
+            setStatusDelegate("Subscribing to Server Events");
+            //Table #17
+            setProgressDelegate(17);
+            _current.m_ConnectInfo.SubscribeEvent("BSDX SCHEDULE");
+			//Table #18
+            setProgressDelegate(18);
+            _current.m_ConnectInfo.SubscribeEvent("BSDX CALL WORKSTATIONS");
+			//Table #19
+            setProgressDelegate(19);
+            _current.m_ConnectInfo.SubscribeEvent("BSDX ADMIN MESSAGE");
+			//Table #20
+            setProgressDelegate(20);
+            _current.m_ConnectInfo.SubscribeEvent("BSDX ADMIN SHUTDOWN");
 
 			_current.m_ConnectInfo.EventPollingInterval = 5000; //in milliseconds
 			_current.m_ConnectInfo.EventPollingEnabled = true;
@@ -585,6 +631,8 @@ namespace IndianHealthService.ClinicalScheduling
 
             //Close Splash Screen
             closeSplashDelegate();
+
+            return true;
 			
 		}
 
