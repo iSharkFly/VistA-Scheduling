@@ -170,12 +170,6 @@ namespace IndianHealthService.ClinicalScheduling
             this.Invoke(d);
         }
 
-        public void RemoteHide()
-        {
-            dAny d = new dAny(this.Hide);
-            this.Invoke(d);
-        }
-
         public void RemoteProgressBarMaxSet(int max)
         {
             if (this.InvokeRequired == true)
