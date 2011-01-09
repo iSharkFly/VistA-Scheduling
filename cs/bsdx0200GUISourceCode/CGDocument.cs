@@ -813,20 +813,13 @@ namespace IndianHealthService.ClinicalScheduling
 			}
 		}
 
-		public void CheckInAppointment(int nApptID, DateTime dCheckIn,
-			string ClinicStopIEN,
-			string ProviderIEN,
-			string PrintRouteSlip,
-			string PCCClinicIEN,
-			string PCCFormIEN,
-			string PCCOutGuide
-			)
+		public void CheckInAppointment(int nApptID, DateTime dCheckIn)
 		{
-			string sCheckIn = dCheckIn.ToString("M-d-yyyy@HH:mm");
+			string sCheckIn = FMDateTime.Create(dCheckIn).FMDateString;
 
-			string sSql = "BSDX CHECKIN APPOINTMENT^" + nApptID.ToString() + "^" + sCheckIn + "^";
-			sSql += ClinicStopIEN + "^" + ProviderIEN + "^" + PrintRouteSlip + "^";
-			sSql += PCCClinicIEN + "^" + PCCFormIEN + "^" + PCCOutGuide;
+            string sSql = "BSDX CHECKIN APPOINTMENT^" + nApptID.ToString() + "^" + sCheckIn; // +"^";
+			//sSql += ClinicStopIEN + "^" + ProviderIEN + "^" + PrintRouteSlip + "^";
+			//sSql += PCCClinicIEN + "^" + PCCFormIEN + "^" + PCCOutGuide;
 
 			System.Data.DataTable dtAppt = m_DocManager.RPMSDataTable(sSql, "CheckInAppointment");
 

@@ -292,15 +292,13 @@ namespace IndianHealthService.ClinicalScheduling
             threadSplash.Name = "Splash Thread";
             threadSplash.Start(m_ds); // pass form as parameter.
 
-            //There are 20 steps to load the application. That's max for the progress bar.
-            setMaxProgressDelegate(20);
+            //There are 19 steps to load the application. That's max for the progress bar.
+            setMaxProgressDelegate(19);
             
             // smh--not used: System.Configuration.ConfigurationManager.GetSection("appSettings");
             
             setStatusDelegate("Connecting to VISTA");
             
-			bool bRetry = true;
-
             //Try to connect using supplied values for Server and Port
             //Why am I doing this? The library BMX net uses prompts for access and verify code
             //whether you can connect or not. Not good. So I test first whether
@@ -321,7 +319,9 @@ namespace IndianHealthService.ClinicalScheduling
                 }
             }
 
-			
+
+            bool bRetry = true;
+
             // Do block is Log-in logic
             do
 			{
@@ -469,7 +469,9 @@ namespace IndianHealthService.ClinicalScheduling
             dcKeys[0] = dcKey;
             dtGroups.PrimaryKey = dcKeys;
 
-            //Get Access Group Types (??)
+            //Get Access Group Types (Combines Access Types and Groups)
+            //Optimization Note: Can eliminate Access type and Access Group Table
+            // But they are heavily referenced throughout the code.
             // Table #7
             setProgressDelegate(7);
             setStatusDelegate(statusConst + " Access Group Types");
@@ -490,12 +492,14 @@ namespace IndianHealthService.ClinicalScheduling
 
             //ResourceGroup Table (Resource Groups by User)
             // Table #8
+            // What shows up on the tree. The groups the user has access to.
             setProgressDelegate(8);
             setStatusDelegate(statusConst + " Resource Groups By User");
             LoadResourceGroupTable();
 
             //Resources by user
             // Table #9
+            // Individual Resources
             setProgressDelegate(9);
             setStatusDelegate(statusConst + " Resources By User");
             LoadBSDXResourcesTable();
@@ -507,6 +511,7 @@ namespace IndianHealthService.ClinicalScheduling
 
             //GroupResources table
             // Table #10
+            // Resource Groups and Indivdual Resources together
             setProgressDelegate(10);
             setStatusDelegate(statusConst + " Group Resources");
             LoadGroupResourcesTable();
@@ -558,6 +563,7 @@ namespace IndianHealthService.ClinicalScheduling
 
             //Build ResourceUser table
             //Table #13
+            //Acess to Resources by [this] User
             setProgressDelegate(13);
             setStatusDelegate(statusConst + " Resource User");
             this.LoadResourceUserTable();
@@ -576,24 +582,16 @@ namespace IndianHealthService.ClinicalScheduling
 
             //Build active provider table
             //Table #14
+            //TODO: Lazy load the provider table; no need to load in advance.
             setProgressDelegate(14);
             setStatusDelegate(statusConst + " Providers");
             sCommandText = "SELECT BMXIEN, NAME FROM NEW_PERSON WHERE INACTIVE_DATE = '' AND BMXIEN > 1";
             ConnectInfo.RPMSDataTable(sCommandText, "Provider", m_dsGlobal);
             Debug.Write("LoadGlobalRecordsets -- Provider loaded\n");
 
-            //Build the CLINIC_STOP table
+            //Build the HOLIDAY table
             //Table #15
             setProgressDelegate(15);
-            setStatusDelegate(statusConst + " Clinic Stops");
-            // sCommandText = "SELECT BMXIEN, CODE, NAME FROM CLINIC_STOP"; //SMH
-            sCommandText = "SELECT BMXIEN, AMIS_REPORTING_STOP_CODE, NAME FROM CLINIC_STOP";
-            ConnectInfo.RPMSDataTable(sCommandText, "ClinicStop", m_dsGlobal);
-            Debug.Write("LoadGlobalRecordsets -- ClinicStop loaded\n");
-
-            //Build the HOLIDAY table
-            //Table #16
-            setProgressDelegate(16);
             setStatusDelegate(statusConst + " Holiday");
             sCommandText = "SELECT NAME, DATE FROM HOLIDAY WHERE DATE > '" + DateTime.Today.ToShortDateString() + "'";
             ConnectInfo.RPMSDataTable(sCommandText, "HOLIDAY", m_dsGlobal);
@@ -612,17 +610,17 @@ namespace IndianHealthService.ClinicalScheduling
 #endif 
 			// Event Subsriptions
             setStatusDelegate("Subscribing to Server Events");
-            //Table #17
-            setProgressDelegate(17);
+            //Table #16
+            setProgressDelegate(16);
             _current.m_ConnectInfo.SubscribeEvent("BSDX SCHEDULE");
+			//Table #17
+            setProgressDelegate(17);
+            _current.m_ConnectInfo.SubscribeEvent("BSDX CALL WORKSTATIONS");
 			//Table #18
             setProgressDelegate(18);
-            _current.m_ConnectInfo.SubscribeEvent("BSDX CALL WORKSTATIONS");
+            _current.m_ConnectInfo.SubscribeEvent("BSDX ADMIN MESSAGE");
 			//Table #19
             setProgressDelegate(19);
-            _current.m_ConnectInfo.SubscribeEvent("BSDX ADMIN MESSAGE");
-			//Table #20
-            setProgressDelegate(20);
             _current.m_ConnectInfo.SubscribeEvent("BSDX ADMIN SHUTDOWN");
 
 			_current.m_ConnectInfo.EventPollingInterval = 5000; //in milliseconds

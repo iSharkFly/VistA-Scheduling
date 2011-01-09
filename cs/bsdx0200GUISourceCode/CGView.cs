@@ -1940,7 +1940,7 @@ namespace IndianHealthService.ClinicalScheduling
 
 		private void AppointmentCheckIn()
 		{
-			bool bDeleted = false;
+			
 			int nApptID = this.calendarGrid1.SelectedAppointment;
 			Debug.Assert(nApptID != 0);
 
@@ -1948,7 +1948,6 @@ namespace IndianHealthService.ClinicalScheduling
 
 			try
 			{
-
 				bool bAlreadyCheckedIn = false;
 				if (a.CheckInTime.Ticks > 0)
 					bAlreadyCheckedIn = true;
@@ -1977,42 +1976,18 @@ namespace IndianHealthService.ClinicalScheduling
 				{
 					Debug.Write("CGView.AppointmentCheckIn Error: " + ex.Message);
 				}
-
 				
 				string sProv = "";
-				string sProvReqd = "NO";
-				string sPCC = "NO";
-				string sMultCodes = "NO";
-				string sStopCode = "";
-				bool bProvReqd = false;
-				bool bPCC = false;
-				bool bMultCodes = false;
+
 				if (nHospLoc > 0)
 				{
 					DataRow dr = drv.Row;
 					DataRow drHL = dr.GetParentRow(m_DocManager.GlobalDataSet.Relations["HospitalLocationResource"]);
 					sProv = drHL["DEFAULT_PROVIDER"].ToString();
-					sStopCode = drHL["STOP_CODE_NUMBER"].ToString();
-
-					
-                    //TODO: Remove this. This doesn't exist in VISTA.
-                    /*
-                    DataRow[] draCS = drHL.GetChildRows(m_DocManager.GlobalDataSet.Relations["HospitalLocationClinic"]);
-					if (draCS.GetLength(0) > 0)
-					{
-						DataRow drCS = draCS[0];
-						sProvReqd = drCS["VISIT_PROVIDER_REQUIRED"].ToString();
-						sPCC = drCS["GENERATE_PCCPLUS_FORMS?"].ToString();
-						sMultCodes = drCS["MULTIPLE_CLINIC_CODES_USED?"].ToString();
-					}
-					bProvReqd = (sProvReqd == "YES")?true:false;
-					bPCC = (sPCC == "YES")?true:false;
-					bMultCodes = (sMultCodes == "YES")?true:false;
-                     */
 				}
 
 				DCheckIn dlgCheckin = new DCheckIn();
-				dlgCheckin.InitializePage(a, this.m_DocManager, sProv, bProvReqd, bPCC, bMultCodes, sStopCode, nHospLoc);
+				dlgCheckin.InitializePage(a, this.m_DocManager, sProv, nHospLoc);
 				calendarGrid1.CGToolTip.Active = false;
 				if (dlgCheckin.ShowDialog(this) != DialogResult.OK)
 				{
@@ -2026,21 +2001,9 @@ namespace IndianHealthService.ClinicalScheduling
 
 				DateTime dtCheckIn = dlgCheckin.CheckInTime;
 
-				/*
-				 * Need to pass Provider, ClinicStop, PrintRouteSlip, 
-				 * PCC Clinic, PCC Form, Print OutGuide
-				 */
-
-				this.Document.CheckInAppointment(nApptID, dtCheckIn,
-			 dlgCheckin.ClinicStopIEN,
-			 dlgCheckin.ProviderIEN,
-			 dlgCheckin.PrintRouteSlip,
-			 dlgCheckin.PCCClinicIEN,
-			 dlgCheckin.PCCFormIEN,
-			 dlgCheckin.PCCOutGuide
-					);
+				this.Document.CheckInAppointment(nApptID, dtCheckIn);
                 //smh new code
-                if (dlgCheckin.PrintRouteSlip == "true") //TODO: strange that we use a string for a boolean value??
+                if (dlgCheckin.PrintRouteSlip)
                     this.printRoutingSlip.Print();
                 // end new code
 
@@ -2051,18 +2014,6 @@ namespace IndianHealthService.ClinicalScheduling
 				MessageBox.Show("Error checking in patient:  " +  ex.Message, "Clinical Scheduling");
 			}
 
-			if (bDeleted == true)
-			{
-				try
-				{
-					RaiseRPMSEvent("BSDX SCHEDULE" , m_Document.DocName);
-				}
-				catch (Exception ex)
-				{
-					Debug.Write(ex.Message);
-				}
-				this.calendarGrid1.Invalidate();
-			}		
 		}
 
 		private void AppointmentAddWalkin()

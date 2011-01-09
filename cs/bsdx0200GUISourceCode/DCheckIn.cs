@@ -43,22 +43,12 @@ namespace IndianHealthService.ClinicalScheduling
         private System.Windows.Forms.Label lblPatientName;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.ComboBox cboProvider;
-        private System.Windows.Forms.ComboBox cboStopCode;
-        private System.Windows.Forms.Label lblStopCode;
         private System.Windows.Forms.CheckBox chkRoutingSlip;
-        private System.Windows.Forms.GroupBox grpPCCPlus;
-        private System.Windows.Forms.ComboBox cboPCCPlusClinic;
-        private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.ComboBox cboPCCPlusForm;
-        private System.Windows.Forms.Label label5;
-        private System.Windows.Forms.CheckBox chkPCCOutGuide;
 
         private string m_sPatientName;
         private DateTime m_dCheckIn;
         private string m_sProvider;
         private string m_sProviderIEN;
-        private string m_sStopCode;
-        private string m_sStopCodeIEN;
         private CGDocumentManager m_DocManager;
         private DataSet m_dsGlobal;
         private DataTable m_dtProvider;
@@ -70,17 +60,8 @@ namespace IndianHealthService.ClinicalScheduling
         private DataView m_dvForm;
         private bool m_bInit;
         public bool m_bPrintRouteSlip;
-        private DateTime m_dAuxTime;
-
-        /*
-         * PCC Variables
-         */
-        private bool m_bPCC;
-        private string m_sPCCClinicIEN;
-        private string m_sPCCFormIEN;
         private ToolTip toolTip1;
-        private bool m_bPCCOutGuide;
-
+        
         #endregion Fields
 
         #region Properties
@@ -97,59 +78,13 @@ namespace IndianHealthService.ClinicalScheduling
         }
 
         /// <summary>
-        /// Returns string representation of IEN of Clinic in VEN EHP CLINIC file
-        /// </summary>
-        public string PCCClinicIEN
-        {
-            get
-            {
-                return this.m_sPCCClinicIEN;
-            }
-        }
-
-        /// <summary>
-        /// Returns string representation of IEN of template entry in VEN PCC TEMPLATE
-        /// </summary>
-        public string PCCFormIEN
-        {
-            get
-            {
-                return m_sPCCFormIEN;
-            }
-        }
-
-        /// <summary>
-        /// Returns 'true' if outguide to be printed; otherwise returns 'false'
-        /// </summary>
-        public string PCCOutGuide
-        {
-            get
-            {
-                string sRet = (this.m_bPCCOutGuide == true) ? "true" : "false";
-                return sRet;
-            }
-        }
-
-        /// <summary>
-        /// Returns string representation of IEN of CLINIC STOP
-        /// </summary>
-        public string ClinicStopIEN
-        {
-            get
-            {
-                return this.m_sStopCodeIEN;
-            }
-        }
-
-        /// <summary>
         /// Returns 'true' if routing slip to be printed; otherwise 'false'
         /// </summary>
-        public string PrintRouteSlip
+        public bool PrintRouteSlip
         {
             get
             {
-                string sRet = (this.m_bPrintRouteSlip == true) ? "true" : "false";
-                return sRet;
+                return m_bPrintRouteSlip;
             }
         }
 
@@ -168,20 +103,6 @@ namespace IndianHealthService.ClinicalScheduling
             }
         }
 
-        /// <summary>
-        /// Appointment end time
-        /// </summary>
-        public DateTime AuxTime
-        {
-            get
-            {
-                return m_dAuxTime;
-            }
-            set
-            {
-                m_dAuxTime = value;
-            }
-        }
         #endregion Properties
 
         #region Methods
@@ -192,21 +113,13 @@ namespace IndianHealthService.ClinicalScheduling
         /// <param name="a">Appointment</param>
         /// <param name="docManager">Document Manager</param>
         /// <param name="sDefaultProvider">Default provider</param>
-        /// <param name="bProviderRequired">not used</param>
-        /// <param name="bGeneratePCCPlus">not used</param>
-        /// <param name="bMultCodes">not used</param>
-        /// <param name="sStopCode">Stop Code</param>
         public void InitializePage(CGAppointment a, CGDocumentManager docManager,
-            string sDefaultProvider, bool bProviderRequired, bool bGeneratePCCPlus,
-            bool bMultCodes, string sStopCode, int nHospLoc)
+            string sDefaultProvider, int nHospLoc)
         {
             m_bInit = true;
             m_DocManager = docManager;
             m_dsGlobal = m_DocManager.GlobalDataSet;
             int nFind = 0;
-
-            //Provider processing
-            m_bProviderRequired = bProviderRequired; //not used in VISTA --remove
 
             //smh new code
             //if the resource is linked to a valid hospital location, grab this locations providers
@@ -238,11 +151,6 @@ namespace IndianHealthService.ClinicalScheduling
                 if (nRow.Length > 0) nFind = m_dtProvider.Rows.IndexOf(nRow[0]);
                 cboProvider.SelectedIndex = nFind;
 
-                //an experiment (doesn't work yet, but leaving for future enlightenment): LINQ
-                var defProv = from Provider in m_dtProvider.AsEnumerable() 
-                              where Provider.Field<string>("DEFAULT") == "YES" 
-                              select Provider;
-
             }
             //otherwise, just use the default provider table
             else
@@ -265,42 +173,6 @@ namespace IndianHealthService.ClinicalScheduling
             }
 
 
-            //Stop code processing
-            //TODO: Remove... not in VISTA.
-            this.lblStopCode.Visible = false;
-            this.cboStopCode.Visible = false;
-            m_dvCS = new DataView(m_dsGlobal.Tables["ClinicStop"]);
-            m_dvCS.Sort = "NAME ASC";
-            m_sStopCode = sStopCode;
-            m_sStopCodeIEN = "";
-            if (m_sStopCode != "")
-            {
-                //Get the IEN of the clinic stop code
-                nFind = m_dvCS.Find((string)m_sStopCode);
-                Debug.Assert(nFind > -1);
-                if (nFind > -1)
-                {
-                    m_sStopCodeIEN = m_dvCS[nFind].Row["BMXIEN"].ToString();
-                }
-            }
-
-            if (bMultCodes == true)
-            {
-                this.lblStopCode.Visible = true;
-                this.cboStopCode.Visible = true;
-                cboStopCode.DataSource = m_dvCS;
-                cboStopCode.DisplayMember = "NAME";
-                cboStopCode.ValueMember = "BMXIEN";
-                if (m_sStopCode != "")
-                {
-                    nFind = m_dvCS.Find((string)m_sStopCode);
-                    cboStopCode.SelectedIndex = nFind;
-                }
-            }
-
-            m_bPCC = bGeneratePCCPlus;
-            PCCPlus();
-
             m_sPatientName = a.PatientName;
             if (a.CheckInTime.Ticks != 0)
             {
@@ -313,68 +185,11 @@ namespace IndianHealthService.ClinicalScheduling
             {
                 m_dCheckIn = DateTime.Now;
             }
+
             UpdateDialogData(true);
             m_bInit = false;
-
-            //Synchronize PCCForm with Clinic
-            if (m_bPCC == true)
-            {
-                cboPCCPlusClinic_SelectedIndexChanged(this, new System.EventArgs());
-            }
         }
 
-        /// <summary>
-        /// Not used in VISTA. Needs to be removed
-        /// <remarks>Not used in VISTA.</remarks>
-        /// </summary>
-        private void PCCPlus()
-        {
-            //PCCPlus processing
-            /*Can't do PCCPlus if no stop code
-                * or if PRINT PCC PLUS FORM field in CLINIC SETUP PARAMETERS is false
-                */
-            if ((m_bPCC == false) || (m_sStopCode == ""))
-            {
-                grpPCCPlus.Enabled = false;
-                return;
-            }
-            else
-            {
-                grpPCCPlus.Enabled = true;
-                //Populate combo box with recordset of clinics based on m_sStopCode
-                string sCmd = "SELECT BMXIEN, NAME, DEPARTMENT, DEFAULT_ENCOUNTER_FORM, NEVER_PRINT_OUTGUIDE FROM VEN_EHP_CLINIC WHERE DEPARTMENT = '" + m_sStopCode + "'";
-                m_dtClinic = m_DocManager.ConnectInfo.RPMSDataTable(sCmd, "CLINIC");
-                m_dvClinic = new DataView(m_dtClinic);
-                m_dvClinic.Sort = "NAME ASC";
-
-                cboPCCPlusClinic.DataSource = m_dvClinic;
-                cboPCCPlusClinic.DisplayMember = "NAME";
-                cboPCCPlusClinic.ValueMember = "BMXIEN";
-
-
-                //Populate combo box with recordset of all forms
-                sCmd = "SELECT BMXIEN, TEMPLATE FROM VEN_EHP_EF_TEMPLATES";
-                m_dtForm = m_DocManager.ConnectInfo.RPMSDataTable(sCmd, "FORM");
-                m_dvForm = new DataView(m_dtForm);
-                m_dvForm.Sort = "TEMPLATE ASC";
-
-                cboPCCPlusForm.DataSource = m_dvForm;
-                cboPCCPlusForm.DisplayMember = "TEMPLATE";
-                cboPCCPlusForm.ValueMember = "BMXIEN";
-
-                if ((m_dtClinic.Rows.Count == 0) || (m_dtForm.Rows.Count == 0))
-                {
-                    //No PCCPlus clinics for current stop code
-                    //or no forms available
-                    grpPCCPlus.Enabled = false;
-                    return;
-                }
-
-                cboPCCPlusClinic.SelectedIndex = 0;
-                cboPCCPlusClinic_SelectedIndexChanged(this, new System.EventArgs());
-
-            }
-        }
 
         /// <summary>
         /// If b is true, moves member vars into control data
@@ -390,48 +205,9 @@ namespace IndianHealthService.ClinicalScheduling
             }
             else //Move data to member variables from dialog controls
             {
-
-                /*
-                 * Need to return Provider, ClinicStop, PrintRouteSlip, 
-                 * PCC Clinic, PCC Form, Print OutGuide
-                 */
-
                 m_dCheckIn = this.dtpCheckIn.Value;
                 m_sProviderIEN = this.cboProvider.SelectedValue.ToString();
                 m_bPrintRouteSlip = chkRoutingSlip.Checked;
-
-                /*
-                 * Don't get value from CLINIC STOP combo since
-                 * it may not be enabled, and
-                 * it updates the member variable whenever the selection changes
-                 */
-
-                /*
-                 * PCCPlus
-                 */
-
-                if (grpPCCPlus.Enabled == false)
-                {
-                    m_bPCC = false;
-                    m_sPCCClinicIEN = "";
-                    m_sPCCFormIEN = "";
-                    m_bPCCOutGuide = false;
-                }
-                else
-                {
-                    m_bPCC = true;
-                    m_sPCCClinicIEN = this.cboPCCPlusClinic.SelectedValue.ToString();
-                    m_sPCCFormIEN = this.cboPCCPlusForm.SelectedValue.ToString();
-                    if (chkPCCOutGuide.Enabled == false)
-                    {
-                        m_bPCCOutGuide = false;
-                    }
-                    else
-                    {
-                        m_bPCCOutGuide = this.chkPCCOutGuide.Checked;
-                    }
-                }
-
             }
         }
 
@@ -459,7 +235,6 @@ namespace IndianHealthService.ClinicalScheduling
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(DCheckIn));
             this.pnlPageBottom = new System.Windows.Forms.Panel();
             this.cmdCancel = new System.Windows.Forms.Button();
             this.cmdOK = new System.Windows.Forms.Button();
@@ -473,20 +248,11 @@ namespace IndianHealthService.ClinicalScheduling
             this.lblPatientName = new System.Windows.Forms.Label();
             this.cboProvider = new System.Windows.Forms.ComboBox();
             this.label2 = new System.Windows.Forms.Label();
-            this.cboStopCode = new System.Windows.Forms.ComboBox();
-            this.lblStopCode = new System.Windows.Forms.Label();
             this.chkRoutingSlip = new System.Windows.Forms.CheckBox();
-            this.grpPCCPlus = new System.Windows.Forms.GroupBox();
-            this.chkPCCOutGuide = new System.Windows.Forms.CheckBox();
-            this.label4 = new System.Windows.Forms.Label();
-            this.cboPCCPlusClinic = new System.Windows.Forms.ComboBox();
-            this.cboPCCPlusForm = new System.Windows.Forms.ComboBox();
-            this.label5 = new System.Windows.Forms.Label();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.pnlPageBottom.SuspendLayout();
             this.pnlDescription.SuspendLayout();
             this.grpDescriptionResourceGroup.SuspendLayout();
-            this.grpPCCPlus.SuspendLayout();
             this.SuspendLayout();
             // 
             // pnlPageBottom
@@ -494,7 +260,7 @@ namespace IndianHealthService.ClinicalScheduling
             this.pnlPageBottom.Controls.Add(this.cmdCancel);
             this.pnlPageBottom.Controls.Add(this.cmdOK);
             this.pnlPageBottom.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.pnlPageBottom.Location = new System.Drawing.Point(0, 360);
+            this.pnlPageBottom.Location = new System.Drawing.Point(0, 203);
             this.pnlPageBottom.Name = "pnlPageBottom";
             this.pnlPageBottom.Size = new System.Drawing.Size(520, 40);
             this.pnlPageBottom.TabIndex = 5;
@@ -522,7 +288,7 @@ namespace IndianHealthService.ClinicalScheduling
             // 
             this.pnlDescription.Controls.Add(this.grpDescriptionResourceGroup);
             this.pnlDescription.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.pnlDescription.Location = new System.Drawing.Point(0, 288);
+            this.pnlDescription.Location = new System.Drawing.Point(0, 131);
             this.pnlDescription.Name = "pnlDescription";
             this.pnlDescription.Size = new System.Drawing.Size(520, 72);
             this.pnlDescription.TabIndex = 6;
@@ -545,7 +311,8 @@ namespace IndianHealthService.ClinicalScheduling
             this.lblDescriptionResourceGroup.Name = "lblDescriptionResourceGroup";
             this.lblDescriptionResourceGroup.Size = new System.Drawing.Size(514, 53);
             this.lblDescriptionResourceGroup.TabIndex = 0;
-            this.lblDescriptionResourceGroup.Text = resources.GetString("lblDescriptionResourceGroup.Text");
+            this.lblDescriptionResourceGroup.Text = "Use this panel to check in an appointment. A patient may only be checked-in once." +
+                "";
             // 
             // label1
             // 
@@ -583,7 +350,7 @@ namespace IndianHealthService.ClinicalScheduling
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(80, 16);
             this.label3.TabIndex = 7;
-            this.label3.Text = "CheckIn Time:";
+            this.label3.Text = "Check-in Time:";
             // 
             // lblPatientName
             // 
@@ -608,91 +375,20 @@ namespace IndianHealthService.ClinicalScheduling
             this.label2.TabIndex = 7;
             this.label2.Text = "Visit Provider:";
             // 
-            // cboStopCode
-            // 
-            this.cboStopCode.Location = new System.Drawing.Point(96, 128);
-            this.cboStopCode.Name = "cboStopCode";
-            this.cboStopCode.Size = new System.Drawing.Size(240, 21);
-            this.cboStopCode.TabIndex = 13;
-            this.cboStopCode.SelectedIndexChanged += new System.EventHandler(this.cboStopCode_SelectedIndexChanged);
-            // 
-            // lblStopCode
-            // 
-            this.lblStopCode.Location = new System.Drawing.Point(16, 128);
-            this.lblStopCode.Name = "lblStopCode";
-            this.lblStopCode.Size = new System.Drawing.Size(80, 16);
-            this.lblStopCode.TabIndex = 7;
-            this.lblStopCode.Text = "Stop Code:";
-            // 
             // chkRoutingSlip
             // 
-            this.chkRoutingSlip.Location = new System.Drawing.Point(368, 88);
+            this.chkRoutingSlip.Location = new System.Drawing.Point(380, 93);
             this.chkRoutingSlip.Name = "chkRoutingSlip";
             this.chkRoutingSlip.Size = new System.Drawing.Size(128, 16);
             this.chkRoutingSlip.TabIndex = 14;
             this.chkRoutingSlip.Text = "Print Routing Slip";
             this.toolTip1.SetToolTip(this.chkRoutingSlip, "Prints routing slip to the Windows Default Printer");
             // 
-            // grpPCCPlus
-            // 
-            this.grpPCCPlus.Controls.Add(this.chkPCCOutGuide);
-            this.grpPCCPlus.Controls.Add(this.label4);
-            this.grpPCCPlus.Controls.Add(this.cboPCCPlusClinic);
-            this.grpPCCPlus.Controls.Add(this.cboPCCPlusForm);
-            this.grpPCCPlus.Controls.Add(this.label5);
-            this.grpPCCPlus.Location = new System.Drawing.Point(8, 168);
-            this.grpPCCPlus.Name = "grpPCCPlus";
-            this.grpPCCPlus.Size = new System.Drawing.Size(488, 104);
-            this.grpPCCPlus.TabIndex = 15;
-            this.grpPCCPlus.TabStop = false;
-            this.grpPCCPlus.Text = "PCC Plus";
-            // 
-            // chkPCCOutGuide
-            // 
-            this.chkPCCOutGuide.Location = new System.Drawing.Point(360, 24);
-            this.chkPCCOutGuide.Name = "chkPCCOutGuide";
-            this.chkPCCOutGuide.Size = new System.Drawing.Size(96, 16);
-            this.chkPCCOutGuide.TabIndex = 15;
-            this.chkPCCOutGuide.Text = "Print Outguide";
-            // 
-            // label4
-            // 
-            this.label4.Location = new System.Drawing.Point(8, 24);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(72, 16);
-            this.label4.TabIndex = 8;
-            this.label4.Text = "PCC+ Clinic:";
-            // 
-            // cboPCCPlusClinic
-            // 
-            this.cboPCCPlusClinic.Location = new System.Drawing.Point(88, 24);
-            this.cboPCCPlusClinic.Name = "cboPCCPlusClinic";
-            this.cboPCCPlusClinic.Size = new System.Drawing.Size(240, 21);
-            this.cboPCCPlusClinic.TabIndex = 0;
-            this.cboPCCPlusClinic.SelectedIndexChanged += new System.EventHandler(this.cboPCCPlusClinic_SelectedIndexChanged);
-            // 
-            // cboPCCPlusForm
-            // 
-            this.cboPCCPlusForm.Location = new System.Drawing.Point(88, 64);
-            this.cboPCCPlusForm.Name = "cboPCCPlusForm";
-            this.cboPCCPlusForm.Size = new System.Drawing.Size(240, 21);
-            this.cboPCCPlusForm.TabIndex = 0;
-            // 
-            // label5
-            // 
-            this.label5.Location = new System.Drawing.Point(8, 64);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(72, 16);
-            this.label5.TabIndex = 8;
-            this.label5.Text = "PCC+ Form:";
-            // 
             // DCheckIn
             // 
             this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
-            this.ClientSize = new System.Drawing.Size(520, 400);
-            this.Controls.Add(this.grpPCCPlus);
+            this.ClientSize = new System.Drawing.Size(520, 243);
             this.Controls.Add(this.chkRoutingSlip);
-            this.Controls.Add(this.cboStopCode);
             this.Controls.Add(this.cboProvider);
             this.Controls.Add(this.lblPatientName);
             this.Controls.Add(this.lblAlready);
@@ -702,7 +398,6 @@ namespace IndianHealthService.ClinicalScheduling
             this.Controls.Add(this.pnlPageBottom);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.label2);
-            this.Controls.Add(this.lblStopCode);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.Name = "DCheckIn";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
@@ -710,7 +405,6 @@ namespace IndianHealthService.ClinicalScheduling
             this.pnlPageBottom.ResumeLayout(false);
             this.pnlDescription.ResumeLayout(false);
             this.grpDescriptionResourceGroup.ResumeLayout(false);
-            this.grpPCCPlus.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -723,45 +417,6 @@ namespace IndianHealthService.ClinicalScheduling
             this.UpdateDialogData(false);
         }
 
-        private void cboStopCode_SelectedIndexChanged(object sender, System.EventArgs e)
-        {
-            /*
-             * Whenever the stop code changes, the set of PCCPlus Clinic Selections change
-             * except during init.
-             */
-            if (m_bInit == true)
-                return;
-
-            //Change the value of m_sStopCode
-            DataRowView drv = (DataRowView)this.cboStopCode.SelectedItem;
-            string sStopCode = drv.Row["NAME"].ToString();
-            m_sStopCode = sStopCode;
-            m_sStopCodeIEN = drv.Row["BMXIEN"].ToString();
-            PCCPlus();
-        }
-
-        private void cboPCCPlusClinic_SelectedIndexChanged(object sender, System.EventArgs e)
-        {
-            /*
-             * Whenever the PCCPlus Clinic changes, the default EF TEMPLATE changes
-             */
-            if (m_bInit == true)
-                return;
-
-            if (this.cboPCCPlusClinic.SelectedItem == null)
-                return;
-
-            DataRowView drv = (DataRowView)this.cboPCCPlusClinic.SelectedItem;
-            string sDefaultForm = drv.Row["DEFAULT_ENCOUNTER_FORM"].ToString();
-
-            int nFind = this.m_dvForm.Find(sDefaultForm);
-            if (nFind > -1)
-            {
-                this.cboPCCPlusForm.SelectedIndex = nFind;
-            }
-        }
         #endregion Events
-
-
     }
 }
