@@ -1,5 +1,8 @@
-BSDX25	; IHS/OIT/HMW - WINDOWS SCHEDULING RPCS ;
-	;;1.42;BSDX;;Dec 07, 2010
+BSDX25	; IHS/OIT/HMW - WINDOWS SCHEDULING RPCS ; 1/6/11 1:57pm
+	;;1.5;BSDX;;Dec 07, 2010
+    ;
+    ; Change Log:
+    ; 3110106: SMH -> Changed Check-in EP - Removed unused paramters. Will change C#
 	;
 	;
 CHECKIND(BSDXY,BSDXAPTID,BSDXCDT,BSDXCC,BSDXPRV,BSDXROU,BSDXVCL,BSDXVFM,BSDXOG)	;EP
@@ -9,8 +12,23 @@ CHECKIND(BSDXY,BSDXAPTID,BSDXCDT,BSDXCC,BSDXPRV,BSDXROU,BSDXVCL,BSDXVFM,BSDXOG)	
 	;E  G ENDBG
 	Q
 	;
-CHECKIN(BSDXY,BSDXAPTID,BSDXCDT,BSDXCC,BSDXPRV,BSDXROU,BSDXVCL,BSDXVFM,BSDXOG)	;EP Check in appointment
-	;
+CHECKIN(BSDXY,BSDXAPTID,BSDXCDT) ; ,BSDXCC,BSDXPRV,BSDXROU,BSDXVCL,BSDXVFM,BSDXOG)	;EP Check in appointment
+	; Private to GUI; use BSDXAPI for general API to checkin patients
+    ; Parameters:
+    ; BSDXY: Global Out
+    ; BSDXAPTID: Appointment ID in ^BSDXAPPT
+    ; BSDXCDT: Checkin Date --> Changed
+    ; BSDXCC: Clinic Stop IEN (not used)
+    ; BSDXPRV: Provider IEN (not used)
+    ; BSDXROU: Print Routing Slip? (not used)
+    ; BSDXVCL: PCC+ Clinic IEN (not used)
+    ; BSDXVFM: PCC+ Form IEN (not used)
+    ; BSDXOG: PCC+ Outguide (true or false)
+    ;
+    ; Output:
+    ; ADO.net table with 1 column ErrorID, 1 row result
+    ; - 0 if all okay
+    ; - Another number or text if not
 ENDBG	;
 	N BSDXNOD,BSDXPATID,BSDXSTART,DIK,DA,BSDXID,BSDXI,BSDXZ,BSDXIENS,BSDXVEN
 	N BSDXNOEV
@@ -23,9 +41,10 @@ ENDBG	;
 	S ^BSDXTMP($J,0)="T00020ERRORID"_$C(30)
 	I '+BSDXAPTID D ERR("BSDX25: Invalid Appointment ID") Q
 	I '$D(^BSDXAPPT(BSDXAPTID,0)) D ERR("BSDX08: Invalid Appointment ID") Q
-	;
-	S:BSDXCDT["@0000" BSDXCDT=$P(BSDXCDT,"@")
-	S %DT="T",X=BSDXCDT D ^%DT S BSDXCDT=Y
+	; Remove Date formatting v.1.5. Client will send date as FM Date.
+	;S:BSDXCDT["@0000" BSDXCDT=$P(BSDXCDT,"@")
+	;S %DT="T",X=BSDXCDT D ^%DT S BSDXCDT=Y
+    S BSDXCDT=+BSDXCDT  ; Strip off zeros if C# sends them
 	I BSDXCDT=-1 D ERR(70) Q
 	I BSDXCDT>$$NOW^XLFDT S BSDXCDT=$$NOW^XLFDT
 	;Checkin BSDX APPOINTMENT entry
