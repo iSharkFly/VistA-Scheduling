@@ -87,6 +87,12 @@
             this.m_sfHour.LineAlignment = StringAlignment.Center;
             this.m_sfHour.Alignment = StringAlignment.Far;
             this.m_bInitialUpdate = false;
+            this.MouseEnter += new EventHandler(CalendarGrid_MouseEnter);
+        }
+
+        void CalendarGrid_MouseEnter(object sender, EventArgs e)
+        {
+            this.Focus();
         }
 
         private Rectangle AdjustRectForOverlap()

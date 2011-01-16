@@ -172,6 +172,11 @@ namespace IndianHealthService.ClinicalScheduling
             // Note: Imported From kernel32.dll
             AttachConsole(ATTACH_PARENT_PROCESS);
 #endif
+
+#if TRACE
+            DateTime startLoadTime = DateTime.Now;
+#endif
+
             //Store a class instance of manager. Actual constructor does nothing.
             _current = new CGDocumentManager();
 
@@ -196,9 +201,41 @@ namespace IndianHealthService.ClinicalScheduling
             doc.DocManager = _current;
             doc.OnNewDocument();
             Application.DoEvents();
+#if TRACE
+            DateTime EndLoadTime = DateTime.Now;
+            TimeSpan LoadTime = EndLoadTime - startLoadTime;
+            Debug.Write("Load Time for GUI is " + LoadTime.Seconds + " s & " + LoadTime.Milliseconds + " ms\n");
+#endif
+            //Application wide error handler for unhandled errors
+            Application.ThreadException += new ThreadExceptionEventHandler(App_ThreadException);
 
             //Run the application
+            //Sam's Note: This is an unusual way to call this. Typically, it's run with
+            //the main form as an argument.
             Application.Run();
+        }
+
+        /// <summary>
+        /// Exception handler for application errors. TODO: Test
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        static void App_ThreadException(object sender, ThreadExceptionEventArgs e)
+        {
+            if (e.Exception is System.Net.Sockets.SocketException)
+            {
+                MessageBox.Show("Looks like we lost our connection with the server\nClick OK to terminate the application.");
+                Application.Exit();
+            }
+
+            string msg = "A problem has occured in this applicaton. \r\n\r\n" +
+                "\t" + e.Exception.Message + "\r\n\r\n" +
+                "Would you like to continue the application?";
+
+            DialogResult res = MessageBox.Show(msg, "Unexpected Error", MessageBoxButtons.YesNo);
+
+            if (res == DialogResult.Yes) return;
+            else Application.Exit();
         }
 
 

@@ -272,7 +272,7 @@ namespace IndianHealthService.ClinicalScheduling
 			/*
 			 * TEST EXCEPTION -- REMOVE AFTER TESTING
 			 */
-			//throw new Exception("Simulated Uncaught Exception");
+            // throw new Exception("Simulated Uncaught Exception");
 			/*
 			 * TEST EXCEPTION -- REMOVE AFTER TESTING
 			 */
@@ -397,6 +397,10 @@ namespace IndianHealthService.ClinicalScheduling
 			}
 		}
 
+        /// <summary>
+        /// Refreshes Availablility and Schedules from RPMS.
+        /// </summary>
+        /// <returns>Success or Failure. Should be always Success.</returns>
 		private bool RefreshSchedule()
 		{
 			try
@@ -585,6 +589,7 @@ namespace IndianHealthService.ClinicalScheduling
 		{
 			//TODO:  Test that resource is not currently in list, that it IS a resource, etc
 			this.m_sResourcesArray.Add(sResource);
+            //UpdateAllViews: Redraws all the open views. But does not call server.
 			this.UpdateAllViews();
 		}
 
