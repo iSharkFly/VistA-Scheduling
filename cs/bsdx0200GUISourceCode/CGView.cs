@@ -5,12 +5,8 @@ using System.ComponentModel;
 using System.Windows.Forms;
 using System.Diagnostics;
 using System.Data;
-using System.Net;
-using System.Net.Sockets;
 using System.Threading;
-using System.IO;
 using IndianHealthService.BMXNet;
-using System.Reflection;
 
 
 namespace IndianHealthService.ClinicalScheduling
@@ -651,7 +647,7 @@ namespace IndianHealthService.ClinicalScheduling
             this.tvSchedules.HotTracking = true;
             this.tvSchedules.Location = new System.Drawing.Point(0, 0);
             this.tvSchedules.Name = "tvSchedules";
-            this.tvSchedules.Size = new System.Drawing.Size(128, 479);
+            this.tvSchedules.Size = new System.Drawing.Size(128, 437);
             this.tvSchedules.Sorted = true;
             this.tvSchedules.TabIndex = 1;
             this.tvSchedules.BeforeSelect += new System.Windows.Forms.TreeViewCancelEventHandler(this.tvSchedules_BeforeSelect);
@@ -699,7 +695,7 @@ namespace IndianHealthService.ClinicalScheduling
             this.panelRight.Dock = System.Windows.Forms.DockStyle.Right;
             this.panelRight.Location = new System.Drawing.Point(941, 0);
             this.panelRight.Name = "panelRight";
-            this.panelRight.Size = new System.Drawing.Size(128, 479);
+            this.panelRight.Size = new System.Drawing.Size(128, 437);
             this.panelRight.TabIndex = 3;
             this.panelRight.Visible = false;
             // 
@@ -777,7 +773,9 @@ namespace IndianHealthService.ClinicalScheduling
             this.dateTimePicker1.Name = "dateTimePicker1";
             this.dateTimePicker1.Size = new System.Drawing.Size(128, 20);
             this.dateTimePicker1.TabIndex = 1;
-            this.dateTimePicker1.ValueChanged += new System.EventHandler(this.dateTimePicker1_ValueChanged);
+            this.dateTimePicker1.CloseUp += new System.EventHandler(this.dateTimePicker1_CloseUp);
+            this.dateTimePicker1.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.dateTimePicker1_KeyPress);
+            this.dateTimePicker1.Leave += new System.EventHandler(this.dateTimePicker1_Leave);
             // 
             // lblResource
             // 
@@ -795,7 +793,7 @@ namespace IndianHealthService.ClinicalScheduling
             this.panelCenter.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panelCenter.Location = new System.Drawing.Point(136, 24);
             this.panelCenter.Name = "panelCenter";
-            this.panelCenter.Size = new System.Drawing.Size(802, 431);
+            this.panelCenter.Size = new System.Drawing.Size(802, 389);
             this.panelCenter.TabIndex = 7;
             // 
             // calendarGrid1
@@ -817,7 +815,7 @@ namespace IndianHealthService.ClinicalScheduling
             this.calendarGrid1.Name = "calendarGrid1";
             this.calendarGrid1.Resources = ((System.Collections.ArrayList)(resources.GetObject("calendarGrid1.Resources")));
             this.calendarGrid1.SelectedAppointment = 0;
-            this.calendarGrid1.Size = new System.Drawing.Size(802, 431);
+            this.calendarGrid1.Size = new System.Drawing.Size(802, 389);
             this.calendarGrid1.StartDate = new System.DateTime(2003, 1, 27, 0, 0, 0, 0);
             this.calendarGrid1.TabIndex = 0;
             this.calendarGrid1.TimeScale = 20;
@@ -909,7 +907,7 @@ namespace IndianHealthService.ClinicalScheduling
             // 
             this.panelBottom.Controls.Add(this.statusBar1);
             this.panelBottom.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panelBottom.Location = new System.Drawing.Point(136, 455);
+            this.panelBottom.Location = new System.Drawing.Point(136, 413);
             this.panelBottom.Name = "panelBottom";
             this.panelBottom.Size = new System.Drawing.Size(802, 24);
             this.panelBottom.TabIndex = 8;
@@ -927,7 +925,7 @@ namespace IndianHealthService.ClinicalScheduling
             // 
             this.splitter1.Location = new System.Drawing.Point(128, 24);
             this.splitter1.Name = "splitter1";
-            this.splitter1.Size = new System.Drawing.Size(8, 455);
+            this.splitter1.Size = new System.Drawing.Size(8, 413);
             this.splitter1.TabIndex = 9;
             this.splitter1.TabStop = false;
             // 
@@ -936,7 +934,7 @@ namespace IndianHealthService.ClinicalScheduling
             this.splitter2.Dock = System.Windows.Forms.DockStyle.Right;
             this.splitter2.Location = new System.Drawing.Point(938, 24);
             this.splitter2.Name = "splitter2";
-            this.splitter2.Size = new System.Drawing.Size(3, 455);
+            this.splitter2.Size = new System.Drawing.Size(3, 413);
             this.splitter2.TabIndex = 10;
             this.splitter2.TabStop = false;
             // 
@@ -948,7 +946,7 @@ namespace IndianHealthService.ClinicalScheduling
             // CGView
             // 
             this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
-            this.ClientSize = new System.Drawing.Size(1069, 479);
+            this.ClientSize = new System.Drawing.Size(1069, 437);
             this.Controls.Add(this.panelCenter);
             this.Controls.Add(this.panelBottom);
             this.Controls.Add(this.splitter2);
@@ -1495,9 +1493,12 @@ namespace IndianHealthService.ClinicalScheduling
 			}
 		}
 
+
 		private void OpenSelectedSchedule(ArrayList sSelectedTreeResourceArray, DateTime dDate)
 		{
 			//If resource already open, then navigate to its window
+            //XXX: Why is this doc definition here? Should be under else scope
+            //XXX: Use Bananna peeling instead of if/else
 			CGDocument doc;
 			CGView v =this.DocManager.GetViewByResource(sSelectedTreeResourceArray);
 			if (v != null) 
@@ -1522,14 +1523,18 @@ namespace IndianHealthService.ClinicalScheduling
 				}
 				for (int j=0; j < sSelectedTreeResourceArray.Count; j++)
 				{
+                    // Investigate this. This draws the grid when there is nothing to draw!!!
 					doc.AddResource((string) sSelectedTreeResourceArray[j]);
 				}
+
 				doc.DocName = this.m_sDocName;
-				try
+				
+                try
 				{
 					doc.OnOpenDocument();
 				}
-				catch (Exception ex)
+				
+                catch (Exception ex)
 				{
 					MessageBox.Show("Unable to open " + m_sDocName + " schedule.  " +  ex.Message, "Clinical Scheduling");
 					this.m_DocManager.CloseAllViews(doc);
@@ -2245,6 +2250,7 @@ namespace IndianHealthService.ClinicalScheduling
         /// </summary>
 		public void UpdateArrays()
 		{
+            // Make sure that we are called synchronously
 			Debug.Assert(this.InvokeRequired == false,"CGView.UpdateArrays InvokeRequired");
             // This is where you set how the grid will look
 			try 
@@ -2376,8 +2382,6 @@ namespace IndianHealthService.ClinicalScheduling
 
 			//Register the view
 			CGDocumentManager.Current.RegisterDocumentView(this.Document, this);
-            this.mnu5Day.Click += new System.EventHandler(this.dateTimePicker1_ValueChanged); // MJL 1/17/2007
-            this.mnu7Day.Click += new System.EventHandler(this.dateTimePicker1_ValueChanged);
 
 			//Load the Group-Resource treeview
 			LoadTree();
@@ -2408,12 +2412,16 @@ namespace IndianHealthService.ClinicalScheduling
 			this.calendarGrid1.Columns = 5;
             this.Document.m_nColumnCount = 5; // MJL 1/17/2007
             //this.Document.UpdateAllViews();
+            //TODO: Is there a way to just reuse the existing arrays? How far in the future do they go?
+            RequestRefreshGrid();
 		}
 
 		private void mnu7Day_Click(object sender, System.EventArgs e)
 		{
 			this.calendarGrid1.Columns = 7;
             this.Document.m_nColumnCount = 7; // MJL 1/17/2007
+            //TODO: Is there a way to just reuse the existing arrays? How far in the future do they go?
+            RequestRefreshGrid();
         }
 
 		private void mnu10Minute_Click(object sender, System.EventArgs e)
@@ -2579,29 +2587,6 @@ namespace IndianHealthService.ClinicalScheduling
 			this.mnuViewRightPanel.Checked = !(this.mnuViewRightPanel.Checked);
 		}
 
-		private void dateTimePicker1_ValueChanged(object sender, System.EventArgs e)
-		{
-			DateTime dDate = dateTimePicker1.Value;
-			dDate = dDate.Date;
-			this.Document.SelectedDate = dDate;
-			if (this.Document.Resources.Count == 1) 
-			{
-				if (this.calendarGrid1.Columns > 1)
-				{
-					this.StartDate = this.Document.StartDate;
-				}
-				else
-				{
-					this.StartDate = this.Document.SelectedDate;
-				}
-			}
-			else
-			{
-					this.StartDate = this.Document.SelectedDate;
-			}
-			this.Document.UpdateAllViews();
-			this.calendarGrid1.Invalidate();
-		}
 
 		private void calendarGrid1_CGSelectionChanged(object sender, IndianHealthService.ClinicalScheduling.CGSelectionChangedArgs e)
 		{
@@ -3077,13 +3062,76 @@ namespace IndianHealthService.ClinicalScheduling
             ClinicalScheduling.Printing.PrintRoutingSlip(a, "Routing Slip", e);
         }
 
+        
+
+        private void dateTimePicker1_Leave(object sender, EventArgs e)
+        {
+            if (this.Document.SelectedDate != dateTimePicker1.Value.Date)
+                RequestRefreshGrid();
+        }
+
+        private void dateTimePicker1_CloseUp(object sender, EventArgs e)
+        {
+            if (this.Document.SelectedDate != dateTimePicker1.Value.Date)
+                RequestRefreshGrid();
+        }
+
+        private void dateTimePicker1_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            //if enter key is pressed:
+            //  Tell windows that we are handling this
+            //  Request a Refresh Grid if the date is different
+            //  Set-Focus to Calendar Grid
+            if (e.KeyChar == (char)Keys.Enter)
+            {
+                e.Handled = true;
+
+                if (this.Document.SelectedDate != dateTimePicker1.Value.Date)
+                    RequestRefreshGrid();
+                
+                this.CGrid.Focus();
+            }
+
+            //if escape key is pressed:
+            //  Tell windows that we are handling this
+            //  Set-Focus to Calendar Grid
+            if (e.KeyChar == (char)Keys.Escape)
+            {
+                e.Handled = true;
+                this.CGrid.Focus();
+            }
+        }
+
 
         #endregion events
 
-
-
-
-
+        void RequestRefreshGrid()
+        {
+            DateTime dDate = dateTimePicker1.Value;
+            dDate = dDate.Date;
+            // This below is responsible for redrawing the grid when you change the date.
+            this.Document.SelectedDate = dDate;
+            
+            if (this.Document.Resources.Count == 1)
+            {
+                if (this.calendarGrid1.Columns > 1)
+                {
+                    this.StartDate = this.Document.StartDate;
+                }
+                else
+                {
+                    this.StartDate = this.Document.SelectedDate;
+                }
+            }
+            else
+            {
+                this.StartDate = this.Document.SelectedDate;
+            }
+            //Is this needed?
+            this.Document.UpdateAllViews();
+            //Is this needed?
+            this.calendarGrid1.Invalidate();
+        }
 
     }//End class
 }
