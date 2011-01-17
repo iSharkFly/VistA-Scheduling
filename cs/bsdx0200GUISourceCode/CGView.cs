@@ -12,7 +12,7 @@ using IndianHealthService.BMXNet;
 namespace IndianHealthService.ClinicalScheduling
 {
 	/// <summary>
-	/// Summary description for CGView.
+	/// Main Form: Shows Tree of Clinics and Calendar Grid 
 	/// </summary>
 	public class CGView : System.Windows.Forms.Form
 	{
@@ -819,9 +819,9 @@ namespace IndianHealthService.ClinicalScheduling
             this.calendarGrid1.StartDate = new System.DateTime(2003, 1, 27, 0, 0, 0, 0);
             this.calendarGrid1.TabIndex = 0;
             this.calendarGrid1.TimeScale = 20;
-            this.calendarGrid1.CGAppointmentAdded += new IndianHealthService.ClinicalScheduling.CGAppointmentChangedHandler(this.calendarGrid1_CGAppointmentAdded);
-            this.calendarGrid1.CGAppointmentChanged += new IndianHealthService.ClinicalScheduling.CGAppointmentChangedHandler(this.calendarGrid1_CGAppointmentChanged);
-            this.calendarGrid1.CGSelectionChanged += new IndianHealthService.ClinicalScheduling.CGSelectionChangedHandler(this.calendarGrid1_CGSelectionChanged);
+            this.calendarGrid1.CGAppointmentAdded += new CalendarGrid.CGAppointmentChangedHandler(this.calendarGrid1_CGAppointmentAdded);
+            this.calendarGrid1.CGAppointmentChanged += new CalendarGrid.CGAppointmentChangedHandler(this.calendarGrid1_CGAppointmentChanged);
+            this.calendarGrid1.CGSelectionChanged += new CalendarGrid.CGSelectionChangedHandler(this.calendarGrid1_CGSelectionChanged);
             this.calendarGrid1.DoubleClick += new System.EventHandler(this.calendarGrid1_DoubleClick);
             // 
             // ctxCalendarGrid
@@ -1482,7 +1482,7 @@ namespace IndianHealthService.ClinicalScheduling
 					cg.TimeScale = nScale;
 
 					//Position grid to 0700
-					PositionGrid(cg, 7);
+					cg.PositionGrid(7);
 				}
 			}
 			catch (Exception ex)
@@ -1572,7 +1572,7 @@ namespace IndianHealthService.ClinicalScheduling
 
 				cg.TimeScale = nScale;
 
-				PositionGrid(cg, 7);
+				cg.PositionGrid(7);
 
 				//Get the OverBook and ModifySchedule permissions from ResourceUser table
 				//and populate the hashtables
@@ -1619,19 +1619,6 @@ namespace IndianHealthService.ClinicalScheduling
 				v.calendarGrid1.SetOverlapTable();
 				v.calendarGrid1.Refresh();
 			}
-		}
-
-		private void PositionGrid(CalendarGrid cg, int nHour)
-		{
-				//Position grid to nHour
-				int nRow = 0, nCol = 0;
-				DateTime dStart = DateTime.Today;
-				dStart = dStart.AddHours(nHour);
-				cg.GetCellFromTime(dStart, ref nRow, ref nCol, false, "");
-				int nHeight = cg.CellHeight + 10;
-				nHeight *= nRow;
-				cg.AutoScrollPosition = new Point(50, nHeight);
-				cg.Invalidate();
 		}
 
 		private void LoadTree()
@@ -2428,28 +2415,28 @@ namespace IndianHealthService.ClinicalScheduling
 		{
 			CalendarGrid cg = this.calendarGrid1;
 			cg.TimeScale = 10;
-			PositionGrid(cg, 7);
+			cg.PositionGrid(7);
 		}
 
 		private void mnu15Minute_Click(object sender, System.EventArgs e)
 		{
 			CalendarGrid cg = this.calendarGrid1;
 			cg.TimeScale = 15;
-			PositionGrid(cg, 7);
+			cg.PositionGrid(7);
 		}
 
 		private void mnu20Minute_Click(object sender, System.EventArgs e)
 		{
 			CalendarGrid cg = this.calendarGrid1;
 			cg.TimeScale = 20;
-			PositionGrid(cg, 7);
+			cg.PositionGrid(7);
 		}
 
 		private void mnu30Minute_Click(object sender, System.EventArgs e)
 		{
 			CalendarGrid cg = this.calendarGrid1;
 			cg.TimeScale = 30;
-			PositionGrid(cg, 7);
+			cg.PositionGrid(7);
 		}
 
 		private void mnuViewScheduleTree_Click(object sender, System.EventArgs e)
