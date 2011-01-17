@@ -213,6 +213,11 @@
                 this.m_StartTime = value;
             }
         }
+
+        public override string ToString()
+        {
+            return ResourceList + " (" + Slots + ") @ " + StartTime;
+        }
     }
 }
 

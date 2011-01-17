@@ -489,9 +489,9 @@ namespace IndianHealthService.ClinicalScheduling
             this.calendarGrid1.StartDate = new System.DateTime(2003, 1, 27, 0, 0, 0, 0);
             this.calendarGrid1.TabIndex = 2;
             this.calendarGrid1.TimeScale = 20;
-            this.calendarGrid1.CGAppointmentAdded += new IndianHealthService.ClinicalScheduling.CGAppointmentChangedHandler(this.calendarGrid1_CGAppointmentAdded);
-            this.calendarGrid1.CGAppointmentChanged += new IndianHealthService.ClinicalScheduling.CGAppointmentChangedHandler(this.calendarGrid1_CGAppointmentChanged);
-            this.calendarGrid1.CGSelectionChanged += new IndianHealthService.ClinicalScheduling.CGSelectionChangedHandler(this.calendarGrid1_CGSelectionChanged);
+            this.calendarGrid1.CGAppointmentAdded += new CalendarGrid.CGAppointmentChangedHandler(this.calendarGrid1_CGAppointmentAdded);
+            this.calendarGrid1.CGAppointmentChanged += new CalendarGrid.CGAppointmentChangedHandler(this.calendarGrid1_CGAppointmentChanged);
+            this.calendarGrid1.CGSelectionChanged += new CalendarGrid.CGSelectionChangedHandler(this.calendarGrid1_CGSelectionChanged);
             this.calendarGrid1.DoubleClick += new System.EventHandler(this.calendarGrid1_DoubleClick);
             // 
             // CGAVView

@@ -53,10 +53,11 @@
         private const int WM_HSCROLL = 0x114;   // Horizontal Scrolling Windows Message
         private const int WM_VSCROLL = 0x115;   // Vertical Scrolling Windows Message
 
+        public delegate void CGAppointmentChangedHandler(object sender, CGAppointmentChangedArgs e);
+        public event CGAppointmentChangedHandler CGAppointmentChanged;
         public event CGAppointmentChangedHandler CGAppointmentAdded;
 
-        public event CGAppointmentChangedHandler CGAppointmentChanged;
-
+        public delegate void CGSelectionChangedHandler(object sender, CGSelectionChangedArgs e);
         public event CGSelectionChangedHandler CGSelectionChanged;
 
         public CalendarGrid()
@@ -1170,6 +1171,20 @@
             rectangle2.Height = this.MinSince80(dEnd2) - rectangle2.Y;
             return rectangle2.IntersectsWith(rect);
         }
+
+        public void PositionGrid(int nHour)
+        {
+            //Position grid to nHour
+            int nRow = 0, nCol = 0;
+            DateTime dStart = DateTime.Today;
+            dStart = dStart.AddHours(nHour);
+            this.GetCellFromTime(dStart, ref nRow, ref nCol, false, "");
+            int nHeight = this.CellHeight + 10;
+            nHeight *= nRow;
+            this.AutoScrollPosition = new Point(50, nHeight);
+            this.Invalidate();
+        }
+
 
         /// <summary>
         /// The purpose of this is to properly draw the date boxes at the top of the calendar grid.
