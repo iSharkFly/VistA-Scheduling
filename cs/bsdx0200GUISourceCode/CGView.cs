@@ -650,7 +650,6 @@ namespace IndianHealthService.ClinicalScheduling
             this.tvSchedules.Size = new System.Drawing.Size(128, 437);
             this.tvSchedules.Sorted = true;
             this.tvSchedules.TabIndex = 1;
-            this.tvSchedules.BeforeSelect += new System.Windows.Forms.TreeViewCancelEventHandler(this.tvSchedules_BeforeSelect);
             this.tvSchedules.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.tvSchedules_AfterSelect);
             this.tvSchedules.Click += new System.EventHandler(this.tvSchedules_Click);
             this.tvSchedules.DoubleClick += new System.EventHandler(this.tvSchedules_DoubleClick);
@@ -819,9 +818,9 @@ namespace IndianHealthService.ClinicalScheduling
             this.calendarGrid1.StartDate = new System.DateTime(2003, 1, 27, 0, 0, 0, 0);
             this.calendarGrid1.TabIndex = 0;
             this.calendarGrid1.TimeScale = 20;
-            this.calendarGrid1.CGAppointmentAdded += new CalendarGrid.CGAppointmentChangedHandler(this.calendarGrid1_CGAppointmentAdded);
-            this.calendarGrid1.CGAppointmentChanged += new CalendarGrid.CGAppointmentChangedHandler(this.calendarGrid1_CGAppointmentChanged);
-            this.calendarGrid1.CGSelectionChanged += new CalendarGrid.CGSelectionChangedHandler(this.calendarGrid1_CGSelectionChanged);
+            this.calendarGrid1.CGAppointmentChanged += new IndianHealthService.ClinicalScheduling.CalendarGrid.CGAppointmentChangedHandler(this.calendarGrid1_CGAppointmentChanged);
+            this.calendarGrid1.CGAppointmentAdded += new IndianHealthService.ClinicalScheduling.CalendarGrid.CGAppointmentChangedHandler(this.calendarGrid1_CGAppointmentAdded);
+            this.calendarGrid1.CGSelectionChanged += new IndianHealthService.ClinicalScheduling.CalendarGrid.CGSelectionChangedHandler(this.calendarGrid1_CGSelectionChanged);
             this.calendarGrid1.DoubleClick += new System.EventHandler(this.calendarGrid1_DoubleClick);
             // 
             // ctxCalendarGrid
@@ -1493,132 +1492,134 @@ namespace IndianHealthService.ClinicalScheduling
 			}
 		}
 
-
+        /// <summary>
+        /// Opens a view of the Schedule a user requested to open at a specific date
+        /// </summary>
+        /// <param name="sSelectedTreeResourceArray">A set of resources to open (?pending more investigation)</param>
+        /// <param name="dDate">Date at which to show the Grid</param>
 		private void OpenSelectedSchedule(ArrayList sSelectedTreeResourceArray, DateTime dDate)
 		{
 			//If resource already open, then navigate to its window
-            //XXX: Why is this doc definition here? Should be under else scope
-            //XXX: Use Bananna peeling instead of if/else
-			CGDocument doc;
 			CGView v =this.DocManager.GetViewByResource(sSelectedTreeResourceArray);
 			if (v != null) 
 			{
 				v.Activate();
 				v.dateTimePicker1.Value = dDate;
+                return;
+			}
+
+			//If this Document has no resources then use it (happens when the GUI has nothing open, typically after log-in)
+			//Else, create a new document
+            CGDocument doc;
+            if (this.Document.m_sResourcesArray.Count == 0)
+			{
+                doc = this.Document;
 			}
 			else 
 			{
-				//If not already open, open it
-				//If current document has a resource, then open a new window 
-				//with the selected resource.
-				//Otherwise just use the current document.
-				if (this.Document.m_sResourcesArray.Count > 0)
-				{
-					doc = new CGDocument();
-					doc.DocManager = this.DocManager;
-				}
-				else 
-				{
-					doc = this.Document;
-				}
-				for (int j=0; j < sSelectedTreeResourceArray.Count; j++)
-				{
-                    // Investigate this. This draws the grid when there is nothing to draw!!!
-					doc.AddResource((string) sSelectedTreeResourceArray[j]);
-				}
-
-				doc.DocName = this.m_sDocName;
-				
-                try
-				{
-					doc.OnOpenDocument();
-				}
-				
-                catch (Exception ex)
-				{
-					MessageBox.Show("Unable to open " + m_sDocName + " schedule.  " +  ex.Message, "Clinical Scheduling");
-					this.m_DocManager.CloseAllViews(doc);
-					return;
-				}
-				v =this.DocManager.GetViewByResource(sSelectedTreeResourceArray);
-				v.dateTimePicker1.Value = dDate;
-
-				//Get preferred time scale from resource info
-				//If more than one resource, get smallest time scale
-				CalendarGrid cg = v.CGrid;
-				DataTable dt = this.DocManager.GlobalDataSet.Tables["Resources"];
-				DataView dv = new DataView(dt, "", "RESOURCE_NAME ASC", DataViewRowState.OriginalRows);
-				int nScale = 60;
-				int nTest=0;
-				string sResource;
-				int nDataRow;
-				DataRowView drv;
-				for (int j=0; j < sSelectedTreeResourceArray.Count; j++)
-				{
-					sResource = (string) sSelectedTreeResourceArray[j];
-					nDataRow = dv.Find(sResource);
-					Debug.Assert(nDataRow != -1);
-					drv = dv[nDataRow];
-					if (drv["TIMESCALE"].ToString() == "")
-					{
-						nTest = 15; //15 minute default
-					}
-					else
-					{
-						nTest = (int) drv["TIMESCALE"];
-					}
-					nScale = (nTest < nScale)?nTest : nScale ;
-				}
-
-				cg.TimeScale = nScale;
-
-				cg.PositionGrid(7);
-
-				//Get the OverBook and ModifySchedule permissions from ResourceUser table
-				//and populate the hashtables
-				string	sOverbook;
-				string	sModSchedule;
-				string	sModAppts;
-				bool	bOverbook;
-				bool	bModSchedule;
-				bool	bModAppts;
-				v.m_htOverbook = new Hashtable(sSelectedTreeResourceArray.Count);
-				v.m_htModifySchedule = new Hashtable(sSelectedTreeResourceArray.Count);
-				v.m_htChangeAppts = new Hashtable(sSelectedTreeResourceArray.Count);
-				dt = this.DocManager.GlobalDataSet.Tables["ResourceUser"];
-				dv = new DataView(dt, "", "RESOURCENAME ASC", DataViewRowState.OriginalRows);
-				dv.RowFilter = "USERNAME = '" + this.DocManager.ConnectInfo.UserName + "'";
-				for (int j=0; j < dv.Count; j++)
-				{
-					drv = dv[j];
-					sResource = drv["RESOURCENAME"].ToString();
-					sOverbook = drv["OVERBOOK"].ToString();
-					bOverbook = (sOverbook == "YES")?true:false;
-					sModSchedule = drv["MODIFY_SCHEDULE"].ToString();
-					bModSchedule = (sModSchedule == "YES")?true:false;
-					sModAppts = drv["MODIFY_APPOINTMENTS"].ToString();
-					bModAppts = (sModAppts == "YES")?true:false;
-					v.m_htOverbook[sResource] = bOverbook;
-					v.m_htModifySchedule[sResource] = bModSchedule;
-					v.m_htChangeAppts[sResource] = bModAppts;
-				}
-
-				//For programmers and scheduling managers, set all permissions for all resources
-				if (this.DocManager.ScheduleManager == true)
-				{
-					dt = this.DocManager.GlobalDataSet.Tables["Resources"];
-					foreach (DataRow dr in dt.Rows)
-					{
-						sResource = dr["RESOURCE_NAME"].ToString();
-						v.m_htOverbook[sResource] = true;
-						v.m_htModifySchedule[sResource] = true;
-						v.m_htChangeAppts[sResource] = true;
-					}
-				}
-
-				v.calendarGrid1.SetOverlapTable();
-				v.calendarGrid1.Refresh();
+                doc = new CGDocument();
+                doc.DocManager = this.DocManager;				
 			}
+
+            //Add resources to Document
+			for (int j=0; j < sSelectedTreeResourceArray.Count; j++)
+			{
+				doc.AddResource((string) sSelectedTreeResourceArray[j]);
+			}
+
+			doc.DocName = this.m_sDocName;
+				
+            try
+			{
+				doc.OnOpenDocument();
+			}
+				
+            catch (Exception ex)
+			{
+				MessageBox.Show("Unable to open " + m_sDocName + " schedule.  " +  ex.Message, "Clinical Scheduling");
+				this.m_DocManager.CloseAllViews(doc);
+				return;
+			}
+
+            //We are doing this--Again?
+			v =this.DocManager.GetViewByResource(sSelectedTreeResourceArray);
+			v.dateTimePicker1.Value = dDate;
+
+			//Get preferred time scale from resource info
+			//If more than one resource, get smallest time scale
+			CalendarGrid cg = v.CGrid;
+			DataTable dt = this.DocManager.GlobalDataSet.Tables["Resources"];
+			DataView dv = new DataView(dt, "", "RESOURCE_NAME ASC", DataViewRowState.OriginalRows);
+			int nScale = 60;
+			int nTest=0;
+			string sResource;
+			int nDataRow;
+			DataRowView drv;
+			for (int j=0; j < sSelectedTreeResourceArray.Count; j++)
+			{
+				sResource = (string) sSelectedTreeResourceArray[j];
+				nDataRow = dv.Find(sResource);
+				Debug.Assert(nDataRow != -1);
+				drv = dv[nDataRow];
+				if (drv["TIMESCALE"].ToString() == "")
+				{
+					nTest = 15; //15 minute default
+				}
+				else
+				{
+					nTest = (int) drv["TIMESCALE"];
+				}
+				nScale = (nTest < nScale)?nTest : nScale ;
+			}
+
+			cg.TimeScale = nScale;
+
+			cg.PositionGrid(7);
+
+			//Get the OverBook and ModifySchedule permissions from ResourceUser table
+			//and populate the hashtables
+			string	sOverbook;
+			string	sModSchedule;
+			string	sModAppts;
+			bool	bOverbook;
+			bool	bModSchedule;
+			bool	bModAppts;
+			v.m_htOverbook = new Hashtable(sSelectedTreeResourceArray.Count);
+			v.m_htModifySchedule = new Hashtable(sSelectedTreeResourceArray.Count);
+			v.m_htChangeAppts = new Hashtable(sSelectedTreeResourceArray.Count);
+			dt = this.DocManager.GlobalDataSet.Tables["ResourceUser"];
+			dv = new DataView(dt, "", "RESOURCENAME ASC", DataViewRowState.OriginalRows);
+			dv.RowFilter = "USERNAME = '" + this.DocManager.ConnectInfo.UserName + "'";
+			for (int j=0; j < dv.Count; j++)
+			{
+				drv = dv[j];
+				sResource = drv["RESOURCENAME"].ToString();
+				sOverbook = drv["OVERBOOK"].ToString();
+				bOverbook = (sOverbook == "YES")?true:false;
+				sModSchedule = drv["MODIFY_SCHEDULE"].ToString();
+				bModSchedule = (sModSchedule == "YES")?true:false;
+				sModAppts = drv["MODIFY_APPOINTMENTS"].ToString();
+				bModAppts = (sModAppts == "YES")?true:false;
+				v.m_htOverbook[sResource] = bOverbook;
+				v.m_htModifySchedule[sResource] = bModSchedule;
+				v.m_htChangeAppts[sResource] = bModAppts;
+			}
+
+			//For programmers and scheduling managers, set all permissions for all resources
+			if (this.DocManager.ScheduleManager == true)
+			{
+				dt = this.DocManager.GlobalDataSet.Tables["Resources"];
+				foreach (DataRow dr in dt.Rows)
+				{
+					sResource = dr["RESOURCE_NAME"].ToString();
+					v.m_htOverbook[sResource] = true;
+					v.m_htModifySchedule[sResource] = true;
+					v.m_htChangeAppts[sResource] = true;
+				}
+			}
+
+			v.calendarGrid1.SetOverlapTable();
+			v.calendarGrid1.Refresh();
 		}
 
 		private void LoadTree()
@@ -2490,11 +2491,6 @@ namespace IndianHealthService.ClinicalScheduling
 
         }
 
-		private void tvSchedules_BeforeSelect(object sender, System.Windows.Forms.TreeViewCancelEventArgs e)
-		{
-
-		}
-
 		private void tvSchedules_AfterSelect(object sender, System.Windows.Forms.TreeViewEventArgs e)
 		{
 			if (bSchedulesClicked == false)
@@ -3094,10 +3090,16 @@ namespace IndianHealthService.ClinicalScheduling
 
         void RequestRefreshGrid()
         {
-            DateTime dDate = dateTimePicker1.Value;
-            dDate = dDate.Date;
-            // This below is responsible for redrawing the grid when you change the date.
+            DateTime dDate = dateTimePicker1.Value.Date;
+            // Change Date on Document
             this.Document.SelectedDate = dDate;
+            
+            //Splash when loading and change Cursor
+            this.Cursor = Cursors.WaitCursor;
+            LoadSplash();
+
+            this.Cursor = Cursors.Default;
+            this.Document.RefreshDocument();
             
             if (this.Document.Resources.Count == 1)
             {
@@ -3114,10 +3116,36 @@ namespace IndianHealthService.ClinicalScheduling
             {
                 this.StartDate = this.Document.SelectedDate;
             }
-            //Is this needed?
+
+            //Is this needed? -- Yes it is. There is a bug in the drawing code for the calendar
+            //First time it draws, it draws appointments, but not availability slots
+            //Second time it draws, it both appointments and availabilites
+            //XXX: Need to investigate
             this.Document.UpdateAllViews();
-            //Is this needed?
-            this.calendarGrid1.Invalidate();
+
+            StopSplash();
+            this.Cursor = Cursors.Default;
+        }
+
+        LoadingSplash _loadingSplash; // Splash object a data point in class
+
+        /// <summary>
+        /// Loads a splash that says "Loading"
+        /// </summary>
+        private void LoadSplash()
+        {
+            _loadingSplash = new LoadingSplash();
+            _loadingSplash.StartPosition = FormStartPosition.CenterScreen;  //XXX: Don't like this, but will do for now.
+            _loadingSplash.UseWaitCursor = true;    // tell user we are working
+            Thread threadSplash = new Thread(new ThreadStart(() => _loadingSplash.ShowDialog())); // lambda
+            threadSplash.IsBackground = true; //expendable thread -- exit even if still running.
+            threadSplash.Name = "Loading Thread";
+            threadSplash.Start();
+        }
+
+        private void StopSplash()
+        {
+            _loadingSplash.RemoteClose();
         }
 
     }//End class

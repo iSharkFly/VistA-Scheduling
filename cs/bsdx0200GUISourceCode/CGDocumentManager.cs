@@ -197,6 +197,7 @@ namespace IndianHealthService.ClinicalScheduling
             if (!isEverythingOkay) return;
 
             //Create the first empty document
+            //SAM: Good place for break point
             CGDocument doc = new CGDocument();
             doc.DocManager = _current;
             doc.OnNewDocument();
@@ -280,12 +281,6 @@ namespace IndianHealthService.ClinicalScheduling
 
 		#region Methods & Events
 
-        
-		private void StartSplash(object form)
-		{
-            ((DSplash)form).ShowDialog();
-		}
-
         /// <summary>
         /// See InitializeApp(bool) below
         /// </summary>
@@ -324,7 +319,7 @@ namespace IndianHealthService.ClinicalScheduling
             DSplash.dProgressBarSet setProgressDelegate = new DSplash.dProgressBarSet(m_ds.RemoteProgressBarValueSet);
 
             //Start new thread for the Splash screen.
-            Thread threadSplash = new Thread(new ParameterizedThreadStart(StartSplash));
+            Thread threadSplash = new Thread(new ParameterizedThreadStart(frm => ((DSplash)frm).ShowDialog()));
             threadSplash.IsBackground = true; //expendable thread -- exit even if still running.
             threadSplash.Name = "Splash Thread";
             threadSplash.Start(m_ds); // pass form as parameter.

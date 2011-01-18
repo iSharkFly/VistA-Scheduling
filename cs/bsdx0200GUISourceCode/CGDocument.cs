@@ -112,21 +112,6 @@ namespace IndianHealthService.ClinicalScheduling
 			set
 			{
 				this.m_dSelectedDate = value;
-				bool bRet = false;
-				if (m_sResourcesArray.Count == 1)
-				{
-					bRet = this.WeekNeedsRefresh(1, m_dSelectedDate, out this.m_dStartDate, out this.m_dEndDate);
-				}
-				else
-				{
-					this.m_dStartDate = m_dSelectedDate;
-					this.m_dEndDate = m_dSelectedDate;
-					this.m_dEndDate = this.m_dEndDate.AddHours(23);
-					this.m_dEndDate = this.m_dEndDate.AddMinutes(59);
-					this.m_dEndDate = this.m_dEndDate.AddSeconds(59);
-				}
-
-				bRet = RefreshSchedule();
 			}
 		}
 
@@ -302,29 +287,23 @@ namespace IndianHealthService.ClinicalScheduling
 			this.UpdateAllViews();
 		}
 
-		private void SetDate(DateTime dDate)
-		{
-			bool bRet = false;
-			if (m_ScheduleType == ScheduleType.Resource)
-			{
-				bRet = this.WeekNeedsRefresh(2,dDate, out this.m_dStartDate, out this.m_dEndDate);
-			}
-			else
-			{
-				this.m_dStartDate = dDate;
-				this.m_dEndDate = dDate;
-				this.m_dEndDate = this.m_dEndDate.AddHours(23);
-				this.m_dEndDate = this.m_dEndDate.AddMinutes(59);
-				this.m_dEndDate = this.m_dEndDate.AddSeconds(59);
-			}
-
-			bRet = RefreshSchedule();
-			this.UpdateAllViews();
-		}
-
 		public void RefreshDocument()
 		{
-			bool bRet = RefreshSchedule();
+            bool bRet = false;
+            if (m_sResourcesArray.Count == 1)
+            {
+                bRet = this.WeekNeedsRefresh(1, m_dSelectedDate, out this.m_dStartDate, out this.m_dEndDate);
+            }
+            else
+            {
+                this.m_dStartDate = m_dSelectedDate;
+                this.m_dEndDate = m_dSelectedDate;
+                this.m_dEndDate = this.m_dEndDate.AddHours(23);
+                this.m_dEndDate = this.m_dEndDate.AddMinutes(59);
+                this.m_dEndDate = this.m_dEndDate.AddSeconds(59);
+            }
+
+			bRet = RefreshSchedule();
 			this.UpdateAllViews();
 		}
 
@@ -355,6 +334,7 @@ namespace IndianHealthService.ClinicalScheduling
 
 				CGView view = null;
 				//If this document already has a view, the use it
+                //SAM: Why do this again???
 				Hashtable h = CGDocumentManager.Current.Views;		
 				CGDocument d;
 				bool bReuseView = false;
@@ -589,8 +569,8 @@ namespace IndianHealthService.ClinicalScheduling
 		{
 			//TODO:  Test that resource is not currently in list, that it IS a resource, etc
 			this.m_sResourcesArray.Add(sResource);
-            //UpdateAllViews: Redraws all the open views. But does not call server.
-			this.UpdateAllViews();
+            //SAM: removing: Remove UpdateAllViews: Redraws all the open views. But does not call server.
+			//this.UpdateAllViews();
 		}
 
 		public void ClearResources()

@@ -66,7 +66,7 @@
     <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
     <ConfigurationOverrideFile>
     </ConfigurationOverrideFile>
-    <DefineConstants>TRACE;DEBUG</DefineConstants>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
     <DocumentationFile>
     </DocumentationFile>
     <DebugSymbols>false</DebugSymbols>
@@ -177,7 +177,6 @@
     </Compile>
     <Compile Include="CGAppointment.cs" />
     <Compile Include="CGAppointmentChangedArgs.cs" />
-    <Compile Include="CGAppointmentChangedHandler.cs" />
     <Compile Include="CGAppointments.cs" />
     <Compile Include="CGAvailability.cs" />
     <Compile Include="CGAVDocument.cs">
@@ -198,7 +197,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="CGSelectionChangedArgs.cs" />
-    <Compile Include="CGSelectionChangedHandler.cs" />
     <Compile Include="CGView.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -294,6 +292,12 @@
     </Compile>
     <Compile Include="DMassSlotDelete.Designer.cs">
       <DependentUpon>DMassSlotDelete.cs</DependentUpon>
+    </Compile>
+    <Compile Include="LoadingSplash.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="LoadingSplash.Designer.cs">
+      <DependentUpon>LoadingSplash.cs</DependentUpon>
     </Compile>
     <Compile Include="Options.cs" />
     <Compile Include="Printing.cs" />
@@ -401,6 +405,9 @@
     <EmbeddedResource Include="DSplash.resx">
       <DependentUpon>DSplash.cs</DependentUpon>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="LoadingSplash.resx">
+      <DependentUpon>LoadingSplash.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UCPatientAppts.resx">
       <DependentUpon>UCPatientAppts.cs</DependentUpon>
