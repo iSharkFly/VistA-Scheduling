@@ -346,18 +346,21 @@ namespace IndianHealthService.ClinicalScheduling
             // mnuRPMSServer
             // 
             this.mnuRPMSServer.Index = 3;
+            this.mnuRPMSServer.Shortcut = System.Windows.Forms.Shortcut.CtrlShiftS;
             this.mnuRPMSServer.Text = "Change VistA &Server";
             this.mnuRPMSServer.Click += new System.EventHandler(this.mnuRPMSServer_Click);
             // 
             // mnuRPMSLogin
             // 
             this.mnuRPMSLogin.Index = 4;
+            this.mnuRPMSLogin.Shortcut = System.Windows.Forms.Shortcut.CtrlShiftL;
             this.mnuRPMSLogin.Text = "Change VistA &Login";
             this.mnuRPMSLogin.Click += new System.EventHandler(this.mnuRPMSLogin_Click);
             // 
             // mnuRPMSDivision
             // 
             this.mnuRPMSDivision.Index = 5;
+            this.mnuRPMSDivision.Shortcut = System.Windows.Forms.Shortcut.CtrlShiftD;
             this.mnuRPMSDivision.Text = "Change VistA &Division";
             this.mnuRPMSDivision.Click += new System.EventHandler(this.mnuRPMSDivision_Click);
             // 
@@ -1543,7 +1546,11 @@ namespace IndianHealthService.ClinicalScheduling
 
             //We are doing this--Again?
 			v =this.DocManager.GetViewByResource(sSelectedTreeResourceArray);
-			v.dateTimePicker1.Value = dDate;
+			
+            //Position the Grid
+            //XXX: This must be a better way to do this.
+            v.dateTimePicker1.Value = dDate;
+            v.StartDate = doc.StartDate;
 
 			//Get preferred time scale from resource info
 			//If more than one resource, get smallest time scale
@@ -2375,6 +2382,9 @@ namespace IndianHealthService.ClinicalScheduling
 			LoadTree();
 
 			this.SetDesktopLocation(this.DesktopLocation.X + 10, this.DesktopLocation.Y + 10);
+
+            //Show the Form
+            this.Activate();
 		}
 
 		private void mnuOpenSchedule_Click(object sender, System.EventArgs e)
@@ -3093,14 +3103,21 @@ namespace IndianHealthService.ClinicalScheduling
             DateTime dDate = dateTimePicker1.Value.Date;
             // Change Date on Document
             this.Document.SelectedDate = dDate;
-            
-            //Splash when loading and change Cursor
-            this.Cursor = Cursors.WaitCursor;
-            LoadSplash();
 
-            this.Cursor = Cursors.Default;
-            this.Document.RefreshDocument();
-            
+            // Do we need to update?
+            bool isRefreshNeeded = this.Document.IsRefreshNeeded();
+
+            //Splash when loading and change Cursor
+            if (isRefreshNeeded)
+            {
+                this.Cursor = Cursors.WaitCursor;
+                LoadSplash();
+                this.Document.RefreshDocument();
+                StopSplash();
+                this.Cursor = Cursors.Default;
+            }
+
+
             if (this.Document.Resources.Count == 1)
             {
                 if (this.calendarGrid1.Columns > 1)
@@ -3122,9 +3139,6 @@ namespace IndianHealthService.ClinicalScheduling
             //Second time it draws, it both appointments and availabilites
             //XXX: Need to investigate
             this.Document.UpdateAllViews();
-
-            StopSplash();
-            this.Cursor = Cursors.Default;
         }
 
         LoadingSplash _loadingSplash; // Splash object a data point in class

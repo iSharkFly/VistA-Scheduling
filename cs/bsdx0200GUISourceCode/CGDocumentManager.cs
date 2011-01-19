@@ -180,7 +180,7 @@ namespace IndianHealthService.ClinicalScheduling
             //Store a class instance of manager. Actual constructor does nothing.
             _current = new CGDocumentManager();
 
-            //Get command line options; store in private variables
+            //Get command line options; store in private class wide variables
             var opset = new OptionSet() {
                 { "s=", s => _current.m_Server = s },
                 { "p=", p => _current.m_Port = int.Parse(p) },
@@ -190,29 +190,39 @@ namespace IndianHealthService.ClinicalScheduling
             };
 
             opset.Parse(args);
-
             
+            //Init app
             bool isEverythingOkay = _current.InitializeApp();
 
+            //if an error occurred, break out.
             if (!isEverythingOkay) return;
 
             //Create the first empty document
+            //A document holds the resources, appointments, and availabilites
             //SAM: Good place for break point
             CGDocument doc = new CGDocument();
             doc.DocManager = _current;
-            doc.OnNewDocument();
+
+            //Create new View
+            //A view is a specific arrangement of appointments and availabilites that constitute a document
+            CGView view = new CGView();
+            view.InitializeDocView(doc, _current, doc.StartDate, doc.Appointments, _current.WindowText);
+
+            //Handle BMX Event
             Application.DoEvents();
+
+            //Application wide error handler for unhandled errors
+            Application.ThreadException += new ThreadExceptionEventHandler(App_ThreadException);
+
 #if TRACE
             DateTime EndLoadTime = DateTime.Now;
             TimeSpan LoadTime = EndLoadTime - startLoadTime;
             Debug.Write("Load Time for GUI is " + LoadTime.Seconds + " s & " + LoadTime.Milliseconds + " ms\n");
 #endif
-            //Application wide error handler for unhandled errors
-            Application.ThreadException += new ThreadExceptionEventHandler(App_ThreadException);
-
-            //Run the application
-            //Sam's Note: This is an unusual way to call this. Typically, it's run with
-            //the main form as an argument.
+            
+            view.Show();
+            view.Activate();
+            
             Application.Run();
         }
 
@@ -367,6 +377,7 @@ namespace IndianHealthService.ClinicalScheduling
                         _current.m_ConnectInfo.LoadConnectInfo("", "");
                     }
                     // My code -- buts looks so ugly!
+                    // Checks the passed parameters stored in the class variables
                     else
                     {
                         if (m_Server != String.Empty && m_Port != 0 && m_AccessCode != String.Empty
@@ -980,6 +991,16 @@ namespace IndianHealthService.ClinicalScheduling
 
 		}
 
+        /// <summary>
+        /// Accomplishes Changing the Server to which you connect
+        /// </summary>
+        /// <remarks>
+        /// Parameter relog-in for InitializeApp forces initialize app to use
+        /// 1. The server the user just picked and then BMX saved off to User Preferences
+        /// 2. A new access and verify code pair
+        /// </remarks>
+        /// <param name="sender">unused</param>
+        /// <param name="e">unused</param>
 		private void mnuRPMSServer_Click(object sender, EventArgs e)
 		{
 			//Warn that changing servers will close all schedules
@@ -989,15 +1010,25 @@ namespace IndianHealthService.ClinicalScheduling
 			//Reconnect to RPMS and recreate all global recordsets
 			try
 			{
+                // Close All, but tell the Close All method not to call Applicaiton.Exit since we still plan to continue.
+                // Close All does not call Application.Exit, but CGView_Close handler does
 				m_bExitOK = false;
-				bool bRetry = true;
-				BMXNetConnectInfo tmpInfo;
+                CloseAll();
+                m_bExitOK = true;
+                
+                //Used in Do loop
+                bool bRetry = true;
+				
+                // Do Loop to deal with changing the server and the vagaries of user choices.
 				do
 				{
-					tmpInfo = m_ConnectInfo;
 					try
 					{
-						tmpInfo.ChangeServerInfo();
+                        //ChangeServerInfo does not re-login the user
+                        //It only changes the saved server information in the %APPDATA% folder
+                        //so it can be re-used when BMX tries to log in again.
+                        //Access and Verify code are prompted for in InitializeApp
+						m_ConnectInfo.ChangeServerInfo();
 						bRetry = false;
 					}
 					catch (Exception ex)
@@ -1005,6 +1036,7 @@ namespace IndianHealthService.ClinicalScheduling
 						if (ex.Message == "User cancelled.")
 						{
 							bRetry = false;
+                            Application.Exit();
 							return;
 						}
 						if (MessageBox.Show("Unable to connect to VistA.  " + ex.Message , "Clinical Scheduling", MessageBoxButtons.RetryCancel) == DialogResult.Retry)
@@ -1014,22 +1046,33 @@ namespace IndianHealthService.ClinicalScheduling
 						else
 						{
 							bRetry = false;
+                            Application.Exit();
 							return;
 						}
 					}
 				} while (bRetry == true);
 
-				CloseAll();
-				m_bExitOK = true;
-				m_ConnectInfo = tmpInfo;
+                //Parameter for initialize app tells it that this is a re-login and forces a new access and verify code.
+                bool isEverythingOkay = this.InitializeApp(true);
 
-				this.InitializeApp();
+                //if an error occurred, break out. This time we need to call Application.Exit since it's already running.
+                if (!isEverythingOkay)
+                {
+                    Application.Exit();
+                    return;
+                }
 
-				//Create a new document
-				CGDocument doc = new CGDocument();
-				doc.DocManager = _current;
-				doc.OnNewDocument();
+                //Otherwise, everything is okay. So open document and view, then show and activate view.
+                CGDocument doc = new CGDocument();
+                doc.DocManager = _current;
 
+                CGView view = new CGView();
+                view.InitializeDocView(doc, _current, doc.StartDate, doc.Appointments, _current.WindowText);
+
+                view.Show();
+                view.Activate();
+
+                //Application.Run need not be called b/c it is already running.
 			}
 			catch (Exception ex)
 			{
@@ -1038,6 +1081,11 @@ namespace IndianHealthService.ClinicalScheduling
 	
 		}
 
+        /// <summary>
+        /// Accomplishes Re-login into RPMS/VISTA. Now all logic is in this event handler.
+        /// </summary>
+        /// <param name="sender">not used</param>
+        /// <param name="e">not used</param>
 		private void mnuRPMSLogin_Click(object sender, EventArgs e)
 		{
 			//Warn that changing login will close all schedules
@@ -1047,15 +1095,33 @@ namespace IndianHealthService.ClinicalScheduling
 			//Reconnect to RPMS and recreate all global recordsets
 			try
 			{
+                // Close All, but tell the Close All method not to call Applicaiton.Exit since we still plan to continue.
+                // Close All does not call Application.Exit, but CGView_Close handler does
 				m_bExitOK = false;
 				CloseAll();
 				m_bExitOK = true;
-				//_current.m_ConnectInfo = new BMXNet.BMXNetConnectInfo();//smh redundant
-				this.InitializeApp(true);
-				//Create a new document
-				CGDocument doc = new CGDocument();
-				doc.DocManager = _current;
-				doc.OnNewDocument();
+
+                //Parameter for initialize app tells it that this is a re-login and forces a new access and verify code.
+                bool isEverythingOkay = this.InitializeApp(true);
+
+                //if an error occurred, break out. This time we need to call Application.Exit since it's already running.
+                if (!isEverythingOkay)
+                {
+                    Application.Exit();
+                    return;
+                }
+
+                //Otherwise, everything is okay. So open document and view, then show and activate view.
+                CGDocument doc = new CGDocument();
+                doc.DocManager = _current;
+
+                CGView view = new CGView();
+                view.InitializeDocView(doc, _current, doc.StartDate, doc.Appointments, _current.WindowText);
+
+                view.Show();
+                view.Activate();
+
+                //Application.Run need not be called b/c it is already running.
 			}
 			catch (Exception ex)
 			{
