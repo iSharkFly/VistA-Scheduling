@@ -70,6 +70,7 @@
             this.m_gridCells = new CGCells();
             this.m_selectedRange = new CGRange();
             this.m_SelectedAppointments = new CGAppointments();
+            //this.m_Appointments = new CGAppointments();
             this.m_dtStart = new DateTime(2003, 1, 27);
             this.m_ApptOverlapTable = new Hashtable();
             this.m_ColumnInfoTable = new Hashtable();
@@ -88,12 +89,6 @@
             this.m_sfHour.LineAlignment = StringAlignment.Center;
             this.m_sfHour.Alignment = StringAlignment.Far;
             this.m_bInitialUpdate = false;
-            this.MouseEnter += new EventHandler(CalendarGrid_MouseEnter);
-        }
-
-        void CalendarGrid_MouseEnter(object sender, EventArgs e)
-        {
-            this.Focus();
         }
 
         private Rectangle AdjustRectForOverlap()

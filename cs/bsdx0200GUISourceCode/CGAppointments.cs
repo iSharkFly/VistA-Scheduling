@@ -7,7 +7,7 @@
     /// by Sam Habiel for WorldVista. The original source code is lost.
     /// </summary>
     [Serializable]
-    public class CGAppointments : IEnumerable
+    public class CGAppointments : IEnumerable, ICloneable
     {
         private Hashtable apptList = new Hashtable();
 
@@ -54,6 +54,16 @@
             {
                 return this.apptList;
             }
+        }
+
+        //smh test
+        //one problem: Hashtable is a shallow copy.
+        //so it shouldn't work. But let's see.
+        public object Clone()
+        {
+            CGAppointments appts = new CGAppointments();
+            appts.apptList = (Hashtable)apptList.Clone();
+            return appts;
         }
     }
 }

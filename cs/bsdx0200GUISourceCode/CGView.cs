@@ -7,7 +7,7 @@ using System.Diagnostics;
 using System.Data;
 using System.Threading;
 using IndianHealthService.BMXNet;
-
+using System.Runtime.InteropServices;
 
 namespace IndianHealthService.ClinicalScheduling
 {
@@ -127,15 +127,20 @@ namespace IndianHealthService.ClinicalScheduling
 		public void InitializeDocView(CGDocument doc, 
 			CGDocumentManager docMgr,
 			DateTime dStartDate,
-			CGAppointments cgAppts,
 			string sText)
 		{
 			System.IntPtr pHandle = this.Handle;
 			this.DocManager = docMgr;
 			this.StartDate = dStartDate;
 			this.Document = doc;
-			this.Appointments = cgAppts;
-			
+            
+            //Rather strangely, this line is needed for God knows Why...
+            //Without it, the Grid tries to draw appointments, but can't.
+            //Making a constructor in the Calendar Grid itself didn't work. Don't know why.
+            //XXX: For later investigation.
+            this.Appointments = new CGAppointments();
+            
+
             // Set username and division up top
             this.Text = this.DocManager.ConnectInfo.UserName;
 			if (sText != null)
@@ -149,46 +154,7 @@ namespace IndianHealthService.ClinicalScheduling
 		}
 
 		private BMXNetConnectInfo.BMXNetEventDelegate m_bmxDelegate;
-		delegate void OnUpdateScheduleDelegate();
-
-		private void BMXNetEventHandler(Object obj, BMXNet.BMXNetEventArgs e)
-		{
-			try
-			{
-				if (e.BMXEvent == "BMXNet AutoFire")
-				{
-					Debug.Write("CGView caught AutoFire event.\n");
-					if (this == null)
-						return;
-					OnUpdateScheduleDelegate ousd = new OnUpdateScheduleDelegate(OnUpdateSchedule);
-					this.BeginInvoke(ousd);
-					return;
-				}
-
-				if (e.BMXEvent != "BSDX SCHEDULE")
-				{
-					return;
-				}
-				string sResourceName;
-				for (int j=0; j < m_Document.m_sResourcesArray.Count; j++)
-				{
-					sResourceName = m_Document.m_sResourcesArray[j].ToString();
-					if (e.BMXParam == sResourceName)
-					{
-						OnUpdateScheduleDelegate ousd = new OnUpdateScheduleDelegate(OnUpdateSchedule);
-						if (this == null)
-							return;
-						this.BeginInvoke(ousd);
-						Debug.Write("CGView caught BSDX SCHEDULE event.\n");
-						break;
-					}
-				}
-			}
-			catch (Exception ex)
-			{
-				Debug.Write(ex.Message);
-			}
-        }
+		
 
         #endregion initialization
 
@@ -650,7 +616,7 @@ namespace IndianHealthService.ClinicalScheduling
             this.tvSchedules.HotTracking = true;
             this.tvSchedules.Location = new System.Drawing.Point(0, 0);
             this.tvSchedules.Name = "tvSchedules";
-            this.tvSchedules.Size = new System.Drawing.Size(128, 437);
+            this.tvSchedules.Size = new System.Drawing.Size(128, 395);
             this.tvSchedules.Sorted = true;
             this.tvSchedules.TabIndex = 1;
             this.tvSchedules.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.tvSchedules_AfterSelect);
@@ -697,7 +663,7 @@ namespace IndianHealthService.ClinicalScheduling
             this.panelRight.Dock = System.Windows.Forms.DockStyle.Right;
             this.panelRight.Location = new System.Drawing.Point(941, 0);
             this.panelRight.Name = "panelRight";
-            this.panelRight.Size = new System.Drawing.Size(128, 437);
+            this.panelRight.Size = new System.Drawing.Size(128, 395);
             this.panelRight.TabIndex = 3;
             this.panelRight.Visible = false;
             // 
@@ -795,7 +761,7 @@ namespace IndianHealthService.ClinicalScheduling
             this.panelCenter.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panelCenter.Location = new System.Drawing.Point(136, 24);
             this.panelCenter.Name = "panelCenter";
-            this.panelCenter.Size = new System.Drawing.Size(802, 389);
+            this.panelCenter.Size = new System.Drawing.Size(802, 347);
             this.panelCenter.TabIndex = 7;
             // 
             // calendarGrid1
@@ -817,7 +783,7 @@ namespace IndianHealthService.ClinicalScheduling
             this.calendarGrid1.Name = "calendarGrid1";
             this.calendarGrid1.Resources = ((System.Collections.ArrayList)(resources.GetObject("calendarGrid1.Resources")));
             this.calendarGrid1.SelectedAppointment = 0;
-            this.calendarGrid1.Size = new System.Drawing.Size(802, 389);
+            this.calendarGrid1.Size = new System.Drawing.Size(802, 347);
             this.calendarGrid1.StartDate = new System.DateTime(2003, 1, 27, 0, 0, 0, 0);
             this.calendarGrid1.TabIndex = 0;
             this.calendarGrid1.TimeScale = 20;
@@ -825,6 +791,7 @@ namespace IndianHealthService.ClinicalScheduling
             this.calendarGrid1.CGAppointmentAdded += new IndianHealthService.ClinicalScheduling.CalendarGrid.CGAppointmentChangedHandler(this.calendarGrid1_CGAppointmentAdded);
             this.calendarGrid1.CGSelectionChanged += new IndianHealthService.ClinicalScheduling.CalendarGrid.CGSelectionChangedHandler(this.calendarGrid1_CGSelectionChanged);
             this.calendarGrid1.DoubleClick += new System.EventHandler(this.calendarGrid1_DoubleClick);
+            this.calendarGrid1.MouseEnter += new System.EventHandler(this.calendarGrid1_MouseEnter);
             // 
             // ctxCalendarGrid
             // 
@@ -909,7 +876,7 @@ namespace IndianHealthService.ClinicalScheduling
             // 
             this.panelBottom.Controls.Add(this.statusBar1);
             this.panelBottom.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panelBottom.Location = new System.Drawing.Point(136, 413);
+            this.panelBottom.Location = new System.Drawing.Point(136, 371);
             this.panelBottom.Name = "panelBottom";
             this.panelBottom.Size = new System.Drawing.Size(802, 24);
             this.panelBottom.TabIndex = 8;
@@ -927,7 +894,7 @@ namespace IndianHealthService.ClinicalScheduling
             // 
             this.splitter1.Location = new System.Drawing.Point(128, 24);
             this.splitter1.Name = "splitter1";
-            this.splitter1.Size = new System.Drawing.Size(8, 413);
+            this.splitter1.Size = new System.Drawing.Size(8, 371);
             this.splitter1.TabIndex = 9;
             this.splitter1.TabStop = false;
             // 
@@ -936,7 +903,7 @@ namespace IndianHealthService.ClinicalScheduling
             this.splitter2.Dock = System.Windows.Forms.DockStyle.Right;
             this.splitter2.Location = new System.Drawing.Point(938, 24);
             this.splitter2.Name = "splitter2";
-            this.splitter2.Size = new System.Drawing.Size(3, 413);
+            this.splitter2.Size = new System.Drawing.Size(3, 371);
             this.splitter2.TabIndex = 10;
             this.splitter2.TabStop = false;
             // 
@@ -948,7 +915,7 @@ namespace IndianHealthService.ClinicalScheduling
             // CGView
             // 
             this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
-            this.ClientSize = new System.Drawing.Size(1069, 437);
+            this.ClientSize = new System.Drawing.Size(1069, 395);
             this.Controls.Add(this.panelCenter);
             this.Controls.Add(this.panelBottom);
             this.Controls.Add(this.splitter2);
@@ -1059,6 +1026,7 @@ namespace IndianHealthService.ClinicalScheduling
 
 
 		#endregion
+
 
 		#region AppointmentMenu Handlers
 
@@ -1511,7 +1479,13 @@ namespace IndianHealthService.ClinicalScheduling
                 return;
 			}
 
-			//If this Document has no resources then use it (happens when the GUI has nothing open, typically after log-in)
+            //So if it is not a view that's already open, it means we have to grab the data for
+            //So we tell the user to wait wait wait
+            this.Cursor = Cursors.WaitCursor;
+            this.LoadSplash();  //Open "Loading" splash
+            
+            
+            //If this Document has no resources then use it (happens when the GUI has nothing open, typically after log-in)
 			//Else, create a new document
             CGDocument doc;
             if (this.Document.m_sResourcesArray.Count == 0)
@@ -1547,7 +1521,7 @@ namespace IndianHealthService.ClinicalScheduling
             //We are doing this--Again?
 			v =this.DocManager.GetViewByResource(sSelectedTreeResourceArray);
 			
-            //Position the Grid
+            //Position the Grid to start at a certain day.
             //XXX: This must be a better way to do this.
             v.dateTimePicker1.Value = dDate;
             v.StartDate = doc.StartDate;
@@ -1627,6 +1601,10 @@ namespace IndianHealthService.ClinicalScheduling
 
 			v.calendarGrid1.SetOverlapTable();
 			v.calendarGrid1.Refresh();
+
+            // Set cursor back and stop splash screen
+            this.Cursor = Cursors.Default;
+            StopSplash();
 		}
 
 		private void LoadTree()
@@ -2223,22 +2201,115 @@ namespace IndianHealthService.ClinicalScheduling
 			}
 		}
 
+        #region BMX Event Processing and Callbacks
+        /// <summary>
+        /// Loosely typed delegate used several times below.
+        /// </summary>
+        delegate void OnUpdateScheduleDelegate();
+        
+        /// <summary>
+        /// Subscription point for each CGView to process BMX events polled from the server
+        /// </summary>
+        /// <param name="obj">Not used</param>
+        /// <param name="e">BMXEvent Args: 
+        /// e.BMXEvent is free text for Event Type; e.BMXParam is free text for Event Arguments</param>
+        private void BMXNetEventHandler(Object obj, BMXNet.BMXNetEventArgs e)
+        {
+            try
+            {
+                // if this class is undefined (e.g. if the user just closed the form, do nothing
+                if (this == null) return;
+
+                // if event is Autofire event
+                if (e.BMXEvent == "BMXNet AutoFire")
+                {
+                    Debug.Write("CGView caught AutoFire event.\n");
+                   
+                    //Create a delegate to OnUpdateSchedule and call Async
+                    //Once Async Call is done, go to OnUpdateScheduleCallback
+                    OnUpdateScheduleDelegate ousd = new OnUpdateScheduleDelegate(OnUpdateSchedule);
+                    ousd.BeginInvoke(OnUpdateScheduleCallback, null);
+
+                    return;
+                }
+
+                // if event is BSDX SCHEDULE
+                else if (e.BMXEvent == "BSDX SCHEDULE")
+                {
+                    //See if any of the resources in the event argument matches BSDX Schedule.
+                    //If yes, fire off the delegate
+                    string sResourceName;
+                    for (int j = 0; j < m_Document.m_sResourcesArray.Count; j++)
+                    {
+                        sResourceName = m_Document.m_sResourcesArray[j].ToString();
+                        if (e.BMXParam == sResourceName)
+                        {
+                            Debug.Write("CGView caught BSDX SCHEDULE event.\n");
+
+                            //Create a delegate to OnUpdateSchedule and call Async
+                            //Once Async Call is done, go to OnUpdateScheduleCallb
+                            OnUpdateScheduleDelegate ousd = new OnUpdateScheduleDelegate(OnUpdateSchedule);
+                            ousd.BeginInvoke(OnUpdateScheduleCallback, null);
+                            
+                            break;
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.Write(ex.Message);
+            }
+        }
+
+        /// <summary>
+        /// Update Appointments and Availabilites using Document.RefreshDocumentAsync on a different thread
+        /// </summary>
+        /// <remarks>
+        /// This method is expected to be called asynchornously.
+        /// </remarks>
 		public void OnUpdateSchedule()
 		{
 			try
 			{
-				this.Cursor = Cursors.WaitCursor;
-				m_Document.RefreshDocument();
+				m_Document.RefreshDocumentAsync(); //new
 			}
 			catch (Exception ex)
 			{
 				MessageBox.Show("Unable to refresh document " +  ex.Message, "Clinical Scheduling");
 			}
-			finally
-			{
-				this.Cursor = Cursors.Default;
-			}
 		}
+
+        /// <summary>
+        /// Callback for when OnUpdateSchedule is done. Triggers the Grid to redraw itself by calling UpdateArrays.
+        /// </summary>
+        /// <param name="itfAR">not used</param>
+        /// <remarks>Calls UpdateArrays via this.Invoke to make sure that the grid is redrawn on the UI thread</remarks>
+        private void OnUpdateScheduleCallback(IAsyncResult itfAR)
+        {
+            OnUpdateScheduleDelegate d = new OnUpdateScheduleDelegate(UpdateArrays);
+            this.Invoke(d);
+        }
+
+        /// <summary>
+        /// Create a new event in RPMS. Wrapper around BMXConnectInfo.RaiseEvent
+        /// </summary>
+        /// <param name="sEvent">Name of Event to Raise</param>
+        /// <param name="sParams">Parameter of Event to Raise</param>
+        public void RaiseRPMSEvent(string sEvent, string sParams)
+        {
+            try
+            {
+                //Signal RPMS to raise an event
+                m_ConnectInfo.RaiseEvent(sEvent, sParams, true);
+            }
+            catch (Exception ex)
+            {
+                Debug.Write(ex.Message);
+            }
+        }
+
+        #endregion
 
         /// <summary>
         /// This is how you set how the grid will look
@@ -2250,10 +2321,12 @@ namespace IndianHealthService.ClinicalScheduling
             // This is where you set how the grid will look
 			try 
 			{
-				this.calendarGrid1.AvailabilityArray = this.m_Document.AvailabilityArray;
+                //Tell the grid about Avails, Appts, and Resources.
+                this.calendarGrid1.AvailabilityArray = this.m_Document.AvailabilityArray;
+                //Appts are cloned b/c if we tie into  the class directly, we shoot off errors when we manipulate it.
+                this.calendarGrid1.Appointments = (CGAppointments)this.m_Document.Appointments.Clone(); //smh new line again
 				this.calendarGrid1.Resources = this.m_Document.Resources;
-                // this.calendarGrid1.Columns = 7; //test
-                // this.calendarGrid1.StartDate = DateTime.Parse("10-10-2007"); // another test
+                //Redraw the calendar grid
 				this.calendarGrid1.OnUpdateArrays(); // this draws the Calendar
 				this.lblResource.Text = this.m_Document.DocName;
 				this.calendarGrid1.Invalidate();
@@ -2261,19 +2334,6 @@ namespace IndianHealthService.ClinicalScheduling
 			catch (Exception ex)
 			{
 				MessageBox.Show("Unable to update arrays " +  ex.Message, "Clinical Scheduling");
-			}
-		}
-
-		public void RaiseRPMSEvent(string sEvent, string sParams)
-		{
-			try
-			{
-				//Signal RPMS to raise an event
-				m_ConnectInfo.RaiseEvent(sEvent, sParams, true);
-			}
-			catch (Exception ex)
-			{
-				Debug.Write(ex.Message);
 			}
 		}
 
@@ -2371,7 +2431,25 @@ namespace IndianHealthService.ClinicalScheduling
 
 		#region Events
 
-		private void CGView_Load(object sender, System.EventArgs e)
+        /// <summary>
+        /// Special import to get the GetActiveWindow method from Win32
+        /// </summary>
+        /// <returns>Windows Handle number for Foregreound Active Window</returns>
+        [DllImport("user32.dll")]
+        static extern IntPtr GetActiveWindow();
+
+        /// <summary>
+        /// If a mouse enters the grid, check if the grid is on the active form first before stealing the focus
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void calendarGrid1_MouseEnter(object sender, EventArgs e)
+        {
+            if (GetActiveWindow() == this.Handle)
+                calendarGrid1.Focus();
+        }
+        
+        private void CGView_Load(object sender, System.EventArgs e)
 		{
 			Debug.Assert (this.Document != null);
 
@@ -3161,6 +3239,9 @@ namespace IndianHealthService.ClinicalScheduling
         {
             _loadingSplash.RemoteClose();
         }
+
+        
+
 
     }//End class
 }

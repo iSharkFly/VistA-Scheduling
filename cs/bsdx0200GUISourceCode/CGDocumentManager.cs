@@ -206,7 +206,7 @@ namespace IndianHealthService.ClinicalScheduling
             //Create new View
             //A view is a specific arrangement of appointments and availabilites that constitute a document
             CGView view = new CGView();
-            view.InitializeDocView(doc, _current, doc.StartDate, doc.Appointments, _current.WindowText);
+            view.InitializeDocView(doc, _current, doc.StartDate, _current.WindowText);
 
             //Handle BMX Event
             Application.DoEvents();
@@ -1067,7 +1067,7 @@ namespace IndianHealthService.ClinicalScheduling
                 doc.DocManager = _current;
 
                 CGView view = new CGView();
-                view.InitializeDocView(doc, _current, doc.StartDate, doc.Appointments, _current.WindowText);
+                view.InitializeDocView(doc, _current, doc.StartDate, _current.WindowText);
 
                 view.Show();
                 view.Activate();
@@ -1116,7 +1116,7 @@ namespace IndianHealthService.ClinicalScheduling
                 doc.DocManager = _current;
 
                 CGView view = new CGView();
-                view.InitializeDocView(doc, _current, doc.StartDate, doc.Appointments, _current.WindowText);
+                view.InitializeDocView(doc, _current, doc.StartDate, _current.WindowText);
 
                 view.Show();
                 view.Activate();

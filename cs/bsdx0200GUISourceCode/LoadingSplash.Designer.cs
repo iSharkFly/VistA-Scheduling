@@ -38,7 +38,7 @@
                         | System.Windows.Forms.AnchorStyles.Right)));
             this.lblLoading.AutoSize = true;
             this.lblLoading.Font = new System.Drawing.Font("Tahoma", 48F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblLoading.Location = new System.Drawing.Point(228, 181);
+            this.lblLoading.Location = new System.Drawing.Point(138, 108);
             this.lblLoading.Name = "lblLoading";
             this.lblLoading.Size = new System.Drawing.Size(255, 77);
             this.lblLoading.TabIndex = 0;
@@ -50,12 +50,11 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.ControlLightLight;
-            this.ClientSize = new System.Drawing.Size(722, 449);
+            this.ClientSize = new System.Drawing.Size(537, 315);
             this.Controls.Add(this.lblLoading);
             this.ForeColor = System.Drawing.SystemColors.ControlLight;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.Name = "LoadingSplash";
-            this.Opacity = 0.8D;
             this.ShowIcon = false;
             this.ShowInTaskbar = false;
             this.Text = "Form1";

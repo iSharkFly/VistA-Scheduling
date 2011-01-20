@@ -269,7 +269,31 @@ namespace IndianHealthService.ClinicalScheduling
             return this.WeekNeedsRefresh(1, m_dSelectedDate, out this.m_dStartDate, out this.m_dEndDate);
         }
 
+        //sam: This is a test that duplicates RefreshDocument, but without the UpdateAllViews,
+        // as that has to be done synchornously.
+        //XXXXXX: Needs to be refactored obviously, but now for testing.
+        public void RefreshDocumentAsync()
+        {
+            bool bRet = false;
+            if (m_sResourcesArray.Count == 0)
+                return;
+            if (m_sResourcesArray.Count == 1)
+            {
+                bRet = this.WeekNeedsRefresh(1, m_dSelectedDate, out this.m_dStartDate, out this.m_dEndDate);
+            }
+            else
+            {
+                this.m_dStartDate = m_dSelectedDate;
+                this.m_dEndDate = m_dSelectedDate;
+                this.m_dEndDate = this.m_dEndDate.AddHours(23);
+                this.m_dEndDate = this.m_dEndDate.AddMinutes(59);
+                this.m_dEndDate = this.m_dEndDate.AddSeconds(59);
+            }
 
+            bRet = RefreshSchedule();
+        }
+
+        
         public void RefreshDocument()
         {
             bool bRet = false;
@@ -289,6 +313,7 @@ namespace IndianHealthService.ClinicalScheduling
             }
 
             bRet = RefreshSchedule();
+            
             this.UpdateAllViews();
         }
 
@@ -343,7 +368,6 @@ namespace IndianHealthService.ClinicalScheduling
                     view.InitializeDocView(this,
                         this.DocManager,
                         m_dStartDate,
-                        this.Appointments,
                         this.DocName);
 
                     view.Show();
