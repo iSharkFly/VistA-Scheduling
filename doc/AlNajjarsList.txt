@@ -1,0 +1,32 @@
+Dear Sam
+This is my wish list for the Scheduling GUI:
+1.  Cancel the Walk-in appointments.
+2.  Make the manager for the division not for the Data Base.
+3.  Map the Clerks (Users) to the Groups not the clinics.
+4.  System should inform the users if there is another appointment to the same clinic, not Just only information in the appointment screen.
+5.  Activate Find Available appointment Function.
+6.  Add New Key to the system; allow the manager to map users to the clinics without having access to add and edit the clinics.
+7.  In the Re-book function; system should inform the users if there is no available clinic; not just do nothing the users confused; specially if they are new in the system
+8.  Error massages should be more clear for the end Users.
+9.  Select the provider from the Check-in option.
+10. Fix appointment transfer between the clinics. Specially if we have two windows.
+11. Make the reason for the cancellation editable can be configured site Specific.
+12. Overbook limit and it can be edited as in VistA Scheduling.
+13. Can know how dont checked-out from the system through the Clinical Scheduling GUI.
+14. Generate a report from the system, tell us about the Check-in & Check-out status.
+15. Time Scale should be for the manager only, clerk cant change it.
+16. For the appointment cancelation, if we can cancel it by group and Re-Book it by group.
+17. Change VistA Server should be only for the manager.
+18. Change VistA Division should be only for the manager.
+19. If the I close the Last Windows in the clinical Scheduling GUI the system should ask me are you sure to close this program
+20. A tool that allow us to edit the schedule without go to each day to change.
+21. If I apply a new template to the clinic the system should ask me if I want to delete the previous one.
+22. System should check the patient appointments, patient should not have two appointment at the same time( I should explain it for you )
+23. Adding blocks in groups not individually.
+24. If we change the default time slot for the clinic the system should change the access block time automatically.
+25. If I inactivate the clinic in VistA it should reflects in GUI.
+26. If we can make the users in groups. i.e. MRs group, OP clinics Group and map them to the resource groups
+27. Copy appointments should be working will.
+28. Not all the work stations in the system can seen in the GUI.
+
+I know there are a lot of clarification for my points. I will call you to explain it.

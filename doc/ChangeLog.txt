@@ -105,3 +105,9 @@ v1.4.2 (released December 12th 2010)
 - Saving access slots is not async, but that causes other bugs because of multiple threads accessing data concurrently. It's an intermediate fix until a better saving program can be devised using BMX Updatable DataTables.
 - Access block grid now refreshes itself after access blocks are added from a template. No need to change dates to see the effect.
 - New option in Access block grid to mass delete access blocks on File menu (tied to Ctrl-D).
+- Can make appointments longer than 240 minutes when using a linked Resource (PIMS issue).
+- Patient Appointment List now does not show cancelled appointments.
+- Patient Appointment List now shows the names of the clinics as what you called them in the Scheduling GUI, not what they are called in VISTA.
+- New kids build
+
+

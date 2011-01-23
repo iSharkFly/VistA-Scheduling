@@ -77,14 +77,14 @@ Known Bugs:
 - No handling of invalid access code when saving access slots.
 - No Ctrl-C & Ctrl-V handling
 - No Insert & Delete button handling
-- Grids don't respond to mouse wheel movement.
+- Grids don't respond to mouse wheel movement. (fixed in 1.5)
 - Appointment drag and drop to the same time at a different clinic doesn't work (complains that the patient already has an appointment at this time).
 - Appointment drap and drop between different windows doesn't cancel the original appointment.
 - Rebooking under certain conditions causes system hangs. Two issues: Program doesn't increment requested available appointment from VISTA, and doesn't deal properly with an appointment that doesn't have a access type (ie an appointment that is not in an Access block).
-- Can't make appointments longer than 240 minutes when using a linked Resource (PIMS issue)
-- Patient Appointment List shows cancelled appointments by default and doesn't indicate in any way that they are cancelled.
-- Patient Appointment List shows the names of the resources as the VISTA PIMS clinics, not what you called them in the Scheduling GUI; only for linked resources. 
-- Speed issues
+- Speed issues (see below)
+- Date on Appt List header in Arabic doesn't show up correctly.
+- Error massages should be clearer for the end Users
+
 
 Other Bugs:
 Put them on the trac server where you got this software.
@@ -97,3 +97,37 @@ Enhancement requests:
 - Print Appointment Letter when Appointment is made (PHH Users workflow).
 - Make printing an extensible module for end user customization (Oroville and PHH)
 - Be able to print mutiple copies of a report (request of a PHH user).
+- Appointment List print out doesn't show the date and time printed.
+- Add patient order to the routing slip
+- Double-click should open make appoitment
+- Double-click on appointment should edit appointment
+- Click right click issue on grid
+- Add right-click on tvClinics to Print schedule for the clinic
+- Print multiple copies of schedule for clinic.
+- Add ability to Cancel Walk-in appointments <Najjar>
+- Make the manager for the division not for the Data Base <Najjar>
+- Map the Clerks (Users) to the Groups not the clinics <Najjar>
+- Add New Key to the system; allow the manager to map users to the clinics without having access to add and edit the clinics
+- In the Re-book function; system should inform the users if there is no available clinic, not just do nothing.
+- Select the provider from the Check-in option should print the provider on the routing slip
+- Make the reason for the cancellation editable can be configured site Specific
+- Have an overbook limit and it can be edited as in VistA Scheduling
+- Show a indicator if a patient got checked out or not.
+- Generate a report from the system, tell us about the Check-in & Check-out status
+- Change VistA Server should be only for the manager only
+- If the I close the Last Windows in the clinical Scheduling GUI the system should ask me "Are you sure to close this program?"
+- A tool that allow us to edit the schedule without go to each day to change
+- If I apply a new template to the clinic the system should ask me if I want to delete the previous one
+- Adding blocks in groups not individually
+- If I inactivate the clinic in VistA it should reflects in GUI
+- If we can make the users in groups. i.e. MRs group, OP clinics Group and map them to the resource groups
+
+Speed issues:
+- Loading takes a long time <solved>
+- Search <enter> Select <enter> <enter> takes a long time when adding appointment
+- Wait cursor when updating <solved>
+- Checkin takes a long time
+- Printing the routing slip takes a slightly longer than necessary time
+- Select patient dialog takes a tiny while to show up.
+- Date-change selection not optimal (calls server with each tiny change) <solved>
+
