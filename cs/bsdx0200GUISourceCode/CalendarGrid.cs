@@ -50,8 +50,9 @@
         private ArrayList m_sResourcesArray;
         private Timer m_Timer;                  // Timeer used in Drag and Drop Operations
         private ToolTip m_toolTip;
-        private const int WM_HSCROLL = 0x114;   // Horizontal Scrolling Windows Message
-        private const int WM_VSCROLL = 0x115;   // Vertical Scrolling Windows Message
+        private const int WM_HSCROLL = 0x114;       // Horizontal Scrolling Windows Message
+        private const int WM_VSCROLL = 0x115;       // Vertical Scrolling Windows Message
+        private const int WM_MOUSEWHEEL = 0x20a;    // Windows Mouse Scrolling Message
 
         public delegate void CGAppointmentChangedHandler(object sender, CGAppointmentChangedArgs e);
         public event CGAppointmentChangedHandler CGAppointmentChanged;
@@ -1185,15 +1186,16 @@
         /// The purpose of this is to properly draw the date boxes at the top of the calendar grid.
         /// Otherwise, when scrolling, it gets garbled.
         /// </summary>
-        /// <param name="msg">Handles two messages:
+        /// <param name="msg">Handles three messages:
         /// WM_VSCROLL (0x115 - Vertical Scrolling)
         /// WM_HSCROLL (0x114 - Horizontal Scrolling)
+        /// WM_MOUSEWHEEL (0x20a - Mouse Wheel Movement)
         /// </param>
         protected override void WndProc(ref Message msg)
         {
             try
             {
-                if (msg.Msg == WM_VSCROLL)
+                if (msg.Msg == WM_VSCROLL || msg.Msg == WM_MOUSEWHEEL)
                 {
                     this.m_bScroll = true;
                     base.Invalidate(false);

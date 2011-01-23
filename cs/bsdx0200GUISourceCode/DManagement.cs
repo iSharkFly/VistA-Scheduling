@@ -691,7 +691,7 @@ namespace IndianHealthService.ClinicalScheduling
             this.tpResourceGroups.Controls.Add(this.pnlAddEditResourceGroups);
             this.tpResourceGroups.Location = new System.Drawing.Point(4, 22);
             this.tpResourceGroups.Name = "tpResourceGroups";
-            this.tpResourceGroups.Size = new System.Drawing.Size(579, 362);
+            this.tpResourceGroups.Size = new System.Drawing.Size(696, 428);
             this.tpResourceGroups.TabIndex = 4;
             this.tpResourceGroups.Text = "Resource Groups";
             // 
@@ -705,7 +705,7 @@ namespace IndianHealthService.ClinicalScheduling
             this.grdResourceGroup.Location = new System.Drawing.Point(0, 0);
             this.grdResourceGroup.Name = "grdResourceGroup";
             this.grdResourceGroup.ReadOnly = true;
-            this.grdResourceGroup.Size = new System.Drawing.Size(579, 250);
+            this.grdResourceGroup.Size = new System.Drawing.Size(696, 316);
             this.grdResourceGroup.TabIndex = 4;
             this.grdResourceGroup.CurrentCellChanged += new System.EventHandler(this.grdResourceGroup_CurrentCellChanged);
             this.grdResourceGroup.Navigate += new System.Windows.Forms.NavigateEventHandler(this.grdResourceGroup_Navigate);
@@ -714,9 +714,9 @@ namespace IndianHealthService.ClinicalScheduling
             // 
             this.pnlDescriptionResourceGroup.Controls.Add(this.grpDescriptionResourceGroup);
             this.pnlDescriptionResourceGroup.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.pnlDescriptionResourceGroup.Location = new System.Drawing.Point(0, 250);
+            this.pnlDescriptionResourceGroup.Location = new System.Drawing.Point(0, 316);
             this.pnlDescriptionResourceGroup.Name = "pnlDescriptionResourceGroup";
-            this.pnlDescriptionResourceGroup.Size = new System.Drawing.Size(579, 72);
+            this.pnlDescriptionResourceGroup.Size = new System.Drawing.Size(696, 72);
             this.pnlDescriptionResourceGroup.TabIndex = 3;
             // 
             // grpDescriptionResourceGroup
@@ -725,7 +725,7 @@ namespace IndianHealthService.ClinicalScheduling
             this.grpDescriptionResourceGroup.Dock = System.Windows.Forms.DockStyle.Fill;
             this.grpDescriptionResourceGroup.Location = new System.Drawing.Point(0, 0);
             this.grpDescriptionResourceGroup.Name = "grpDescriptionResourceGroup";
-            this.grpDescriptionResourceGroup.Size = new System.Drawing.Size(579, 72);
+            this.grpDescriptionResourceGroup.Size = new System.Drawing.Size(696, 72);
             this.grpDescriptionResourceGroup.TabIndex = 0;
             this.grpDescriptionResourceGroup.TabStop = false;
             this.grpDescriptionResourceGroup.Text = "Description";
@@ -735,7 +735,7 @@ namespace IndianHealthService.ClinicalScheduling
             this.lblDescriptionResourceGroup.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lblDescriptionResourceGroup.Location = new System.Drawing.Point(3, 16);
             this.lblDescriptionResourceGroup.Name = "lblDescriptionResourceGroup";
-            this.lblDescriptionResourceGroup.Size = new System.Drawing.Size(573, 53);
+            this.lblDescriptionResourceGroup.Size = new System.Drawing.Size(690, 53);
             this.lblDescriptionResourceGroup.TabIndex = 0;
             this.lblDescriptionResourceGroup.Text = resources.GetString("lblDescriptionResourceGroup.Text");
             // 
@@ -745,9 +745,9 @@ namespace IndianHealthService.ClinicalScheduling
             this.pnlAddEditResourceGroups.Controls.Add(this.cmdRemoveResourceGroup);
             this.pnlAddEditResourceGroups.Controls.Add(this.cmdAddResourceGroup);
             this.pnlAddEditResourceGroups.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.pnlAddEditResourceGroups.Location = new System.Drawing.Point(0, 322);
+            this.pnlAddEditResourceGroups.Location = new System.Drawing.Point(0, 388);
             this.pnlAddEditResourceGroups.Name = "pnlAddEditResourceGroups";
-            this.pnlAddEditResourceGroups.Size = new System.Drawing.Size(579, 40);
+            this.pnlAddEditResourceGroups.Size = new System.Drawing.Size(696, 40);
             this.pnlAddEditResourceGroups.TabIndex = 2;
             // 
             // cmdChangeResourceGroup
@@ -786,7 +786,7 @@ namespace IndianHealthService.ClinicalScheduling
             this.tpAccessTypes.Controls.Add(this.pnlAddEditAT);
             this.tpAccessTypes.Location = new System.Drawing.Point(4, 22);
             this.tpAccessTypes.Name = "tpAccessTypes";
-            this.tpAccessTypes.Size = new System.Drawing.Size(579, 362);
+            this.tpAccessTypes.Size = new System.Drawing.Size(696, 428);
             this.tpAccessTypes.TabIndex = 2;
             this.tpAccessTypes.Text = "Access Types";
             // 
@@ -799,7 +799,7 @@ namespace IndianHealthService.ClinicalScheduling
             this.grdAccessTypes.Name = "grdAccessTypes";
             this.grdAccessTypes.ReadOnly = true;
             this.grdAccessTypes.RowHeadersVisible = false;
-            this.grdAccessTypes.Size = new System.Drawing.Size(579, 250);
+            this.grdAccessTypes.Size = new System.Drawing.Size(696, 316);
             this.grdAccessTypes.TabIndex = 3;
             this.grdAccessTypes.CurrentCellChanged += new System.EventHandler(this.grdAccessTypes_CurrentCellChanged);
             // 
@@ -807,9 +807,9 @@ namespace IndianHealthService.ClinicalScheduling
             // 
             this.pnlDescriptionAT.Controls.Add(this.grpDescriptionAT);
             this.pnlDescriptionAT.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.pnlDescriptionAT.Location = new System.Drawing.Point(0, 250);
+            this.pnlDescriptionAT.Location = new System.Drawing.Point(0, 316);
             this.pnlDescriptionAT.Name = "pnlDescriptionAT";
-            this.pnlDescriptionAT.Size = new System.Drawing.Size(579, 72);
+            this.pnlDescriptionAT.Size = new System.Drawing.Size(696, 72);
             this.pnlDescriptionAT.TabIndex = 2;
             // 
             // grpDescriptionAT
@@ -818,7 +818,7 @@ namespace IndianHealthService.ClinicalScheduling
             this.grpDescriptionAT.Dock = System.Windows.Forms.DockStyle.Fill;
             this.grpDescriptionAT.Location = new System.Drawing.Point(0, 0);
             this.grpDescriptionAT.Name = "grpDescriptionAT";
-            this.grpDescriptionAT.Size = new System.Drawing.Size(579, 72);
+            this.grpDescriptionAT.Size = new System.Drawing.Size(696, 72);
             this.grpDescriptionAT.TabIndex = 0;
             this.grpDescriptionAT.TabStop = false;
             this.grpDescriptionAT.Text = "Description";
@@ -828,7 +828,7 @@ namespace IndianHealthService.ClinicalScheduling
             this.label1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.label1.Location = new System.Drawing.Point(3, 16);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(573, 53);
+            this.label1.Size = new System.Drawing.Size(690, 53);
             this.label1.TabIndex = 1;
             this.label1.Text = " Use the Access Types panel to define the kinds of access available for schedulin" +
                 "g at this facility.  Common types of access include Walkin, Scheduled, Same Day," +
@@ -839,9 +839,9 @@ namespace IndianHealthService.ClinicalScheduling
             this.pnlAddEditAT.Controls.Add(this.cmdChangeAT);
             this.pnlAddEditAT.Controls.Add(this.cmdAddAT);
             this.pnlAddEditAT.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.pnlAddEditAT.Location = new System.Drawing.Point(0, 322);
+            this.pnlAddEditAT.Location = new System.Drawing.Point(0, 388);
             this.pnlAddEditAT.Name = "pnlAddEditAT";
-            this.pnlAddEditAT.Size = new System.Drawing.Size(579, 40);
+            this.pnlAddEditAT.Size = new System.Drawing.Size(696, 40);
             this.pnlAddEditAT.TabIndex = 1;
             // 
             // cmdChangeAT
@@ -869,7 +869,7 @@ namespace IndianHealthService.ClinicalScheduling
             this.tpAccessGroups.Controls.Add(this.pnlAddEditAccessGroup);
             this.tpAccessGroups.Location = new System.Drawing.Point(4, 22);
             this.tpAccessGroups.Name = "tpAccessGroups";
-            this.tpAccessGroups.Size = new System.Drawing.Size(579, 362);
+            this.tpAccessGroups.Size = new System.Drawing.Size(696, 428);
             this.tpAccessGroups.TabIndex = 1;
             this.tpAccessGroups.Text = "Access Groups";
             // 
@@ -883,7 +883,7 @@ namespace IndianHealthService.ClinicalScheduling
             this.grdAccessGroups.Location = new System.Drawing.Point(0, 0);
             this.grdAccessGroups.Name = "grdAccessGroups";
             this.grdAccessGroups.ReadOnly = true;
-            this.grdAccessGroups.Size = new System.Drawing.Size(579, 250);
+            this.grdAccessGroups.Size = new System.Drawing.Size(696, 316);
             this.grdAccessGroups.TabIndex = 5;
             this.grdAccessGroups.CurrentCellChanged += new System.EventHandler(this.grdAccessGroups_CurrentCellChanged);
             this.grdAccessGroups.Navigate += new System.Windows.Forms.NavigateEventHandler(this.grdAccessGroups_Navigate);
@@ -892,9 +892,9 @@ namespace IndianHealthService.ClinicalScheduling
             // 
             this.pnlDescriptionAccessGroups.Controls.Add(this.grpDescriptionAccessGroups);
             this.pnlDescriptionAccessGroups.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.pnlDescriptionAccessGroups.Location = new System.Drawing.Point(0, 250);
+            this.pnlDescriptionAccessGroups.Location = new System.Drawing.Point(0, 316);
             this.pnlDescriptionAccessGroups.Name = "pnlDescriptionAccessGroups";
-            this.pnlDescriptionAccessGroups.Size = new System.Drawing.Size(579, 72);
+            this.pnlDescriptionAccessGroups.Size = new System.Drawing.Size(696, 72);
             this.pnlDescriptionAccessGroups.TabIndex = 4;
             // 
             // grpDescriptionAccessGroups
@@ -903,7 +903,7 @@ namespace IndianHealthService.ClinicalScheduling
             this.grpDescriptionAccessGroups.Dock = System.Windows.Forms.DockStyle.Fill;
             this.grpDescriptionAccessGroups.Location = new System.Drawing.Point(0, 0);
             this.grpDescriptionAccessGroups.Name = "grpDescriptionAccessGroups";
-            this.grpDescriptionAccessGroups.Size = new System.Drawing.Size(579, 72);
+            this.grpDescriptionAccessGroups.Size = new System.Drawing.Size(696, 72);
             this.grpDescriptionAccessGroups.TabIndex = 0;
             this.grpDescriptionAccessGroups.TabStop = false;
             this.grpDescriptionAccessGroups.Text = "Description";
@@ -913,7 +913,7 @@ namespace IndianHealthService.ClinicalScheduling
             this.lblDescriptionAccessGroups.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lblDescriptionAccessGroups.Location = new System.Drawing.Point(3, 16);
             this.lblDescriptionAccessGroups.Name = "lblDescriptionAccessGroups";
-            this.lblDescriptionAccessGroups.Size = new System.Drawing.Size(573, 53);
+            this.lblDescriptionAccessGroups.Size = new System.Drawing.Size(690, 53);
             this.lblDescriptionAccessGroups.TabIndex = 0;
             this.lblDescriptionAccessGroups.Text = resources.GetString("lblDescriptionAccessGroups.Text");
             // 
@@ -923,9 +923,9 @@ namespace IndianHealthService.ClinicalScheduling
             this.pnlAddEditAccessGroup.Controls.Add(this.cmdRemoveAccessGroup);
             this.pnlAddEditAccessGroup.Controls.Add(this.cmdAddAccessGroup);
             this.pnlAddEditAccessGroup.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.pnlAddEditAccessGroup.Location = new System.Drawing.Point(0, 322);
+            this.pnlAddEditAccessGroup.Location = new System.Drawing.Point(0, 388);
             this.pnlAddEditAccessGroup.Name = "pnlAddEditAccessGroup";
-            this.pnlAddEditAccessGroup.Size = new System.Drawing.Size(579, 40);
+            this.pnlAddEditAccessGroup.Size = new System.Drawing.Size(696, 40);
             this.pnlAddEditAccessGroup.TabIndex = 3;
             // 
             // cmdChangeAccessGroup
@@ -971,7 +971,7 @@ namespace IndianHealthService.ClinicalScheduling
             this.tpTransferAppts.Controls.Add(this.pnlCmdXfer);
             this.tpTransferAppts.Location = new System.Drawing.Point(4, 22);
             this.tpTransferAppts.Name = "tpTransferAppts";
-            this.tpTransferAppts.Size = new System.Drawing.Size(579, 362);
+            this.tpTransferAppts.Size = new System.Drawing.Size(696, 428);
             this.tpTransferAppts.TabIndex = 5;
             this.tpTransferAppts.Text = "Copy Appointments";
             // 
@@ -1041,9 +1041,9 @@ namespace IndianHealthService.ClinicalScheduling
             // 
             this.pnlDescriptionXfer.Controls.Add(this.grpDescriptionXfer);
             this.pnlDescriptionXfer.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.pnlDescriptionXfer.Location = new System.Drawing.Point(0, 250);
+            this.pnlDescriptionXfer.Location = new System.Drawing.Point(0, 316);
             this.pnlDescriptionXfer.Name = "pnlDescriptionXfer";
-            this.pnlDescriptionXfer.Size = new System.Drawing.Size(579, 72);
+            this.pnlDescriptionXfer.Size = new System.Drawing.Size(696, 72);
             this.pnlDescriptionXfer.TabIndex = 2;
             // 
             // grpDescriptionXfer
@@ -1052,7 +1052,7 @@ namespace IndianHealthService.ClinicalScheduling
             this.grpDescriptionXfer.Dock = System.Windows.Forms.DockStyle.Fill;
             this.grpDescriptionXfer.Location = new System.Drawing.Point(0, 0);
             this.grpDescriptionXfer.Name = "grpDescriptionXfer";
-            this.grpDescriptionXfer.Size = new System.Drawing.Size(579, 72);
+            this.grpDescriptionXfer.Size = new System.Drawing.Size(696, 72);
             this.grpDescriptionXfer.TabIndex = 0;
             this.grpDescriptionXfer.TabStop = false;
             this.grpDescriptionXfer.Text = "Description";
@@ -1062,7 +1062,7 @@ namespace IndianHealthService.ClinicalScheduling
             this.lblDescriptionXfer.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lblDescriptionXfer.Location = new System.Drawing.Point(3, 16);
             this.lblDescriptionXfer.Name = "lblDescriptionXfer";
-            this.lblDescriptionXfer.Size = new System.Drawing.Size(573, 53);
+            this.lblDescriptionXfer.Size = new System.Drawing.Size(690, 53);
             this.lblDescriptionXfer.TabIndex = 0;
             this.lblDescriptionXfer.Text = resources.GetString("lblDescriptionXfer.Text");
             // 
@@ -1070,9 +1070,9 @@ namespace IndianHealthService.ClinicalScheduling
             // 
             this.pnlCmdXfer.Controls.Add(this.cmdCopyAppts);
             this.pnlCmdXfer.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.pnlCmdXfer.Location = new System.Drawing.Point(0, 322);
+            this.pnlCmdXfer.Location = new System.Drawing.Point(0, 388);
             this.pnlCmdXfer.Name = "pnlCmdXfer";
-            this.pnlCmdXfer.Size = new System.Drawing.Size(579, 40);
+            this.pnlCmdXfer.Size = new System.Drawing.Size(696, 40);
             this.pnlCmdXfer.TabIndex = 1;
             // 
             // cmdCopyAppts
@@ -1091,7 +1091,7 @@ namespace IndianHealthService.ClinicalScheduling
             this.tpWorkStations.Controls.Add(this.panel1);
             this.tpWorkStations.Location = new System.Drawing.Point(4, 22);
             this.tpWorkStations.Name = "tpWorkStations";
-            this.tpWorkStations.Size = new System.Drawing.Size(579, 362);
+            this.tpWorkStations.Size = new System.Drawing.Size(696, 428);
             this.tpWorkStations.TabIndex = 6;
             this.tpWorkStations.Text = "WorkStations";
             // 
@@ -1105,16 +1105,16 @@ namespace IndianHealthService.ClinicalScheduling
             this.grdWorkStations.Location = new System.Drawing.Point(0, 0);
             this.grdWorkStations.Name = "grdWorkStations";
             this.grdWorkStations.ReadOnly = true;
-            this.grdWorkStations.Size = new System.Drawing.Size(579, 250);
+            this.grdWorkStations.Size = new System.Drawing.Size(696, 316);
             this.grdWorkStations.TabIndex = 6;
             // 
             // pnlWorkstations
             // 
             this.pnlWorkstations.Controls.Add(this.groupBox1);
             this.pnlWorkstations.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.pnlWorkstations.Location = new System.Drawing.Point(0, 250);
+            this.pnlWorkstations.Location = new System.Drawing.Point(0, 316);
             this.pnlWorkstations.Name = "pnlWorkstations";
-            this.pnlWorkstations.Size = new System.Drawing.Size(579, 72);
+            this.pnlWorkstations.Size = new System.Drawing.Size(696, 72);
             this.pnlWorkstations.TabIndex = 5;
             // 
             // groupBox1
@@ -1123,7 +1123,7 @@ namespace IndianHealthService.ClinicalScheduling
             this.groupBox1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.groupBox1.Location = new System.Drawing.Point(0, 0);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(579, 72);
+            this.groupBox1.Size = new System.Drawing.Size(696, 72);
             this.groupBox1.TabIndex = 0;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Description";
@@ -1133,7 +1133,7 @@ namespace IndianHealthService.ClinicalScheduling
             this.lblWorkstations.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lblWorkstations.Location = new System.Drawing.Point(3, 16);
             this.lblWorkstations.Name = "lblWorkstations";
-            this.lblWorkstations.Size = new System.Drawing.Size(573, 53);
+            this.lblWorkstations.Size = new System.Drawing.Size(690, 53);
             this.lblWorkstations.TabIndex = 0;
             this.lblWorkstations.Text = resources.GetString("lblWorkstations.Text");
             // 
@@ -1144,9 +1144,9 @@ namespace IndianHealthService.ClinicalScheduling
             this.panel1.Controls.Add(this.cmdWorkStationsShutdown);
             this.panel1.Controls.Add(this.cmdWorkStationsRefresh);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panel1.Location = new System.Drawing.Point(0, 322);
+            this.panel1.Location = new System.Drawing.Point(0, 388);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(579, 40);
+            this.panel1.Size = new System.Drawing.Size(696, 40);
             this.panel1.TabIndex = 4;
             // 
             // txtSendMessage
@@ -1193,8 +1193,8 @@ namespace IndianHealthService.ClinicalScheduling
             this.Name = "DManagement";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Scheduling Management";
-            this.Load += new System.EventHandler(this.DManagement_Load);
             this.Closing += new System.ComponentModel.CancelEventHandler(this.DManagement_Closing);
+            this.Load += new System.EventHandler(this.DManagement_Load);
             this.pnlPageBottom.ResumeLayout(false);
             this.tabMain.ResumeLayout(false);
             this.tpResources.ResumeLayout(false);

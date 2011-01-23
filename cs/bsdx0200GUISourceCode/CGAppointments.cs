@@ -56,14 +56,17 @@
             }
         }
 
-        //smh test
-        //one problem: Hashtable is a shallow copy.
-        //so it shouldn't work. But let's see.
+ 
         public object Clone()
         {
-            CGAppointments appts = new CGAppointments();
-            appts.apptList = (Hashtable)apptList.Clone();
-            return appts;
+            CGAppointments newappts = new CGAppointments();
+            //appts.apptList = (Hashtable)apptList.Clone();
+            foreach (DictionaryEntry d in this.apptList)
+            {
+                newappts.apptList.Add(d.Key, d.Value);
+            }
+            
+            return newappts;
         }
     }
 }
