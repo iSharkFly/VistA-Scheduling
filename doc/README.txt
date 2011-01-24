@@ -121,6 +121,7 @@ Enhancement requests:
 - Adding blocks in groups not individually
 - If I inactivate the clinic in VistA it should reflects in GUI
 - If we can make the users in groups. i.e. MRs group, OP clinics Group and map them to the resource groups
+- Add an option to change the locale independent of the Windows locale (Khamis; PHH)
 
 Speed issues:
 - Loading takes a long time <solved>
