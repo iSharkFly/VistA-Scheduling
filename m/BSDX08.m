@@ -72,7 +72,7 @@ UT	; Unit Tests
 	D APPDEL^BSDX08(.ZZZ,999999,"PC",1,"Reasons")
 	I $P(^BSDXTMP($J,1),"~")'=-3 W "Error in -3",!
 	;
-	; Test 6: for Cancelling walkin and checked-in appointments.
+	; Test 6: for Cancelling walkin and checked-in appointments (should fail).
 	S BSDXSTART=$E($$NOW^XLFDT,1,12),BSDXEND=BSDXSTART+.0001
 	D APPADD^BSDX07(.ZZZ,BSDXSTART,BSDXEND,4,"Dr Office",10,"Sam's Note",1)
 	S APPID=+$P(^BSDXTMP($J,1),U)
@@ -80,6 +80,22 @@ UT	; Unit Tests
 	D CHECKIN^BSDX25(.ZZZ,APPID,$$NOW^XLFDT)
 	B
 	D APPDEL^BSDX08(.ZZZ,APPID,"PC",10,"Cancel Note")
+	B
+	;
+	; Test 7: for cancelling walkin and checked-in appointments (this should pass)
+	S BSDXSTART=$E($$NOW^XLFDT,1,12)+.0001,BSDXEND=BSDXSTART+.0001
+	D APPADD^BSDX07(.ZZZ,BSDXSTART,BSDXEND,4,"Dr Office",10,"Sam's Note",1)
+	S APPID=+$P(^BSDXTMP($J,1),U)
+	B
+	D CHECKIN^BSDX25(.ZZZ,APPID,$$NOW^XLFDT)
+	S BSDXRES=$O(^BSDXRES("B","Dr Office",""))
+	S BSDXCLN=$P(^BSDXRES(BSDXRES,0),U,4)
+	B
+	S BSDXRESULT=$$RMCI^BSDXAPI(4,BSDXCLN,BSDXSTART)
+	B
+	D APPDEL^BSDX08(.ZZZ,APPID,"PC",10,"Cancel Note")
+	;
+	
 	QUIT
 	   ; Lock the node in another job for testing.
 UTL(APPID)	L +^BSDXAPPT(APPID) HANG 10 QUIT
