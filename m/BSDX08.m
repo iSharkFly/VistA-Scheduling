@@ -1,31 +1,31 @@
 BSDX08	; IHS/OIT/HMW - WINDOWS SCHEDULING RPCS ; 12/6/10 12:35pm
 	;;1.42;BSDX;;Dec 07, 2010
-	   ; 
-	   ; Original by HMW. New Written by Sam Habiel. Licensed under LGPL.
-	   ; 
-	   ; Change History
-	   ; 3101022 UJO/SMH v1.42
-	   ;  - Transaction now restartable. Thanks to 
-	   ;   --> Zach Gonzalez and Rick Marshall for fix.
-	   ;  - Extra TROLLBACK in Lock Statement when lock fails.
-	   ;   --> Removed--Rollback is already in ERR tag.
-	   ;  - Added new statements to old SD code in AVUPDT to obviate
-	   ;   --> need to restore variables in transaction
-	   ;  - Refactored this chunk of code. Don't really know whether it 
-	   ;   --> worked in the first place. Waiting for bug report to know.
-	   ;  - Refactored all of APPDEL.
-	   ; 
-	   ; Error Reference:
-	   ;  -1~BSDX08: Appt record is locked. Please contact technical support.
-	   ;  -2~BSDX08: Invalid Appointment ID
+	; 
+	; Original by HMW. New Written by Sam Habiel. Licensed under LGPL.
+	; 
+	; Change History
+	; 3101022 UJO/SMH v1.42
+	;  - Transaction now restartable. Thanks to 
+	;   --> Zach Gonzalez and Rick Marshall for fix.
+	;  - Extra TROLLBACK in Lock Statement when lock fails.
+	;   --> Removed--Rollback is already in ERR tag.
+	;  - Added new statements to old SD code in AVUPDT to obviate
+	;   --> need to restore variables in transaction
+	;  - Refactored this chunk of code. Don't really know whether it 
+	;   --> worked in the first place. Waiting for bug report to know.
+	;  - Refactored all of APPDEL.
+	; 
+	; Error Reference:
+	;  -1~BSDX08: Appt record is locked. Please contact technical support.
+	;  -2~BSDX08: Invalid Appointment ID
 	;  -3~BSDX08: Invalid Appointment ID
-	   ;  -4~BSDX08: Cancelled appointment does not have a Resouce ID  
-	   ;  -5~BSDX08: Resouce ID does not exist in BSDX RESOURCE
-	   ;  -6~BSDX08: Invalid Hosp Location stored in Database
-	   ;  -7~BSDX08: Patient does not have an appointment in PIMS Clinic
-	   ;  -8^BSDX08: Unable to find associated PIMS appointment for this patient
-	   ;  -9^BSDX08: BSDXAPI returned an error: (error)
-	   ;  -100~BSDX08 Error: (Mumps Error)
+	;  -4~BSDX08: Cancelled appointment does not have a Resouce ID  
+	;  -5~BSDX08: Resouce ID does not exist in BSDX RESOURCE
+	;  -6~BSDX08: Invalid Hosp Location stored in Database
+	;  -7~BSDX08: Patient does not have an appointment in PIMS Clinic
+	;  -8^BSDX08: Unable to find associated PIMS appointment for this patient
+	;  -9^BSDX08: BSDXAPI returned an error: (error)
+	;  -100~BSDX08 Error: (Mumps Error)
 	;
 APPDELD(BSDXY,BSDXAPTID,BSDXTYP,BSDXCR,BSDXNOT)	;EP
 	;Entry point for debugging
@@ -33,45 +33,54 @@ APPDELD(BSDXY,BSDXAPTID,BSDXTYP,BSDXCR,BSDXNOT)	;EP
 	Q
 	;
 UT	; Unit Tests
-	   ; Test 1: Make normal appointment and cancel it. See if every thing works
-	   N ZZZ
-	   D APPADD^BSDX07(.ZZZ,3110123.2,3110123.3,4,"Dr Office",10,"Sam's Note",1)
-	   S APPID=+$P(^BSDXTMP($J,1),U)
-	   D APPDEL^BSDX08(.ZZZ,APPID,"PC",1,"Sam's Cancel Note")
-	   I $P(^BSDXAPPT(APPID,0),U,12)'>0 W "Error in Cancellation-1"
-	   I $O(^SC(2,"S",3110123.2,1,0))]"" W "Error in Cancellation-2"
-	   I $P(^DPT(4,"S",3110123.2,0),U,2)'="PC" W "Error in Cancellation-3"
-	   I ^DPT(4,"S",3110123.2,"R")'="Sam's Cancel Note" W "Error in Cancellation-4"
-	   ;
-	   ; Test 2: Check for -1
-	   ; Make appt
-	   D APPADD^BSDX07(.ZZZ,3110125.2,3110125.3,4,"Dr Office",10,"Sam's Note",1)
-	   ; Lock the node in another job
-	   S APPID=+$P(^BSDXTMP($J,1),U)
-	   ; W "Lock ^BSDXAPPT("_APPID_") in another session. You have 10 seconds." H 10
-	   D APPDEL^BSDX08(.ZZZ,APPID,"PC",1,"Sam's Cancel Note")
-	   ;
-	   ; Test 3: Check for -100
-	   S bsdxdie=1
-	   D APPADD^BSDX07(.ZZZ,3110126.2,3110126.3,4,"Dr Office",10,"Sam's Note",1)
-	   S APPID=+$P(^BSDXTMP($J,1),U)
-	   D APPDEL^BSDX08(.ZZZ,APPID,"PC",1,"Reasons")
-	   I $P(^BSDXTMP($J,1),"~")'=-100 W "Error in -100",!
-	   K bsdxdie
-	   ;
-	   ; Test 4: Restartable transaction
-	   S bsdxrestart=1
-	   D APPADD^BSDX07(.ZZZ,3110128.2,3110128.3,4,"Dr Office",10,"Sam's Note",1)
-	   S APPID=+$P(^BSDXTMP($J,1),U)
-	   D APPDEL^BSDX08(.ZZZ,APPID,"PC",1,"Reasons")
-	   I $P(^DPT(4,"S",3110128.2,0),U,2)'="PC" W "Error in Restartable Transaction",!
-	   ;
-	   ; Test 5: for invalid Appointment ID (-2 and -3)
-	   D APPDEL^BSDX08(.ZZZ,0,"PC",1,"Reasons")
-	   I $P(^BSDXTMP($J,1),"~")'=-2 W "Error in -2",!
-	   D APPDEL^BSDX08(.ZZZ,999999,"PC",1,"Reasons")
-	   I $P(^BSDXTMP($J,1),"~")'=-3 W "Error in -3",!
-	   QUIT
+	; Test 1: Make normal appointment and cancel it. See if every thing works
+	N ZZZ
+	D APPADD^BSDX07(.ZZZ,3110123.2,3110123.3,4,"Dr Office",10,"Sam's Note",1)
+	S APPID=+$P(^BSDXTMP($J,1),U)
+	D APPDEL^BSDX08(.ZZZ,APPID,"PC",1,"Sam's Cancel Note")
+	I $P(^BSDXAPPT(APPID,0),U,12)'>0 W "Error in Cancellation-1"
+	I $O(^SC(2,"S",3110123.2,1,0))]"" W "Error in Cancellation-2"
+	I $P(^DPT(4,"S",3110123.2,0),U,2)'="PC" W "Error in Cancellation-3"
+	I ^DPT(4,"S",3110123.2,"R")'="Sam's Cancel Note" W "Error in Cancellation-4"
+	;
+	; Test 2: Check for -1
+	; Make appt
+	D APPADD^BSDX07(.ZZZ,3110125.2,3110125.3,4,"Dr Office",10,"Sam's Note",1)
+	; Lock the node in another job
+	S APPID=+$P(^BSDXTMP($J,1),U)
+	; W "Lock ^BSDXAPPT("_APPID_") in another session. You have 10 seconds." H 10
+	D APPDEL^BSDX08(.ZZZ,APPID,"PC",1,"Sam's Cancel Note")
+	;
+	; Test 3: Check for -100
+	S bsdxdie=1
+	D APPADD^BSDX07(.ZZZ,3110126.2,3110126.3,4,"Dr Office",10,"Sam's Note",1)
+	S APPID=+$P(^BSDXTMP($J,1),U)
+	D APPDEL^BSDX08(.ZZZ,APPID,"PC",1,"Reasons")
+	I $P(^BSDXTMP($J,1),"~")'=-100 W "Error in -100",!
+	K bsdxdie
+	;
+	; Test 4: Restartable transaction
+	S bsdxrestart=1
+	D APPADD^BSDX07(.ZZZ,3110128.2,3110128.3,4,"Dr Office",10,"Sam's Note",1)
+	S APPID=+$P(^BSDXTMP($J,1),U)
+	D APPDEL^BSDX08(.ZZZ,APPID,"PC",1,"Reasons")
+	I $P(^DPT(4,"S",3110128.2,0),U,2)'="PC" W "Error in Restartable Transaction",!
+	;
+	; Test 5: for invalid Appointment ID (-2 and -3)
+	D APPDEL^BSDX08(.ZZZ,0,"PC",1,"Reasons")
+	I $P(^BSDXTMP($J,1),"~")'=-2 W "Error in -2",!
+	D APPDEL^BSDX08(.ZZZ,999999,"PC",1,"Reasons")
+	I $P(^BSDXTMP($J,1),"~")'=-3 W "Error in -3",!
+	;
+	; Test 6: for Cancelling walkin and checked-in appointments.
+	S BSDXSTART=$E($$NOW^XLFDT,1,12),BSDXEND=BSDXSTART+.0001
+	D APPADD^BSDX07(.ZZZ,BSDXSTART,BSDXEND,4,"Dr Office",10,"Sam's Note",1)
+	S APPID=+$P(^BSDXTMP($J,1),U)
+	B
+	D CHECKIN^BSDX25(.ZZZ,APPID,$$NOW^XLFDT)
+	B
+	D APPDEL^BSDX08(.ZZZ,APPID,"PC",10,"Cancel Note")
+	QUIT
 	   ; Lock the node in another job for testing.
 UTL(APPID)	L +^BSDXAPPT(APPID) HANG 10 QUIT
 	   ;

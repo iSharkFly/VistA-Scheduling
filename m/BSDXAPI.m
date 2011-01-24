@@ -4,19 +4,19 @@ BSDXAPI	; IHS/ANMC/LJF - SCHEDULING APIs ; 12/6/10 5:50pm
 	;local mods (many) by WV/SMH
 	;Move to BSDX namespace as BSDXAPI from BSDAPI by WV/SMH
 	; Change History:
-	   ; 2010-11-5:
+	; 2010-11-5:
 	; - Fixed errors having to do uncanceling patient appointments if it was a patient cancelled appointment.
 	; - Use new style Fileman API for storing appointments in file 44 in $$MAKE due to problems with legacy API.
-	   ; 2010-11-12:
-	   ; - Changed ="C" to ["C" in SCIEN. Cancelled appointments can be "PC" as well. 
-	   ; 2010-12-5
-	   ; Added an entry point to update the patient note in file 44.
-	   ; 2010-12-6
-	   ; MAKE1 incorrectly put info field in BSDR("INFO") rather than BSDR("OI")
-	   ; 2010-12-8
-	   ; Removed restriction on max appt length. Even though this restriction
-	   ; exists in fileman (120 minutes), PIMS ignores it. Therefore, I 
-	   ; will ignore it here too.
+	; 2010-11-12:
+	; - Changed ="C" to ["C" in SCIEN. Cancelled appointments can be "PC" as well. 
+	; 2010-12-5
+	; Added an entry point to update the patient note in file 44.
+	; 2010-12-6
+	; MAKE1 incorrectly put info field in BSDR("INFO") rather than BSDR("OI")
+	; 2010-12-8
+	; Removed restriction on max appt length. Even though this restriction
+	; exists in fileman (120 minutes), PIMS ignores it. Therefore, I 
+	; will ignore it here too.
 	;
 MAKE1(DFN,CLIN,TYP,DATE,LEN,INFO)	; Simplified PEP w/ parameters for $$MAKE - making appointment
 	; Call like this for DFN 23435 having an appointment at Hospital Location 33
@@ -265,6 +265,42 @@ CI(PAT,CLINIC,DATE,SDIEN)	;PEP; -- returns 1 if appt already checked-in
 	I 'X S X=$$SCIEN(PAT,CLINIC,DATE) I 'X Q 0
 	S X=$P($G(^SC(CLINIC,"S",DATE,1,X,"C")),U)
 	Q $S(X:1,1:0)
+	;
+RMCI(PAT,CLINIC,DATE)		;PEP; -- Remove Check-in; $$
+	; PAT = DFN
+	; CLINIC = SC IEN
+	; DATE = FM Date/Time of Appointment
+	;
+	; Returns:
+	; 0 if okay
+	; -1 if failure
+	;
+	; remember before status
+	NEW SDATA,DFN,SDT,SDCL,SDDA,SDCIHDL
+	S DFN=PAT,SDT=DATE,SDCL=CLINIC,SDMODE=2,SDDA=$$SCIEN(DFN,SDCL,SDT)
+	;
+	I SDDA<1 QUIT 0    ; Appt cancelled; cancelled appts rm'ed from file 44
+	;
+	S SDCIHDL=$$HANDLE^SDAMEVT(1),SDATA=SDDA_U_DFN_U_SDT_U_SDCL
+	D BEFORE^SDAMEVT(.SDATA,DFN,SDT,SDCL,SDDA,SDCIHDL)
+	;
+	; remove check-in using filer.
+	N BSDXIENS S BSDXIENS=SDDA_","_DATE_","_CLINIC_","
+	S BSDXFDA(44.003,BSDXIENS,309)="@"	; CHECKED-IN
+	S BSDXFDA(44.003,BSDXIENS,302)="@"	; CHECK IN USER
+	S BSDXFDA(44.003,BSDXIENS,305)="@"	; CHECK IN ENTERED
+	N BSDXERR
+	D FILE^DIE("","BSDXFDA","BSDXERR")
+	I $D(BSDXERR) QUIT "-1~Can't file for Pat "_PAT_" in Clinic "_CLINIC_" at "_DATE_". Fileman reported an error: "_BSDXERR("DIERR",1,"TEXT",1)
+	;
+	; set after status
+	S SDDA=$$SCIEN(DFN,SDCL,SDT)
+	S SDCIHDL=$$HANDLE^SDAMEVT(1),SDATA=SDDA_U_DFN_U_SDT_U_SDCL
+	D AFTER^SDAMEVT(.SDATA,DFN,SDT,SDCL,SDDA,SDCIHDL)
+	;
+	; call event driver
+	D EVT^SDAMEVT(.SDATA,4,SDMODE,SDCIHDL)
+	QUIT 0
 	;
 SCIEN(PAT,CLINIC,DATE)	;PEP; returns ien for appt in ^SC
 	NEW X,IEN
