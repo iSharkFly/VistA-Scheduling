@@ -1,22 +1,32 @@
-BSDXAPI	; IHS/ANMC/LJF - SCHEDULING APIs ; 12/6/10 5:50pm
+BSDXAPI	; IHS/ANMC/LJF - SCHEDULING APIs ; 1/25/11 1:00pm
 	;;1.42;BSDX;;Dec 07, 2010;Build 7
 	;Orignal routine is BSDAPI by IHS/LJF, HMW, and MAW
 	;local mods (many) by WV/SMH
 	;Move to BSDX namespace as BSDXAPI from BSDAPI by WV/SMH
 	; Change History:
-	; 2010-11-5:
+	; 2010-11-5: (1.42)
 	; - Fixed errors having to do uncanceling patient appointments if it was a patient cancelled appointment.
 	; - Use new style Fileman API for storing appointments in file 44 in $$MAKE due to problems with legacy API.
-	; 2010-11-12:
+	; 2010-11-12: (1.42)
 	; - Changed ="C" to ["C" in SCIEN. Cancelled appointments can be "PC" as well. 
-	; 2010-12-5
+	; 2010-12-5 (1.42)
 	; Added an entry point to update the patient note in file 44.
-	; 2010-12-6
+	; 2010-12-6 (1.42)
 	; MAKE1 incorrectly put info field in BSDR("INFO") rather than BSDR("OI")
-	; 2010-12-8
+	; 2010-12-8 (1.42)
 	; Removed restriction on max appt length. Even though this restriction
 	; exists in fileman (120 minutes), PIMS ignores it. Therefore, I 
 	; will ignore it here too.
+	; 2011-01-25 (v.1.5)
+	; Added entry point $$RMCI to remove checked in appointments.
+	; In $$CANCEL, if the appointment is checked in, delete check-in rather than
+	;  spitting an error message to the user saying 'Delete the check-in'
+	; Changed all lines that look like this:
+	;  I $G(BSDR("ADT"))'?7N1".".4N Q 1_U_"Appt Date/Time error: "_$G(BSDR("ADT"))
+	; to:
+	;  I $G(BSDR("ADT"))'?7N.1".".4N Q 1_U_"Appt Date/Time error: "_$G(BSDR("ADT"))
+	; to allow for date at midnight which does not have a dot at the end.
+	;  
 	;
 MAKE1(DFN,CLIN,TYP,DATE,LEN,INFO)	; Simplified PEP w/ parameters for $$MAKE - making appointment
 	; Call like this for DFN 23435 having an appointment at Hospital Location 33
@@ -53,7 +63,7 @@ MAKE(BSDR)	;PEP; call to store appt made
 	I '$D(^SC(+$G(BSDR("CLN")),0)) Q 1_U_"Clinic not on file: "_$G(BSDR("CLN"))
 	I ($G(BSDR("TYP"))<3)!($G(BSDR("TYP"))>4) Q 1_U_"Appt Type error: "_$G(BSDR("TYP"))
 	I $G(BSDR("ADT")) S BSDR("ADT")=+$E(BSDR("ADT"),1,12)  ;remove seconds
-	I $G(BSDR("ADT"))'?7N1".".4N Q 1_U_"Appt Date/Time error: "_$G(BSDR("ADT"))
+	I $G(BSDR("ADT"))'?7N.1".".4N Q 1_U_"Appt Date/Time error: "_$G(BSDR("ADT"))
 	;
 	;I ($G(BSDR("LEN"))<5)!($G(BSDR("LEN"))>240) Q 1_U_"Appt Length error: "_$G(BSDR("LEN")) ; v 1.42 - no check on length is done anymore. see top comments for details.
 	I '$D(^VA(200,+$G(BSDR("USR")),0)) Q 1_U_"User Who Made Appt Error: "_$G(BSDR("USR"))
@@ -149,9 +159,9 @@ CHECKIN(BSDR)	;EP; call to add checkin info to appt; IHS/ITSC/LJF 12/23/2004 PAT
 	I '$D(^DPT(+$G(BSDR("PAT")),0)) Q 1_U_"Patient not on file: "_$G(BSDR("PAT"))
 	I '$D(^SC(+$G(BSDR("CLN")),0)) Q 1_U_"Clinic not on file: "_$G(BSDR("CLN"))
 	I $G(BSDR("ADT")) S BSDR("ADT")=+$E(BSDR("ADT"),1,12)  ;remove seconds
-	I $G(BSDR("ADT"))'?7N1".".4N Q 1_U_"Appt Date/Time error: "_$G(BSDR("ADT"))
+	I $G(BSDR("ADT"))'?7N.1".".4N Q 1_U_"Appt Date/Time error: "_$G(BSDR("ADT"))
 	I $G(BSDR("CDT")) S BSDR("CDT")=+$E(BSDR("CDT"),1,12)  ;remove seconds
-	I $G(BSDR("CDT"))'?7N1".".4N Q 1_U_"Checkin Date/Time error: "_$G(BSDR("CDT"))
+	I $G(BSDR("CDT"))'?7N.1".".4N Q 1_U_"Checkin Date/Time error: "_$G(BSDR("CDT"))
 	I '$D(^VA(200,+$G(BSDR("USR")),0)) Q 1_U_"User Who Made Appt Error: "_$G(BSDR("USR"))
 	;
 	; find ien for appt in file 44
@@ -218,9 +228,9 @@ CANCEL(BSDR)	;PEP; called to cancel appt
 	I '$D(^SC(+$G(BSDR("CLN")),0)) Q 1_U_"Clinic not on file: "_$G(BSDR("CLN"))
 	I ($G(BSDR("TYP"))'="C"),($G(BSDR("TYP"))'="PC") Q 1_U_"Cancel Status error: "_$G(BSDR("TYP"))
 	I $G(BSDR("ADT")) S BSDR("ADT")=+$E(BSDR("ADT"),1,12)  ;remove seconds
-	I $G(BSDR("ADT"))'?7N1".".4N Q 1_U_"Appt Date/Time error: "_$G(BSDR("ADT"))
+	I $G(BSDR("ADT"))'?7N.1".".4N Q 1_U_"Appt Date/Time error: "_$G(BSDR("ADT"))
 	I $G(BSDR("CDT")) S BSDR("CDT")=+$E(BSDR("CDT"),1,12)  ;remove seconds
-	I $G(BSDR("CDT"))'?7N1".".4N Q 1_U_"Cancel Date/Time error: "_$G(BSDR("CDT"))
+	I $G(BSDR("CDT"))'?7N.1".".4N Q 1_U_"Cancel Date/Time error: "_$G(BSDR("CDT"))
 	I '$D(^VA(200,+$G(BSDR("USR")),0)) Q 1_U_"User Who Canceled Appt Error: "_$G(BSDR("USR"))
 	I '$D(^SD(409.2,+$G(BSDR("CR")))) Q 1_U_"Cancel Reason error: "_$G(BSDR("CR"))
 	;
@@ -228,7 +238,13 @@ CANCEL(BSDR)	;PEP; called to cancel appt
 	S IEN=$$SCIEN(BSDR("PAT"),BSDR("CLN"),BSDR("ADT"))
 	I 'IEN Q 1_U_"Error trying to find appointment for cancel: Patient="_BSDR("PAT")_" Clinic="_BSDR("CLN")_" Appt="_BSDR("ADT")
 	;
-	I $$CI(BSDR("PAT"),BSDR("CLN"),BSDR("ADT"),IEN) Q 1_U_"Patient already checked in; cannot cancel until checkin deleted: Patient="_BSDR("PAT")_" Clinic="_BSDR("CLN")_" Appt="_BSDR("ADT")
+	; BSDX 1.5 3110125
+	; UJO/SMH - Add ability to remove check-in if the patient is checked in
+	; I $$CI(BSDR("PAT"),BSDR("CLN"),BSDR("ADT"),IEN) Q 1_U_"Patient already checked in; cannot cancel until checkin deleted: Patient="_BSDR("PAT")_" Clinic="_BSDR("CLN")_" Appt="_BSDR("ADT")
+	; Remove check-in if the patient is checked in.
+	N BSDXRESULT S BSDXRESULT=0 ; Result; should be zero if success; -1 + message if failure
+	I $$CI(BSDR("PAT"),BSDR("CLN"),BSDR("ADT"),IEN) SET BSDXRESULT=$$RMCI(BSDR("PAT"),BSDR("CLN"),BSDR("ADT"))
+	I BSDXRESULT Q BSDXRESULT
 	;
 	; remember before status
 	NEW SDATA,DFN,SDT,SDCL,SDDA,SDCPHDL
@@ -275,12 +291,15 @@ RMCI(PAT,CLINIC,DATE)		;PEP; -- Remove Check-in; $$
 	; 0 if okay
 	; -1 if failure
 	;
-	; remember before status
+	; Call like this: $$RMCI(233,33,3110102.1130)
+	;
+	; Move my variables into the ones used by SDAPIs (just a convenience)
 	NEW SDATA,DFN,SDT,SDCL,SDDA,SDCIHDL
 	S DFN=PAT,SDT=DATE,SDCL=CLINIC,SDMODE=2,SDDA=$$SCIEN(DFN,SDCL,SDT)
 	;
 	I SDDA<1 QUIT 0    ; Appt cancelled; cancelled appts rm'ed from file 44
 	;
+	; remember before status
 	S SDCIHDL=$$HANDLE^SDAMEVT(1),SDATA=SDDA_U_DFN_U_SDT_U_SDCL
 	D BEFORE^SDAMEVT(.SDATA,DFN,SDT,SDCL,SDDA,SDCIHDL)
 	;
@@ -321,18 +340,18 @@ CO(PAT,CLINIC,DATE,SDIEN)	;PEP; -- returns 1 if appt already checked-out
 	Q $S(X:1,1:0)
 	;
 UPDATENOTE(PAT,CLINIC,DATE,NOTE)	; PEP; Update Note in ^SC for patient's appointment @ DATE
-	   ; PAT = DFN
-	   ; CLINIC = SC IEN
-	   ; DATE = FM Date/Time of Appointment
-	   ;
-	   ; Returns:
-	   ; 0 if okay
-	   ; -1 if failure
-	   N SCIEN S SCIEN=$$SCIEN(PAT,CLINIC,DATE) ; ien of appt in ^SC
-	   I SCIEN<1 QUIT 0    ; Appt cancelled; cancelled appts rm'ed from file 44
-	   N BSDXIENS S BSDXIENS=SCIEN_","_DATE_","_CLINIC_","
-	   S BSDXFDA(44.003,BSDXIENS,3)=$E(NOTE,1,150)
-	   N BSDXERR
-	   D FILE^DIE("","BSDXFDA","BSDXERR")
-	   I $D(BSDXERR) QUIT "-1~Can't file for Pat "_PAT_" in Clinic "_CLINIC_" at "_DATE_". Fileman reported an error: "_BSDXERR("DIERR",1,"TEXT",1)
-	   QUIT 0
+	; PAT = DFN
+	; CLINIC = SC IEN
+	; DATE = FM Date/Time of Appointment
+	;
+	; Returns:
+	; 0 if okay
+	; -1 if failure
+	N SCIEN S SCIEN=$$SCIEN(PAT,CLINIC,DATE) ; ien of appt in ^SC
+	I SCIEN<1 QUIT 0    ; Appt cancelled; cancelled appts rm'ed from file 44
+	N BSDXIENS S BSDXIENS=SCIEN_","_DATE_","_CLINIC_","
+	S BSDXFDA(44.003,BSDXIENS,3)=$E(NOTE,1,150)
+	N BSDXERR
+	D FILE^DIE("","BSDXFDA","BSDXERR")
+	I $D(BSDXERR) QUIT "-1~Can't file for Pat "_PAT_" in Clinic "_CLINIC_" at "_DATE_". Fileman reported an error: "_BSDXERR("DIERR",1,"TEXT",1)
+	QUIT 0
