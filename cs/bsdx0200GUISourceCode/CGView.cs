@@ -616,7 +616,7 @@ namespace IndianHealthService.ClinicalScheduling
             this.tvSchedules.HotTracking = true;
             this.tvSchedules.Location = new System.Drawing.Point(0, 0);
             this.tvSchedules.Name = "tvSchedules";
-            this.tvSchedules.Size = new System.Drawing.Size(128, 332);
+            this.tvSchedules.Size = new System.Drawing.Size(128, 290);
             this.tvSchedules.Sorted = true;
             this.tvSchedules.TabIndex = 1;
             this.tvSchedules.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.tvSchedules_AfterSelect);
@@ -663,7 +663,7 @@ namespace IndianHealthService.ClinicalScheduling
             this.panelRight.Dock = System.Windows.Forms.DockStyle.Right;
             this.panelRight.Location = new System.Drawing.Point(941, 0);
             this.panelRight.Name = "panelRight";
-            this.panelRight.Size = new System.Drawing.Size(128, 332);
+            this.panelRight.Size = new System.Drawing.Size(128, 290);
             this.panelRight.TabIndex = 3;
             this.panelRight.Visible = false;
             // 
@@ -761,7 +761,7 @@ namespace IndianHealthService.ClinicalScheduling
             this.panelCenter.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panelCenter.Location = new System.Drawing.Point(136, 24);
             this.panelCenter.Name = "panelCenter";
-            this.panelCenter.Size = new System.Drawing.Size(802, 284);
+            this.panelCenter.Size = new System.Drawing.Size(802, 242);
             this.panelCenter.TabIndex = 7;
             // 
             // ctxCalendarGrid
@@ -847,7 +847,7 @@ namespace IndianHealthService.ClinicalScheduling
             // 
             this.panelBottom.Controls.Add(this.statusBar1);
             this.panelBottom.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panelBottom.Location = new System.Drawing.Point(136, 308);
+            this.panelBottom.Location = new System.Drawing.Point(136, 266);
             this.panelBottom.Name = "panelBottom";
             this.panelBottom.Size = new System.Drawing.Size(802, 24);
             this.panelBottom.TabIndex = 8;
@@ -865,7 +865,7 @@ namespace IndianHealthService.ClinicalScheduling
             // 
             this.splitter1.Location = new System.Drawing.Point(128, 24);
             this.splitter1.Name = "splitter1";
-            this.splitter1.Size = new System.Drawing.Size(8, 308);
+            this.splitter1.Size = new System.Drawing.Size(8, 266);
             this.splitter1.TabIndex = 9;
             this.splitter1.TabStop = false;
             // 
@@ -874,7 +874,7 @@ namespace IndianHealthService.ClinicalScheduling
             this.splitter2.Dock = System.Windows.Forms.DockStyle.Right;
             this.splitter2.Location = new System.Drawing.Point(938, 24);
             this.splitter2.Name = "splitter2";
-            this.splitter2.Size = new System.Drawing.Size(3, 308);
+            this.splitter2.Size = new System.Drawing.Size(3, 266);
             this.splitter2.TabIndex = 10;
             this.splitter2.TabStop = false;
             // 
@@ -902,7 +902,7 @@ namespace IndianHealthService.ClinicalScheduling
             this.calendarGrid1.Name = "calendarGrid1";
             this.calendarGrid1.Resources = ((System.Collections.ArrayList)(resources.GetObject("calendarGrid1.Resources")));
             this.calendarGrid1.SelectedAppointment = 0;
-            this.calendarGrid1.Size = new System.Drawing.Size(802, 284);
+            this.calendarGrid1.Size = new System.Drawing.Size(802, 242);
             this.calendarGrid1.StartDate = new System.DateTime(2003, 1, 27, 0, 0, 0, 0);
             this.calendarGrid1.TabIndex = 0;
             this.calendarGrid1.TimeScale = 20;
@@ -915,7 +915,7 @@ namespace IndianHealthService.ClinicalScheduling
             // CGView
             // 
             this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
-            this.ClientSize = new System.Drawing.Size(1069, 332);
+            this.ClientSize = new System.Drawing.Size(1069, 290);
             this.Controls.Add(this.panelCenter);
             this.Controls.Add(this.panelBottom);
             this.Controls.Add(this.splitter2);
@@ -1922,8 +1922,9 @@ namespace IndianHealthService.ClinicalScheduling
 			int nApptID = this.calendarGrid1.SelectedAppointment;
 			Debug.Assert(nApptID != 0);
 
-			CGAppointment a = (CGAppointment) this.Appointments.AppointmentTable[nApptID];
-
+            //smh
+			//CGAppointment a = (CGAppointment) this.Appointments.AppointmentTable[nApptID];
+            CGAppointment a = (CGAppointment)this.Document.Appointments.AppointmentTable[nApptID];
 			try
 			{
 				bool bAlreadyCheckedIn = false;
@@ -1979,12 +1980,18 @@ namespace IndianHealthService.ClinicalScheduling
 
 				DateTime dtCheckIn = dlgCheckin.CheckInTime;
 
-				this.Document.CheckInAppointment(nApptID, dtCheckIn);
+				//Save to Database
+                this.Document.CheckInAppointment(nApptID, dtCheckIn);
+
+                //Tell appointment that it is checked in--smh cancel that!
+                //a.CheckInTime = DateTime.Now;
+
                 //smh new code
                 if (dlgCheckin.PrintRouteSlip)
                     this.printRoutingSlip.Print();
                 // end new code
 
+                //redraw grid (would this work???)
 				this.calendarGrid1.Invalidate();
 			}
 			catch (Exception ex)
@@ -2033,7 +2040,8 @@ namespace IndianHealthService.ClinicalScheduling
 				/*
 				 * 8-10-05 Added overbook prompt for walkin
 				*/
-				this.Document.RefreshDocument();
+                //SMH: Takes too long to do.
+				//this.Document.RefreshDocument();
 				string sAccessType = "";
 				string sAvailabilityMessage = "";
 				m_nSlots = m_Document.SlotsAvailable(dStart, dEnd, sResource, out sAccessType, out sAvailabilityMessage);
@@ -2066,32 +2074,47 @@ namespace IndianHealthService.ClinicalScheduling
 				appt.Resource = sResource;
 				appt.HealthRecordNumber = dPat.HealthRecordNumber;
 
-				this.Document.RefreshDocument();
+                //smh: Takes too long
+				//this.Document.RefreshDocument();
 
 				//Call Document to add a walkin appointment
 				int nApptID = this.Document.CreateAppointment(appt, true);
 
 				//Now check them in.
 				calendarGrid1.SelectedAppointment = nApptID;
-
 				AppointmentCheckIn();
 
-				try
-				{
-					RaiseRPMSEvent("BSDX SCHEDULE" , m_Document.DocName);
-				}
-				catch (Exception ex)
-				{
-					Debug.Write(ex.Message);
-				}
-			
+                //Show the new set of appointments by calling UpdateArrays. Fetches Document's CGAppointments
+                this.UpdateArrays();
+
+                //Get the appointments and availabilities, async, from Server. Callback updates this thread's controls.
+                OnUpdateScheduleDelegate ousd = new OnUpdateScheduleDelegate(OnUpdateSchedule);
+                ousd.BeginInvoke(OnUpdateScheduleCallback, null);
+
+
 			}
 			catch (Exception ex)
 			{
-				MessageBox.Show("Unable to add walk-in appointment  " +  ex.Message, "Clinical Scheduling");
-				return;
+                string msg;
+                if (BMXNetLib.Piece(ex.Message, "~", 1) == "-10") // -10 means that BSDXAPI reported an error.
+                    msg = BMXNetLib.Piece(ex.Message, "~", 4);
+                else
+                    msg = ex.Message;
 
+                MessageBox.Show("VISTA says: \r\n" + msg, "Unable to Make Walk-in Appointment");
+                return;
 			}
+
+            try
+            {
+                RaiseRPMSEvent("BSDX SCHEDULE", m_Document.DocName);
+            }
+            catch (Exception ex)
+            {
+                Debug.Write(ex.Message);
+            }
+			
+
 		}
 
 		private void AppointmentAddNew() 
@@ -2132,7 +2155,9 @@ namespace IndianHealthService.ClinicalScheduling
 				int nDuration = (int) tsDuration.TotalMinutes;
 				Debug.Assert(nDuration > 0);
 
-				this.Document.RefreshDocument();
+
+                //Sam: takes too long. Remove this call; deal with the issue of concurrent appointments another way.
+                //this.Document.RefreshDocument();
 				string sAccessType = "";
 				string sAvailabilityMessage = "";
 				m_nSlots = m_Document.SlotsAvailable(dStart, dEnd, sResource, out sAccessType, out sAvailabilityMessage);
@@ -2179,17 +2204,28 @@ namespace IndianHealthService.ClinicalScheduling
 				appt.HealthRecordNumber = dPat.HealthRecordNumber;
 				appt.AccessTypeID = nAccessTypeID;
 
-				//Call Document to add a new appointment
+				//Call Document to add a new appointment. Document adds appointment to CGAppointments array.
 				this.Document.CreateAppointment(appt);
-                this.Document.RefreshDocument();
 
+                //Show the new set of appointments by calling UpdateArrays. Fetches Document's CGAppointments
+                this.UpdateArrays();
+                
+                //Get the appointments and availabilities, async, from Server. Callback updates this thread's controls.
+                OnUpdateScheduleDelegate ousd = new OnUpdateScheduleDelegate(OnUpdateSchedule);
+                ousd.BeginInvoke(OnUpdateScheduleCallback, null);
 			}
 			catch (Exception ex)
-			{
-				MessageBox.Show("Unable to add new appointment  " +  ex.Message, "Clinical Scheduling");
-				return;
+			{   
+                string msg;
+                if (BMXNetLib.Piece(ex.Message, "~", 1) == "-10") // -10 means that BSDXAPI reported an error.
+                    msg = BMXNetLib.Piece(ex.Message, "~", 4);
+                else
+                    msg = ex.Message;
 
+				MessageBox.Show("VISTA says: \r\n" + msg, "Unable to Make Appointment");
+				return;
 			}
+
 			try
 			{
 				RaiseRPMSEvent("BSDX SCHEDULE" , m_Document.DocName);
@@ -2319,12 +2355,18 @@ namespace IndianHealthService.ClinicalScheduling
             // Make sure that we are called synchronously
 			Debug.Assert(this.InvokeRequired == false,"CGView.UpdateArrays InvokeRequired");
             // This is where you set how the grid will look
+
+            //Create Deep copy of Availability Array
+            ArrayList availArrayCopy = new ArrayList();
+            foreach (CGAvailability av in this.m_Document.AvailabilityArray)
+                availArrayCopy.Add(av);
+
 			try 
 			{
                 //Tell the grid about Avails, Appts, and Resources.
-                this.calendarGrid1.AvailabilityArray = this.m_Document.AvailabilityArray;
+                this.calendarGrid1.AvailabilityArray = availArrayCopy;
                 //Appts are cloned b/c if we tie into  the class directly, we shoot off errors when we manipulate it.
-                this.calendarGrid1.Appointments = (CGAppointments)this.m_Document.Appointments.Clone(); //smh new line again
+                this.calendarGrid1.Appointments = (CGAppointments)this.m_Document.Appointments.Clone();
 				this.calendarGrid1.Resources = this.m_Document.Resources;
                 //Redraw the calendar grid
 				this.calendarGrid1.OnUpdateArrays(); // this draws the Calendar
@@ -3134,19 +3176,33 @@ namespace IndianHealthService.ClinicalScheduling
         }
 
         
-
+        /// <summary>
+        /// Update Selection of date if user does not pick a date/time
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void dateTimePicker1_Leave(object sender, EventArgs e)
         {
             if (this.Document.SelectedDate != dateTimePicker1.Value.Date)
                 RequestRefreshGrid();
         }
 
+        /// <summary>
+        /// Handle Selection of Date via mouse from datetimepicker dropdown
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void dateTimePicker1_CloseUp(object sender, EventArgs e)
         {
             if (this.Document.SelectedDate != dateTimePicker1.Value.Date)
                 RequestRefreshGrid();
         }
 
+        /// <summary>
+        /// Handle Enter and Escape key on dateTimePicker
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void dateTimePicker1_KeyPress(object sender, KeyPressEventArgs e)
         {
             //if enter key is pressed:

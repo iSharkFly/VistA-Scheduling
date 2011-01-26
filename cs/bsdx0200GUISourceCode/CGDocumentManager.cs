@@ -1181,9 +1181,6 @@ namespace IndianHealthService.ClinicalScheduling
 			string			sErrorMessage = "";
             DataTable dtOut;
 
-#if TRACE
-            DateTime sendTime = DateTime.Now;
-#endif
 			try
 			{
 				//System.IntPtr pHandle = this.Handle;
@@ -1197,12 +1194,6 @@ namespace IndianHealthService.ClinicalScheduling
 				sErrorMessage = "CGDocumentManager.RPMSDataTable error: " + ex.Message;
 				throw ex;
 			}
-
-#if TRACE
-            DateTime receiveTime = DateTime.Now;
-            TimeSpan executionTime = receiveTime - sendTime;
-            Debug.Write("CGDocumentManager::RPMSDataTable Execution Time: " + executionTime.Milliseconds + " ms.\n");
-#endif
 
             return dtOut;
 

@@ -1027,6 +1027,9 @@
             }
         }
 
+        /// <summary>
+        /// Draws Availabilities. Draws Some of the Empty cells (don't know where the rest go) with the Khaki color
+        /// </summary>
         private void SetAppointmentTypes()
         {
             if (this.m_gridCells.CellCount != 0)

@@ -60,7 +60,6 @@
         public object Clone()
         {
             CGAppointments newappts = new CGAppointments();
-            //appts.apptList = (Hashtable)apptList.Clone();
             foreach (DictionaryEntry d in this.apptList)
             {
                 newappts.apptList.Add(d.Key, d.Value);

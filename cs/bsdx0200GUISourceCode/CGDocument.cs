@@ -271,9 +271,12 @@ namespace IndianHealthService.ClinicalScheduling
 
         //sam: This is a test that duplicates RefreshDocument, but without the UpdateAllViews,
         // as that has to be done synchornously.
-        //XXXXXX: Needs to be refactored obviously, but now for testing.
+        //XXX: Needs to be refactored obviously, but now for testing.
+        //XXX: Tested extensively enough. Less refactoring now. 2011-01-26
         public void RefreshDocumentAsync()
         {
+            Debug.WriteLine("IN REFERSH DOCUMENT ASYNC\n\n");
+
             bool bRet = false;
             if (m_sResourcesArray.Count == 0)
                 return;
@@ -423,8 +426,6 @@ namespace IndianHealthService.ClinicalScheduling
                     m_DocManager.ConnectInfo.LoadConnectInfo();
                 }
 
-                m_pAvArray.Clear();
-
                 ArrayList saryApptTypes = new ArrayList();
                 int nApptTypeID = 0;
 
@@ -463,59 +464,67 @@ namespace IndianHealthService.ClinicalScheduling
                 string sResourceList;
                 string sAccessRuleList;
 
-
-                foreach (DataRow rTemp in rAvailabilitySchedule.Rows)
+                //smh: moved clear availabilities down here.
+                //smh: Temporary solution to make sure that people don't touch the availability table at the same time!!!
+                //NOTE: This lock makes sure that availabilities aren't queried for slots when the array is an intermediate
+                //state. The other place that has this lock is SlotsAvailable function.
+                lock (this.m_pAvArray)
                 {
-                    //get StartTime, EndTime and Slots 
-                    dStart = (DateTime)rTemp["START_TIME"];
-                    dEnd = (DateTime)rTemp["END_TIME"];
+                    m_pAvArray.Clear();
 
-                    //TODO: Fix this slots datatype problem
-                    string sSlots = rTemp["SLOTS"].ToString();
-                    nSlots = Convert.ToInt16(sSlots);
-
-                    sResourceList = rTemp["RESOURCE"].ToString();
-                    sAccessRuleList = rTemp["ACCESS_TYPE"].ToString();
-
-                    string sNote = rTemp["NOTE"].ToString();
-
-                    if ((nSlots < -1000) || (sAccessRuleList == ""))
+                    foreach (DataRow rTemp in rAvailabilitySchedule.Rows)
                     {
-                        nApptTypeID = 0;
-                    }
-                    else
-                    {
-                        foreach (DataRow rType in rTypeSchedule.Rows)
+                        //get StartTime, EndTime and Slots 
+                        dStart = (DateTime)rTemp["START_TIME"];
+                        dEnd = (DateTime)rTemp["END_TIME"];
+
+                        //TODO: Fix this slots datatype problem
+                        string sSlots = rTemp["SLOTS"].ToString();
+                        nSlots = Convert.ToInt16(sSlots);
+
+                        sResourceList = rTemp["RESOURCE"].ToString();
+                        sAccessRuleList = rTemp["ACCESS_TYPE"].ToString();
+
+                        string sNote = rTemp["NOTE"].ToString();
+
+                        if ((nSlots < -1000) || (sAccessRuleList == ""))
                         {
-
-                            dTypeStart = (DateTime)rType["StartTime"];
-                            dTypeEnd = (DateTime)rType["EndTime"];
-                            //if start & end times overlap, then
-                            string sTypeResource = rType["ResourceName"].ToString();
-                            if ((dTypeStart.DayOfYear == dStart.DayOfYear) && (sResourceList == sTypeResource))
+                            nApptTypeID = 0;
+                        }
+                        else
+                        {
+                            foreach (DataRow rType in rTypeSchedule.Rows)
                             {
-                                crRectA.Y = GetTotalMinutes(dStart);
-                                crRectA.Height = GetTotalMinutes(dEnd) - crRectA.Top;
-                                crRectB.Y = GetTotalMinutes(dTypeStart);
-                                crRectB.Height = GetTotalMinutes(dTypeEnd) - crRectB.Top;
-                                bIsect = crRectA.IntersectsWith(crRectB);
-                                if (bIsect == true)
+
+                                dTypeStart = (DateTime)rType["StartTime"];
+                                dTypeEnd = (DateTime)rType["EndTime"];
+                                //if start & end times overlap, then
+                                string sTypeResource = rType["ResourceName"].ToString();
+                                if ((dTypeStart.DayOfYear == dStart.DayOfYear) && (sResourceList == sTypeResource))
                                 {
-                                    //TODO: This code:
-                                    //	nApptTypeID = (int) rType["AppointmentTypeID"];
-                                    //Causes this exception:
-                                    //Unhandled Exception: System.InvalidCastException: Specified cast is not valid.
-                                    string sTemp = rType["AppointmentTypeID"].ToString();
-                                    nApptTypeID = Convert.ToInt16(sTemp);
-                                    break;
+                                    crRectA.Y = GetTotalMinutes(dStart);
+                                    crRectA.Height = GetTotalMinutes(dEnd) - crRectA.Top;
+                                    crRectB.Y = GetTotalMinutes(dTypeStart);
+                                    crRectB.Height = GetTotalMinutes(dTypeEnd) - crRectB.Top;
+                                    bIsect = crRectA.IntersectsWith(crRectB);
+                                    if (bIsect == true)
+                                    {
+                                        //TODO: This code:
+                                        //	nApptTypeID = (int) rType["AppointmentTypeID"];
+                                        //Causes this exception:
+                                        //Unhandled Exception: System.InvalidCastException: Specified cast is not valid.
+                                        string sTemp = rType["AppointmentTypeID"].ToString();
+                                        nApptTypeID = Convert.ToInt16(sTemp);
+                                        break;
+                                    }
                                 }
-                            }
-                        }//end foreach datarow rType
-                    }
+                            }//end foreach datarow rType
+                        }
 
-                    AddAvailability(dStart, dEnd, nApptTypeID, nSlots, false, sResourceList, sAccessRuleList, sNote);
-                }//end foreach datarow rTemp
 
+                        AddAvailability(dStart, dEnd, nApptTypeID, nSlots, false, sResourceList, sAccessRuleList, sNote);
+                    }//end foreach datarow rTemp
+                }//end lock
                 return true;
             }
             catch (Exception ex)
@@ -530,6 +539,18 @@ namespace IndianHealthService.ClinicalScheduling
             return ((dDate.Hour * 60) + dDate.Minute);
         }
 
+        /// <summary>
+        /// Adds Availability to Availability Array held by document
+        /// </summary>
+        /// <param name="StartTime">Self-Explan</param>
+        /// <param name="EndTime">Self-Explan</param>
+        /// <param name="nType"></param>
+        /// <param name="nSlots"></param>
+        /// <param name="UpdateView"></param>
+        /// <param name="sResourceList"></param>
+        /// <param name="sAccessRuleList"></param>
+        /// <param name="sNote"></param>
+        /// <returns></returns>
         public int AddAvailability(DateTime StartTime, DateTime EndTime, int nType, int nSlots, bool UpdateView, string sResourceList, string sAccessRuleList, string sNote)
         {
             //adds it to the object array
@@ -578,13 +599,6 @@ namespace IndianHealthService.ClinicalScheduling
         {
             //TODO:  Test that resource is not currently in list, that it IS a resource, etc
             this.m_sResourcesArray.Add(sResource);
-            //SAM: removing: Remove UpdateAllViews: Redraws all the open views. But does not call server.
-            //this.UpdateAllViews();
-        }
-
-        public void ClearResources()
-        {
-            this.m_sResourcesArray.Clear();
         }
 
         public int SlotsAvailable(DateTime dSelStart, DateTime dSelEnd, string sResource, out string sAccessType, out string sAvailabilityMessage)
@@ -603,39 +617,53 @@ namespace IndianHealthService.ClinicalScheduling
             crRectB.Y = GetTotalMinutes(dSelStart);
             crRectB.Height = GetTotalMinutes(dSelEnd) - crRectB.Y;
 
-            //			//loop thru m_pAvArray
-            //			//Compare the start time and end time of eachblock
-            while (i < m_pAvArray.Count)
-            {
-                pAv = (CGAvailability)m_pAvArray[i];
-                dStart = pAv.StartTime;
-                dEnd = pAv.EndTime;
-                if ((sResource == pAv.ResourceList) &&
-                    ((dSelStart.Date == dStart.Date) || (dSelStart.Date == dEnd.Date)))
-                {
-                    crRectA.Y = (dStart.Date < dSelStart.Date) ? 0 : GetTotalMinutes(dStart);
-                    crRectA.Height = (dEnd.Date > dSelEnd.Date) ? 1440 : GetTotalMinutes(dEnd);
-                    crRectA.Height = crRectA.Height - crRectA.Y;
-                    bIsect = crRectA.IntersectsWith(crRectB);
-                    if (bIsect != false)
-                    {
-                        nSlots = pAv.Slots;
-                        if (nSlots < 1)
-                        {
-                            nAvailableSlots = 0;
-                            break;
-                        }
-                        if (nSlots < nAvailableSlots)
-                        {
-                            nAvailableSlots = nSlots;
-                            sAccessType = pAv.AccessTypeName;
-                            sAvailabilityMessage = pAv.Note;
+            //NOTE: What's this lock? This lock makes sure that nobody is editing the availability array
+            //when we are looking at it. Since the availability array could potentially be updated on
+            //a different thread, we are can be potentially left stuck with an empty array.
+            //
+            //The other place that uses this lock is the RefershAvailabilitySchedule method
+            //
+            //This is a temporary fix until I figure out how to divorce the availbilities here from those drawn
+            //on the calendar. Appointments are cloned b/c they are in an object that supports that; and b/c I
+            //don't need to suddenly query them at runtime like I do with Availabilities.
 
-                        }
-                    }
-                }
-                i++;
-            }
+            lock (this.m_pAvArray)
+            {
+                //loop thru m_pAvArray
+                //Compare the start time and end time of eachblock
+                while (i < m_pAvArray.Count)
+                {
+                    pAv = (CGAvailability)m_pAvArray[i];
+                    dStart = pAv.StartTime;
+                    dEnd = pAv.EndTime;
+                    if ((sResource == pAv.ResourceList) &&
+                        ((dSelStart.Date == dStart.Date) || (dSelStart.Date == dEnd.Date)))
+                    {
+                        crRectA.Y = (dStart.Date < dSelStart.Date) ? 0 : GetTotalMinutes(dStart);
+                        crRectA.Height = (dEnd.Date > dSelEnd.Date) ? 1440 : GetTotalMinutes(dEnd);
+                        crRectA.Height = crRectA.Height - crRectA.Y;
+                        bIsect = crRectA.IntersectsWith(crRectB);
+                        if (bIsect != false)
+                        {
+                            nSlots = pAv.Slots;
+                            if (nSlots < 1)
+                            {
+                                nAvailableSlots = 0;
+                                break;
+                            }
+                            if (nSlots < nAvailableSlots)
+                            {
+                                nAvailableSlots = nSlots;
+                                sAccessType = pAv.AccessTypeName;
+                                sAvailabilityMessage = pAv.Note;
+
+                            }
+                        }//end if
+                    }//end if
+                    i++;
+                }//end while
+            }//end lock
+
             if (nAvailableSlots == 999)
             {
                 nAvailableSlots = 0;
@@ -758,6 +786,7 @@ namespace IndianHealthService.ClinicalScheduling
             aCopy.PatientName = rApptInfo.PatientName;
             aCopy.HealthRecordNumber = rApptInfo.HealthRecordNumber;
             aCopy.AccessTypeID = rApptInfo.AccessTypeID;
+            aCopy.WalkIn = bWalkin ? true : false;
 
             string sSql = "BSDX ADD NEW APPOINTMENT^" + sStart + "^" + sEnd + "^" + sPatID + "^" + sResource + "^" + sLen + "^" + sNote + "^" + sApptID;
             System.Data.DataTable dtAppt = m_DocManager.RPMSDataTable(sSql, "NewAppointment");
@@ -772,10 +801,14 @@ namespace IndianHealthService.ClinicalScheduling
                 throw new Exception(sErrorID);
             aCopy.AppointmentKey = nApptID;
             this.m_appointments.AddAppointment(aCopy);
+            
+            
+            //Have make appointment from CGView responsible for requesting an update for the avialability.
+            //bool bRet = RefreshAvailabilitySchedule();
 
-            bool bRet = RefreshAvailabilitySchedule();
-
-            UpdateAllViews();
+            //Sam: don't think this is needed as it is called from CGView.
+            //Make CGView responsible for all drawing.
+            //UpdateAllViews();
 
             return nApptID;
         }
@@ -821,11 +854,7 @@ namespace IndianHealthService.ClinicalScheduling
             DataRow r = dtAppt.Rows[0];
             string sErrorID = r["ERRORID"].ToString();
 
-            if (this.m_appointments.AppointmentTable.ContainsKey(nApptID))
-            {
-                bool bRet = RefreshSchedule();
-                UpdateAllViews();
-            }
+
         }
 
         public string DeleteAppointment(int nApptID)
