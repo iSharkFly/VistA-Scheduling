@@ -1,4 +1,4 @@
-BSDXAPI	; IHS/ANMC/LJF - SCHEDULING APIs ; 1/25/11 1:00pm
+BSDXAPI	; IHS/ANMC/LJF - SCHEDULING APIs ; 1/26/11 11:47am
 	;;1.42;BSDX;;Dec 07, 2010;Build 7
 	;Orignal routine is BSDAPI by IHS/LJF, HMW, and MAW
 	;local mods (many) by WV/SMH
@@ -26,6 +26,9 @@ BSDXAPI	; IHS/ANMC/LJF - SCHEDULING APIs ; 1/25/11 1:00pm
 	; to:
 	;  I $G(BSDR("ADT"))'?7N.1".".4N Q 1_U_"Appt Date/Time error: "_$G(BSDR("ADT"))
 	; to allow for date at midnight which does not have a dot at the end.
+	; 2011-01-26 (v.1.5)
+	; More user friendly message if patient already has appointment in $$MAKE:
+	;  Spits out pt name and user friendly date.
 	;  
 	;
 MAKE1(DFN,CLIN,TYP,DATE,LEN,INFO)	; Simplified PEP w/ parameters for $$MAKE - making appointment
@@ -51,7 +54,7 @@ MAKE(BSDR)	;PEP; call to store appt made
 	; BSDR("CLN") = ien of clinic in file 44
 	; BSDR("TYP") = 3 for scheduled appts, 4 for walkins
 	; BSDR("ADT") = appointment date and time
-	; BSDR("LEN") = appointment length in minutes (5-120)
+	; BSDR("LEN") = appointment length in minutes (*1.42 limit removed)
 	; BSDR("OI")  = reason for appt - up to 150 characters
 	; BSDR("USR") = user who made appt
 	;
@@ -67,7 +70,21 @@ MAKE(BSDR)	;PEP; call to store appt made
 	;
 	;I ($G(BSDR("LEN"))<5)!($G(BSDR("LEN"))>240) Q 1_U_"Appt Length error: "_$G(BSDR("LEN")) ; v 1.42 - no check on length is done anymore. see top comments for details.
 	I '$D(^VA(200,+$G(BSDR("USR")),0)) Q 1_U_"User Who Made Appt Error: "_$G(BSDR("USR"))
-	I $D(^DPT(BSDR("PAT"),"S",BSDR("ADT"),0)),$P(^(0),U,2)'["C" Q 1_U_"Patient "_BSDR("PAT")_" already has appt at "_BSDR("ADT")
+	;I $D(^DPT(BSDR("PAT"),"S",BSDR("ADT"),0)),$P(^(0),U,2)'["C" Q 1_U_"Patient "_BSDR("PAT")_" already has appt at "_BSDR("ADT") ; v.1.5 more user friendly err msg
+	;
+	; Following block to give an error message to user if there is already an appointment for patient. More verbose than others.
+	N BSDXERR ; place to store error message
+	I $D(^DPT(BSDR("PAT"),"S",BSDR("ADT"),0)),$P(^(0),U,2)'["C" DO  QUIT BSDXERR  ; If there's an appt in the "S" node of file 2 and it's not cancelled
+	. S BSDXERR=1_U_"Patient "_$P(^DPT(BSDR("PAT"),0),U)_" ("_BSDR("PAT")_") "
+	. S BSDXERR=BSDXERR_"already has appt at "_$$FMTE^XLFDT(BSDR("ADT"))
+	. N BSDXSCIEN S BSDXSCIEN=$P(^DPT(BSDR("PAT"),"S",BSDR("ADT"),0),U)  ; Clinic IEN in ^SC (0 piece of 0 node of "S" multiple in file 2)
+	. N BSDXSCNAM S BSDXSCNAM=$P(^SC(BSDXSCIEN,0),U) ; PIMS Name of Clinic
+	. S BSDXERR=BSDXERR_$C(13,10)_"PIMS clinic: "_BSDXSCNAM ; tell the user of the PIMS clinic
+	. I $D(^BSDXRES("ALOC",BSDXSCIEN)) DO  ; if the Clinic is linked to a BSDX Resource (we find out using the index ALOC in the BSDX RESOURCE file)
+	. . N BSDXRESIEN S BSDXRESIEN=$O(^BSDXRES("ALOC",BSDXSCIEN,""))
+	. . QUIT:'BSDXRESIEN  ; Safeguard if index is corrupt
+	. . N BSDXRESNAM S BSDXRESNAM=$P(^BSDXRES(BSDXRESIEN,0),U)
+	. . S BSDXERR=BSDXERR_$C(13,10)_"Scheduling GUI clinic: "_BSDXRESNAM ; tell the user of the BSDX clinic
 	;
 	NEW DIC,DA,Y,X,DD,DO,DLAYGO
 	;

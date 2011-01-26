@@ -1,4 +1,4 @@
-BSDX07	; IHS/OIT/HMW - WINDOWS SCHEDULING RPCS  ; 12/6/10 12:31pm
+BSDX07	; IHS/OIT/HMW - WINDOWS SCHEDULING RPCS  ; 1/26/11 11:29am
 	   ;;1.42;BSDX;;Dec 07, 2010
 	   ;
 	   ; Change Log:
@@ -174,7 +174,7 @@ APPADD(BSDXY,BSDXSTART,BSDXEND,BSDXPATID,BSDXRES,BSDXLEN,BSDXNOTE,BSDXATID)	;EP
 	   ; Then Create Subfiles in 2/44 Appointment
 	   N BSDXSCD S BSDXSCD=$P(BSDXRNOD,U,4)  ; Hosp Location IEN
 	   ; Only if we have a valid Hosp Loc can we make an appointment
-	   I +BSDXSCD,$D(^SC(BSDXSCD,0)) D  I +BSDXERR D ERR(BSDXI,"-10~BSDX07 Error: ~MAKE^BSDAPI returned error code: "_BSDXERR) Q
+	   I +BSDXSCD,$D(^SC(BSDXSCD,0)) D  I +BSDXERR D ERR(BSDXI,"-10~BSDX07 Error: MAKE^BSDXAPI returned error code: "_BSDXERR) Q
 	   . N BSDXC
 	   . S BSDXC("PAT")=BSDXPATID
 	   . S BSDXC("CLN")=BSDXSCD
