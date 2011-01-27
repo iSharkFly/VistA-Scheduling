@@ -40,6 +40,8 @@ namespace IndianHealthService.ClinicalScheduling
 		private BMXNetConnectInfo						m_ConnectInfo = null;   // Connection to VISTA object
         private BMXNetConnectInfo.BMXNetEventDelegate CDocMgrEventDelegate;     // Delegate to respond to messages from VISTA. Responds to event: BMXNetConnectInfo.BMXNetEvent
 
+        //Custom Printing
+        private CustomPrinting                          m_PrintingObject = null; 
 		#endregion
 
         #region Properties
@@ -131,7 +133,13 @@ namespace IndianHealthService.ClinicalScheduling
             get { return this._dal; }
         }
 
-
+        public CustomPrinting PrintingObject
+        {
+            get
+            {
+                return this.m_PrintingObject;
+            }
+        }
         #endregion
 
         /// <summary>
@@ -412,6 +420,35 @@ namespace IndianHealthService.ClinicalScheduling
                 }
 			}while (bRetry == true);
             
+            //Printing
+
+            System.IO.DirectoryInfo di = new System.IO.DirectoryInfo(Application.StartupPath + @"\Printing\");
+            System.IO.FileInfo[] rgFiles = di.GetFiles("*.dll");
+            string DllLocation = string.Empty;
+            foreach (System.IO.FileInfo fi in rgFiles)
+            {
+                DllLocation = fi.FullName;
+            }
+
+            PrintingCreator Creator = null;
+            if (DllLocation == string.Empty)
+            {
+                this.m_PrintingObject = new CustomPrinting();
+            }
+            else
+            {
+                System.Reflection.Assembly assembly = System.Reflection.Assembly.LoadFrom(DllLocation);
+                foreach (Type type in assembly.GetTypes())
+                {
+                    if (type.IsClass == true & type.BaseType == typeof(PrintingCreator))
+                    {
+                        Creator = (PrintingCreator)Activator.CreateInstance(type);
+                        break;
+                    }
+                }
+                this.m_PrintingObject = Creator.PrintFactory();
+            }
+           
             //Create global dataset
 			_current.m_dsGlobal = new DataSet("GlobalDataSet");
 
