@@ -110,4 +110,8 @@ v1.4.2 (released December 12th 2010)
 - Patient Appointment List now shows the names of the clinics as what you called them in the Scheduling GUI, not what they are called in VISTA.
 - New kids build
 
-
+v1.5 (Alpha released Jan 27 2010)
+- Speed issues mitigated.
+- Ability to Cancel checked-in appointments (including walk-ins) added.
+- Grid now responds to mouse wheel movements
+- Clearer error messages for end users.

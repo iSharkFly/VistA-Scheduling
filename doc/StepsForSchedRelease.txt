@@ -9,3 +9,16 @@ Steps for Creating a new Release for Scheduling GUI.
 8. Write out the build, and update svn with the new build.
 9. Update Readme file with new version. Add any tidbits if necessary.
 0. Update the Change Log.
+
+Steps for Creating a new Release for BMX
+1. Increment version number on the GUI (assembly and file).
+2. Compile GUI and dll in release mode. Update svn.
+3. Increment version number in the BMX APPLICATION file.
+4. Copy kids build into new kids build, incrementing the version number.
+5. Edit build. Change Date Distributed.
+6. Change version number on routines using the Update Version Number option.
+7. Copy modified routines just created from patches back to svn directory. Update svn.
+8. Write out the build, and update svn with the new build.
+9. Update Readme file with new version. Add any tidbits if necessary.
+0. Update the Change Log.
+

@@ -9,13 +9,13 @@ Kernel 8
 XB 3 or above
 SD 5.3
 SD 5.3 patch 11310 (to fix a problem with the code)
-BMX 2.2 (now required)
+BMX 2.21
 
 For a Virgin WorldVistA 6-08 release install the following in this order:
 1. XB 4                 (see https://trac.opensourcevista.net/browser/IHS-VA_UTILITIES-XB/tag/rel_20091207) 
-2. BMX 2.2              (see https://trac.opensourcevista.net/browser/BMXNET_RPMS_dotNET_UTILITIES-BMX/trunk/k)
+2. BMX 2.21              (see https://trac.opensourcevista.net/browser/BMXNET_RPMS_dotNET_UTILITIES-BMX/trunk/k)
 3. XWB 1.1 patch 113102 (see https://trac.opensourcevista.net/browser/BMXNET_RPMS_dotNET_UTILITIES-BMX/trunk/k)
-4. BSDX 1.41             (see https://trac.opensourcevista.net/browser/Scheduling/trunk/kids)
+4. BSDX 1.42            (see https://trac.opensourcevista.net/browser/Scheduling/trunk/kids)
 5. SD 5.3 patch 11310   (see https://trac.opensourcevista.net/browser/Scheduling/trunk/kids)
 
 Client (download from https://trac.opensourcevista.net/browser/Scheduling/trunk/cs/bsdx0200GUISourceCode/bin/Release):
@@ -125,11 +125,10 @@ Enhancement requests:
 - Show today's column in a different color.
 
 Speed issues:
-- Loading takes a long time <solved>
-- Search <enter> Select <enter> <enter> takes a long time when adding appointment
-- Wait cursor when updating <solved>
-- Checkin takes a long time
-- Printing the routing slip takes a slightly longer than necessary time
-- Select patient dialog takes a tiny while to show up.
-- Date-change selection not optimal (calls server with each tiny change) <solved>
-
+- Loading takes a long time <solved in 1.5>
+- Search <enter> Select <enter> <enter> takes a long time when adding appointment <solved in 1.5>
+- Wait cursor when updating <solved in 1.5>
+- Checkin takes a long time <solved in 1.5>
+- Printing the routing slip takes a slightly longer than necessary time <not an issue in main version>
+- Select patient dialog takes a tiny while to show up. <solved in 1.5>
+- Date-change selection not optimal (calls server with each tiny change) <solved in 1.5>
