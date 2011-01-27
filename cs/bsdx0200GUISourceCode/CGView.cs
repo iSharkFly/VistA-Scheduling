@@ -616,7 +616,7 @@ namespace IndianHealthService.ClinicalScheduling
             this.tvSchedules.HotTracking = true;
             this.tvSchedules.Location = new System.Drawing.Point(0, 0);
             this.tvSchedules.Name = "tvSchedules";
-            this.tvSchedules.Size = new System.Drawing.Size(128, 290);
+            this.tvSchedules.Size = new System.Drawing.Size(128, 400);
             this.tvSchedules.Sorted = true;
             this.tvSchedules.TabIndex = 1;
             this.tvSchedules.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.tvSchedules_AfterSelect);
@@ -663,7 +663,7 @@ namespace IndianHealthService.ClinicalScheduling
             this.panelRight.Dock = System.Windows.Forms.DockStyle.Right;
             this.panelRight.Location = new System.Drawing.Point(941, 0);
             this.panelRight.Name = "panelRight";
-            this.panelRight.Size = new System.Drawing.Size(128, 290);
+            this.panelRight.Size = new System.Drawing.Size(128, 400);
             this.panelRight.TabIndex = 3;
             this.panelRight.Visible = false;
             // 
@@ -753,7 +753,6 @@ namespace IndianHealthService.ClinicalScheduling
             this.lblResource.Name = "lblResource";
             this.lblResource.Size = new System.Drawing.Size(456, 19);
             this.lblResource.TabIndex = 2;
-            this.lblResource.Text = "lblResource";
             // 
             // panelCenter
             // 
@@ -761,7 +760,7 @@ namespace IndianHealthService.ClinicalScheduling
             this.panelCenter.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panelCenter.Location = new System.Drawing.Point(136, 24);
             this.panelCenter.Name = "panelCenter";
-            this.panelCenter.Size = new System.Drawing.Size(802, 242);
+            this.panelCenter.Size = new System.Drawing.Size(802, 352);
             this.panelCenter.TabIndex = 7;
             // 
             // ctxCalendarGrid
@@ -847,7 +846,7 @@ namespace IndianHealthService.ClinicalScheduling
             // 
             this.panelBottom.Controls.Add(this.statusBar1);
             this.panelBottom.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panelBottom.Location = new System.Drawing.Point(136, 266);
+            this.panelBottom.Location = new System.Drawing.Point(136, 376);
             this.panelBottom.Name = "panelBottom";
             this.panelBottom.Size = new System.Drawing.Size(802, 24);
             this.panelBottom.TabIndex = 8;
@@ -865,7 +864,7 @@ namespace IndianHealthService.ClinicalScheduling
             // 
             this.splitter1.Location = new System.Drawing.Point(128, 24);
             this.splitter1.Name = "splitter1";
-            this.splitter1.Size = new System.Drawing.Size(8, 266);
+            this.splitter1.Size = new System.Drawing.Size(8, 376);
             this.splitter1.TabIndex = 9;
             this.splitter1.TabStop = false;
             // 
@@ -874,7 +873,7 @@ namespace IndianHealthService.ClinicalScheduling
             this.splitter2.Dock = System.Windows.Forms.DockStyle.Right;
             this.splitter2.Location = new System.Drawing.Point(938, 24);
             this.splitter2.Name = "splitter2";
-            this.splitter2.Size = new System.Drawing.Size(3, 266);
+            this.splitter2.Size = new System.Drawing.Size(3, 376);
             this.splitter2.TabIndex = 10;
             this.splitter2.TabStop = false;
             // 
@@ -902,7 +901,7 @@ namespace IndianHealthService.ClinicalScheduling
             this.calendarGrid1.Name = "calendarGrid1";
             this.calendarGrid1.Resources = ((System.Collections.ArrayList)(resources.GetObject("calendarGrid1.Resources")));
             this.calendarGrid1.SelectedAppointment = 0;
-            this.calendarGrid1.Size = new System.Drawing.Size(802, 242);
+            this.calendarGrid1.Size = new System.Drawing.Size(802, 352);
             this.calendarGrid1.StartDate = new System.DateTime(2003, 1, 27, 0, 0, 0, 0);
             this.calendarGrid1.TabIndex = 0;
             this.calendarGrid1.TimeScale = 20;
@@ -915,7 +914,7 @@ namespace IndianHealthService.ClinicalScheduling
             // CGView
             // 
             this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
-            this.ClientSize = new System.Drawing.Size(1069, 290);
+            this.ClientSize = new System.Drawing.Size(1069, 400);
             this.Controls.Add(this.panelCenter);
             this.Controls.Add(this.panelBottom);
             this.Controls.Add(this.splitter2);
@@ -1837,7 +1836,7 @@ namespace IndianHealthService.ClinicalScheduling
 		private void AppointmentDelete() 
 		{
 			calendarGrid1.CGToolTip.Active = false;
-			CGAppointments	alRebookList = new CGAppointments();
+			CGAppointments alRebookList = new CGAppointments();
 
 			DCancelAppt dCancel = new DCancelAppt();
 			dCancel.InitializePage(this.m_DocManager);
@@ -1901,7 +1900,12 @@ namespace IndianHealthService.ClinicalScheduling
 			{
 				try
 				{
+                    this.UpdateArrays();
 					RaiseRPMSEvent("BSDX SCHEDULE" , m_Document.DocName);
+
+                    //Get the appointments and availabilities, async, from Server. Callback updates this thread's controls.
+                    OnUpdateScheduleDelegate ousd = new OnUpdateScheduleDelegate(OnUpdateSchedule);
+                    ousd.BeginInvoke(OnUpdateScheduleCallback, null);
 				}
 				catch (Exception ex)
 				{
@@ -2121,7 +2125,7 @@ namespace IndianHealthService.ClinicalScheduling
 		{
 			try
 			{
-				CGAppointment appt = new CGAppointment();
+				
 			
 				//Get Time and Resource from Selected Cell
 				DateTime dStart = DateTime.Today;
@@ -2195,6 +2199,7 @@ namespace IndianHealthService.ClinicalScheduling
 					return;
 				}
 
+                CGAppointment appt = new CGAppointment();
 				appt.PatientID = Convert.ToInt32(dPat.PatientIEN);
 				appt.PatientName = dPat.PatientName;
 				appt.StartTime = dStart;
@@ -2323,6 +2328,9 @@ namespace IndianHealthService.ClinicalScheduling
         /// <remarks>Calls UpdateArrays via this.Invoke to make sure that the grid is redrawn on the UI thread</remarks>
         private void OnUpdateScheduleCallback(IAsyncResult itfAR)
         {
+            // if the view meanwhile closed, just return
+            if (this == null) return;
+
             OnUpdateScheduleDelegate d = new OnUpdateScheduleDelegate(UpdateArrays);
             this.Invoke(d);
         }
@@ -2709,6 +2717,11 @@ namespace IndianHealthService.ClinicalScheduling
 			UpdateStatusBar(e.StartTime, e.EndTime, sAccessType, sAvailabilityMessage);
 		}
 
+        /// <summary>
+        /// Fired during drag and drop, on the drop action.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
 		private void calendarGrid1_CGAppointmentChanged(object sender, IndianHealthService.ClinicalScheduling.CGAppointmentChangedArgs e)
 		{
 			try
@@ -2726,8 +2739,11 @@ namespace IndianHealthService.ClinicalScheduling
                     if (result == DialogResult.No) return;
                 }
 
+                //Can user edit destination resource?
 				if (EditAppointmentEnabled(e.Resource) == false)
 					return;
+                
+                //Can user edit original schedule?
 				if (EditAppointmentEnabled(e.Appointment.Resource) == false)
 					return;
 
@@ -2771,11 +2787,29 @@ namespace IndianHealthService.ClinicalScheduling
 					}
 				}
 
-				e.Appointment.StartTime = e.StartTime;
-				e.Appointment.EndTime = e.EndTime;
-				e.Appointment.Resource = e.Resource;
-				e.Appointment.AccessTypeID = e.AccessTypeID;
-				m_Document.CreateAppointment(e.Appointment);
+                //Create a new appointment using old data for patient demographics and note and new data
+                //for StartTime, EndTime, Resource, AccessTypeID
+                CGAppointment appt = new CGAppointment();
+                appt.PatientID = e.Appointment.PatientID;
+                appt.PatientName = e.Appointment.PatientName;
+                appt.StartTime = e.StartTime;
+                appt.EndTime = e.EndTime;
+                appt.Resource = e.Resource;
+                appt.Note = e.Appointment.Note;
+                appt.HealthRecordNumber = e.Appointment.HealthRecordNumber;
+                appt.AccessTypeID = e.AccessTypeID;
+                this.Document.CreateAppointment(appt);
+
+                //CGAppointment a = new CGAppointment();
+                //a.StartTime = e.StartTime;
+                ////e.Appointment.StartTime = e.StartTime
+                //a.EndTime = e.EndTime;
+                ////e.Appointment.EndTime = e.EndTime;
+                //a.Resource = e.Resource;
+                ////e.Appointment.Resource = e.Resource;
+                //a.AccessTypeID = e.AccessTypeID;
+                ////e.Appointment.AccessTypeID = e.AccessTypeID;
+                //m_Document.CreateAppointment(a);
 			
 				
                 string sError = AppointmentDeleteOne(e.Appointment.AppointmentKey);
@@ -2789,19 +2823,21 @@ namespace IndianHealthService.ClinicalScheduling
 			catch (Exception ex)
 			{
 				MessageBox.Show("Unable to change appointment  " +  ex.Message, "Clinical Scheduling");
-				this.m_DocManager.UpdateViews();
+				//this.m_DocManager.UpdateViews();
 				return;
 			}
 			finally
 			{
-
+                this.UpdateArrays();
             }
 			try
 			{
 				RaiseRPMSEvent("BSDX SCHEDULE"  , e.Resource);
 				if (e.Resource != e.OldResource)
 					RaiseRPMSEvent("BSDX SCHEDULE", e.OldResource);
-				this.m_DocManager.UpdateViews(e.Resource, e.OldResource);
+				
+                //That will take too long. Don't do it. Try and see what happens when you come
+                //this.m_DocManager.UpdateViews(e.Resource, e.OldResource);
 			}
 			catch (Exception ex)
 			{

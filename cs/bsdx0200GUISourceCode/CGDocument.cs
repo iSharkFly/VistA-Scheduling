@@ -798,7 +798,9 @@ namespace IndianHealthService.ClinicalScheduling
             string sErrorID;
             sErrorID = r["ERRORID"].ToString();
             if ((sErrorID != "") || (nApptID < 1))
+            {
                 throw new Exception(sErrorID);
+            }
             aCopy.AppointmentKey = nApptID;
             this.m_appointments.AddAppointment(aCopy);
             
@@ -884,8 +886,10 @@ namespace IndianHealthService.ClinicalScheduling
             if (this.m_appointments.AppointmentTable.ContainsKey(nApptID))
             {
                 this.m_appointments.RemoveAppointment(nApptID);
-                bool bRet = RefreshAvailabilitySchedule();
-                UpdateAllViews();
+                
+                // View responsible for deciding to redraw the grid; not the document now.
+                //bool bRet = RefreshAvailabilitySchedule();
+                //UpdateAllViews();
             }
             return "";
         }
