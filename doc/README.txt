@@ -70,7 +70,7 @@ If you need to use PIMS clinics, here is how you do the set-up:
 Known Bugs:
 - Users booking appointments at exactly the same time for the same clinic doesn't work properly (concurrency issues).
 - Various usability issues that are apparent in the program. E.g. you need to click before you right click, drag and drop has no visiual assist to show what you are dragging and where to, etc.
-- Remaining slots calculation does not work properly if you have more than 1 slot per access block.
+- Remaining slots calculation does not work properly if you have more than 1 slot per access block (Najjar says that it doesn't work for 1 slot either if you change the time scale).
 - Find Appointments function is not operational in Scheduling GUI
 - IDs in Scheduling GUI reflect the HRN not the Primary ID
 - Cannot cancel a walk-in appointment in Scheduling...
@@ -81,9 +81,11 @@ Known Bugs:
 - Appointment drag and drop to the same time at a different clinic doesn't work (complains that the patient already has an appointment at this time).
 - Appointment drap and drop between different windows doesn't cancel the original appointment.
 - Rebooking under certain conditions causes system hangs. Two issues: Program doesn't increment requested available appointment from VISTA, and doesn't deal properly with an appointment that doesn't have a access type (ie an appointment that is not in an Access block).
-- Speed issues (see below)
+- Speed issues (see below) <better in 1.5>
 - Date on Appt List header in Arabic doesn't show up correctly.
-- Error massages should be clearer for the end Users
+- Error massages should be clearer for the end Users <fixed in 1.5>
+- Event raise for clinic groups raises the name of the group not the clinic. The receiving end in the C# code compares and checks for the clinic.
+- When making a walk-in appointment, it lets you cancel check-in by pressing the cancel button.
 
 
 Other Bugs:
@@ -123,6 +125,9 @@ Enhancement requests:
 - If we can make the users in groups. i.e. MRs group, OP clinics Group and map them to the resource groups
 - Add an option to change the locale independent of the Windows locale (Khamis; PHH)
 - Show today's column in a different color.
+- Be able to copy appointments in mass from one clinic to another.
+- Manager functions: Send message and Shutdown sends message or shuts down all users, not just individual users.
+- SMS to remind patients of appointments.
 
 Speed issues:
 - Loading takes a long time <solved in 1.5>
