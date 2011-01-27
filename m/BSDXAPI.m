@@ -1,5 +1,5 @@
 BSDXAPI	; IHS/ANMC/LJF - SCHEDULING APIs ; 1/26/11 11:47am
-	;;1.42;BSDX;;Dec 07, 2010;Build 7
+	;;1.5;BSDX;;Jan 25, 2011;Build 7
 	;Orignal routine is BSDAPI by IHS/LJF, HMW, and MAW
 	;local mods (many) by WV/SMH
 	;Move to BSDX namespace as BSDXAPI from BSDAPI by WV/SMH
@@ -299,7 +299,7 @@ CI(PAT,CLINIC,DATE,SDIEN)	;PEP; -- returns 1 if appt already checked-in
 	S X=$P($G(^SC(CLINIC,"S",DATE,1,X,"C")),U)
 	Q $S(X:1,1:0)
 	;
-RMCI(PAT,CLINIC,DATE)		;PEP; -- Remove Check-in; $$
+RMCI(PAT,CLINIC,DATE)	 ;PEP; -- Remove Check-in; $$
 	; PAT = DFN
 	; CLINIC = SC IEN
 	; DATE = FM Date/Time of Appointment

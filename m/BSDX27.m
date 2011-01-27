@@ -1,5 +1,5 @@
 BSDX27	 ; IHS/OIT/HMW - WINDOWS SCHEDULING RPCS ; 12/6/10 4:52pm
-	   ;;1.42;BSDX;;Dec 07, 2010
+	   ;;1.5;BSDX;;Jan 25, 2011
 	   ; 
 	   ; Change Log: July 15, 2010
 	   ; UJO/SMH - i18n: FM Dates passed into routine for Clinic Letters - CLDISP ta

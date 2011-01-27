@@ -1,5 +1,5 @@
 BSDX11	; IHS/OIT/HMW - WINDOWS SCHEDULING RPCS ;
-	;;1.42;BSDX;;Dec 07, 2010
+	;;1.5;BSDX;;Jan 25, 2011
 	;
 ENV0100	;EP Version 1.0 Environment check
 	I '$G(IOM) D HOME^%ZIS
