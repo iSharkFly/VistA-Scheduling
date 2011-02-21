@@ -798,7 +798,7 @@
             DateTime time2 = this.GetTimeFromCell(endCell).AddMinutes((double) this.m_nTimeScale);
             foreach (CGAvailability availability in this.m_pAvArray)
             {
-                if (this.TimesOverlap(availability.StartTime, availability.EndTime, timeFromCell, time2))
+                if (TimesOverlap(availability.StartTime, availability.EndTime, timeFromCell, time2))
                 {
                     nAccessTypeID = availability.AvailabilityType;
                     break;
@@ -841,7 +841,7 @@
             DateTime time2 = this.GetTimeFromCell(cell2).AddMinutes((double) this.m_nTimeScale);
             foreach (CGAvailability availability in this.m_pAvArray)
             {
-                if (this.TimesOverlap(availability.StartTime, availability.EndTime, timeFromCell, time2))
+                if (TimesOverlap(availability.StartTime, availability.EndTime, timeFromCell, time2))
                 {
                     nAccessTypeID = availability.AvailabilityType;
                     break;
@@ -893,7 +893,7 @@
 
         }
 
-        private int MinSince80(DateTime d)
+        private static int MinSince80(DateTime d)
         {
             DateTime time = new DateTime(1980, 1, 1, 0, 0, 0);
             TimeSpan span = (TimeSpan) (d - time);
@@ -1152,7 +1152,15 @@
             base.Invalidate();
         }
 
-        private bool TimesOverlap(DateTime dStart1, DateTime dEnd1, DateTime dStart2, DateTime dEnd2)
+        /// <summary>
+        /// Do 2 time ranges overlap each other?
+        /// </summary>
+        /// <param name="dStart1">First Start Time</param>
+        /// <param name="dEnd1">First End Time</param>
+        /// <param name="dStart2">Second Start Time</param>
+        /// <param name="dEnd2">Second End Time</param>
+        /// <returns>True or False</returns>
+        public static bool TimesOverlap(DateTime dStart1, DateTime dEnd1, DateTime dStart2, DateTime dEnd2)
         {
             long ticks = dEnd1.Ticks - dStart1.Ticks;
             TimeSpan ts = new TimeSpan(ticks);
@@ -1164,10 +1172,10 @@
             rectangle2.X = 0;
             rect.Width = 1;
             rectangle2.Width = 1;
-            rect.Y = this.MinSince80(dStart1);
-            rect.Height = this.MinSince80(dEnd1) - rect.Y;
-            rectangle2.Y = this.MinSince80(dStart2);
-            rectangle2.Height = this.MinSince80(dEnd2) - rectangle2.Y;
+            rect.Y = MinSince80(dStart1);
+            rect.Height = MinSince80(dEnd1) - rect.Y;
+            rectangle2.Y = MinSince80(dStart2);
+            rectangle2.Height = MinSince80(dEnd2) - rectangle2.Y;
             return rectangle2.IntersectsWith(rect);
         }
 

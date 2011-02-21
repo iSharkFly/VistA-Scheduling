@@ -96,7 +96,6 @@ namespace IndianHealthService.ClinicalScheduling
 
 				//Build AccessGroup table containing *active* AccessTypes and their Groups
 				m_dtTypes = m_dsGlobal.Tables["AccessGroupType"];
-				CGSchedLib.OutputArray(m_dtTypes, "Access Group Type");
 				//Create a view that is filterable on Access Group
 				m_dvTypes = new DataView(m_dtTypes);
 				m_dvTypes.RowFilter = "ACCESS_GROUP = '" + this.cboAccessTypeFilter.Text + "'";
@@ -656,7 +655,7 @@ namespace IndianHealthService.ClinicalScheduling
 			string sDOW;
 			int nAccessTypeID;
 			string sAccessType;
-			CGSchedLib.OutputArray(m_dtResult, "Result Grid");
+
 			foreach (DataRow dr in m_dtResult.Rows)
 			{
 				dt = (DateTime) dr["START_TIME"];
@@ -673,7 +672,7 @@ namespace IndianHealthService.ClinicalScheduling
 					}
 				}
 			}
-			CGSchedLib.OutputArray(m_dtResult, "Result Grid");
+
 
 			m_dvResult = new DataView(m_dtResult);
 

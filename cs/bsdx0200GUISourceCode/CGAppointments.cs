@@ -3,9 +3,11 @@
     using System;
     using System.Collections;
     /// <summary>
-    /// This class was regenerated from Calendargrid.dll using Reflector.exe
-    /// by Sam Habiel for WorldVista. The original source code is lost.
+    /// Managers Appointment objects CGAppointment using an array list internally.
     /// </summary>
+    /// <remarks>
+    /// Really needs to be refactored to use generics
+    /// </remarks>
     [Serializable]
     public class CGAppointments : IEnumerable, ICloneable
     {
@@ -57,6 +59,10 @@
         }
 
  
+        /// <summary>
+        /// Returns a deep copy of CGAppointments
+        /// </summary>
+        /// <returns></returns>
         public object Clone()
         {
             CGAppointments newappts = new CGAppointments();

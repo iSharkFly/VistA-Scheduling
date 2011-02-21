@@ -172,6 +172,7 @@ namespace IndianHealthService.ClinicalScheduling
 
         /// <summary>
         /// Update schedule based on info in RPMS
+        /// <returns>Clears and repopluates m_appointments</returns>
         /// </summary>
         private bool RefreshDaysSchedule()
         {
@@ -199,15 +200,13 @@ namespace IndianHealthService.ClinicalScheduling
                 //Nice to know that it gets set here!!!
                 m_dLastRefresh = DateTime.Now;
 
+                //Clear appointments associated with this document
                 this.m_appointments.ClearAllAppointments();
 
                 //  calls RPC to get appointments
                 rAppointmentSchedule = CGSchedLib.CreateAppointmentSchedule(m_DocManager, m_sResourcesArray, this.m_dStartDate, this.m_dEndDate);
 
-                // Datatable dumper into Debug Log (nice to know that this exists)
-                CGSchedLib.OutputArray(rAppointmentSchedule, "rAppointmentSchedule");
-
-
+                // loop through datatable: Create CGAppointment and add to CGAppointments
                 foreach (DataRow r in rAppointmentSchedule.Rows)
                 {
 
@@ -421,19 +420,48 @@ namespace IndianHealthService.ClinicalScheduling
         {
             try
             {
-                if (this.m_DocManager.ConnectInfo.Connected == false)
-                {
-                    m_DocManager.ConnectInfo.LoadConnectInfo();
-                }
-
                 ArrayList saryApptTypes = new ArrayList();
-                int nApptTypeID = 0;
-
+                
                 //Refresh Availability schedules
                 DataTable rAvailabilitySchedule;
                 rAvailabilitySchedule = CGSchedLib.CreateAvailabilitySchedule(m_DocManager, m_sResourcesArray, this.m_dStartDate, this.m_dEndDate, saryApptTypes,/**/ m_ScheduleType, "0");
-                CGSchedLib.OutputArray(rAvailabilitySchedule, "rAvailabilitySchedule");
 
+                ////NEW
+                //NOTE: This lock makes sure that availabilities aren't queried for slots when the array is an intermediate
+                //state. The other place that has this lock is SlotsAvailable function.
+                lock (this.m_pAvArray)
+                {
+                    m_pAvArray.Clear();
+                    foreach (DataRow rTemp in rAvailabilitySchedule.Rows)
+                    {
+                        DateTime dStart = (DateTime)rTemp["START_TIME"];
+                        DateTime dEnd = (DateTime)rTemp["END_TIME"];
+
+                        //TODO: Fix this slots datatype problem
+                        string sSlots = rTemp["SLOTS"].ToString();
+                        int nSlots = Convert.ToInt16(sSlots);
+
+                        string sResourceList = rTemp["RESOURCE"].ToString();
+                        string sAccessRuleList = rTemp["ACCESS_TYPE"].ToString();
+                        string sNote = rTemp["NOTE"].ToString();
+
+                        int nApptTypeID;
+
+                        if ((nSlots < -1000) || (sAccessRuleList == ""))
+                        {
+                            nApptTypeID = 0;
+                        }
+                        else
+                        {
+                            nApptTypeID = Int32.Parse(rTemp["ACCESS_TYPE"].ToString());
+                        }
+
+                        AddAvailability(dStart, dEnd, nApptTypeID, nSlots, sResourceList, sAccessRuleList, sNote);
+                    }
+                }
+                return true;
+                
+                /* NOT USED
                 //Refresh Type Schedule
                 string sResourceName = "";
                 DataTable rTypeSchedule = new DataTable(); ;
@@ -441,7 +469,7 @@ namespace IndianHealthService.ClinicalScheduling
                 {
                     sResourceName = m_sResourcesArray[j].ToString();
                     DataTable dtTemp = CGSchedLib.CreateAssignedTypeSchedule(m_DocManager, sResourceName, this.m_dStartDate, this.m_dEndDate, m_ScheduleType);
-                    CGSchedLib.OutputArray(dtTemp, "dtTemp");
+
                     if (j == 0)
                     {
                         rTypeSchedule = dtTemp;
@@ -451,7 +479,6 @@ namespace IndianHealthService.ClinicalScheduling
                         rTypeSchedule = CGSchedLib.UnionBlocks(rTypeSchedule, dtTemp);
                     }
                 }
-                CGSchedLib.OutputArray(rTypeSchedule, "rTypeSchedule");
 
                 DateTime dStart;
                 DateTime dEnd;
@@ -522,10 +549,11 @@ namespace IndianHealthService.ClinicalScheduling
                         }
 
 
-                        AddAvailability(dStart, dEnd, nApptTypeID, nSlots, false, sResourceList, sAccessRuleList, sNote);
+                        //AddAvailability(dStart, dEnd, nApptTypeID, nSlots, sResourceList, sAccessRuleList, sNote);
                     }//end foreach datarow rTemp
                 }//end lock
                 return true;
+             */
             }
             catch (Exception ex)
             {
@@ -551,7 +579,7 @@ namespace IndianHealthService.ClinicalScheduling
         /// <param name="sAccessRuleList"></param>
         /// <param name="sNote"></param>
         /// <returns></returns>
-        public int AddAvailability(DateTime StartTime, DateTime EndTime, int nType, int nSlots, bool UpdateView, string sResourceList, string sAccessRuleList, string sNote)
+        public int AddAvailability(DateTime StartTime, DateTime EndTime, int nType, int nSlots, string sResourceList, string sAccessRuleList, string sNote)
         {
             //adds it to the object array
             //Returns the index in the array
@@ -587,10 +615,7 @@ namespace IndianHealthService.ClinicalScheduling
 
             int nIndex = 0;
             nIndex = m_pAvArray.Add(pNewAv);
-            if (UpdateView == true)
-            {
-                this.UpdateAllViews();
-            }
+
             return nIndex;
         }
 

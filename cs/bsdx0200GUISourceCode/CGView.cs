@@ -2328,11 +2328,17 @@ namespace IndianHealthService.ClinicalScheduling
         /// <remarks>Calls UpdateArrays via this.Invoke to make sure that the grid is redrawn on the UI thread</remarks>
         private void OnUpdateScheduleCallback(IAsyncResult itfAR)
         {
-            // if the view meanwhile closed, just return
-            if (this == null) return;
-
             OnUpdateScheduleDelegate d = new OnUpdateScheduleDelegate(UpdateArrays);
-            this.Invoke(d);
+            
+            //try catch just in case that the view closed in the meantime.
+            try
+            {
+                this.Invoke(d);
+            }
+            catch (InvalidOperationException)
+            {
+                return;
+            }
         }
 
         /// <summary>

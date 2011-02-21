@@ -169,7 +169,7 @@ namespace IndianHealthService.ClinicalScheduling
         /// <remarks>
         /// Encoding decision is complex. This is the order of priority:
         /// - If the M DB runs in UTF-8, that's what we are going to use.
-        /// - If that's not so, /e sets the default encoding. If /e is a non-existent encoding, move forward.
+        /// - If that's not so, /e sets the default encoding. If /e is a non-existent encoding, move to next step.
         /// - If /e is not supplied or is not recognized, the default encoding is the Windows default Encoding for the user.
         /// </remarks>
         [STAThread()]
@@ -605,7 +605,7 @@ namespace IndianHealthService.ClinicalScheduling
             dr = new DataRelation("GroupResource",	//Relation Name
                 m_dsGlobal.Tables["ResourceGroup"].Columns["RESOURCE_GROUP"],	//Parent
                 m_dsGlobal.Tables["GroupResources"].Columns["RESOURCE_GROUP"]);	//Child
-            CGSchedLib.OutputArray(m_dsGlobal.Tables["GroupResources"], "GroupResources");
+
             m_dsGlobal.Relations.Add(dr);
 
             //HospitalLocation table

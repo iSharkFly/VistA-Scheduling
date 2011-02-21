@@ -374,7 +374,7 @@ namespace IndianHealthService.ClinicalScheduling
 			ArrayList apptTypeIDs = new ArrayList();
 
 			rAppointmentSchedule = CGSchedLib.CreateAssignedSlotSchedule(m_DocManager, (string) m_sResourcesArray[0], this.m_dStartDate, this.m_dEndDate, apptTypeIDs,/* */ this.m_ScheduleType, "0");
-			CGSchedLib.OutputArray(rAppointmentSchedule, "rAppointmentSchedule");
+
 			foreach (DataRow r in rAppointmentSchedule.Rows) 
 			{
 				nKeyID = Convert.ToInt32(r["AVAILABILITYID"].ToString());
