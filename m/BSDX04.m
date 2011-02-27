@@ -1,8 +1,13 @@
-BSDX04	; IHS/OIT/HMW - WINDOWS SCHEDULING RPCS ;  ; 7/15/10 12:44pm
+BSDX04	; IHS/OIT/HMW - WINDOWS SCHEDULING RPCS ;  ; 2/27/11 6:32am
 	;;1.5;BSDX;;Jan 25, 2011
-	   ; Change Log:
-	   ; July 11 2010: Pass BSDXSTART and END as FM dates rather than US formatted dates
-	   ;       for i18n
+	; Change Log:
+	; July 11 2010: Pass BSDXSTART and END as FM dates rather than US formatted dates
+	;       for i18n
+	; Feb 27 2010 (v. 1.5) SMH
+	; - Grab multiple resources instead of a single resource. 
+	;   --> Will be passed from C# as | delimited.
+	; - Change in algorithm. Padding part to pad start and end dates to coincide
+	;   --> with schedule now not performed. C# won't need that anymore.
 	;
 	;
 CASSCHD(BSDXY,BSDXRES,BSDXSTART,BSDXEND,BSDXTYPES,BSDXSRCH)	;EP
@@ -19,19 +24,16 @@ CASSET	;EP
 	S ^BSDXTMP($J,BSDXI)=$C(31)
 	Q
 	;
-CASSCH(BSDXY,BSDXRES,BSDXSTART,BSDXEND,BSDXTYPES,BSDXSRCH)	;EP
-	;Called by BSDX CREATE ASGND SLOT SCHED
-	;Create Assigned Slot Schedule recordset
+CASSCH(BSDXY,BSDXRES,BSDXSTART,BSDXEND,BSDXTYPES,BSDXSRCH)	;EP  -- RPC: BSDX CREATE ASGND SLOT SCHED
+	;Create Assigned Slot Schedule recordset (Access Blocks, Availabilities, etc.)
 	;This call is used both to create a schedule of availability for the calendar display
 	;and to search for availability in the Find Appointment function
 	;
-	;BSDXRES is resource name
-	   ;
-	   ;//smh
-	   ; BSDXSTART and BSDXEND both passed in FM Format.
-	   ; BSDXSTART is the Date Portion of FM Date
-	   ; BSDXEND -- pass date and h,m,s as well
-	   ;//smh
+	;BSDXRES is resources name, delimited by |
+	;
+	; BSDXSTART and BSDXEND both passed in FM Format.
+	; BSDXSTART is the Date Portion of FM Date
+	; BSDXEND -- pass date and h,m,s as well
 	;
 	;BSDXTYPES is |-delimited list of Access Type Names
 	;If BSDXTYPES is "" then the screen passes all types.
@@ -47,14 +49,14 @@ CASSCH(BSDXY,BSDXRES,BSDXSTART,BSDXEND,BSDXTYPES,BSDXSRCH)	;EP
 	;BSDX CREATE ASGND SLOT SCHED^ROGERS,BUCK^<fmdate>^<fmdate>^2
 	;S ^HW("BSDX04")=BSDXRES_U_BSDXSTART_U_BSDXEND
 	;
-	N BSDXERR,BSDXIEN,BSDXDEP,BSDXTYPED,BSDXTYPE,BSDXALO,BSDXBS,BSDXI,BSDXNEND,BSDXNSTART,BSDXPEND,BSDXRESD,BSDXRESN,BSDXS,BSDXZ,BSDXTMP,BSDXQ,BSDXNOT,BSDXNOD,BSDXAD
+	N BSDXERR,BSDXIEN,BSDXDEP,BSDXTYPED,BSDXTYPE,BSDXBS,BSDXI,BSDXNEND,BSDXNSTART,BSDXPEND,BSDXRESD,BSDXRESN,BSDXS,BSDXZ,BSDXTMP,BSDXQ,BSDXNOT,BSDXNOD,BSDXAD
 	N BSDXSUBCD
 	S X="CASSET^BSDX04",@^%ZOSF("TRAP")
 	K ^BSDXTMP($J)
 	S BSDXERR=""
 	S BSDXY="^BSDXTMP("_$J_")"
 	S ^BSDXTMP($J,0)="D00030START_TIME^D00030END_TIME^I00010SLOTS^T00030RESOURCE^T00010ACCESS_TYPE^T00250NOTE^I00030AVAILABILITYID"_$C(30)
-	S BSDXALO=0,BSDXI=2
+	S BSDXI=2
 	;
 	;Get Access Type IDs
 	N BSDXK,BSDXTYPED,BSDXL
@@ -65,41 +67,44 @@ CASSCH(BSDXY,BSDXRES,BSDXSTART,BSDXEND,BSDXTYPES,BSDXSRCH)	;EP
 	. I '$D(^BSDXTYPE("B",BSDXL)) S $P(BSDXTYPED,"|",BSDXK)=0 Q
 	. S $P(BSDXTYPED,"|",BSDXK)=$O(^BSDXTYPE("B",BSDXL,0))
 	;
-	D
-	. S BSDXBS=0
-	. S BSDXRESN=BSDXRES
+	N BSDXCOUN ; Counter
+	FOR BSDXCOUN=1:1:$L(BSDXRES,"|") DO  ;smh - d in algo to do multiple res
+	. S BSDXRESN=$P(BSDXRES,"|",BSDXCOUN)
 	. Q:BSDXRESN=""
 	. Q:'$D(^BSDXRES("B",BSDXRESN))
-	. S BSDXRESD=$O(^BSDXRES("B",BSDXRESN,0)) Q:'+BSDXRESD
+	. S BSDXRESD=$O(^BSDXRES("B",BSDXRESN,0)) 
+	. Q:'+BSDXRESD
 	. Q:'$D(^BSDXAB("ARSCT",BSDXRESD))
+	. S BSDXBS=0
 	. D STRES(BSDXRESN,BSDXRESD)
 	. Q
 	;
+	; V 1.5 -- All of this commented out; algo changed on C# side.
 	;start, end, slots, resource, accesstype, note, availabilityid
 	;I '+BSDXSRCH,BSDXALO D
-	I BSDXALO D
-	. ;If first block start time > input start time then pad with new block
-	. I BSDXBS>BSDXSTART K BSDXTMP D
-	. . S Y=BSDXSTART X ^DD("DD") S Y=$TR(Y,"@"," ")
-	. . S BSDXTMP=Y
-	. . S Y=BSDXBS X ^DD("DD") S Y=$TR(Y,"@"," ")
-	. . S BSDXTMP=BSDXTMP_"^"_Y_"^0^"_BSDXRESN_"^0^^0"_$C(30)
-	. . S ^BSDXTMP($J,1)=BSDXTMP
-	. ;
-	. ;If first block start time < input start time then trim
-	. I BSDXBS<BSDXSTART D
-	. . S Y=BSDXSTART
-	. . X ^DD("DD") S Y=$TR(Y,"@"," ")
-	. . S $P(^BSDXTMP($J,2),U,1)=Y
-	. ;
-	. ;If last block end time < input end time then pad end with new block
-	. I BSDXPEND<BSDXEND D
-	. . S Y=BSDXPEND X ^DD("DD") S Y=$TR(Y,"@"," ")
-	. . S BSDXTMP=Y
-	. . S Y=BSDXEND X ^DD("DD") S Y=$TR(Y,"@"," ")
-	. . S BSDXTMP=BSDXTMP_"^"_Y_"^0^"_BSDXRESN_"^0^^0"_$C(30)
-	. . S ^BSDXTMP($J,BSDXI-1)=BSDXTMP
-	. ;
+	; I BSDXALO D
+	; . ;If first block start time > input start time then pad with new block
+	; . I BSDXBS>BSDXSTART K BSDXTMP D
+	; . . S Y=BSDXSTART X ^DD("DD") S Y=$TR(Y,"@"," ")
+	; . . S BSDXTMP=Y
+	; . . S Y=BSDXBS X ^DD("DD") S Y=$TR(Y,"@"," ")
+	; . . S BSDXTMP=BSDXTMP_"^"_Y_"^0^"_BSDXRESN_"^0^^0"_$C(30)
+	; . . S ^BSDXTMP($J,1)=BSDXTMP
+	; . ;
+	; . ;If first block start time < input start time then trim
+	; . I BSDXBS<BSDXSTART D
+	; . . S Y=BSDXSTART
+	; . . X ^DD("DD") S Y=$TR(Y,"@"," ")
+	; . . S $P(^BSDXTMP($J,2),U,1)=Y
+	; . ;
+	; . ;If last block end time < input end time then pad end with new block
+	; . I BSDXPEND<BSDXEND D
+	; . . S Y=BSDXPEND X ^DD("DD") S Y=$TR(Y,"@"," ")
+	; . . S BSDXTMP=Y
+	; . . S Y=BSDXEND X ^DD("DD") S Y=$TR(Y,"@"," ")
+	; . . S BSDXTMP=BSDXTMP_"^"_Y_"^0^"_BSDXRESN_"^0^^0"_$C(30)
+	; . . S ^BSDXTMP($J,BSDXI-1)=BSDXTMP
+	; . ;
 	S ^BSDXTMP($J,BSDXI)=$C(31)
 	Q
 	;
@@ -156,5 +161,4 @@ STCOMM(BSDXRESN,BSDXRESD,BSDXS,BSDXAD)	;
 	S BSDXPEND=BSDXNEND
 	S ^BSDXTMP($J,BSDXI)=BSDXZ_"^"_BSDXAD_$C(30)
 	S BSDXI=BSDXI+2
-	S BSDXALO=1 ;At Least One record will be returned
 	Q
