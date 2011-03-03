@@ -105,7 +105,7 @@ namespace IndianHealthService.ClinicalScheduling
             this.panelRight.Dock = System.Windows.Forms.DockStyle.Right;
             this.panelRight.Location = new System.Drawing.Point(728, 0);
             this.panelRight.Name = "panelRight";
-            this.panelRight.Size = new System.Drawing.Size(120, 364);
+            this.panelRight.Size = new System.Drawing.Size(120, 343);
             this.panelRight.TabIndex = 1;
             // 
             // panelClip
@@ -166,7 +166,7 @@ namespace IndianHealthService.ClinicalScheduling
             // 
             this.panelBottom.Controls.Add(this.statusBar1);
             this.panelBottom.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panelBottom.Location = new System.Drawing.Point(8, 340);
+            this.panelBottom.Location = new System.Drawing.Point(8, 319);
             this.panelBottom.Name = "panelBottom";
             this.panelBottom.Size = new System.Drawing.Size(720, 24);
             this.panelBottom.TabIndex = 2;
@@ -194,10 +194,9 @@ namespace IndianHealthService.ClinicalScheduling
             // 
             this.dateTimePicker1.Dock = System.Windows.Forms.DockStyle.Right;
             this.dateTimePicker1.DropDownAlign = System.Windows.Forms.LeftRightAlignment.Right;
-            this.dateTimePicker1.Format = System.Windows.Forms.DateTimePickerFormat.Short;
-            this.dateTimePicker1.Location = new System.Drawing.Point(592, 0);
+            this.dateTimePicker1.Location = new System.Drawing.Point(517, 0);
             this.dateTimePicker1.Name = "dateTimePicker1";
-            this.dateTimePicker1.Size = new System.Drawing.Size(128, 20);
+            this.dateTimePicker1.Size = new System.Drawing.Size(203, 20);
             this.dateTimePicker1.TabIndex = 4;
             this.dateTimePicker1.ValueChanged += new System.EventHandler(this.dateTimePicker1_ValueChanged);
             // 
@@ -218,7 +217,7 @@ namespace IndianHealthService.ClinicalScheduling
             this.panelCenter.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panelCenter.Location = new System.Drawing.Point(8, 24);
             this.panelCenter.Name = "panelCenter";
-            this.panelCenter.Size = new System.Drawing.Size(712, 316);
+            this.panelCenter.Size = new System.Drawing.Size(712, 295);
             this.panelCenter.TabIndex = 4;
             // 
             // ctxCalendarGrid
@@ -254,7 +253,7 @@ namespace IndianHealthService.ClinicalScheduling
             this.tvSchedules.HotTracking = true;
             this.tvSchedules.Location = new System.Drawing.Point(0, 0);
             this.tvSchedules.Name = "tvSchedules";
-            this.tvSchedules.Size = new System.Drawing.Size(8, 364);
+            this.tvSchedules.Size = new System.Drawing.Size(8, 343);
             this.tvSchedules.Sorted = true;
             this.tvSchedules.TabIndex = 5;
             // 
@@ -455,7 +454,7 @@ namespace IndianHealthService.ClinicalScheduling
             this.splitter1.Dock = System.Windows.Forms.DockStyle.Right;
             this.splitter1.Location = new System.Drawing.Point(720, 24);
             this.splitter1.Name = "splitter1";
-            this.splitter1.Size = new System.Drawing.Size(8, 316);
+            this.splitter1.Size = new System.Drawing.Size(8, 295);
             this.splitter1.TabIndex = 6;
             this.splitter1.TabStop = false;
             // 
@@ -485,19 +484,19 @@ namespace IndianHealthService.ClinicalScheduling
             this.calendarGrid1.Name = "calendarGrid1";
             this.calendarGrid1.Resources = ((System.Collections.ArrayList)(resources.GetObject("calendarGrid1.Resources")));
             this.calendarGrid1.SelectedAppointment = 0;
-            this.calendarGrid1.Size = new System.Drawing.Size(712, 316);
+            this.calendarGrid1.Size = new System.Drawing.Size(712, 295);
             this.calendarGrid1.StartDate = new System.DateTime(2003, 1, 27, 0, 0, 0, 0);
             this.calendarGrid1.TabIndex = 2;
             this.calendarGrid1.TimeScale = 20;
-            this.calendarGrid1.CGAppointmentAdded += new CalendarGrid.CGAppointmentChangedHandler(this.calendarGrid1_CGAppointmentAdded);
-            this.calendarGrid1.CGAppointmentChanged += new CalendarGrid.CGAppointmentChangedHandler(this.calendarGrid1_CGAppointmentChanged);
-            this.calendarGrid1.CGSelectionChanged += new CalendarGrid.CGSelectionChangedHandler(this.calendarGrid1_CGSelectionChanged);
+            this.calendarGrid1.CGAppointmentChanged += new IndianHealthService.ClinicalScheduling.CalendarGrid.CGAppointmentChangedHandler(this.calendarGrid1_CGAppointmentChanged);
+            this.calendarGrid1.CGAppointmentAdded += new IndianHealthService.ClinicalScheduling.CalendarGrid.CGAppointmentChangedHandler(this.calendarGrid1_CGAppointmentAdded);
+            this.calendarGrid1.CGSelectionChanged += new IndianHealthService.ClinicalScheduling.CalendarGrid.CGSelectionChangedHandler(this.calendarGrid1_CGSelectionChanged);
             this.calendarGrid1.DoubleClick += new System.EventHandler(this.calendarGrid1_DoubleClick);
             // 
             // CGAVView
             // 
             this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
-            this.ClientSize = new System.Drawing.Size(848, 364);
+            this.ClientSize = new System.Drawing.Size(848, 343);
             this.Controls.Add(this.panelCenter);
             this.Controls.Add(this.splitter1);
             this.Controls.Add(this.panelTop);
@@ -726,7 +725,7 @@ namespace IndianHealthService.ClinicalScheduling
 				{
 					DateTime sStart2 = a.StartTime;
 					DateTime sEnd2 = a.EndTime;
-					if (CGSchedLib.TimesOverlap(dStart, dEnd, a.StartTime, a.EndTime))
+					if (CalendarGrid.TimesOverlap(dStart, dEnd, a.StartTime, a.EndTime))
 					{
 						MessageBox.Show("Access blocks may not overlap.","Clinical Scheduling", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
 						return;

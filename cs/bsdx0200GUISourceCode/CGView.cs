@@ -616,7 +616,7 @@ namespace IndianHealthService.ClinicalScheduling
             this.tvSchedules.HotTracking = true;
             this.tvSchedules.Location = new System.Drawing.Point(0, 0);
             this.tvSchedules.Name = "tvSchedules";
-            this.tvSchedules.Size = new System.Drawing.Size(128, 400);
+            this.tvSchedules.Size = new System.Drawing.Size(128, 358);
             this.tvSchedules.Sorted = true;
             this.tvSchedules.TabIndex = 1;
             this.tvSchedules.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.tvSchedules_AfterSelect);
@@ -663,7 +663,7 @@ namespace IndianHealthService.ClinicalScheduling
             this.panelRight.Dock = System.Windows.Forms.DockStyle.Right;
             this.panelRight.Location = new System.Drawing.Point(941, 0);
             this.panelRight.Name = "panelRight";
-            this.panelRight.Size = new System.Drawing.Size(128, 400);
+            this.panelRight.Size = new System.Drawing.Size(128, 358);
             this.panelRight.TabIndex = 3;
             this.panelRight.Visible = false;
             // 
@@ -736,10 +736,9 @@ namespace IndianHealthService.ClinicalScheduling
             // 
             this.dateTimePicker1.Dock = System.Windows.Forms.DockStyle.Right;
             this.dateTimePicker1.DropDownAlign = System.Windows.Forms.LeftRightAlignment.Right;
-            this.dateTimePicker1.Format = System.Windows.Forms.DateTimePickerFormat.Short;
-            this.dateTimePicker1.Location = new System.Drawing.Point(685, 0);
+            this.dateTimePicker1.Location = new System.Drawing.Point(607, 0);
             this.dateTimePicker1.Name = "dateTimePicker1";
-            this.dateTimePicker1.Size = new System.Drawing.Size(128, 20);
+            this.dateTimePicker1.Size = new System.Drawing.Size(206, 20);
             this.dateTimePicker1.TabIndex = 1;
             this.dateTimePicker1.CloseUp += new System.EventHandler(this.dateTimePicker1_CloseUp);
             this.dateTimePicker1.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.dateTimePicker1_KeyPress);
@@ -760,7 +759,7 @@ namespace IndianHealthService.ClinicalScheduling
             this.panelCenter.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panelCenter.Location = new System.Drawing.Point(136, 24);
             this.panelCenter.Name = "panelCenter";
-            this.panelCenter.Size = new System.Drawing.Size(802, 352);
+            this.panelCenter.Size = new System.Drawing.Size(802, 310);
             this.panelCenter.TabIndex = 7;
             // 
             // ctxCalendarGrid
@@ -846,7 +845,7 @@ namespace IndianHealthService.ClinicalScheduling
             // 
             this.panelBottom.Controls.Add(this.statusBar1);
             this.panelBottom.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panelBottom.Location = new System.Drawing.Point(136, 376);
+            this.panelBottom.Location = new System.Drawing.Point(136, 334);
             this.panelBottom.Name = "panelBottom";
             this.panelBottom.Size = new System.Drawing.Size(802, 24);
             this.panelBottom.TabIndex = 8;
@@ -864,7 +863,7 @@ namespace IndianHealthService.ClinicalScheduling
             // 
             this.splitter1.Location = new System.Drawing.Point(128, 24);
             this.splitter1.Name = "splitter1";
-            this.splitter1.Size = new System.Drawing.Size(8, 376);
+            this.splitter1.Size = new System.Drawing.Size(8, 334);
             this.splitter1.TabIndex = 9;
             this.splitter1.TabStop = false;
             // 
@@ -873,7 +872,7 @@ namespace IndianHealthService.ClinicalScheduling
             this.splitter2.Dock = System.Windows.Forms.DockStyle.Right;
             this.splitter2.Location = new System.Drawing.Point(938, 24);
             this.splitter2.Name = "splitter2";
-            this.splitter2.Size = new System.Drawing.Size(3, 376);
+            this.splitter2.Size = new System.Drawing.Size(3, 334);
             this.splitter2.TabIndex = 10;
             this.splitter2.TabStop = false;
             // 
@@ -901,7 +900,7 @@ namespace IndianHealthService.ClinicalScheduling
             this.calendarGrid1.Name = "calendarGrid1";
             this.calendarGrid1.Resources = ((System.Collections.ArrayList)(resources.GetObject("calendarGrid1.Resources")));
             this.calendarGrid1.SelectedAppointment = 0;
-            this.calendarGrid1.Size = new System.Drawing.Size(802, 352);
+            this.calendarGrid1.Size = new System.Drawing.Size(802, 310);
             this.calendarGrid1.StartDate = new System.DateTime(2003, 1, 27, 0, 0, 0, 0);
             this.calendarGrid1.TabIndex = 0;
             this.calendarGrid1.TimeScale = 20;
@@ -914,7 +913,7 @@ namespace IndianHealthService.ClinicalScheduling
             // CGView
             // 
             this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
-            this.ClientSize = new System.Drawing.Size(1069, 400);
+            this.ClientSize = new System.Drawing.Size(1069, 358);
             this.Controls.Add(this.panelCenter);
             this.Controls.Add(this.panelBottom);
             this.Controls.Add(this.splitter2);
@@ -1987,15 +1986,15 @@ namespace IndianHealthService.ClinicalScheduling
 				//Save to Database
                 this.Document.CheckInAppointment(nApptID, dtCheckIn);
 
-                //Tell appointment that it is checked in--smh cancel that!
-                //a.CheckInTime = DateTime.Now;
+                //Tell appointment that it is checked in
+                a.CheckInTime = DateTime.Now;
 
                 //smh new code
                 if (dlgCheckin.PrintRouteSlip)
                     this.printRoutingSlip.Print();
                 // end new code
 
-                //redraw grid (would this work???)
+                //redraw grid
 				this.calendarGrid1.Invalidate();
 			}
 			catch (Exception ex)
@@ -2474,11 +2473,12 @@ namespace IndianHealthService.ClinicalScheduling
             if (dSearch.ShowDialog(this) == DialogResult.Cancel)
                 return;
 
-            string sResource = dSearch.SelectedResource;
+            CGAvailability av = dSearch.SelectedAvailability;
+
             ArrayList alResource = new ArrayList();
-            alResource.Add(sResource);
-            DateTime sDate = dSearch.SelectedDate;
-            m_sDocName = sResource;
+            alResource.Add(av.ResourceList);
+            DateTime sDate = av.StartTime;
+            m_sDocName = av.ResourceList;
             OpenSelectedSchedule(alResource, sDate);
 
         }

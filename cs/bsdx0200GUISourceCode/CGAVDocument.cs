@@ -168,7 +168,7 @@ namespace IndianHealthService.ClinicalScheduling
 				{
 					DateTime sStart2 = a.StartTime;
 					DateTime sEnd2 = a.EndTime;
-					if ((a.AppointmentKey != pAppt.AppointmentKey) && (CGSchedLib.TimesOverlap(dNewStart, dNewEnd, a.StartTime, a.EndTime)))
+					if ((a.AppointmentKey != pAppt.AppointmentKey) && (CalendarGrid.TimesOverlap(dNewStart, dNewEnd, a.StartTime, a.EndTime)))
 					{
 						MessageBox.Show("Access blocks may not overlap.","Clinical Scheduling", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
 						return;
@@ -297,7 +297,7 @@ namespace IndianHealthService.ClinicalScheduling
 				{
 					DateTime sStart2 = a.StartTime;
 					DateTime sEnd2 = a.EndTime;
-					if (CGSchedLib.TimesOverlap(aCopy.StartTime, aCopy.EndTime, a.StartTime, a.EndTime))
+					if (CalendarGrid.TimesOverlap(aCopy.StartTime, aCopy.EndTime, a.StartTime, a.EndTime))
 					{
 						//						throw new Exception("Access blocks may not overlap.");
 						MessageBox.Show("Access blocks may not overlap.","Clinical Scheduling", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
@@ -373,7 +373,7 @@ namespace IndianHealthService.ClinicalScheduling
 
 			ArrayList apptTypeIDs = new ArrayList();
 
-			rAppointmentSchedule = CGSchedLib.CreateAssignedSlotSchedule(m_DocManager, (string) m_sResourcesArray[0], this.m_dStartDate, this.m_dEndDate, apptTypeIDs,/* */ this.m_ScheduleType, "0");
+			rAppointmentSchedule = CGSchedLib.CreateAvailabilitySchedule(m_DocManager, m_sResourcesArray, this.m_dStartDate, this.m_dEndDate, apptTypeIDs,/* */ this.m_ScheduleType, "0");
 
 			foreach (DataRow r in rAppointmentSchedule.Rows) 
 			{

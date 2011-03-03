@@ -36,7 +36,7 @@
     <RemoteDebugMachine>
     </RemoteDebugMachine>
     <StartAction>Project</StartAction>
-    <StartArguments>/s=192.168.56.101 /p=9260 /a=shabiel12 /v=catdog.77</StartArguments>
+    <StartArguments>/s=172.16.16.108 /p=9250 /a=s.habiel /v=catdog.66</StartArguments>
     <StartPage>
     </StartPage>
     <StartProgram>C:\WINDOWS\Microsoft.NET\Framework\v1.1.4322\IEExec.exe</StartProgram>

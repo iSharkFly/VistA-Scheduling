@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
 using IndianHealthService.BMXNet;
+using System.Linq;
 
 namespace IndianHealthService.ClinicalScheduling
 {
@@ -626,8 +627,122 @@ namespace IndianHealthService.ClinicalScheduling
             this.m_sResourcesArray.Add(sResource);
         }
 
+        /// <summary>
+        /// Gets number of slots left in a certain selection on the grid. Used in Multiple Places.
+        /// </summary>
+        /// <param name="dSelStart">Selection Start Date</param>
+        /// <param name="dSelEnd">Selection End Date</param>
+        /// <param name="sResource">Resource Name</param>
+        /// <param name="sAccessType">Out: Name of Access Type</param>
+        /// <param name="sAvailabilityMessage">Out: Access Note</param>
+        /// <returns>Number of slots</returns>
         public int SlotsAvailable(DateTime dSelStart, DateTime dSelEnd, string sResource, out string sAccessType, out string sAvailabilityMessage)
         {
+
+
+            sAccessType = "";               //default out value
+            sAvailabilityMessage = "";      //default out value
+
+            double slotsAvailable = 0;      //defalut return value
+
+            //NOTE: What's this lock? This lock makes sure that nobody is editing the availability array
+            //when we are looking at it. Since the availability array could potentially be updated on
+            //a different thread, we are can be potentially left stuck with an empty array.
+            //
+            //The other place that uses this lock is the RefershAvailabilitySchedule method
+            //
+            //This is a temporary fix until I figure out how to divorce the availbilities here from those drawn
+            //on the calendar. Appointments are cloned b/c they are in an object that supports that; and b/c I
+            //don't need to suddenly query them at runtime like I do with Availabilities.
+
+            //Let's Try Linq
+            lock (this.m_pAvArray)
+            {
+                //This foreach loop looks for an availability that overlaps where the user clicked.
+                //There can only be one, as availabilites cannot overlap each other (enforced at the DB level)
+                //If selection hits multiple blocks, get the block with the most slots (reflected by the sorting here)
+                CGAvailability[] pAVs = (from pAV in this.m_pAvArray.Cast<CGAvailability>()
+                                         where (sResource == pAV.ResourceList && CalendarGrid.TimesOverlap(dSelStart, dSelEnd, pAV.StartTime, pAV.EndTime))
+                                         orderby pAV.Slots descending
+                                         select pAV)
+                                         .ToArray<CGAvailability>();
+
+                if ((pAVs.Length) == 0) return 0;
+
+                slotsAvailable = pAVs[0].Slots;
+                sAccessType = pAVs[0].AccessTypeName;
+                sAvailabilityMessage = pAVs[0].Note;
+
+                //Subtract total slots current appointments take up.
+                slotsAvailable -= (from appt in this.Appointments.AppointmentTable.Values.Cast<CGAppointment>()
+                                   //If the resource is the same and the user selection overlaps, then...
+                                   where (sResource == appt.Resource && CalendarGrid.TimesOverlap(pAVs[0].StartTime, pAVs[0].EndTime, appt.StartTime, appt.EndTime))
+                                   // if appt starttime is before avail start time, only count against the avail starting from the availability start time
+                                   let startTimeToCountAgainstBlock = appt.StartTime < pAVs[0].StartTime ? pAVs[0].StartTime : appt.StartTime
+                                   // if appt endtime is after the avail ends, only count against the avail up to where the avail ends
+                                   let endTimeToCountAgainstBlock = appt.EndTime > pAVs[0].EndTime ? pAVs[0].EndTime : appt.EndTime
+                                   // theoretical minutes per slot for the availability
+                                   let minPerSlot = (pAVs[0].EndTime - pAVs[0].StartTime).TotalMinutes / pAVs[0].Slots
+                                   // how many minutes does this appointment take away from the slot
+                                   let minPerAppt = (endTimeToCountAgainstBlock - startTimeToCountAgainstBlock).TotalMinutes
+                                   // how many slots the appointment takes up using this availability's scale
+                                   let slotsConsumed = minPerAppt / minPerSlot
+                                   select slotsConsumed)
+                                   // add up SlotsConsumed to substract from slotsAvailable
+                                   .Sum();
+            }
+
+            return (int)slotsAvailable;
+
+            /* OLD ALGOTHRIM 2
+
+            lock (this.m_pAvArray)
+            {
+                //This foreach loop looks for an availability that overlaps where the user clicked.
+                //There can only be one, as availabilites cannot overlap each other (enforced at the DB level)
+                //Therefore, we loop, and once we find it, we break.
+                foreach (CGAvailability pAV in this.m_pAvArray)
+                {
+                    //If the resource is the same and the user selection overlaps, then...
+                    if (sResource == pAV.ResourceList && CalendarGrid.TimesOverlap(dSelStart, dSelEnd, pAV.StartTime, pAV.EndTime))
+                    {
+                        slotsAvailable = pAV.Slots;         //variable now holds the total number of slots
+                        sAccessType = pAV.AccessTypeName;   //Access Name
+                        sAvailabilityMessage = pAV.Note;    //Access Block Note
+                        
+                        //Here we substract each appointment weight in slots from slotsAvailable
+                        foreach (DictionaryEntry apptDict in this.m_appointments.AppointmentTable)
+                        {
+                            CGAppointment appt = (CGAppointment)apptDict.Value;
+                            //If the appointment is in the same resource and overlaps with this availablity
+                            if (sResource == appt.Resource && CalendarGrid.TimesOverlap(pAV.StartTime, pAV.EndTime, appt.StartTime, appt.EndTime))
+                            {
+                                // if appt starttime is before avail start time, only count against the avail starting from the availability start time
+                                DateTime startTimeToCountAgainstBlock = appt.StartTime < pAV.StartTime ? pAV.StartTime : appt.StartTime;
+                                // if appt endtime is after the avail ends, only count against the avail up to where the avail ends
+                                DateTime endTimeToCountAgainstBlock = appt.EndTime > pAV.EndTime ? pAV.EndTime : appt.EndTime;
+                                // theoretical minutes per slot for the availability
+                                double minPerSlot = (pAV.EndTime - pAV.StartTime).TotalMinutes/pAV.Slots;
+                                // how many minutes does this appointment take away from the slot
+                                double minPerAppt = (endTimeToCountAgainstBlock - startTimeToCountAgainstBlock).TotalMinutes;
+                                // how many slots the appointment takes up using this availability's scale
+                                double slotsConsumed = minPerAppt / minPerSlot;
+                                // subscract that from the total slots for the availability
+                                slotsAvailable -= slotsConsumed;
+                            } //end if
+                            //now go to the next appointment in foreach
+                        } 
+                        // As I said above, we can match only one availability. Once we found it and substracted from it; we are done.
+                        break;
+                    }
+                }
+                // We return the integer portion of the variable for display to the user or for calculations.
+                // That means, if 2.11 slots are left, the user sees 2. If 2.66, still 2.
+                return (int)slotsAvailable;
+            }
+            */
+
+            /* ORIGINAL ALGORITHM
             sAccessType = "";
             sAvailabilityMessage = "";
             DateTime dStart;
@@ -694,6 +809,7 @@ namespace IndianHealthService.ClinicalScheduling
                 nAvailableSlots = 0;
             }
             return nAvailableSlots;
+            */
         }
 
         /// <summary>

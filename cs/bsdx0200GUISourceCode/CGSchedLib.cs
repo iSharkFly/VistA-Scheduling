@@ -1,10 +1,8 @@
 using System;
 using System.Data;
-//using System.Data.OleDb;
 using System.Collections;
 using System.Diagnostics;
 using System.Drawing;
-using IndianHealthService.BMXNet;
 
 namespace IndianHealthService.ClinicalScheduling
 {
@@ -23,28 +21,19 @@ namespace IndianHealthService.ClinicalScheduling
         /// <summary>
         /// Gets appointments from VISTA to display in Grid
         /// </summary>
-        /// <param name="docManager"></param>
-        /// <param name="saryResNames"></param>
-        /// <param name="StartTime"></param>
-        /// <param name="EndTime"></param>
+        /// <param name="docManager">God Class</param>
+        /// <param name="saryResNames">Resource Names Array</param>
+        /// <param name="StartTime">Self Explanatory</param>
+        /// <param name="EndTime">Self Explanatory</param>
         /// <returns></returns>
 		public static DataTable CreateAppointmentSchedule(CGDocumentManager docManager, ArrayList saryResNames, DateTime StartTime, DateTime EndTime)
 		{
-			string sResName = "";
-			for  (int i = 0; i < saryResNames.Count; i++)
-			{
-				sResName += saryResNames[i];
-				if ((i+1) < saryResNames.Count)
-					sResName += "|";
-			}
-			
-			
+            string sResName = string.Join("|", saryResNames.ToArray());			
             string sStart = FMDateTime.Create(StartTime).DateOnly.FMDateString;
             string sEnd = FMDateTime.Create(EndTime).FMDateString;
 			string sSql = "BSDX CREATE APPT SCHEDULE^" + sResName + "^" + sStart + "^" + sEnd ;
 			DataTable dtRet = docManager.RPMSDataTable(sSql, "AppointmentSchedule");
 			return dtRet;
-			
 		}
 
 
@@ -56,51 +45,52 @@ namespace IndianHealthService.ClinicalScheduling
         /// <param name="StartTime">Self-Explanatory</param>
         /// <param name="EndTime">Self-Explanatory</param>
         /// <param name="saryApptTypes">Array of Access Type IDs</param>
-        /// <param name="stType"></param>
-        /// <param name="sSearchInfo"></param>
+        /// <param name="stType">Not used</param>
+        /// <param name="sSearchInfo">Specific Search Parameters</param>
         /// <returns></returns>
-		public static DataTable CreateAvailabilitySchedule(CGDocumentManager docManager, 
-			ArrayList saryResourceNames, DateTime StartTime, DateTime EndTime, 
-			ArrayList saryApptTypes,/**/ ScheduleType stType, string sSearchInfo) 
-		{
-			DataTable rsOut;
-			rsOut = new DataTable("AvailabilitySchedule");
+        public static DataTable CreateAvailabilitySchedule(CGDocumentManager docManager,
+            ArrayList saryResourceNames, DateTime StartTime, DateTime EndTime,
+            ArrayList saryApptTypes,/**/ ScheduleType stType, string sSearchInfo)
+        {
+            DataTable rsOut = new DataTable("AvailabilitySchedule");
+            if (saryResourceNames.Count == 0) return rsOut;
+            string sResNames = string.Join("|", saryResourceNames.ToArray());
+            string sApptTypeIDs = string.Join("|", saryApptTypes.ToArray());
+            string sStart = FMDateTime.Create(StartTime).DateOnly.FMDateString;
+            string sEnd = FMDateTime.Create(EndTime).FMDateString;
+            string sSql = "BSDX CREATE ASGND SLOT SCHED^" + sResNames + "^" + sStart + "^" + sEnd + "^" + sApptTypeIDs + "^" + sSearchInfo; //+ "^" + sSTType ;
+            rsOut = docManager.RPMSDataTable(sSql, "AssignedSlotSchedule");
 
-			DataTable rsSlotSchedule;
-			DataTable rsApptSchedule;
-			DataTable rsTemp1;
+            return rsOut;
+        }
 
-			int nSize = saryResourceNames.Count;
-			if (nSize == 0) 
-			{
-				return rsOut;
-			}
-			
-			string sResName;
+            /*NOT USED ANYMORE
             //TODO: Optimize: no need to keep looping through resources.
             // for each resource
 			for (int i = 0; i < nSize; i++) 
 			{
 				sResName = saryResourceNames[i].ToString();
                 //Gets all the slots (or Availabities, or AV Blocks if you like)
-				rsSlotSchedule = CGSchedLib.CreateAssignedSlotSchedule(docManager, sResName, StartTime, EndTime, saryApptTypes,/**/ stType, sSearchInfo);
-				
+				rsSlotSchedule = CGSchedLib.CreateAssignedSlotSchedule(docManager, sResName, StartTime, EndTime, saryApptTypes, stType, sSearchInfo);
+                rsTemp1 = rsSlotSchedule;
+
                 //if we have slots
-				if (rsSlotSchedule.Rows.Count > 0 ) 
-				{
+                if (rsSlotSchedule.Rows.Count > 0 ) 
+                {
                     // Get appointment count to substract from the slots
-					rsApptSchedule = CGSchedLib.CreateAppointmentSlotSchedule(docManager, sResName, StartTime, EndTime, stType);
+                    rsApptSchedule = CGSchedLib.CreateAppointmentSlotSchedule(docManager, sResName, StartTime, EndTime, stType);
 
                     // Perform the substraction
-					rsTemp1 = CGSchedLib.SubtractSlotsRS2(rsSlotSchedule, rsApptSchedule, sResName);
+                    rsTemp1 = CGSchedLib.SubtractSlotsRS2(rsSlotSchedule, rsApptSchedule, sResName);
 
-				}
+                }
                 //otherwise, just return the slot schedule we have.
-				else 
-				{
-					rsTemp1 = rsSlotSchedule;
+                else 
+                {
+                    rsTemp1 = rsSlotSchedule;
 
-				}
+                }
+
 
                 // if only one resource was passed in, its availablility is what we want
 				if (i == 0) 
@@ -116,7 +106,7 @@ namespace IndianHealthService.ClinicalScheduling
 			}
 			return rsOut;
 		}		
-
+                */
 
         /* NOT USED ANYMORE!!!
 		public static DataTable CreateAssignedTypeSchedule(CGDocumentManager docManager, string sResourceName, DateTime StartTime, DateTime EndTime, ScheduleType stType)
@@ -280,21 +270,12 @@ namespace IndianHealthService.ClinicalScheduling
         /// <returns>DataTable with the following Columns:
         /// D00030START_TIME^D00030END_TIME^I00010SLOTS^T00030RESOURCE^T00010ACCESS_TYPE^T00250NOTE^I00030AVAILABILITYID
         /// </returns>
-		public static DataTable CreateAssignedSlotSchedule(CGDocumentManager docManager, string sResourceName, DateTime StartTime, 
-            DateTime EndTime, ArrayList rsaryApptTypeIDs, /**/ ScheduleType stType, string sSearchInfo) 
+		/*
+         * public static DataTable CreateAssignedSlotSchedule(CGDocumentManager docManager, string sResourceName, DateTime StartTime, 
+            DateTime EndTime, ArrayList rsaryApptTypeIDs, ScheduleType stType, string sSearchInfo) 
 		{
             //Appointment type ids is now always "" so that all appointment types are returned.
-			string sApptTypeIDs = "";
-			
-            //flatten types by '|'
-			int nSize = rsaryApptTypeIDs.Count;  //nSize is used to decide where to put the '|' sent in the RPC as we flatten sApptTypeIDs
-			for (int i=0; i < nSize; i++) 
-			{
-				sApptTypeIDs += rsaryApptTypeIDs[i];
-				if (i < (nSize-1))
-					sApptTypeIDs += "|";
-			}	
-	
+            string sApptTypeIDs = string.Join("|", rsaryApptTypeIDs.ToArray());
             string sStart = FMDateTime.Create(StartTime).DateOnly.FMDateString;
             string sEnd = FMDateTime.Create(EndTime).FMDateString;
 			string sSql = "BSDX CREATE ASGND SLOT SCHED^" + sResourceName + "^" + sStart + "^" + sEnd + "^" + sApptTypeIDs + "^" + sSearchInfo; //+ "^" + sSTType ;
@@ -302,7 +283,9 @@ namespace IndianHealthService.ClinicalScheduling
 
             return dtRet;
 		}
+        */
 
+        /*
 		public static DataTable CreateCopyTable()
 		{
 			DataTable dtCopy = new DataTable("dtCopy");			
@@ -357,6 +340,7 @@ namespace IndianHealthService.ClinicalScheduling
 
 			return dtCopy;
 		}
+         */
 
         /// <summary>
         /// This gets a datatable which shows the appointments between start and end time, one row per appointment
@@ -367,7 +351,8 @@ namespace IndianHealthService.ClinicalScheduling
         /// <param name="EndTime"></param>
         /// <param name="stType"></param>
         /// <returns>DataTable with 4 columns: START_TIME, END_TIME, SLOTS, RESOURCE </returns>
-		public static DataTable CreateAppointmentSlotSchedule(CGDocumentManager docManager, string sResourceName, DateTime StartTime, DateTime EndTime, ScheduleType stType)
+		/*
+        public static DataTable CreateAppointmentSlotSchedule(CGDocumentManager docManager, string sResourceName, DateTime StartTime, DateTime EndTime, ScheduleType stType)
 		{
             //Change Dates to FM Format
             string sStart = FMDateTime.Create(StartTime).DateOnly.FMDateString;
@@ -423,7 +408,7 @@ namespace IndianHealthService.ClinicalScheduling
             //Convert Appointments to Availabilities, where all appointments become squeezed together.
 			ScheduleFromArray(cdtArray, StartTime, EndTime, ref ctbApptSchedule);
 
-            /*So far, we have the following:
+            So far, we have the following:
              * dtRet -> List of Appointments Start and End times, one row per appointment
              * cdtArray -> Linear 1 dimensional Array of dtRet Start and End times, sorted
              * ctbAppointments -> Arraylist of dtRet as Availabilities
@@ -431,7 +416,7 @@ namespace IndianHealthService.ClinicalScheduling
              *      (overlaps in appointments get converted into availabilties themselves: so
              *      2 appts as 10:10-10:30 and 10:20-10:40 get converted into 10:10-10:20,
              *      10:20-10:30, 10:30-10:40).
-            */
+            
 
             //Find number of TimeBlocks in ctbApptSchedule that overlap the TimeBlocks in ctbAppointments
 			ArrayList ctbApptSchedule2 = new ArrayList();
@@ -497,7 +482,9 @@ namespace IndianHealthService.ClinicalScheduling
 			return dtCopy;
 
 		}
+        */
 
+        /*
 		public static int BlocksOverlap(CGAvailability rBlock, ArrayList rTBArray)
 		{
 			//this overload implements default false for bCountSlots
@@ -541,6 +528,7 @@ namespace IndianHealthService.ClinicalScheduling
 
 			return nCount;
 		}
+        */
 
 		/// <summary>
 		/// Does an appointment overlap with another appointment in the same day?
@@ -551,7 +539,8 @@ namespace IndianHealthService.ClinicalScheduling
 		/// <param name="dEnd2">End Time of Second Appt</param>
 		/// <returns>true or false</returns>
         /// <remarks>Draws 2 rectangles and sees if they overlap using minutes from 1980 as the start point</remarks>
-		public static bool TimesOverlap(DateTime dStart1, DateTime dEnd1, DateTime dStart2, DateTime dEnd2)
+		/*
+        public static bool TimesOverlap(DateTime dStart1, DateTime dEnd1, DateTime dStart2, DateTime dEnd2)
 		{
 			Rectangle rect1 = new Rectangle();
 			Rectangle rect2 = new Rectangle();
@@ -567,7 +556,9 @@ namespace IndianHealthService.ClinicalScheduling
 			bool bRet = rect2.IntersectsWith(rect1);
 			return bRet;
 		}
+        */
 
+        /*
 		public static void ConsolidateBlocks(ArrayList rTBArray)
 		{
 			//TODO: Test this function
@@ -606,7 +597,7 @@ namespace IndianHealthService.ClinicalScheduling
 				}
 			}
 			while (!((bDirty == false) || (rTBArray.Count == 1)));
-		}
+		} */
 
         /// <summary>
         /// My guess is that this calculates remaining slots
@@ -615,7 +606,8 @@ namespace IndianHealthService.ClinicalScheduling
         /// <param name="rsBlocks2"></param>
         /// <param name="sResource"></param>
         /// <returns></returns>
-		public static DataTable SubtractSlotsRS2(DataTable rsBlocks1, DataTable rsBlocks2, string sResource)
+		/*
+        public static DataTable SubtractSlotsRS2(DataTable rsBlocks1, DataTable rsBlocks2, string sResource)
 		{
 			//Subtract slots in rsBlocks2 from rsBlocks1
 			//7-16-01 SUBCLINIC data field in rsBlocks1 persists thru routine.
@@ -679,7 +671,9 @@ namespace IndianHealthService.ClinicalScheduling
 			return rsCopy;
 
 		}
+         */
 
+        /*
 		public static DataTable UnionBlocks(DataTable rs1, DataTable rs2)
 		{
 			//Test input tables
@@ -713,7 +707,9 @@ namespace IndianHealthService.ClinicalScheduling
 			}
 			return rsCopy;
 		}
+        */
 
+        /*
 		public static DataTable IntersectBlocks(DataTable rs1, DataTable rs2)
 		{
 			DataTable rsCopy = CGSchedLib.CreateCopyTable();
@@ -769,7 +765,7 @@ namespace IndianHealthService.ClinicalScheduling
 //							rect2.Y = CGSchedLib.MinSince80(dStart2);
 //							rect2.Height = CGSchedLib.MinSince80(dEnd2) - rect2.Y;
 							if (
-								/*(rect2.IntersectsWith(rect1) == true)*/
+								/*(rect2.IntersectsWith(rect1) == true)
 								(CGSchedLib.TimesOverlap(dStart1, dEnd1, dStart2, dEnd2) == true)
 								&& 
 								((sClinic == sClinic2) || (sClinic == "NONE") || (sClinic2 == "NONE"))
@@ -796,13 +792,15 @@ namespace IndianHealthService.ClinicalScheduling
 			}//foreach r1 in rs1.rows
 			return rsCopy;
 		}//end IntersectBlocks
-
+        */
+        
         /// <summary>
         /// Number of minutes since Jan 1 1980
         /// </summary>
         /// <param name="d">Date to compare</param>
         /// <returns>Minutes as integer</returns>
-		public static int MinSince80(DateTime d)
+		/*
+        public static int MinSince80(DateTime d)
 		{
 			//Returns the total minutes between d and 1 Jan 1980
 			DateTime y = new DateTime(1980,1,1,0,0,0);
@@ -813,7 +811,9 @@ namespace IndianHealthService.ClinicalScheduling
 			int nMinutes = (int) ts.TotalMinutes;
 			return nMinutes;
 		}
+        */
 
+        /*
         /// <summary>
         /// Converts an Array of Times like this:
         /// 10:00 10:00 10:20 10:20 10:30 10:30 10:30 10:40
@@ -908,8 +908,10 @@ namespace IndianHealthService.ClinicalScheduling
 			}
 
 		}//end ScheduleFromArray
-
-		//long CResourceLink::SlotsInBlock(CTimeBlock &rTimeBlock, _RecordsetPtr rsBlock)
+        */
+		
+        /*
+        //long CResourceLink::SlotsInBlock(CTimeBlock &rTimeBlock, _RecordsetPtr rsBlock)
 		public static int SlotsInBlock(CGAvailability rTimeBlock, DataTable rsBlock)
 		{
 			DateTime dStart1;
@@ -951,7 +953,9 @@ namespace IndianHealthService.ClinicalScheduling
 			}
 			return nSlots;
 		}//end SlotsInBlock
+        */
 
+        /*
 		public static string ClinicInBlock(CGAvailability rTimeBlock, DataTable rsBlock)
 		{
 			DateTime dStart1;
@@ -990,7 +994,9 @@ namespace IndianHealthService.ClinicalScheduling
 			}
 			return sClinic;
 		}//end ClinicInBlock
+        */
 
+        /*
 		public static bool ResourceRulesInBlock(CGAvailability rTimeBlock, DataTable rsBlock, ref string sResourceList, ref string sAccessRuleList, ref string sNote)
 		{
 			DateTime dStart1;
@@ -1058,6 +1064,7 @@ namespace IndianHealthService.ClinicalScheduling
 			}
 			return true;
 		}//End ResourceRulesInBlock
+        */
 
 	
 	}

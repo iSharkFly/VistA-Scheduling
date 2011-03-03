@@ -1,22 +1,21 @@
 using System;
-using System.Drawing;
 using System.Collections;
-using System.ComponentModel;
+using System.Collections.Generic;
 using System.Windows.Forms;
 using System.Data;
+using System.Linq;
 //using System.Data.OleDb;
-using IndianHealthService.BMXNet;
 
 namespace IndianHealthService.ClinicalScheduling
 {
 	/// <summary>
-	/// Summary description for DApptSearch.
+	/// Modal Dialog for searching for Patient Slots
 	/// </summary>
 	public class DApptSearch : System.Windows.Forms.Form
 	{
 		private System.Windows.Forms.Panel panel1;
 		private System.Windows.Forms.Button cmdCancel;
-		private System.Windows.Forms.Button cmdOK;
+		private System.Windows.Forms.Button btnAccept;
 		private System.Windows.Forms.Panel pnlDescription;
 		private System.Windows.Forms.GroupBox grpDescription;
 		private System.Windows.Forms.Label lblDescription;
@@ -37,15 +36,24 @@ namespace IndianHealthService.ClinicalScheduling
 		private System.Windows.Forms.RadioButton rdoBoth;
 		private System.Windows.Forms.RadioButton rdoPM;
 		private System.Windows.Forms.RadioButton rdoAM;
-		private System.Windows.Forms.Label label1;
-		private System.Windows.Forms.MonthCalendar calStartDate;
-		private System.Windows.Forms.GroupBox groupBox2;
-		private System.Windows.Forms.DataGrid grdResult;
-		private System.Windows.Forms.Button cmdSearch;
-		/// <summary>
-		/// Required designer variable.
-		/// </summary>
-		private System.ComponentModel.Container components = null;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.GroupBox groupBox2;
+        private System.Windows.Forms.Button cmdSearch;
+        private ListView lstResults;
+        private ColumnHeader colStartTime;
+        private ColumnHeader colEndTime;
+        private ColumnHeader colResource;
+        private ColumnHeader colSlots;
+        private ColumnHeader colAccessType;
+        private ColumnHeader colDate;
+        private Label lblEnd;
+        private Label lblStart;
+        private DateTimePicker dtEnd;
+        private DateTimePicker dtStart;
+        private ColumnHeader colDOW;
+        private ColumnHeader colID;
+      
+        private System.ComponentModel.IContainer components;
 
 		public DApptSearch()
 		{
@@ -59,19 +67,14 @@ namespace IndianHealthService.ClinicalScheduling
 		private DataSet	m_dsGlobal;
 		DataTable		m_dtTypes;
 		DataView		m_dvTypes;
-
+        List<CGAvailability> lstResultantAvailabilities;
+        private CGAvailability _selectedAvailability;
 		DateTime		m_dStart;
 		DateTime		m_dEnd;
 		ArrayList		m_alResources;
 		ArrayList		m_alAccessTypes;
-		string			m_sWeekDays;
-		string			m_sAmpm;
-
-		DataTable		m_dtResult;
-		DataView		m_dvResult;
-
-		string			m_sSelectedResource;
-		DateTime		m_sSelectedDate;
+		string			m_sWeekDays; //only practical use now is for sending to server
+		string			m_sAmpm; // same here.
 
 		#endregion Fields
 
@@ -109,9 +112,11 @@ namespace IndianHealthService.ClinicalScheduling
 		public void InitializePage(ArrayList alResources, CGDocumentManager docManager)
 		{
 
-			this.m_DocManager = docManager;
+            this.Text = "Searching for Appointments in: " + string.Join(" | ", alResources.Cast<string>());
+            
+            this.m_DocManager = docManager;
 			this.m_dsGlobal = m_DocManager.GlobalDataSet;
-			System.IntPtr pHandle = this.Handle;
+			
 			LoadListBox("ALL");
 
 			m_dStart = DateTime.Today;
@@ -135,13 +140,16 @@ namespace IndianHealthService.ClinicalScheduling
 			cboAccessTypeFilter.SelectedIndex = cboAccessTypeFilter.Items.Count - 1;
 			cboAccessTypeFilter.Refresh();
 
-			//Create DataGridTableStyle for Result grid
+
+            /* OLD CODE 
+            //Create DataGridTableStyle for Result grid
 			DataGridTableStyle tsResult = new DataGridTableStyle();
 			tsResult.MappingName = "Result";
 			tsResult.ReadOnly = true;
+
 			// Add START_TIME column style.
 			DataGridTextBoxColumn colStartTime = new DataGridTextBoxColumn();
-			colStartTime.MappingName = "START_TIME";
+            colStartTime.MappingName = "StartTime";
 			colStartTime.HeaderText = "Start Time";
 			colStartTime.Width = 200;
 			colStartTime.Format = "f";
@@ -149,7 +157,7 @@ namespace IndianHealthService.ClinicalScheduling
 			
 			// Add END_TIME column style.
 			DataGridTextBoxColumn colEndTime = new DataGridTextBoxColumn();
-			colEndTime.MappingName = "END_TIME";
+            colEndTime.MappingName = "EndTime";
 			colEndTime.HeaderText = "End Time";
 			colEndTime.Width = 75;
 			colEndTime.Format = "h:mm tt";
@@ -157,7 +165,7 @@ namespace IndianHealthService.ClinicalScheduling
 
 			// Add RESOURCE column style.
 			DataGridTextBoxColumn colResource = new DataGridTextBoxColumn();
-			colResource.MappingName = "RESOURCE";
+            colResource.MappingName = "ResourceList";
 			colResource.HeaderText = "Resource";
 			colResource.Width = 200;
 			tsResult.GridColumnStyles.Add(colResource);
@@ -175,8 +183,9 @@ namespace IndianHealthService.ClinicalScheduling
 			colAccess.HeaderText = "Access Type";
 			colAccess.Width = 200;
 			tsResult.GridColumnStyles.Add(colAccess);
-			grdResult.TableStyles.Add(tsResult);
-
+			//grdResult.TableStyles.Add(tsResult);
+            */
+            
 			this.UpdateDialogData(true);
 		
 		}
@@ -231,13 +240,10 @@ namespace IndianHealthService.ClinicalScheduling
 					m_sWeekDays += "Sunday";
 
 				//Start
-				this.m_dStart = this.calStartDate.SelectionStart;
+                this.m_dStart = this.dtStart.Value;
 
 				//End
-				m_dEnd = calStartDate.SelectionEnd;
-				m_dEnd = m_dEnd.AddHours(23);
-				m_dEnd = m_dEnd.AddMinutes(59);
-
+				this.m_dEnd = this.dtEnd.Value;
 			}		
 		}
 
@@ -269,11 +275,15 @@ namespace IndianHealthService.ClinicalScheduling
             this.panel1 = new System.Windows.Forms.Panel();
             this.cmdSearch = new System.Windows.Forms.Button();
             this.cmdCancel = new System.Windows.Forms.Button();
-            this.cmdOK = new System.Windows.Forms.Button();
+            this.btnAccept = new System.Windows.Forms.Button();
             this.pnlDescription = new System.Windows.Forms.Panel();
             this.grpDescription = new System.Windows.Forms.GroupBox();
             this.lblDescription = new System.Windows.Forms.Label();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.lblEnd = new System.Windows.Forms.Label();
+            this.lblStart = new System.Windows.Forms.Label();
+            this.dtEnd = new System.Windows.Forms.DateTimePicker();
+            this.dtStart = new System.Windows.Forms.DateTimePicker();
             this.label3 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.lstAccessTypes = new System.Windows.Forms.CheckedListBox();
@@ -291,9 +301,16 @@ namespace IndianHealthService.ClinicalScheduling
             this.rdoPM = new System.Windows.Forms.RadioButton();
             this.rdoAM = new System.Windows.Forms.RadioButton();
             this.label1 = new System.Windows.Forms.Label();
-            this.calStartDate = new System.Windows.Forms.MonthCalendar();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
-            this.grdResult = new System.Windows.Forms.DataGrid();
+            this.lstResults = new System.Windows.Forms.ListView();
+            this.colID = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.colDate = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.colDOW = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.colStartTime = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.colEndTime = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.colResource = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.colSlots = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.colAccessType = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.panel1.SuspendLayout();
             this.pnlDescription.SuspendLayout();
             this.grpDescription.SuspendLayout();
@@ -301,14 +318,13 @@ namespace IndianHealthService.ClinicalScheduling
             this.grpDayOfWeek.SuspendLayout();
             this.grpTimeOfDay.SuspendLayout();
             this.groupBox2.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.grdResult)).BeginInit();
             this.SuspendLayout();
             // 
             // panel1
             // 
             this.panel1.Controls.Add(this.cmdSearch);
             this.panel1.Controls.Add(this.cmdCancel);
-            this.panel1.Controls.Add(this.cmdOK);
+            this.panel1.Controls.Add(this.btnAccept);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.panel1.Location = new System.Drawing.Point(0, 461);
             this.panel1.Name = "panel1";
@@ -333,16 +349,15 @@ namespace IndianHealthService.ClinicalScheduling
             this.cmdCancel.TabIndex = 1;
             this.cmdCancel.Text = "Cancel";
             // 
-            // cmdOK
+            // btnAccept
             // 
-            this.cmdOK.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this.cmdOK.Location = new System.Drawing.Point(128, 8);
-            this.cmdOK.Name = "cmdOK";
-            this.cmdOK.Size = new System.Drawing.Size(64, 24);
-            this.cmdOK.TabIndex = 0;
-            this.cmdOK.Text = "OK";
-            this.cmdOK.Visible = false;
-            this.cmdOK.Click += new System.EventHandler(this.cmdOK_Click);
+            this.btnAccept.DialogResult = System.Windows.Forms.DialogResult.OK;
+            this.btnAccept.Location = new System.Drawing.Point(128, 8);
+            this.btnAccept.Name = "btnAccept";
+            this.btnAccept.Size = new System.Drawing.Size(176, 24);
+            this.btnAccept.TabIndex = 0;
+            this.btnAccept.Text = "Select Slot for Appointment";
+            this.btnAccept.Click += new System.EventHandler(this.btnAccept_Click);
             // 
             // pnlDescription
             // 
@@ -377,6 +392,10 @@ namespace IndianHealthService.ClinicalScheduling
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.lblEnd);
+            this.groupBox1.Controls.Add(this.lblStart);
+            this.groupBox1.Controls.Add(this.dtEnd);
+            this.groupBox1.Controls.Add(this.dtStart);
             this.groupBox1.Controls.Add(this.label3);
             this.groupBox1.Controls.Add(this.label2);
             this.groupBox1.Controls.Add(this.lstAccessTypes);
@@ -384,7 +403,6 @@ namespace IndianHealthService.ClinicalScheduling
             this.groupBox1.Controls.Add(this.grpDayOfWeek);
             this.groupBox1.Controls.Add(this.grpTimeOfDay);
             this.groupBox1.Controls.Add(this.label1);
-            this.groupBox1.Controls.Add(this.calStartDate);
             this.groupBox1.Dock = System.Windows.Forms.DockStyle.Top;
             this.groupBox1.Location = new System.Drawing.Point(0, 0);
             this.groupBox1.Name = "groupBox1";
@@ -392,6 +410,38 @@ namespace IndianHealthService.ClinicalScheduling
             this.groupBox1.TabIndex = 56;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Search Parameters";
+            // 
+            // lblEnd
+            // 
+            this.lblEnd.AutoSize = true;
+            this.lblEnd.Location = new System.Drawing.Point(12, 124);
+            this.lblEnd.Name = "lblEnd";
+            this.lblEnd.Size = new System.Drawing.Size(153, 13);
+            this.lblEnd.TabIndex = 67;
+            this.lblEnd.Text = "End Date to Search (Inclusive)";
+            // 
+            // lblStart
+            // 
+            this.lblStart.AutoSize = true;
+            this.lblStart.Location = new System.Drawing.Point(12, 35);
+            this.lblStart.Name = "lblStart";
+            this.lblStart.Size = new System.Drawing.Size(159, 13);
+            this.lblStart.TabIndex = 66;
+            this.lblStart.Text = "Start Date to Search (Inclusive)";
+            // 
+            // dtEnd
+            // 
+            this.dtEnd.Location = new System.Drawing.Point(12, 141);
+            this.dtEnd.Name = "dtEnd";
+            this.dtEnd.Size = new System.Drawing.Size(200, 20);
+            this.dtEnd.TabIndex = 65;
+            // 
+            // dtStart
+            // 
+            this.dtStart.Location = new System.Drawing.Point(12, 54);
+            this.dtStart.Name = "dtStart";
+            this.dtStart.Size = new System.Drawing.Size(200, 20);
+            this.dtStart.TabIndex = 64;
             // 
             // label3
             // 
@@ -541,22 +591,15 @@ namespace IndianHealthService.ClinicalScheduling
             // label1
             // 
             this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label1.Location = new System.Drawing.Point(16, 24);
+            this.label1.Location = new System.Drawing.Point(6, 16);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(136, 16);
             this.label1.TabIndex = 57;
             this.label1.Text = "Date Range:";
             // 
-            // calStartDate
-            // 
-            this.calStartDate.Location = new System.Drawing.Point(16, 40);
-            this.calStartDate.MaxSelectionCount = 62;
-            this.calStartDate.Name = "calStartDate";
-            this.calStartDate.TabIndex = 56;
-            // 
             // groupBox2
             // 
-            this.groupBox2.Controls.Add(this.grdResult);
+            this.groupBox2.Controls.Add(this.lstResults);
             this.groupBox2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.groupBox2.Location = new System.Drawing.Point(0, 208);
             this.groupBox2.Name = "groupBox2";
@@ -565,19 +608,68 @@ namespace IndianHealthService.ClinicalScheduling
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Search Result";
             // 
-            // grdResult
+            // lstResults
             // 
-            this.grdResult.CaptionVisible = false;
-            this.grdResult.DataMember = "";
-            this.grdResult.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.grdResult.HeaderForeColor = System.Drawing.SystemColors.ControlText;
-            this.grdResult.Location = new System.Drawing.Point(3, 16);
-            this.grdResult.Name = "grdResult";
-            this.grdResult.ReadOnly = true;
-            this.grdResult.Size = new System.Drawing.Size(917, 170);
-            this.grdResult.TabIndex = 0;
-            this.grdResult.DoubleClick += new System.EventHandler(this.grdResult_DoubleClick);
-            this.grdResult.CurrentCellChanged += new System.EventHandler(this.grdResult_CurrentCellChanged);
+            this.lstResults.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.colID,
+            this.colDate,
+            this.colDOW,
+            this.colStartTime,
+            this.colEndTime,
+            this.colResource,
+            this.colSlots,
+            this.colAccessType});
+            this.lstResults.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lstResults.FullRowSelect = true;
+            this.lstResults.GridLines = true;
+            this.lstResults.Location = new System.Drawing.Point(3, 16);
+            this.lstResults.MultiSelect = false;
+            this.lstResults.Name = "lstResults";
+            this.lstResults.Size = new System.Drawing.Size(917, 170);
+            this.lstResults.TabIndex = 0;
+            this.lstResults.UseCompatibleStateImageBehavior = false;
+            this.lstResults.View = System.Windows.Forms.View.Details;
+            this.lstResults.DoubleClick += new System.EventHandler(this.lstResults_DoubleClick);
+            // 
+            // colID
+            // 
+            this.colID.Text = "ID";
+            this.colID.Width = 0;
+            // 
+            // colDate
+            // 
+            this.colDate.Text = "Date";
+            this.colDate.Width = 91;
+            // 
+            // colDOW
+            // 
+            this.colDOW.Text = "Day of Week";
+            this.colDOW.Width = 80;
+            // 
+            // colStartTime
+            // 
+            this.colStartTime.Text = "Start Time";
+            this.colStartTime.Width = 87;
+            // 
+            // colEndTime
+            // 
+            this.colEndTime.Text = "End Time";
+            this.colEndTime.Width = 116;
+            // 
+            // colResource
+            // 
+            this.colResource.Text = "Resource";
+            this.colResource.Width = 370;
+            // 
+            // colSlots
+            // 
+            this.colSlots.Text = "Slots";
+            this.colSlots.Width = 47;
+            // 
+            // colAccessType
+            // 
+            this.colAccessType.Text = "Access Type";
+            this.colAccessType.Width = 101;
             // 
             // DApptSearch
             // 
@@ -595,161 +687,205 @@ namespace IndianHealthService.ClinicalScheduling
             this.pnlDescription.ResumeLayout(false);
             this.grpDescription.ResumeLayout(false);
             this.groupBox1.ResumeLayout(false);
+            this.groupBox1.PerformLayout();
             this.grpDayOfWeek.ResumeLayout(false);
             this.grpTimeOfDay.ResumeLayout(false);
             this.groupBox2.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.grdResult)).EndInit();
             this.ResumeLayout(false);
 
 		}
 		#endregion
 
         #region Event Handlers
-        private void cmdOK_Click(object sender, System.EventArgs e)
-		{
-
-		}
 
 		private void cmdSearch_Click(object sender, System.EventArgs e)
 		{
-			//Get the control data into local vars
+			//Tell user we are processing
+            this.Cursor = Cursors.WaitCursor;
+            
+            //Get the control data into local vars
 			UpdateDialogData(false);
 			//Resource array, Begin date, Access type array, MTWTF , AM PM
-			//Assemble |-delimited resource string
-			string sResources = "";
-			for (int j=0; j < m_alResources.Count; j++)
-			{
-				sResources = sResources + m_alResources[j];
-				if (j < (m_alResources.Count - 1))
-					sResources = sResources + "|";
-			}
 
-			//Access Types Array
-			string sTypes = "";
-			if (m_alAccessTypes.Count > 0) 
-			{
-				for (int j=0; j < m_alAccessTypes.Count; j++)
-				{
-					sTypes = sTypes + (string) m_alAccessTypes[j];
-					if (j < (m_alAccessTypes.Count-1))
-						sTypes = sTypes + "|";
-				}
-			}
-
+            //Get Availabilities and Appointments from the DB
+            //NB: m_sAmpm and m_sWeekDays don't have an effect on the M side side right now
 			string sSearchInfo = "1|" + m_sAmpm + "|" + m_sWeekDays;
-			m_dtResult = CGSchedLib.CreateAvailabilitySchedule(m_DocManager, m_alResources, m_dStart, m_dEnd, m_alAccessTypes, ScheduleType.Resource, sSearchInfo);
+			DataTable m_availTable = CGSchedLib.CreateAvailabilitySchedule(m_DocManager, m_alResources, m_dStart, m_dEnd, m_alAccessTypes, ScheduleType.Resource, sSearchInfo);
+            DataTable m_apptTable = CGSchedLib.CreateAppointmentSchedule(m_DocManager, m_alResources, m_dStart, m_dEnd);
 
-			if (m_dtResult.Rows.Count == 0)
-			{
-				MessageBox.Show("No availability found.");
-				return;
-			}
+#if DEBUG            
+            System.Diagnostics.Stopwatch stopwatch = new System.Diagnostics.Stopwatch();
+            stopwatch.Start();
+#endif
+            lstResultantAvailabilities = (from rowAV in m_availTable.AsEnumerable()
+                         
+                         // Calculate the number of slots consumed in this availability by appointments
+                         let slotsConsumed = (from appt in m_apptTable.AsEnumerable()
+                                              //If the resource is the same and the user selection overlaps, then...
+                                              where (rowAV.Field<string>("RESOURCE") == appt.Field<string>("RESOURCENAME")
+                                                && CalendarGrid.TimesOverlap(rowAV.Field<DateTime>("START_TIME"), rowAV.Field<DateTime>("END_TIME"), appt.Field<DateTime>("START_TIME"), appt.Field<DateTime>("END_TIME")))
+                                              // if appt starttime is before avail start time, only count against the avail starting from the availability start time
+                                              let startTimeToCountAgainstBlock = appt.Field<DateTime>("START_TIME") < rowAV.Field<DateTime>("START_TIME") ? rowAV.Field<DateTime>("START_TIME") : appt.Field<DateTime>("START_TIME")
+                                              // if appt endtime is after the avail ends, only count against the avail up to where the avail ends
+                                              let endTimeToCountAgainstBlock = appt.Field<DateTime>("END_TIME") > rowAV.Field<DateTime>("END_TIME") ? rowAV.Field<DateTime>("END_TIME") : appt.Field<DateTime>("END_TIME")
+                                              // theoretical minutes per slot for the availability
+                                              let minPerSlot = (rowAV.Field<DateTime>("END_TIME") - rowAV.Field<DateTime>("START_TIME")).TotalMinutes / rowAV.Field<int>("SLOTS")
+                                              // how many minutes does this appointment take away from the slot
+                                              let minPerAppt = (endTimeToCountAgainstBlock - startTimeToCountAgainstBlock).TotalMinutes
+                                              // how many slots the appointment takes up using this availability's scale
+                                              let slotsConsumed = minPerAppt / minPerSlot
+                                              select slotsConsumed).Sum()
+                         
+                         // Subtract the number consumed from the original ones
+                         let slotsLeft = (float)rowAV.Field<int>("SLOTS") - slotsConsumed
+                         // filter by that value if it is at least one slot
+                         where slotsLeft >= 1
+                         // Sort by Start Time, then by Resource Name
+                         orderby rowAV.Field<DateTime>("START_TIME"), rowAV.Field<string>("RESOURCE")
+                          //return as a CGAvailability
+                          select new CGAvailability
+                         {
+                             ResourceList = rowAV.Field<string>("RESOURCE"),
+                             StartTime = rowAV.Field<DateTime>("START_TIME"),
+                             EndTime = rowAV.Field<DateTime>("END_TIME"),
+                             Slots = (int)slotsLeft,
+                             // AccessTypeName is grabbed from the Access Type Table using a psuedojoin syntax.
+                             // "ACCESS_TYPE" is the IEN of the AcceesType.
+                             // Single or default is b/c we are expecting one result.
+                             AccessTypeName = (from at in m_dsGlobal.Tables["AccessTypes"].AsEnumerable() 
+                                              where at.Field<int>("BMXIEN")==Int32.Parse(rowAV.Field<string>("ACCESS_TYPE"))
+                                              select at.Field<string>("ACCESS_TYPE_NAME")).SingleOrDefault<string>(),
+                             AvailabilityType = rowAV.Field<int>("AVAILABILITYID")
+                         })
+                         // convert to Generic List
+                         .ToList<CGAvailability>();
 
-			m_dtResult.TableName = "Result";
-			m_dtResult.Columns.Add("AMPM", System.Type.GetType("System.String") ,"Convert(START_TIME, 'System.String')" );
-			m_dtResult.Columns.Add("DAYOFWEEK", System.Type.GetType("System.String"));
-			m_dtResult.Columns.Add("ACCESSNAME", System.Type.GetType("System.String"));
+            // if specific access types are chosen, filter the results based on a join against them.
+            if (m_alAccessTypes.Count > 0)
+                lstResultantAvailabilities = (from av in lstResultantAvailabilities
+                                              join at in m_alAccessTypes.Cast<string>() on av.AccessTypeName equals at
+                                              select av).ToList<CGAvailability>();
 
-			DataRow drAT;
-			DateTime dt;
-			string sDOW;
-			int nAccessTypeID;
-			string sAccessType;
+            // if user chose AM radio button, get morning appointments
+            // TimeSpan.FromHours(12) gets the number of ticks since Midnight
+            if (rdoAM.Checked) // less than 12 pm
+            {
+                lstResultantAvailabilities = (from av in lstResultantAvailabilities
+                                              where av.StartTime.TimeOfDay < TimeSpan.FromHours(12)
+                                              select av).ToList<CGAvailability>();
+            }
+            // if user chose PM radio button, get morning appointments
+            if (rdoPM.Checked) // after or equal to 12 pm
+            {
+                lstResultantAvailabilities = (from av in lstResultantAvailabilities
+                                              where av.StartTime.TimeOfDay >= TimeSpan.FromHours(12)
+                                              select av).ToList<CGAvailability>();
+            }
 
-			foreach (DataRow dr in m_dtResult.Rows)
-			{
-				dt = (DateTime) dr["START_TIME"];
-				sDOW = dt.DayOfWeek.ToString();
-				dr["DAYOFWEEK"] = sDOW;
-				if (dr["ACCESS_TYPE"].ToString() != "") 
-				{
-					nAccessTypeID =Convert.ToInt16(dr["ACCESS_TYPE"].ToString());
-					drAT = m_dsGlobal.Tables["AccessTypes"].Rows.Find(nAccessTypeID);
-					if (drAT != null)
-					{
-						sAccessType = drAT["ACCESS_TYPE_NAME"].ToString();
-						dr["ACCESSNAME"] = sAccessType;
-					}
-				}
-			}
+            // if any of the days of week are checked, create a new list based on them
+            // and clear the original list, and join the new lists together
+            if (chkMon.Checked || chkTue.Checked || chkWed.Checked || chkThu.Checked || chkFri.Checked || chkSat.Checked || chkSun.Checked)
+            {
+
+                var lstMonday = new List<CGAvailability>();
+                var lstTuesday = new List<CGAvailability>();
+                var lstWednesday = new List<CGAvailability>();
+                var lstThursday = new List<CGAvailability>();
+                var lstFriday = new List<CGAvailability>();
+                var lstSaturday = new List<CGAvailability>();
+                var lstSunday = new List<CGAvailability>();
+
+                if (chkMon.Checked == true)
+                {
+                    lstMonday = (from av in lstResultantAvailabilities
+                                 where av.StartTime.DayOfWeek == DayOfWeek.Monday
+                                 select av).ToList<CGAvailability>();
+                }
+
+                if (chkTue.Checked == true)
+                {
+                    lstTuesday = (from av in lstResultantAvailabilities
+                                  where av.StartTime.DayOfWeek == DayOfWeek.Tuesday
+                                  select av).ToList<CGAvailability>();
+                }
+
+                if (chkWed.Checked == true)
+                {
+                    lstWednesday = (from av in lstResultantAvailabilities
+                                    where av.StartTime.DayOfWeek == DayOfWeek.Wednesday
+                                    select av).ToList<CGAvailability>();
+
+                }
+
+                if (chkThu.Checked == true)
+                {
+                    lstThursday = (from av in lstResultantAvailabilities
+                                   where av.StartTime.DayOfWeek == DayOfWeek.Thursday
+                                   select av).ToList<CGAvailability>();
+
+                }
+
+                if (chkFri.Checked == true)
+                {
+                    lstFriday = (from av in lstResultantAvailabilities
+                                 where av.StartTime.DayOfWeek == DayOfWeek.Friday
+                                 select av).ToList<CGAvailability>();
+                }
+
+                if (chkSat.Checked == true)
+                {
+                    lstSaturday = (from av in lstResultantAvailabilities
+                                   where av.StartTime.DayOfWeek == DayOfWeek.Saturday
+                                   select av).ToList<CGAvailability>();
+
+                }
+
+                if (chkSun.Checked == true)
+                {
+                    lstSunday = (from av in lstResultantAvailabilities
+                                 where av.StartTime.DayOfWeek == DayOfWeek.Sunday
+                                 select av).ToList<CGAvailability>();
+
+                }
 
 
-			m_dvResult = new DataView(m_dtResult);
+                lstResultantAvailabilities.Clear();
+                lstResultantAvailabilities.AddRange(lstMonday);
+                lstResultantAvailabilities.AddRange(lstTuesday);
+                lstResultantAvailabilities.AddRange(lstWednesday);
+                lstResultantAvailabilities.AddRange(lstThursday);
+                lstResultantAvailabilities.AddRange(lstFriday);
+                lstResultantAvailabilities.AddRange(lstSaturday);
+                lstResultantAvailabilities.AddRange(lstSunday);
 
-			string sFilter = "(SLOTS > 0)";
-			if (m_sAmpm != "")
-			{
-				if (m_sAmpm == "AM")
-					sFilter = sFilter + " AND (AMPM LIKE '*AM*')";
-				if (m_sAmpm == "PM")
-					sFilter = sFilter + " AND (AMPM LIKE '*PM*')";
-			}
+                lstResultantAvailabilities.OrderBy(av => av.StartTime).ThenBy(av => av.ResourceList);
+            }
 
-			bool sOr = false;
-			if (m_sWeekDays != "")
-			{
-				sFilter += " AND (";
-				if (chkMon.Checked == true)
-				{
-					sFilter = sFilter + "(DAYOFWEEK LIKE '*Monday*')";
-					sOr = true;
-				}
-				if (chkTue.Checked == true)
-				{
-					sFilter = (sOr == true)?sFilter + " OR ":sFilter;
-					sFilter = sFilter + "(DAYOFWEEK LIKE '*Tuesday*')";
-					sOr = true;
-				}
-				if (chkWed.Checked == true)
-				{
-					sFilter = (sOr == true)?sFilter + " OR ":sFilter;
-					sFilter = sFilter + "(DAYOFWEEK LIKE '*Wednesday*')";
-					sOr = true;
-				}
-				if (chkThu.Checked == true)
-				{
-					sFilter = (sOr == true)?sFilter + " OR ":sFilter;
-					sFilter = sFilter + "(DAYOFWEEK LIKE '*Thursday*')";
-					sOr = true;
-				}
-				if (chkFri.Checked == true)
-				{
-					sFilter = (sOr == true)?sFilter + " OR ":sFilter;
-					sFilter = sFilter + "(DAYOFWEEK LIKE '*Friday*')";
-					sOr = true;
-				}
-				if (chkSat.Checked == true)
-				{
-					sFilter = (sOr == true)?sFilter + " OR ":sFilter;
-					sFilter = sFilter + "(DAYOFWEEK LIKE '*Saturday*')";
-					sOr = true;
-				}
-				if (chkSun.Checked == true)
-				{
-					sFilter = (sOr == true)?sFilter + " OR ":sFilter;
-					sFilter = sFilter + "(DAYOFWEEK LIKE '*Sunday*')";
-					sOr = true;
-				}
-				sFilter += ")";
-			}
+            
 
-			if (m_alAccessTypes.Count > 0) 
-			{
-				sFilter += " AND (";
-				sOr = false;
-				foreach (string sType in m_alAccessTypes)
-				{
-					if (sOr == true)
-						sFilter += " OR ";
-					sOr = true;
-					sFilter += "(ACCESSNAME = '" + sType + "')";
-				}
-				sFilter += ")";
-			}	
+#if DEBUG
+            System.Diagnostics.Debug.Write("LINQ took this long: " + stopwatch.ElapsedMilliseconds + "\n");
+            stopwatch = null;
+#endif
+            
+            //Then, convert the availabilities to ListViewItems
+            var items = (from item in lstResultantAvailabilities
+                        let s = new string[] {item.AvailabilityType.ToString(), item.StartTime.ToShortDateString(), item.StartTime.DayOfWeek.ToString(),item.StartTime.ToShortTimeString() ,item.EndTime.ToShortTimeString() ,item.ResourceList,item.Slots.ToString(),item.AccessTypeName}
+                        let lvItem = new ListViewItem(s)
+                        select lvItem).ToArray<ListViewItem>();
 
-			m_dvResult.RowFilter = sFilter;
-			this.grdResult.DataSource = m_dvResult;
+            //--Updating Listview
+            lstResults.BeginUpdate(); //tell listview to suspend drawing for now
+            lstResults.Items.Clear(); //empty it from old data
 
+            //if (items.Length == 0) lstResults.Items.Add(new ListViewItem(new string[] { "", "", "", "" , "", "No Slots found", "", "" })); // no results
+            if (items.Length > 0) lstResults.Items.AddRange(items); // add new data
+
+            lstResults.EndUpdate(); // ok done adding items, draw now.
+            //--End Update Listview
+
+            //We are done
+            this.Cursor = Cursors.Default;
 		}
 
 		private void cboAccessTypeFilter_SelectionChangeCommitted(object sender, System.EventArgs e)
@@ -769,51 +905,65 @@ namespace IndianHealthService.ClinicalScheduling
 
 		private void grdResult_DoubleClick(object sender, System.EventArgs e)
 		{
-			if (grdResult.DataSource == null)
+			/*
+            if (lstResults.DataSource == null)
 				return;
 
-			DataGridCell dgCell;
+			DataGridViewCell dgCell;
 			dgCell = this.grdResult.CurrentCell;
-			dgCell.ColumnNumber = 2;
-			this.m_sSelectedResource = grdResult[dgCell.RowNumber, dgCell.ColumnNumber].ToString();
-			this.m_sSelectedDate = (DateTime) grdResult[dgCell.RowNumber,0];
+            this.m_sSelectedResource = grdResult.SelectedRows[0].Cells[2].ToString();
+            this.m_sSelectedDate = (DateTime)grdResult.SelectedRows[0].Cells[0].Value;
 			this.DialogResult = DialogResult.OK;
 			this.Close();
+             */
 		}
 
 		private void grdResult_CurrentCellChanged(object sender, System.EventArgs e)
 		{
-			DataGridCell dgCell;
-			dgCell = this.grdResult.CurrentCell;
-			this.grdResult.Select(dgCell.RowNumber);
+			/*
+            DataGridViewCell dgCell;
+            dgCell = this.grdResult.CurrentCell;
+             */
+        }
 
+        /// <summary>
+        /// BAAAAAAAAAAAAAAAAAD. Use a shared method instead.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void lstResults_DoubleClick(object sender, EventArgs e)
+        {
+            btnAccept_Click(sender, e);
+        }
+
+        private void btnAccept_Click(object sender, EventArgs e)
+        {
+            if (lstResults.SelectedIndices.Count == 0)
+            {
+                this.DialogResult = DialogResult.None;
+                return;
+            }
+
+            long availabilityKey = long.Parse(lstResults.SelectedItems[0].SubItems[0].Text);
+            _selectedAvailability = (from av in lstResultantAvailabilities
+                                     where av.AvailabilityType == availabilityKey
+                                     select av).Single<CGAvailability>();
+            this.DialogResult = DialogResult.OK;
         }
 
         #endregion  Event Handlers
 
         #region Properties
+
+        
         /// <summary>
-		/// Gets the resource selected by the user
-		/// </summary>
-		public string SelectedResource
-		{
-			get
-			{
-				return this.m_sSelectedResource;
-			}
-		}
+        /// Gets the Availability Selected by the User in which to put an appointment
+        /// </summary>
+        public CGAvailability SelectedAvailability
+        {
+            get { return this._selectedAvailability; }
+        }
 
-		/// <summary>
-		/// Gets the date selected by the user
-		/// </summary>
-		public DateTime SelectedDate
-		{
-			get
-			{
-				return this.m_sSelectedDate;
-			}
-		}
 		#endregion Properties
-
-	}
+    }
 }
