@@ -1,5 +1,5 @@
 BSDX28	; IHS/OIT/HMW - WINDOWS SCHEDULING RPCS ; 7/18/10 2:30pm
-	;;1.5;BSDX;;Jan 25, 2011
+	;;1.5V2;BSDX;;Mar 03, 2011
 	; 
 	   ; Change Log:
 	; HMW 3050721 Added test for inactivated record

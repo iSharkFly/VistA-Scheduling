@@ -1,5 +1,5 @@
 BSDXAPI	; IHS/ANMC/LJF - SCHEDULING APIs ; 1/26/11 11:47am
-	;;1.5;BSDX;;Jan 25, 2011;Build 7
+	;;1.5V2;BSDX;;Mar 03, 2011;Build 7
 	;Orignal routine is BSDAPI by IHS/LJF, HMW, and MAW
 	;local mods (many) by WV/SMH
 	;Move to BSDX namespace as BSDXAPI from BSDAPI by WV/SMH
