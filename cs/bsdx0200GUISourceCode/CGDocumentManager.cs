@@ -422,12 +422,16 @@ namespace IndianHealthService.ClinicalScheduling
             
             //Printing
 
-            System.IO.DirectoryInfo di = new System.IO.DirectoryInfo(Application.StartupPath + @"\Printing\");
-            System.IO.FileInfo[] rgFiles = di.GetFiles("*.dll");
             string DllLocation = string.Empty;
-            foreach (System.IO.FileInfo fi in rgFiles)
+            System.IO.DirectoryInfo di = new System.IO.DirectoryInfo(Application.StartupPath + @"\Printing\");
+            if (di.Exists)
             {
-                DllLocation = fi.FullName;
+                System.IO.FileInfo[] rgFiles = di.GetFiles("*.dll");
+                
+                foreach (System.IO.FileInfo fi in rgFiles)
+                {
+                    DllLocation = fi.FullName;
+                }
             }
 
             PrintingCreator Creator = null;
@@ -922,6 +926,9 @@ namespace IndianHealthService.ClinicalScheduling
 			}
 		}
 
+        /// <summary>
+        /// Not used
+        /// </summary>
 		private void KeepAlive()
 		{
 			foreach (CGView v in _views.Keys)

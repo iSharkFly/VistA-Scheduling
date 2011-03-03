@@ -200,6 +200,7 @@
     <Compile Include="CGView.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="CustomPrinting.cs" />
     <Compile Include="DAccessBlock.cs">
       <SubType>Form</SubType>
     </Compile>
