@@ -70,10 +70,10 @@ If you need to use PIMS clinics, here is how you do the set-up:
 Known Bugs:
 - Users booking appointments at exactly the same time for the same clinic doesn't work properly (concurrency issues).
 - Various usability issues that are apparent in the program. E.g. you need to click before you right click, drag and drop has no visiual assist to show what you are dragging and where to, etc.
-- Remaining slots calculation does not work properly if you have more than 1 slot per access block (Najjar says that it doesn't work for 1 slot either if you change the time scale).
-- Find Appointments function is not operational in Scheduling GUI
+- Remaining slots calculation does not work properly if you have more than 1 slot per access block (Najjar says that it doesn't work for 1 slot either if you change the time scale). (being fixed in v 1.5).
+- Find Appointments function is not operational in Scheduling GUI (fixed in 1.5)
 - IDs in Scheduling GUI reflect the HRN not the Primary ID
-- Cannot cancel a walk-in appointment in Scheduling...
+- Cannot cancel a walk-in appointment in Scheduling... (fixed in 1.5)
 - No handling of invalid access code when saving access slots.
 - No Ctrl-C & Ctrl-V handling
 - No Insert & Delete button handling
@@ -85,7 +85,9 @@ Known Bugs:
 - Date on Appt List header in Arabic doesn't show up correctly.
 - Error massages should be clearer for the end Users <fixed in 1.5>
 - Event raise for clinic groups raises the name of the group not the clinic. The receiving end in the C# code compares and checks for the clinic.
-- When making a walk-in appointment, it lets you cancel check-in by pressing the cancel button.
+- When making a walk-in appointment, it lets you cancel check-in by pressing the cancel button, yet walk-in continues to be made.
+- If user has no access to any schedules but has access to application (has BSDXZMENU key), opening the appointment menu causes a crash.
+- Shortcut server/port is not overridden when cancel, retry and enter them manually.
 
 
 Other Bugs:
@@ -123,8 +125,9 @@ Enhancement requests:
 - Adding blocks in groups not individually
 - If I inactivate the clinic in VistA it should reflects in GUI
 - If we can make the users in groups. i.e. MRs group, OP clinics Group and map them to the resource groups
-- Add an option to change the locale independent of the Windows locale (Khamis; PHH)
+- Add an option to change the locale independent of the Windows locale (Khamis; PHH) <not doable>; changed date format instead in v 1.5
 - Show today's column in a different color.
+- Show Holiday columns in a different color.
 - Be able to copy appointments in mass from one clinic to another.
 - Manager functions: Send message and Shutdown sends message or shuts down all users, not just individual users.
 - SMS to remind patients of appointments.
