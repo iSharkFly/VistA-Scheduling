@@ -677,7 +677,7 @@ namespace IndianHealthService.ClinicalScheduling
             //Table #15
             setProgressDelegate(15);
             setStatusDelegate(statusConst + " Holiday");
-            sCommandText = "SELECT NAME, DATE FROM HOLIDAY WHERE DATE > '" + DateTime.Today.ToShortDateString() + "'";
+            sCommandText = "SELECT NAME, DATE FROM HOLIDAY WHERE INTERNAL[DATE] > '" + FMDateTime.Create(DateTime.Today).DateOnly.FMDateString + "'";
             ConnectInfo.RPMSDataTable(sCommandText, "HOLIDAY", m_dsGlobal);
             Debug.Write("LoadingGlobalRecordsets -- Holidays loaded\n");
 
