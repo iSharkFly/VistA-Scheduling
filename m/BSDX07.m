@@ -1,4 +1,4 @@
-BSDX07	; IHS/OIT/HMW - WINDOWS SCHEDULING RPCS  ; 1/26/11 11:29am
+BSDX07	; IHS/OIT/HMW - WINDOWS SCHEDULING RPCS  ; 3/15/11 11:50am
 	   ;;1.5V2;BSDX;;Mar 03, 2011
 	   ;
 	   ; Change Log:
@@ -7,12 +7,14 @@ BSDX07	; IHS/OIT/HMW - WINDOWS SCHEDULING RPCS  ; 1/26/11 11:29am
 	   ; v1.42 Oct 22 2010 - Transaction now restartable by providing arguments
 	   ;   thanks to Rick Marshall and Zach Gonzalez at Oroville.
 	   ; v1.42 Oct 30 2010 - Extensive refactoring.
+	   ; v1.5  Mar 15 2011 - End time does not have to have time anymore.
+	   ;      It could be midnight of the next day
 	   ;
 	   ; Error Reference:
 	   ; -1: Patient Record is locked. This means something is wrong!!!!
 	   ; -2: Start Time is not a valid Fileman date
 	   ; -3: End Time is not a valid Fileman date
-	   ; -4: End Time does not have time inside of it.
+	   ; v1.5:obsolete::-4: End Time does not have time inside of it.
 	   ; -5: BSDXPATID is not numeric
 	   ; -6: Patient Does not exist in ^DPT
 	   ; -7: Resource Name does not exist in B index of BSDX RESOURCE
@@ -139,8 +141,10 @@ APPADD(BSDXY,BSDXSTART,BSDXEND,BSDXPATID,BSDXRES,BSDXLEN,BSDXNOTE,BSDXATID)	;EP
 	   ; Are the dates valid? Must be FM Dates > than 2010
 	   I BSDXSTART'>3100000 D ERR(BSDXI,"-2~BSDX07 Error: Invalid Start Time") Q
 	   I BSDXEND'>3100000 D ERR(BSDXI,"-3~BSDX07 Error: Invalid End Time") Q
-	   ; If Ending date doesn't have a time, this is an error
-	   I $L(BSDXEND,".")=1 D ERR(BSDXI,"-4~BSDX07 Error: Invalid End Time") Q
+	   ;
+	   ;; If Ending date doesn't have a time, this is an error --rm 1.5
+	   ; I $L(BSDXEND,".")=1 D ERR(BSDXI,"-4~BSDX07 Error: Invalid End Time") Q
+	   ;
 	   ; If the Start Date is greater than the end date, swap dates
 	   N BSDXTMP
 	   I BSDXSTART>BSDXEND S BSDXTMP=BSDXEND,BSDXEND=BSDXSTART,BSDXSTART=BSDXTMP
