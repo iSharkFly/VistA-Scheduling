@@ -616,12 +616,13 @@ namespace IndianHealthService.ClinicalScheduling
             this.tvSchedules.HotTracking = true;
             this.tvSchedules.Location = new System.Drawing.Point(0, 0);
             this.tvSchedules.Name = "tvSchedules";
-            this.tvSchedules.Size = new System.Drawing.Size(128, 358);
+            this.tvSchedules.Size = new System.Drawing.Size(128, 393);
             this.tvSchedules.Sorted = true;
             this.tvSchedules.TabIndex = 1;
             this.tvSchedules.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.tvSchedules_AfterSelect);
-            this.tvSchedules.Click += new System.EventHandler(this.tvSchedules_Click);
+            this.tvSchedules.NodeMouseClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.tvSchedules_NodeMouseClick);
             this.tvSchedules.DoubleClick += new System.EventHandler(this.tvSchedules_DoubleClick);
+            this.tvSchedules.MouseEnter += new System.EventHandler(this.tvSchedules_MouseEnter);
             // 
             // contextMenu1
             // 
@@ -661,9 +662,9 @@ namespace IndianHealthService.ClinicalScheduling
             // 
             this.panelRight.Controls.Add(this.panelClip);
             this.panelRight.Dock = System.Windows.Forms.DockStyle.Right;
-            this.panelRight.Location = new System.Drawing.Point(941, 0);
+            this.panelRight.Location = new System.Drawing.Point(996, 0);
             this.panelRight.Name = "panelRight";
-            this.panelRight.Size = new System.Drawing.Size(128, 358);
+            this.panelRight.Size = new System.Drawing.Size(128, 393);
             this.panelRight.TabIndex = 3;
             this.panelRight.Visible = false;
             // 
@@ -729,14 +730,14 @@ namespace IndianHealthService.ClinicalScheduling
             this.panelTop.Dock = System.Windows.Forms.DockStyle.Top;
             this.panelTop.Location = new System.Drawing.Point(128, 0);
             this.panelTop.Name = "panelTop";
-            this.panelTop.Size = new System.Drawing.Size(813, 24);
+            this.panelTop.Size = new System.Drawing.Size(868, 24);
             this.panelTop.TabIndex = 6;
             // 
             // dateTimePicker1
             // 
             this.dateTimePicker1.Dock = System.Windows.Forms.DockStyle.Right;
             this.dateTimePicker1.DropDownAlign = System.Windows.Forms.LeftRightAlignment.Right;
-            this.dateTimePicker1.Location = new System.Drawing.Point(607, 0);
+            this.dateTimePicker1.Location = new System.Drawing.Point(662, 0);
             this.dateTimePicker1.Name = "dateTimePicker1";
             this.dateTimePicker1.Size = new System.Drawing.Size(206, 20);
             this.dateTimePicker1.TabIndex = 1;
@@ -759,7 +760,7 @@ namespace IndianHealthService.ClinicalScheduling
             this.panelCenter.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panelCenter.Location = new System.Drawing.Point(136, 24);
             this.panelCenter.Name = "panelCenter";
-            this.panelCenter.Size = new System.Drawing.Size(802, 310);
+            this.panelCenter.Size = new System.Drawing.Size(857, 345);
             this.panelCenter.TabIndex = 7;
             // 
             // ctxCalendarGrid
@@ -845,9 +846,9 @@ namespace IndianHealthService.ClinicalScheduling
             // 
             this.panelBottom.Controls.Add(this.statusBar1);
             this.panelBottom.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panelBottom.Location = new System.Drawing.Point(136, 334);
+            this.panelBottom.Location = new System.Drawing.Point(136, 369);
             this.panelBottom.Name = "panelBottom";
-            this.panelBottom.Size = new System.Drawing.Size(802, 24);
+            this.panelBottom.Size = new System.Drawing.Size(857, 24);
             this.panelBottom.TabIndex = 8;
             // 
             // statusBar1
@@ -855,7 +856,7 @@ namespace IndianHealthService.ClinicalScheduling
             this.statusBar1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.statusBar1.Location = new System.Drawing.Point(0, 0);
             this.statusBar1.Name = "statusBar1";
-            this.statusBar1.Size = new System.Drawing.Size(802, 24);
+            this.statusBar1.Size = new System.Drawing.Size(857, 24);
             this.statusBar1.SizingGrip = false;
             this.statusBar1.TabIndex = 0;
             // 
@@ -863,16 +864,16 @@ namespace IndianHealthService.ClinicalScheduling
             // 
             this.splitter1.Location = new System.Drawing.Point(128, 24);
             this.splitter1.Name = "splitter1";
-            this.splitter1.Size = new System.Drawing.Size(8, 334);
+            this.splitter1.Size = new System.Drawing.Size(8, 369);
             this.splitter1.TabIndex = 9;
             this.splitter1.TabStop = false;
             // 
             // splitter2
             // 
             this.splitter2.Dock = System.Windows.Forms.DockStyle.Right;
-            this.splitter2.Location = new System.Drawing.Point(938, 24);
+            this.splitter2.Location = new System.Drawing.Point(993, 24);
             this.splitter2.Name = "splitter2";
-            this.splitter2.Size = new System.Drawing.Size(3, 334);
+            this.splitter2.Size = new System.Drawing.Size(3, 369);
             this.splitter2.TabIndex = 10;
             this.splitter2.TabStop = false;
             // 
@@ -900,7 +901,7 @@ namespace IndianHealthService.ClinicalScheduling
             this.calendarGrid1.Name = "calendarGrid1";
             this.calendarGrid1.Resources = ((System.Collections.ArrayList)(resources.GetObject("calendarGrid1.Resources")));
             this.calendarGrid1.SelectedAppointment = 0;
-            this.calendarGrid1.Size = new System.Drawing.Size(802, 310);
+            this.calendarGrid1.Size = new System.Drawing.Size(857, 345);
             this.calendarGrid1.StartDate = new System.DateTime(2003, 1, 27, 0, 0, 0, 0);
             this.calendarGrid1.TabIndex = 0;
             this.calendarGrid1.TimeScale = 20;
@@ -913,7 +914,7 @@ namespace IndianHealthService.ClinicalScheduling
             // CGView
             // 
             this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
-            this.ClientSize = new System.Drawing.Size(1069, 358);
+            this.ClientSize = new System.Drawing.Size(1124, 393);
             this.Controls.Add(this.panelCenter);
             this.Controls.Add(this.panelBottom);
             this.Controls.Add(this.splitter2);
@@ -945,7 +946,6 @@ namespace IndianHealthService.ClinicalScheduling
 		private	CGDocument			m_Document;
 		private CGDocumentManager	m_DocManager;
 		private int					m_nSlots;
-		bool						bSchedulesClicked = false;
 		private ArrayList			m_alSelectedTreeResourceArray = new ArrayList();
 		private string				m_sDocName;
 		private CGAppointments		m_ClipList;
@@ -1359,30 +1359,33 @@ namespace IndianHealthService.ClinicalScheduling
 			base.Dispose( disposing );
 		}
 
-		void UpdateStatusBar(DateTime dStart, DateTime dEnd, string sAccessType, string sAvailabilityMessage)
+		void UpdateStatusBar(DateTime dStart, DateTime dEnd, CGAvailability av)
 		{
-			string sMsg =  dStart.ToShortTimeString() + " to " + dEnd.ToShortTimeString();
-			if (m_nSlots > 0)
+            System.Text.StringBuilder sbMsg = new System.Text.StringBuilder(100);
+		    sbMsg.Append(dStart.ToShortTimeString() + " to " + dEnd.ToShortTimeString());
+			if (av != null && m_nSlots > 0)
 			{
-				sMsg = sMsg + ": " + m_nSlots.ToString() + " slot";
-				sMsg = sMsg + ((m_nSlots > 1)?"s " : " ");
-				sMsg = sMsg + "available";
-				if (sAccessType != "")
-				{
-					sMsg = sMsg + " for " + sAccessType;
-				}
-				sMsg = sMsg + ".";
-				if (sAvailabilityMessage != "")
-				{
-					sMsg = sMsg + "  Note: " + sAvailabilityMessage;
-				}
-			}
+                sbMsg.Append(String.Format(" has {0} slot(s) available for {1}. ", m_nSlots.ToString(), av.AccessTypeName));
+            }
 			else
 			{
-				sMsg += ": No appointment slots available.";
+				sbMsg.Append(": No appointment slots available. ");
 			}
 
-			this.statusBar1.Text = sMsg;
+            if (av != null)
+            {
+                sbMsg.Append(String.Format("Source Block: {0} to {1} with {2} slot(s) of type {3}",
+                    av.StartTime.ToShortTimeString(),
+                    av.EndTime.ToShortTimeString(),
+                    av.Slots.ToString(),
+                    av.AccessTypeName));
+
+                sbMsg.Append(". ");
+
+                if (av.Note.Trim().Length > 0) sbMsg.Append("Note: " + av.Note + ".");
+            }
+
+            this.statusBar1.Text = sbMsg.ToString();
 		}
 
 		private void EditScheduleAvailability()
@@ -1474,6 +1477,7 @@ namespace IndianHealthService.ClinicalScheduling
 			{
 				v.Activate();
 				v.dateTimePicker1.Value = dDate;
+                v.RequestRefreshGrid();
                 return;
 			}
 
@@ -1506,7 +1510,7 @@ namespace IndianHealthService.ClinicalScheduling
 				
             try
 			{
-				doc.OnOpenDocument();
+				doc.OnOpenDocument(dDate);
 			}
 				
             catch (Exception ex)
@@ -1637,7 +1641,7 @@ namespace IndianHealthService.ClinicalScheduling
 			doc.DocManager = this.DocManager;
 			try
 			{
-				doc.OnOpenDocument();
+				doc.OnOpenDocument(DateTime.Today);
 			}
 			catch (Exception ex)
 			{
@@ -2045,9 +2049,9 @@ namespace IndianHealthService.ClinicalScheduling
 				*/
                 //SMH: Takes too long to do.
 				//this.Document.RefreshDocument();
-				string sAccessType = "";
-				string sAvailabilityMessage = "";
-				m_nSlots = m_Document.SlotsAvailable(dStart, dEnd, sResource, out sAccessType, out sAvailabilityMessage);
+                CGAvailability resultantAvail;
+
+				m_nSlots = m_Document.SlotsAvailable(dStart, dEnd, sResource, this.calendarGrid1.TimeScale, out resultantAvail);
 
 				if (m_nSlots < 1)
 				{
@@ -2154,16 +2158,10 @@ namespace IndianHealthService.ClinicalScheduling
 						return;
 				}
 				
-				TimeSpan tsDuration = dEnd - dStart;
-				int nDuration = (int) tsDuration.TotalMinutes;
-				Debug.Assert(nDuration > 0);
-
-
                 //Sam: takes too long. Remove this call; deal with the issue of concurrent appointments another way.
                 //this.Document.RefreshDocument();
-				string sAccessType = "";
-				string sAvailabilityMessage = "";
-				m_nSlots = m_Document.SlotsAvailable(dStart, dEnd, sResource, out sAccessType, out sAvailabilityMessage);
+                CGAvailability resultantAvail;
+                m_nSlots = m_Document.SlotsAvailable(dStart, dEnd, sResource, this.calendarGrid1.TimeScale, out resultantAvail);
 
 				if (m_nSlots < 1)
 				{
@@ -2191,14 +2189,17 @@ namespace IndianHealthService.ClinicalScheduling
 				DAppointPage dAppt = new DAppointPage();			
 				dAppt.DocManager = this.m_DocManager;
 				string sNote = "";
-				dAppt.InitializePage(dPat.PatientIEN, dStart, nDuration, sResource, sNote);
+                dAppt.InitializePage(dPat.PatientIEN, dStart, dEnd, sResource, sNote, nAccessTypeID);
 
 				if (dAppt.ShowDialog(this) == DialogResult.Cancel)
 				{
 					return;
 				}
 
-                CGAppointment appt = new CGAppointment();
+                CGAppointment appt = dAppt.Appointment;
+                    
+                // old way of making an appointment
+                    /*new CGAppointment();
 				appt.PatientID = Convert.ToInt32(dPat.PatientIEN);
 				appt.PatientName = dPat.PatientName;
 				appt.StartTime = dStart;
@@ -2207,9 +2208,18 @@ namespace IndianHealthService.ClinicalScheduling
 				appt.Note = dAppt.Note;
 				appt.HealthRecordNumber = dPat.HealthRecordNumber;
 				appt.AccessTypeID = nAccessTypeID;
+                    */
 
 				//Call Document to add a new appointment. Document adds appointment to CGAppointments array.
 				this.Document.CreateAppointment(appt);
+
+                //Experimental now.
+                if (dAppt.PrintAppointmentSlip)
+                {
+                    System.Drawing.Printing.PrintDocument pd = new System.Drawing.Printing.PrintDocument();
+                    pd.PrintPage += (object s, System.Drawing.Printing.PrintPageEventArgs e) => CGDocumentManager.Current.PrintingObject.PrintAppointmentSlip(appt, e);
+                    pd.Print();
+                }
 
                 //Show the new set of appointments by calling UpdateArrays. Fetches Document's CGAppointments
                 this.UpdateArrays();
@@ -2504,6 +2514,17 @@ namespace IndianHealthService.ClinicalScheduling
             if (GetActiveWindow() == this.Handle)
                 calendarGrid1.Focus();
         }
+
+        /// <summary>
+        /// If mouse enters the Tree Section, check if the grid is on the active form first before stealing the focus
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void tvSchedules_MouseEnter(object sender, EventArgs e)
+        {
+            if (GetActiveWindow() == this.Handle)
+                tvSchedules.Focus();
+        }
         
         private void CGView_Load(object sender, System.EventArgs e)
 		{
@@ -2519,6 +2540,9 @@ namespace IndianHealthService.ClinicalScheduling
 
             //Show the Form
             this.Activate();
+
+            //Set focus on the calendar grid
+            this.calendarGrid1.Focus();
 		}
 
 		private void mnuOpenSchedule_Click(object sender, System.EventArgs e)
@@ -2591,10 +2615,7 @@ namespace IndianHealthService.ClinicalScheduling
 			this.mnuViewScheduleTree.Checked = !(this.mnuViewScheduleTree.Checked);
 		}
 
-		private void tvSchedules_Click(object sender, System.EventArgs e)
-		{
-			bSchedulesClicked = true;
-		}
+
 
 		private void tvSchedules_DoubleClick(object sender, System.EventArgs e)
 		{
@@ -2635,12 +2656,9 @@ namespace IndianHealthService.ClinicalScheduling
 
         }
 
+
 		private void tvSchedules_AfterSelect(object sender, System.Windows.Forms.TreeViewEventArgs e)
-		{
-			if (bSchedulesClicked == false)
-				return;
-			bSchedulesClicked = false;
-			
+		{	
 			m_alSelectedTreeResourceArray = new ArrayList();
 			string sResource = e.Node.FullPath;
 			string[] ss = sResource.Split((char) 92);
@@ -2661,6 +2679,22 @@ namespace IndianHealthService.ClinicalScheduling
 
 		}
 
+        /// <summary>
+        /// Makes sure that the node gets selected no matter where we click.
+        /// Incidentally, Invokes AfterSelect event.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void tvSchedules_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
+        {
+            e.Node.TreeView.SelectedNode = e.Node;
+        }
+
+        /// <summary>
+        /// Useless code now... Good place to test something.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
 		private void mnuTest1_Click(object sender, System.EventArgs e)
 		{
 			ReaderWriterLock m_rwl = this.DocManager.ConnectInfo.bmxNetLib.BMXRWL;
@@ -2717,10 +2751,9 @@ namespace IndianHealthService.ClinicalScheduling
 
 		private void calendarGrid1_CGSelectionChanged(object sender, IndianHealthService.ClinicalScheduling.CGSelectionChangedArgs e)
 		{
-			string sAccessType = "";
-			string sAvailabilityMessage = "";
-			m_nSlots = m_Document.SlotsAvailable(e.StartTime, e.EndTime, e.Resource, out sAccessType, out sAvailabilityMessage);
-			UpdateStatusBar(e.StartTime, e.EndTime, sAccessType, sAvailabilityMessage);
+            CGAvailability resultantAvail;
+            m_nSlots = m_Document.SlotsAvailable(e.StartTime, e.EndTime, e.Resource, this.calendarGrid1.TimeScale, out resultantAvail);
+			UpdateStatusBar(e.StartTime, e.EndTime, resultantAvail);
 		}
 
         /// <summary>
@@ -2757,8 +2790,6 @@ namespace IndianHealthService.ClinicalScheduling
 					return;
 
 				//20040909 Cherokee Replaced this block with following
-				string sAccessType = "";
-				string sAvailabilityMessage = "";
 				//				if (m_Document.SlotsAvailable(e.StartTime, e.EndTime, e.Resource, out sAccessType, out sAvailabilityMessage) < 1)
 				//				{
 				//					MessageBox.Show("There are no appointment slots available for the selected time.");
@@ -2774,7 +2805,8 @@ namespace IndianHealthService.ClinicalScheduling
 				{
 					bModSchedule =  (bool) this.m_htModifySchedule[e.Resource.ToString()];
 				}
-				bool bSlotsAvailable = (m_Document.SlotsAvailable(e.StartTime, e.EndTime, e.Resource, out sAccessType, out sAvailabilityMessage) > 0);
+                CGAvailability resultantAvail;
+                bool bSlotsAvailable = (m_Document.SlotsAvailable(e.StartTime, e.EndTime, e.Resource, this.calendarGrid1.TimeScale, out resultantAvail) > 0);
 				if (!((bSlotsAvailable) || (bModSchedule) || (bOverbook) ))
 				{
 					MessageBox.Show("There are no appointment slots available for the selected time.");
@@ -2965,8 +2997,6 @@ namespace IndianHealthService.ClinicalScheduling
 		{
 			try
 			{
-				string sAccessType = "";
-				string sAvailabilityMessage = "";
 				bool	bSlotsAvailable;
 				bool	bOverbook;
 				bool	bModSchedule;
@@ -2989,7 +3019,9 @@ namespace IndianHealthService.ClinicalScheduling
 
 				bOverbook = (bool) this.m_htOverbook[e.Resource.ToString()];
 				bModSchedule =  (bool) this.m_htModifySchedule[e.Resource.ToString()];
-				bSlotsAvailable = (m_Document.SlotsAvailable(e.StartTime, e.EndTime, e.Resource, out sAccessType, out sAvailabilityMessage) > 0);
+                CGAvailability resultantAvail;
+
+                bSlotsAvailable = (m_Document.SlotsAvailable(e.StartTime, e.EndTime, e.Resource, this.calendarGrid1.TimeScale, out resultantAvail) > 0);
 
 				if (!((bSlotsAvailable) || (bModSchedule) || (bOverbook) ))
 				{
@@ -3337,6 +3369,10 @@ namespace IndianHealthService.ClinicalScheduling
         {
             _loadingSplash.RemoteClose();
         }
+
+
+
+
 
         
 

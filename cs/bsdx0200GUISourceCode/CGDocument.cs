@@ -7,6 +7,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using IndianHealthService.BMXNet;
 using System.Linq;
+using System.Collections.Generic;
 
 namespace IndianHealthService.ClinicalScheduling
 {
@@ -320,16 +321,14 @@ namespace IndianHealthService.ClinicalScheduling
             this.UpdateAllViews();
         }
 
-        public void OnOpenDocument()
+        public void OnOpenDocument(DateTime dDate)
         {
             try
             {
                 //Create new Document
                 m_ScheduleType = (m_sResourcesArray.Count == 1) ? ScheduleType.Resource : ScheduleType.Clinic;
                 bool bRet = false;
-
-                //Set initial From and To dates based on current day
-                DateTime dDate = DateTime.Today;
+                
                 if (m_ScheduleType == ScheduleType.Resource)
                 {
                     bRet = this.WeekNeedsRefresh(1, dDate, out this.m_dStartDate, out this.m_dEndDate);
@@ -395,26 +394,9 @@ namespace IndianHealthService.ClinicalScheduling
         /// <returns>Success or Failure. Should be always Success.</returns>
         private bool RefreshSchedule()
         {
-            try
-            {
-                bool bRet = this.RefreshAvailabilitySchedule();
-                if (bRet == false)
-                {
-                    return bRet;
-                }
-                bRet = this.RefreshDaysSchedule();
-                return bRet;
-            }
-            catch (ApplicationException aex)
-            {
-                Debug.Write("CGDocument.RefreshSchedule Application Error:  " + aex.Message + "\n");
-                return false;
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("CGDocument.RefreshSchedule error:  " + ex.Message + "\n");
-                return false;
-            }
+            this.RefreshAvailabilitySchedule();
+            this.RefreshDaysSchedule();
+            return true;
         }
 
         private bool RefreshAvailabilitySchedule()
@@ -636,14 +618,15 @@ namespace IndianHealthService.ClinicalScheduling
         /// <param name="sAccessType">Out: Name of Access Type</param>
         /// <param name="sAvailabilityMessage">Out: Access Note</param>
         /// <returns>Number of slots</returns>
-        public int SlotsAvailable(DateTime dSelStart, DateTime dSelEnd, string sResource, out string sAccessType, out string sAvailabilityMessage)
+        public int SlotsAvailable(DateTime dSelStart, DateTime dSelEnd, string sResource, int viewTimeScale, out CGAvailability resultantAV)
         {
 
-
-            sAccessType = "";               //default out value
-            sAvailabilityMessage = "";      //default out value
+            resultantAV = null;
 
             double slotsAvailable = 0;      //defalut return value
+
+            double effectiveSlotsAvailable = 0;    //Slots available based on the time scale.
+
 
             //NOTE: What's this lock? This lock makes sure that nobody is editing the availability array
             //when we are looking at it. Since the availability array could potentially be updated on
@@ -659,30 +642,85 @@ namespace IndianHealthService.ClinicalScheduling
             lock (this.m_pAvArray)
             {
                 //This foreach loop looks for an availability that overlaps where the user clicked.
-                //There can only be one, as availabilites cannot overlap each other (enforced at the DB level)
+                //Availabilites cannot overlap each other (enforced at the DB level)
                 //If selection hits multiple blocks, get the block with the most slots (reflected by the sorting here)
-                CGAvailability[] pAVs = (from pAV in this.m_pAvArray.Cast<CGAvailability>()
-                                         where (sResource == pAV.ResourceList && CalendarGrid.TimesOverlap(dSelStart, dSelEnd, pAV.StartTime, pAV.EndTime))
-                                         orderby pAV.Slots descending
-                                         select pAV)
-                                         .ToArray<CGAvailability>();
+                List<CGAvailability> lstAV = (from avail in this.m_pAvArray.Cast<CGAvailability>()
+                           where (sResource == avail.ResourceList && CalendarGrid.TimesOverlap(dSelStart, dSelEnd, avail.StartTime, avail.EndTime))
+                           select avail).ToList();
 
-                if ((pAVs.Length) == 0) return 0;
+                //if we don't have any availabilities, then return with zero slots.
+                if (lstAV.Count == 0) return 0;
+                
+                CGAvailability pAV;
 
-                slotsAvailable = pAVs[0].Slots;
-                sAccessType = pAVs[0].AccessTypeName;
-                sAvailabilityMessage = pAVs[0].Note;
+                //if there is just one, that's it.
+                if (lstAV.Count == 1) pAV = lstAV.First();
+                //otherwise...
+                else
+                {
+                    //if availabilities are contigous to each other, need to join them together.
 
+                    //First, are they the same?
+                    string firsttype = lstAV.First().AccessTypeName;
+                    bool bAllSameType = lstAV.All(av => av.AccessTypeName == firsttype);
+
+                    //Second are they ALL contigous?
+                    DateTime lastEndTime = DateTime.Today; //bogus value to please compiler who wants it assigned.
+                    int index = 0;
+
+                    bool bContigous = lstAV.OrderBy(av => av.StartTime)
+                       .All(av =>
+                       {
+                           index++;
+                           if (index == 1)
+                           {
+                               lastEndTime = av.EndTime;
+                               return true;
+                           }
+                           if (av.StartTime == lastEndTime)
+                           {
+                               lastEndTime = av.EndTime;
+                               return true;
+                           }
+
+                           return false;
+                       });
+
+
+
+                    if (bContigous && bAllSameType)
+                    {
+                        var enumAVOrdered = lstAV.OrderBy(av => av.StartTime);
+
+                        pAV = new CGAvailability
+                        {
+                            StartTime = enumAVOrdered.First().StartTime,
+                            EndTime = enumAVOrdered.Last().EndTime,
+                            Slots = enumAVOrdered.Sum(av => av.Slots),
+                            AccessTypeName = enumAVOrdered.First().AccessTypeName,
+                            Note = enumAVOrdered.First().Note
+                        };
+                    }
+                    else
+                    {
+                        pAV = lstAV.OrderByDescending(av => av.Slots).First();
+                    }
+                }
+
+                resultantAV = pAV; // out var
+                
+                slotsAvailable = pAV.Slots;
+                
                 //Subtract total slots current appointments take up.
                 slotsAvailable -= (from appt in this.Appointments.AppointmentTable.Values.Cast<CGAppointment>()
                                    //If the resource is the same and the user selection overlaps, then...
-                                   where (sResource == appt.Resource && CalendarGrid.TimesOverlap(pAVs[0].StartTime, pAVs[0].EndTime, appt.StartTime, appt.EndTime))
+                                   where (sResource == appt.Resource && CalendarGrid.TimesOverlap(pAV.StartTime, pAV.EndTime, appt.StartTime, appt.EndTime))
                                    // if appt starttime is before avail start time, only count against the avail starting from the availability start time
-                                   let startTimeToCountAgainstBlock = appt.StartTime < pAVs[0].StartTime ? pAVs[0].StartTime : appt.StartTime
+                                   let startTimeToCountAgainstBlock = appt.StartTime < pAV.StartTime ? pAV.StartTime : appt.StartTime
                                    // if appt endtime is after the avail ends, only count against the avail up to where the avail ends
-                                   let endTimeToCountAgainstBlock = appt.EndTime > pAVs[0].EndTime ? pAVs[0].EndTime : appt.EndTime
+                                   let endTimeToCountAgainstBlock = appt.EndTime > pAV.EndTime ? pAV.EndTime : appt.EndTime
                                    // theoretical minutes per slot for the availability
-                                   let minPerSlot = (pAVs[0].EndTime - pAVs[0].StartTime).TotalMinutes / pAVs[0].Slots
+                                   let minPerSlot = (pAV.EndTime - pAV.StartTime).TotalMinutes / pAV.Slots
                                    // how many minutes does this appointment take away from the slot
                                    let minPerAppt = (endTimeToCountAgainstBlock - startTimeToCountAgainstBlock).TotalMinutes
                                    // how many slots the appointment takes up using this availability's scale
@@ -690,9 +728,17 @@ namespace IndianHealthService.ClinicalScheduling
                                    select slotsConsumed)
                                    // add up SlotsConsumed to substract from slotsAvailable
                                    .Sum();
-            }
 
-            return (int)slotsAvailable;
+                //theoretical minutes per slot for the availability
+                double minPerSlot2 = (pAV.EndTime - pAV.StartTime).TotalMinutes / pAV.Slots;
+                
+                //Convert it to the view's time scale.
+                effectiveSlotsAvailable = (minPerSlot2 / viewTimeScale) * slotsAvailable;
+
+            }
+            
+            //round it down.
+            return (int)effectiveSlotsAvailable;
 
             /* OLD ALGOTHRIM 2
 

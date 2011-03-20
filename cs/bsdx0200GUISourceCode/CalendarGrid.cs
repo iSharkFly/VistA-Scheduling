@@ -23,7 +23,7 @@
         private bool m_bDragDropStart;
         private bool m_bDrawWalkIns = true;
         private bool m_bGridEnter;
-        private bool m_bInitialUpdate;
+        //private bool m_bInitialUpdate;
         private bool m_bMouseDown;
         private bool m_bScroll;
         private bool m_bScrollDown;
@@ -48,11 +48,13 @@
         private StringFormat m_sfHour;
         private StringFormat m_sfRight;
         private ArrayList m_sResourcesArray;
-        private Timer m_Timer;                  // Timeer used in Drag and Drop Operations
+        private Timer m_Timer;                  // Timer used in Drag and Drop Operations
         private ToolTip m_toolTip;
         private const int WM_HSCROLL = 0x114;       // Horizontal Scrolling Windows Message
         private const int WM_VSCROLL = 0x115;       // Vertical Scrolling Windows Message
         private const int WM_MOUSEWHEEL = 0x20a;    // Windows Mouse Scrolling Message
+        private System.Diagnostics.Stopwatch watch = new System.Diagnostics.Stopwatch();
+
 
         public delegate void CGAppointmentChangedHandler(object sender, CGAppointmentChangedArgs e);
         public event CGAppointmentChangedHandler CGAppointmentChanged;
@@ -89,7 +91,7 @@
             this.m_sfRight.Alignment = StringAlignment.Far;
             this.m_sfHour.LineAlignment = StringAlignment.Center;
             this.m_sfHour.Alignment = StringAlignment.Far;
-            this.m_bInitialUpdate = false;
+            // this.m_bInitialUpdate = false;
         }
 
         private Rectangle AdjustRectForOverlap()
@@ -112,6 +114,7 @@
             if (this.m_Timer != null)
             {
                 this.m_Timer.Stop();
+                this.m_Timer.Tick -= new EventHandler(this.tickEventHandler);
                 this.m_Timer.Dispose();
                 this.m_Timer = null;
             }
@@ -231,6 +234,7 @@
 
         private void CalendarGrid_MouseDown(object sender, MouseEventArgs e)
         {
+            //watch.Restart();
             if (e.Button == MouseButtons.Left)
             {
                 foreach (DictionaryEntry entry in this.m_gridCells.CellHashTable)
@@ -246,15 +250,25 @@
 
         private void CalendarGrid_MouseMove(object Sender, MouseEventArgs e)
         {
+            //test
+            //System.Diagnostics.Debug.Write(watch.ElapsedMilliseconds + "\n");
+            //test
+
+            //if the left mouse button is down and we are moving the mouse...
             if (this.m_bMouseDown)
             {
+                //if Y axis is outside the top or bottom
                 if ((e.Y >= base.ClientRectangle.Bottom) || (e.Y <= base.ClientRectangle.Top))
                 {
+                    //start auto scrolling. m_bScrollDown decides whether we scroll up or down.
                     this.m_bScrollDown = e.Y >= base.ClientRectangle.Bottom;
+                    AutoDragStart();
                 }
+
+                //if Y axis within client rectagle, stop dragging (whether you started or not)
                 if ((e.Y < base.ClientRectangle.Bottom) && (e.Y > base.ClientRectangle.Top))
                 {
-                    bool bAutoDrag = this.m_bAutoDrag;
+                    AutoDragStop();
                 }
                 if (this.m_bSelectingRange)
                 {
@@ -277,6 +291,9 @@
             }
             else
             {
+                //test
+                AutoDragStop(); //is this needed?
+                //test
                 int y = e.Y - base.AutoScrollPosition.Y;
                 int x = e.X - base.AutoScrollPosition.X;
                 Point pt = new Point(x, y);
@@ -347,12 +364,14 @@
             if (e.Graphics != null)
             {
                 this.DrawGrid(e.Graphics);
+                /*
                 if (!this.m_bInitialUpdate)
                 {
                     this.SetAppointmentTypes();
                     base.Invalidate();
                     this.m_bInitialUpdate = true;
                 }
+                 */
             }
         }
 
@@ -601,9 +620,13 @@
                         }
                         if (this.m_sResourcesArray.Count > 0)
                         {
+                            //IMP
+                            //this is the place where we the selected cells are drawn in Light Light Blue.
+                            //IMP
                             if (this.m_selectedRange.CellIsInRange(cellFromRowCol))
                             {
                                 g.FillRectangle(Brushes.Aquamarine, r);
+                                //g.FillRectangle(Brushes.AntiqueWhite, r);
                             }
                             else
                             {
@@ -1141,12 +1164,20 @@
             }
         }
 
+        /// <summary>
+        /// Handles scrolling when the mouse button is down
+        /// </summary>
+        /// <param name="o"></param>
+        /// <param name="e"></param>
         private void tickEventHandler(object o, EventArgs e)
         {
+            //if there are still WM_TIME messages in the Queue after the timer is dead, don't do anything.
+            if (this.m_Timer == null) return;
+
             Point point = new Point(base.AutoScrollPosition.X, base.AutoScrollPosition.Y);
             int x = point.X;
             int num = point.Y * -1;
-            num = this.m_bScrollDown ? (num + 5) : (num - 5);
+            num = this.m_bScrollDown ? (num + 2) : (num - 2);
             point.Y = num;
             base.AutoScrollPosition = point;
             base.Invalidate();

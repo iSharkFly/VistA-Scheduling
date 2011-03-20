@@ -409,7 +409,14 @@ namespace IndianHealthService.ClinicalScheduling
                     if (MessageBox.Show("Unable to connect to VistA.  " + ex.Message, "Clinical Scheduling", MessageBoxButtons.RetryCancel) == DialogResult.Retry)
                     {
                         bRetry = true;
-                        _current.m_ConnectInfo.ChangeServerInfo();
+                        //I hate this, but this is how the library is designed. It throws an error if the user cancels. XXX: Won't fix library until BMX 4.0 port.
+                        try { _current.m_ConnectInfo.ChangeServerInfo(); }
+                        catch (Exception) 
+                        {
+                            closeSplashDelegate();
+                            bRetry = false;
+                            return false; //tell main that it's a no go.
+                        }
                     }
                     else
                     {

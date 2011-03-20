@@ -302,6 +302,8 @@
                 this.m_bWalkIn = value;
             }
         }
+
+        public Patient Patient { get; set; }
     }
 }
 

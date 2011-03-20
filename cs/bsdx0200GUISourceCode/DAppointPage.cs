@@ -62,6 +62,7 @@ namespace IndianHealthService.ClinicalScheduling
         private TextBox txtPhoneCell;
         private Label label7;
         private TextBox txtCountry;
+        private CheckBox chkPrint;
         private IContainer components;
 
 		public DAppointPage()
@@ -124,6 +125,7 @@ namespace IndianHealthService.ClinicalScheduling
             this.patientApptsBindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.dsPatientApptDisplay2BindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.dsPatientApptDisplay2 = new IndianHealthService.ClinicalScheduling.dsPatientApptDisplay2();
+            this.chkPrint = new System.Windows.Forms.CheckBox();
             this.tabControl1.SuspendLayout();
             this.tabAppointment.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -531,6 +533,7 @@ namespace IndianHealthService.ClinicalScheduling
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.chkPrint);
             this.panel1.Controls.Add(this.cmdCancel);
             this.panel1.Controls.Add(this.cmdOK);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Bottom;
@@ -573,6 +576,16 @@ namespace IndianHealthService.ClinicalScheduling
             this.dsPatientApptDisplay2.DataSetName = "dsPatientApptDisplay2";
             this.dsPatientApptDisplay2.SchemaSerializationMode = System.Data.SchemaSerializationMode.IncludeSchema;
             // 
+            // chkPrint
+            // 
+            this.chkPrint.AutoSize = true;
+            this.chkPrint.Location = new System.Drawing.Point(13, 14);
+            this.chkPrint.Name = "chkPrint";
+            this.chkPrint.Size = new System.Drawing.Size(144, 17);
+            this.chkPrint.TabIndex = 2;
+            this.chkPrint.Text = "Print Appointment Letter";
+            this.chkPrint.UseVisualStyleBackColor = true;
+            // 
             // DAppointPage
             // 
             this.AcceptButton = this.cmdOK;
@@ -595,6 +608,7 @@ namespace IndianHealthService.ClinicalScheduling
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
             this.panel1.ResumeLayout(false);
+            this.panel1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.patientApptsBindingSource)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.dsPatientApptDisplay2BindingSource)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.dsPatientApptDisplay2)).EndInit();
@@ -610,7 +624,7 @@ namespace IndianHealthService.ClinicalScheduling
 		private string			m_sPatientName;
 		private string			m_sPatientHRN;
 		private string			m_sPatientIEN;
-		private string			m_sPatientDOB;
+		private DateTime		m_dPatientDOB;
 		private string			m_sPatientPID;
 
 		private string			m_sCity;
@@ -622,12 +636,14 @@ namespace IndianHealthService.ClinicalScheduling
 
 		private string			m_sNote;
 		private	DateTime		m_dStartTime;
+        private DateTime        m_dEndTime;
 		private int				m_nDuration;
 		private string			m_sClinic;
 
         private string          m_sPhoneCell;
         private string          m_sEmail;
         private string          m_sCountry;
+        private int          m_iAccessTypeID;
 
 		#endregion //fields
 
@@ -635,13 +651,15 @@ namespace IndianHealthService.ClinicalScheduling
 
 		public void InitializePage(CGAppointment a)
 		{
-			InitializePage(a.PatientID.ToString(), a.StartTime, a.Duration, "", a.Note);
+			InitializePage(a.PatientID.ToString(), a.StartTime, a.EndTime, "", a.Note, a.AccessTypeID);
 		}
 
-		public void InitializePage(string sPatientIEN, DateTime dStart, int nDuration, string sClinic, string sNote)
+		public void InitializePage(string sPatientIEN, DateTime dStart, DateTime dEnd, string sClinic, string sNote, int iAccessTypeID)
 		{
 			m_dStartTime = dStart;
-			m_nDuration = nDuration;
+            m_dEndTime = dEnd;
+			m_nDuration = (int)(dEnd - dStart).TotalMinutes;
+            m_iAccessTypeID = iAccessTypeID;
 			m_sClinic = sClinic;
 			m_sPatientIEN = sPatientIEN;
 			m_sNote = sNote;
@@ -658,8 +676,7 @@ namespace IndianHealthService.ClinicalScheduling
 				this.m_sPatientHRN = r["HRN"].ToString();
 				this.m_sPatientIEN = r["IEN"].ToString();
                 this.m_sPatientPID = r["PID"].ToString();
-				DateTime dDob =(DateTime) r["DOB"]; //what if it's null?
-				this.m_sPatientDOB = dDob.ToShortDateString();
+				this.m_dPatientDOB = (DateTime) r["DOB"];
 				this.m_sStreet = r["STREET"].ToString();
 				this.m_sCity = r["CITY"].ToString();
 				this.m_sPhoneOffice = r["OFCPHONE"].ToString();
@@ -694,7 +711,7 @@ namespace IndianHealthService.ClinicalScheduling
 				lblStartTime.Text = m_dStartTime.ToShortDateString() + " " + m_dStartTime.ToShortTimeString();
 
 				txtCity.Text = this.m_sCity;
-				txtDOB.Text = this.m_sPatientDOB;
+				txtDOB.Text = this.m_dPatientDOB.ToShortDateString();
 				txtHRN.Text = this.m_sPatientHRN;
 				txtNote.Text = this.m_sNote;
 				txtPatientName.Text = m_sPatientName;
@@ -766,6 +783,50 @@ namespace IndianHealthService.ClinicalScheduling
 			}
 		}
 
+        public bool PrintAppointmentSlip
+        {
+            get { return chkPrint.Checked; }
+        }
+
+        public CGAppointment Appointment
+        {
+            get
+            {
+                Patient pt = new Patient
+                {
+                    DFN = Int32.Parse(m_sPatientIEN),
+                    Name = m_sPatientName,
+                    DOB = m_dPatientDOB,
+                    ID = m_sPatientPID,
+                    HRN = m_sPatientHRN,
+                    Appointments = null, //for now
+                    Street = m_sStreet,
+                    City = m_sCity,
+                    State = m_sState,
+                    Zip = m_sZip,
+                    Country = m_sCountry,
+                    Email = m_sEmail,
+                    HomePhone = m_sPhoneHome,
+                    WorkPHone = m_sPhoneOffice,
+                    CellPhone = m_sPhoneCell
+                };
+
+                CGAppointment appt = new CGAppointment()
+                {
+                    PatientID = Convert.ToInt32(m_sPatientIEN),
+                    PatientName = m_sPatientName,
+                    StartTime = m_dStartTime,
+                    EndTime = m_dEndTime,
+                    Resource = m_sClinic,
+                    Note = m_sNote,
+                    HealthRecordNumber = m_sPatientHRN,
+                    AccessTypeID = m_iAccessTypeID,
+                    Patient = pt
+                };
+
+                return appt;
+            }
+        }
 		#endregion //Properties
 
 

@@ -301,6 +301,7 @@
       <DependentUpon>LoadingSplash.cs</DependentUpon>
     </Compile>
     <Compile Include="Options.cs" />
+    <Compile Include="Patient.cs" />
     <Compile Include="Printing.cs" />
     <Compile Include="UCPatientAppts.cs">
       <SubType>UserControl</SubType>

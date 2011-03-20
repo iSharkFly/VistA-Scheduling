@@ -52,6 +52,7 @@ namespace IndianHealthService.ClinicalScheduling
         private DateTimePicker dtStart;
         private ColumnHeader colDOW;
         private ColumnHeader colID;
+        private Label lblMessage;
       
         private System.ComponentModel.IContainer components;
 
@@ -311,6 +312,7 @@ namespace IndianHealthService.ClinicalScheduling
             this.colResource = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.colSlots = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.colAccessType = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.lblMessage = new System.Windows.Forms.Label();
             this.panel1.SuspendLayout();
             this.pnlDescription.SuspendLayout();
             this.grpDescription.SuspendLayout();
@@ -322,6 +324,7 @@ namespace IndianHealthService.ClinicalScheduling
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.lblMessage);
             this.panel1.Controls.Add(this.cmdSearch);
             this.panel1.Controls.Add(this.cmdCancel);
             this.panel1.Controls.Add(this.btnAccept);
@@ -333,7 +336,7 @@ namespace IndianHealthService.ClinicalScheduling
             // 
             // cmdSearch
             // 
-            this.cmdSearch.Location = new System.Drawing.Point(536, 8);
+            this.cmdSearch.Location = new System.Drawing.Point(33, 6);
             this.cmdSearch.Name = "cmdSearch";
             this.cmdSearch.Size = new System.Drawing.Size(72, 24);
             this.cmdSearch.TabIndex = 2;
@@ -343,7 +346,7 @@ namespace IndianHealthService.ClinicalScheduling
             // cmdCancel
             // 
             this.cmdCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.cmdCancel.Location = new System.Drawing.Point(616, 8);
+            this.cmdCancel.Location = new System.Drawing.Point(828, 8);
             this.cmdCancel.Name = "cmdCancel";
             this.cmdCancel.Size = new System.Drawing.Size(64, 24);
             this.cmdCancel.TabIndex = 1;
@@ -352,7 +355,7 @@ namespace IndianHealthService.ClinicalScheduling
             // btnAccept
             // 
             this.btnAccept.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this.btnAccept.Location = new System.Drawing.Point(128, 8);
+            this.btnAccept.Location = new System.Drawing.Point(135, 8);
             this.btnAccept.Name = "btnAccept";
             this.btnAccept.Size = new System.Drawing.Size(176, 24);
             this.btnAccept.TabIndex = 0;
@@ -435,6 +438,7 @@ namespace IndianHealthService.ClinicalScheduling
             this.dtEnd.Name = "dtEnd";
             this.dtEnd.Size = new System.Drawing.Size(200, 20);
             this.dtEnd.TabIndex = 65;
+            this.dtEnd.ValueChanged += new System.EventHandler(this.dtEnd_ValueChanged);
             // 
             // dtStart
             // 
@@ -442,6 +446,7 @@ namespace IndianHealthService.ClinicalScheduling
             this.dtStart.Name = "dtStart";
             this.dtStart.Size = new System.Drawing.Size(200, 20);
             this.dtStart.TabIndex = 64;
+            this.dtStart.ValueChanged += new System.EventHandler(this.dtStart_ValueChanged);
             // 
             // label3
             // 
@@ -671,6 +676,16 @@ namespace IndianHealthService.ClinicalScheduling
             this.colAccessType.Text = "Access Type";
             this.colAccessType.Width = 101;
             // 
+            // lblMessage
+            // 
+            this.lblMessage.AutoSize = true;
+            this.lblMessage.Font = new System.Drawing.Font("Tahoma", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblMessage.ForeColor = System.Drawing.Color.Red;
+            this.lblMessage.Location = new System.Drawing.Point(337, 16);
+            this.lblMessage.Name = "lblMessage";
+            this.lblMessage.Size = new System.Drawing.Size(0, 16);
+            this.lblMessage.TabIndex = 3;
+            // 
             // DApptSearch
             // 
             this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
@@ -684,6 +699,7 @@ namespace IndianHealthService.ClinicalScheduling
             this.Name = "DApptSearch";
             this.Text = "Find Clinic Availability";
             this.panel1.ResumeLayout(false);
+            this.panel1.PerformLayout();
             this.pnlDescription.ResumeLayout(false);
             this.grpDescription.ResumeLayout(false);
             this.groupBox1.ResumeLayout(false);
@@ -702,7 +718,8 @@ namespace IndianHealthService.ClinicalScheduling
 		{
 			//Tell user we are processing
             this.Cursor = Cursors.WaitCursor;
-            
+            this.lblMessage.Text = String.Empty;
+
             //Get the control data into local vars
 			UpdateDialogData(false);
 			//Resource array, Begin date, Access type array, MTWTF , AM PM
@@ -878,8 +895,8 @@ namespace IndianHealthService.ClinicalScheduling
             lstResults.BeginUpdate(); //tell listview to suspend drawing for now
             lstResults.Items.Clear(); //empty it from old data
 
-            //if (items.Length == 0) lstResults.Items.Add(new ListViewItem(new string[] { "", "", "", "" , "", "No Slots found", "", "" })); // no results
             if (items.Length > 0) lstResults.Items.AddRange(items); // add new data
+            else this.lblMessage.Text = "No available Appointment Slots Found!";
 
             lstResults.EndUpdate(); // ok done adding items, draw now.
             //--End Update Listview
@@ -903,44 +920,28 @@ namespace IndianHealthService.ClinicalScheduling
 				
 		}
 
-		private void grdResult_DoubleClick(object sender, System.EventArgs e)
-		{
-			/*
-            if (lstResults.DataSource == null)
-				return;
 
-			DataGridViewCell dgCell;
-			dgCell = this.grdResult.CurrentCell;
-            this.m_sSelectedResource = grdResult.SelectedRows[0].Cells[2].ToString();
-            this.m_sSelectedDate = (DateTime)grdResult.SelectedRows[0].Cells[0].Value;
-			this.DialogResult = DialogResult.OK;
-			this.Close();
-             */
-		}
-
-		private void grdResult_CurrentCellChanged(object sender, System.EventArgs e)
-		{
-			/*
-            DataGridViewCell dgCell;
-            dgCell = this.grdResult.CurrentCell;
-             */
-        }
-
-        /// <summary>
-        /// BAAAAAAAAAAAAAAAAAD. Use a shared method instead.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
         private void lstResults_DoubleClick(object sender, EventArgs e)
         {
-            btnAccept_Click(sender, e);
+            ProcessChoice(sender, e);
         }
 
         private void btnAccept_Click(object sender, EventArgs e)
         {
+            ProcessChoice(sender, e);
+        }
+
+        /// <summary>
+        /// Shared method to process a user's choice
+        /// </summary>
+        /// <param name="s">sender</param>
+        /// <param name="e">EventArgs</param>
+        private void ProcessChoice(object s, EventArgs e)
+        {
             if (lstResults.SelectedIndices.Count == 0)
             {
                 this.DialogResult = DialogResult.None;
+                lblMessage.Text = "No Appointment Slot selected!";
                 return;
             }
 
@@ -951,10 +952,29 @@ namespace IndianHealthService.ClinicalScheduling
             this.DialogResult = DialogResult.OK;
         }
 
+        /// <summary>
+        /// Adjust start date based on end date.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void dtStart_ValueChanged(object sender, EventArgs e)
+        {
+            if (dtEnd.Value < dtStart.Value) dtEnd.Value = dtStart.Value;
+        }
+
+        /// <summary>
+        /// Adjust end date based on start date.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void dtEnd_ValueChanged(object sender, EventArgs e)
+        {
+            if (dtStart.Value > dtEnd.Value) dtStart.Value = dtEnd.Value;
+        }
+
         #endregion  Event Handlers
 
         #region Properties
-
         
         /// <summary>
         /// Gets the Availability Selected by the User in which to put an appointment
@@ -965,5 +985,7 @@ namespace IndianHealthService.ClinicalScheduling
         }
 
 		#endregion Properties
+
+
     }
 }

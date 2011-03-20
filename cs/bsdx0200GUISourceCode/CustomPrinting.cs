@@ -111,7 +111,38 @@ namespace IndianHealthService.ClinicalScheduling
                 apptPrinting++;
             }
         }
-       
+
+        /// <summary>
+        /// Prints a single appointment slip to give to the patient
+        /// </summary>
+        /// <param name="appt">The Appointment to print</param>
+        /// <param name="e">PrintPageEventArgs from PrintDocument Print handler</param>
+        public virtual void PrintAppointmentSlip(CGAppointment appt, PrintPageEventArgs e)
+        {
+            Rectangle printArea = e.MarginBounds;
+            Graphics g = e.Graphics;
+            StringFormat sf = new StringFormat();
+            sf.Alignment = StringAlignment.Center; //for title
+            Font fTitle = new Font(FontFamily.GenericSerif, 24, FontStyle.Bold); //for title
+            Font fBody = new Font(FontFamily.GenericSerif, 12);
+            string s = "Appointment Reminder Slip";
+            g.DrawString(s, fTitle, Brushes.Black, printArea, sf); //title
+
+            // move down
+            int titleHeight = (int)g.MeasureString(s, fTitle, printArea.Width).Height;
+            printArea.Y += titleHeight;
+            printArea.Height -= titleHeight;
+
+            // draw underline
+            g.DrawLine(Pens.Black, printArea.Location, new Point(printArea.Right, printArea.Y));
+            printArea.Y += 15;
+            printArea.Height -= 15;
+
+
+
+        }
+
+
         /// <summary>
         /// Print Letter to be given or mailed to the patient
         /// </summary>
