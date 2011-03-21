@@ -1,4 +1,4 @@
-BSDX02	; IHS/OIT/HMW - WINDOWS SCHEDULING RPCS ; 3/21/11 9:44am
+BSDX02	; IHS/OIT/HMW - WINDOWS SCHEDULING RPCS ; 3/21/11 11:49am
 	;;1.5V2;BSDX;;Mar 03, 2011
     ; 
     ; Change Log
@@ -95,6 +95,8 @@ STCOMM(BSDXAD,BSDXRESN)	     ;
 	; new code for V1.5. Extra fields to return.
 	N SEX S SEX=$$GET1^DIQ(2,BSDXPATD,.02)  ; SEX
 	N PID S PID=$$GET1^DIQ(2,BSDXPATD,.363) ; PRIMARY LONG ID
+	; Note strange way I retrieve the value. B/c DOB Output Transform
+	; Outputs it in MM/DD/YYYY format, which is ambigous for C#.
 	N DOB S DOB=$$FMTE^XLFDT($$GET1^DIQ(2,BSDXPATD,.03,"I"))  ; DOB
 	S ^BSDXTMP($J,BSDXI)=SEX_U_PID_U_DOB_$C(30)
 	; end new code
