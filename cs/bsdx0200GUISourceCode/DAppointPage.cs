@@ -63,6 +63,8 @@ namespace IndianHealthService.ClinicalScheduling
         private Label label7;
         private TextBox txtCountry;
         private CheckBox chkPrint;
+        private Label label18;
+        private TextBox txtSex;
         private IContainer components;
 
 		public DAppointPage()
@@ -120,12 +122,14 @@ namespace IndianHealthService.ClinicalScheduling
             this.label11 = new System.Windows.Forms.Label();
             this.txtStreet = new System.Windows.Forms.TextBox();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.chkPrint = new System.Windows.Forms.CheckBox();
             this.cmdCancel = new System.Windows.Forms.Button();
             this.cmdOK = new System.Windows.Forms.Button();
             this.patientApptsBindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.dsPatientApptDisplay2BindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.dsPatientApptDisplay2 = new IndianHealthService.ClinicalScheduling.dsPatientApptDisplay2();
-            this.chkPrint = new System.Windows.Forms.CheckBox();
+            this.label18 = new System.Windows.Forms.Label();
+            this.txtSex = new System.Windows.Forms.TextBox();
             this.tabControl1.SuspendLayout();
             this.tabAppointment.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -259,6 +263,8 @@ namespace IndianHealthService.ClinicalScheduling
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.txtSex);
+            this.groupBox1.Controls.Add(this.label18);
             this.groupBox1.Controls.Add(this.label14);
             this.groupBox1.Controls.Add(this.txtHRN);
             this.groupBox1.Controls.Add(this.label6);
@@ -276,7 +282,7 @@ namespace IndianHealthService.ClinicalScheduling
             // 
             // label14
             // 
-            this.label14.Location = new System.Drawing.Point(56, 64);
+            this.label14.Location = new System.Drawing.Point(50, 64);
             this.label14.Name = "label14";
             this.label14.Size = new System.Drawing.Size(40, 16);
             this.label14.TabIndex = 13;
@@ -293,7 +299,7 @@ namespace IndianHealthService.ClinicalScheduling
             // 
             // label6
             // 
-            this.label6.Location = new System.Drawing.Point(224, 40);
+            this.label6.Location = new System.Drawing.Point(227, 65);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(40, 16);
             this.label6.TabIndex = 9;
@@ -302,7 +308,7 @@ namespace IndianHealthService.ClinicalScheduling
             // 
             // txtPID
             // 
-            this.txtPID.Location = new System.Drawing.Point(272, 40);
+            this.txtPID.Location = new System.Drawing.Point(272, 63);
             this.txtPID.Name = "txtPID";
             this.txtPID.ReadOnly = true;
             this.txtPID.Size = new System.Drawing.Size(161, 20);
@@ -310,7 +316,7 @@ namespace IndianHealthService.ClinicalScheduling
             // 
             // label5
             // 
-            this.label5.Location = new System.Drawing.Point(64, 40);
+            this.label5.Location = new System.Drawing.Point(58, 41);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(32, 16);
             this.label5.TabIndex = 7;
@@ -327,7 +333,7 @@ namespace IndianHealthService.ClinicalScheduling
             // 
             // label2
             // 
-            this.label2.Location = new System.Drawing.Point(56, 16);
+            this.label2.Location = new System.Drawing.Point(50, 16);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(40, 16);
             this.label2.TabIndex = 5;
@@ -542,6 +548,16 @@ namespace IndianHealthService.ClinicalScheduling
             this.panel1.Size = new System.Drawing.Size(471, 40);
             this.panel1.TabIndex = 1;
             // 
+            // chkPrint
+            // 
+            this.chkPrint.AutoSize = true;
+            this.chkPrint.Location = new System.Drawing.Point(13, 14);
+            this.chkPrint.Name = "chkPrint";
+            this.chkPrint.Size = new System.Drawing.Size(144, 17);
+            this.chkPrint.TabIndex = 2;
+            this.chkPrint.Text = "Print Appointment Letter";
+            this.chkPrint.UseVisualStyleBackColor = true;
+            // 
             // cmdCancel
             // 
             this.cmdCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
@@ -576,15 +592,23 @@ namespace IndianHealthService.ClinicalScheduling
             this.dsPatientApptDisplay2.DataSetName = "dsPatientApptDisplay2";
             this.dsPatientApptDisplay2.SchemaSerializationMode = System.Data.SchemaSerializationMode.IncludeSchema;
             // 
-            // chkPrint
+            // label18
             // 
-            this.chkPrint.AutoSize = true;
-            this.chkPrint.Location = new System.Drawing.Point(13, 14);
-            this.chkPrint.Name = "chkPrint";
-            this.chkPrint.Size = new System.Drawing.Size(144, 17);
-            this.chkPrint.TabIndex = 2;
-            this.chkPrint.Text = "Print Appointment Letter";
-            this.chkPrint.UseVisualStyleBackColor = true;
+            this.label18.AutoSize = true;
+            this.label18.Location = new System.Drawing.Point(238, 44);
+            this.label18.Name = "label18";
+            this.label18.Size = new System.Drawing.Size(29, 13);
+            this.label18.TabIndex = 14;
+            this.label18.Text = "Sex:";
+            // 
+            // txtSex
+            // 
+            this.txtSex.BackColor = System.Drawing.SystemColors.Control;
+            this.txtSex.Location = new System.Drawing.Point(273, 41);
+            this.txtSex.Name = "txtSex";
+            this.txtSex.ReadOnly = true;
+            this.txtSex.Size = new System.Drawing.Size(160, 20);
+            this.txtSex.TabIndex = 15;
             // 
             // DAppointPage
             // 
@@ -622,6 +646,7 @@ namespace IndianHealthService.ClinicalScheduling
 		private CGDocumentManager	m_DocManager;
 
 		private string			m_sPatientName;
+        private Sex             m_enumPatientSex;
 		private string			m_sPatientHRN;
 		private string			m_sPatientIEN;
 		private DateTime		m_dPatientDOB;
@@ -673,6 +698,7 @@ namespace IndianHealthService.ClinicalScheduling
 				Debug.Assert(tb.Rows.Count == 1);
 				DataRow r = tb.Rows[0];
 				this.m_sPatientName = r["NAME"].ToString();
+                this.m_enumPatientSex = r["SEX"].ToString() == "MALE" ? Sex.Male : Sex.Female;
 				this.m_sPatientHRN = r["HRN"].ToString();
 				this.m_sPatientIEN = r["IEN"].ToString();
                 this.m_sPatientPID = r["PID"].ToString();
@@ -715,6 +741,7 @@ namespace IndianHealthService.ClinicalScheduling
 				txtHRN.Text = this.m_sPatientHRN;
 				txtNote.Text = this.m_sNote;
 				txtPatientName.Text = m_sPatientName;
+                txtSex.Text = m_enumPatientSex.ToString();
 				txtPhoneHome.Text = this.m_sPhoneHome;
 				txtPhoneOffice.Text = this.m_sPhoneOffice;
 				txtPID.Text = this.m_sPatientPID;
@@ -796,6 +823,7 @@ namespace IndianHealthService.ClinicalScheduling
                 {
                     DFN = Int32.Parse(m_sPatientIEN),
                     Name = m_sPatientName,
+                    Sex = m_enumPatientSex,
                     DOB = m_dPatientDOB,
                     ID = m_sPatientPID,
                     HRN = m_sPatientHRN,

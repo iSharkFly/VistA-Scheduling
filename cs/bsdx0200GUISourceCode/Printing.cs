@@ -1,19 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Drawing.Printing;
 using System.Drawing;
-using System.Data;
+using System.Text;
 using System.Drawing.Drawing2D;
+using System.Linq;
+using System.Data;
 
 namespace IndianHealthService.ClinicalScheduling
 {
-    /// <summary>
-    /// Class that encapsulates printing functions in Clinical Scheduling
-    /// </summary>
-    public static class Printing
-    {
+    public class Printing
+    { 
         /// <summary>
         /// Print Appointments
         /// </summary>
@@ -25,8 +21,7 @@ namespace IndianHealthService.ClinicalScheduling
         /// <param name="apptPrinting">Current Appointment printing</param>
         /// <param name="pageNumber">Current page number</param>
         /// <remarks>beg and end have no effect on operation--they are there for documentation for user only</remarks>
-        public static void PrintAppointments(dsPatientApptDisplay2 ds, PrintPageEventArgs e, DateTime beg, DateTime end,
-            int resourceToPrint, ref int apptPrinting, int pageNumber)
+        public virtual void PrintAppointments(dsPatientApptDisplay2 ds, PrintPageEventArgs e, DateTime beg, DateTime end, int resourceToPrint, ref int apptPrinting, int pageNumber)
         {
             Graphics g = e.Graphics;
             //g.PageUnit = GraphicsUnit.Millimeter;
@@ -121,13 +116,218 @@ namespace IndianHealthService.ClinicalScheduling
         }
 
         /// <summary>
+        /// Prints a single appointment slip to give to the patient
+        /// </summary>
+        /// <param name="appt">The Appointment to print</param>
+        /// <param name="e">PrintPageEventArgs from PrintDocument Print handler</param>
+        public virtual void PrintAppointmentSlip(CGAppointment appt, PrintPageEventArgs e)
+        {
+            // Prep
+            Graphics g = e.Graphics;
+            Rectangle printArea = e.MarginBounds;
+            Rectangle pageArea = e.PageBounds;
+            Rectangle headerArea = new Rectangle()
+            {
+                X = e.MarginBounds.X,
+                Y = e.PageBounds.Y,
+                Height = e.MarginBounds.Y - e.PageBounds.Y,
+                Width = e.MarginBounds.Width
+            };
+
+            // A few fonts
+            Font fTitle = new Font(FontFamily.GenericSerif, 24, FontStyle.Bold); //for title
+            Font fBody = new Font(FontFamily.GenericSerif, 12);
+            Font fGroupTitle = new Font(FontFamily.GenericSansSerif, 10, FontStyle.Bold);
+
+            StringFormat sf0 = new StringFormat()
+            {
+                 Alignment = StringAlignment.Center,
+                 LineAlignment = StringAlignment.Center
+            };
+            
+            // Draw Header
+            string division = CGDocumentManager.Current.ConnectInfo.DivisionName;
+            g.DrawString(division, fBody, Brushes.Black, headerArea, sf0);
+            
+            // Draw Title
+            StringFormat sf = new StringFormat();
+            sf.Alignment = StringAlignment.Center; //for title & header
+
+            string s = "Appointment Reminder Slip";
+            g.DrawString(s, fTitle, Brushes.Black, printArea, sf); //title
+
+            // move down
+            int titleHeight = (int)g.MeasureString(s, fTitle, printArea.Width).Height;
+            printArea.Y += titleHeight;
+            printArea.Height -= titleHeight;
+
+            // draw underline
+            g.DrawLine(Pens.Black, printArea.Location, new Point(printArea.Right, printArea.Y));
+            printArea.Y += 15;
+            printArea.Height -= 15;
+
+            // draw curved rectangle.
+            Rectangle personalInfoRectangle = new Rectangle(e.MarginBounds.X, printArea.Y + 30, 280, 300);
+            using (GraphicsPath path = GetRoundedRectPath(personalInfoRectangle, 10))
+            {
+                g.DrawPath(Pens.Black, path);
+            }
+
+            // group header
+            g.DrawString("Patient Information", fGroupTitle, Brushes.Black, new Point(personalInfoRectangle.X, personalInfoRectangle.Y - 20));
+            
+            // inner rectangle for drawing strings:
+            Rectangle personalInfoInnerRectangle = new Rectangle(personalInfoRectangle.X + 20, personalInfoRectangle.Y + 20, 280 - 40, 300 - 40);
+            
+            // Strings to write
+            StringBuilder sb = new StringBuilder(500);
+            sb.AppendLine("Name:" + "\t" + appt.Patient.Name);
+            sb.AppendLine();
+            sb.AppendLine("ID#:" + "\t" + appt.Patient.ID);
+            sb.AppendLine();
+            sb.AppendLine("DOB:" + "\t" + appt.Patient.DOB.ToShortDateString());
+            sb.AppendLine();
+            sb.AppendLine("Age:" + "\t" + appt.Patient.UserFriendlyAge);
+            sb.AppendLine();
+            sb.AppendLine("Sex:" + "\t" + appt.Patient.Sex.ToString());
+            
+            // Draw them
+            g.DrawString(sb.ToString(), fBody, Brushes.Black, personalInfoInnerRectangle);
+
+            // draw curved rectangle
+            Rectangle apptInfoRectangle = new Rectangle(e.MarginBounds.X + e.MarginBounds.Width - 280, printArea.Y + 30, 280, 300);
+            using (GraphicsPath path = GetRoundedRectPath(apptInfoRectangle, 10))
+            {
+                g.DrawPath(Pens.Black, path);
+            }
+
+            // group header
+            g.DrawString("Appointment Information", fGroupTitle, Brushes.Black, new Point(apptInfoRectangle.X, apptInfoRectangle.Y - 20));
+
+            // Strings to write
+            sb = new StringBuilder();
+            sb.AppendLine("Clinic: " + "\t" + appt.Resource);
+            sb.AppendLine();
+            sb.AppendLine("Date: " + "\t" + appt.StartTime.ToShortDateString());
+            sb.AppendLine();
+            sb.AppendLine("Day: " + "\t" + appt.StartTime.DayOfWeek.ToString());
+            sb.AppendLine();
+            sb.AppendLine("Time: " + "\t" + appt.StartTime.ToShortTimeString());
+
+            // Draw them
+            Rectangle apptInfoInnerRectangle = new Rectangle(apptInfoRectangle.X + 20, apptInfoRectangle.Y + 20, 280 - 40, 300 - 40);
+
+            // Draw them
+            g.DrawString(sb.ToString(), fBody, Brushes.Black, apptInfoInnerRectangle);
+
+            // Move Drawing Rectangle Down
+            printArea.Y += 300 + 30 + 20;
+            printArea.Height -= 300 + 30 + 20;
+
+            // Draw New Line
+            g.DrawLine(Pens.Black, printArea.Location, new Point(printArea.Right, printArea.Y));
+            printArea.Y += 5;
+            printArea.Height -= 5;
+
+            // Draw new Title
+            s = "Clinic Instructions";
+            g.DrawString(s, fTitle, Brushes.Black, printArea, sf); //title
+
+            // move down
+            titleHeight = (int)g.MeasureString(s, fTitle, printArea.Width).Height;
+            printArea.Y += titleHeight;
+            printArea.Height -= titleHeight;
+
+            // Draw New Line
+            g.DrawLine(Pens.Black, printArea.Location, new Point(printArea.Right, printArea.Y));
+            printArea.Y += 15;
+            printArea.Height -= 15;
+
+            // Get Resource Clinic Appointment Letter Text
+            DataTable resources = CGDocumentManager.Current.GlobalDataSet.Tables["Resources"];
+
+            string ltrTxt = (from resource in resources.AsEnumerable()
+                             where resource.Field<string>("RESOURCE_NAME") == appt.Resource
+                             select resource.Field<string>("LETTER_TEXT")).SingleOrDefault<string>();
+
+            if (String.IsNullOrWhiteSpace(ltrTxt)) ltrTxt = "(no instructions provided)";
+
+            g.DrawString(ltrTxt, fBody, Brushes.Black, printArea);
+
+            int ltrTxtHeight = (int)g.MeasureString(ltrTxt, fBody).Height;
+
+            printArea.Y += ltrTxtHeight + 15;
+            printArea.Height -= ltrTxtHeight + 15;
+
+            g.DrawLine(Pens.Black, printArea.Location, new Point(printArea.Right, printArea.Y));
+            printArea.Y += 5;
+            printArea.Height -= 5;
+
+            s = "Notes";
+            g.DrawString(s, fTitle, Brushes.Black, printArea, sf); // Notes title
+            
+            // move down
+            titleHeight = (int)g.MeasureString(s, fTitle, printArea.Width).Height;
+            printArea.Y += titleHeight;
+            printArea.Height -= titleHeight;
+
+            // Draw New Line
+            g.DrawLine(Pens.Black, printArea.Location, new Point(printArea.Right, printArea.Y));
+            printArea.Y += 15;
+            printArea.Height -= 15;
+
+            // Draw Notes Area
+            using (GraphicsPath path = GetRoundedRectPath(printArea, 15))
+            {
+                g.DrawPath(Pens.Black, path);
+            }
+
+            // Draw Footer
+            // Get footer rectangle
+            Rectangle footerArea = new Rectangle()
+            {
+                X = e.MarginBounds.X,
+                Y = e.MarginBounds.Height + headerArea.Height,
+                Width = e.MarginBounds.Width,
+                Height = pageArea.Height - (e.MarginBounds.Height + headerArea.Height)
+            };
+
+            //use sf0 to print the footer (center all the way)
+            s = "Printed: " + DateTime.Now.ToString();
+            Font fFooter = new Font(FontFamily.GenericSerif, 7);
+            g.DrawString(s, fFooter, Brushes.Black, footerArea, sf0);
+
+        }
+
+
+        private GraphicsPath GetRoundedRectPath(Rectangle rect, int radius)
+        {
+            int diameter = 2 * radius;
+           
+            Rectangle arcRect = new Rectangle(rect.Location, new Size(diameter, diameter));
+            GraphicsPath path = new GraphicsPath();
+            
+            path.AddArc(arcRect, 180, 90); //top left
+            arcRect.X = rect.Right - diameter;
+            path.AddArc(arcRect, 270, 90); // top right
+            arcRect.Y = rect.Bottom - diameter;
+            path.AddArc(arcRect, 0, 90); // bottom right
+            arcRect.X = rect.Left;
+            path.AddArc(arcRect, 90, 90); // bottom left
+
+            path.CloseFigure();
+
+            return path;
+        }
+
+        /// <summary>
         /// Print Letter to be given or mailed to the patient
         /// </summary>
         /// <param name="ptrow">Strongly typed PatientApptsRow to pass (just one ApptRow)</param>
         /// <param name="e">You know what that is</param>
         /// <param name="letter">Contains letter string</param>
         /// <param name="title">Title of the letter</param>
-        public static void PrintReminderLetter(dsPatientApptDisplay2.PatientApptsRow ptRow, PrintPageEventArgs e, string letter, string title)
+        public virtual void PrintReminderLetter(dsPatientApptDisplay2.PatientApptsRow ptRow, PrintPageEventArgs e, string letter, string title)
         {
 
             Rectangle printArea = e.MarginBounds;
@@ -176,7 +376,7 @@ namespace IndianHealthService.ClinicalScheduling
             address.AppendLine(ptRow.CITY + ", " + ptRow.STATE + " " + ptRow.ZIP);
             g.DrawString(address.ToString(), fBody, Brushes.Black, printArea, sf);
         }
-
+       
         /// <summary>
         /// Cancellation Letter to be given or mailed to the patient
         /// </summary>
@@ -184,7 +384,7 @@ namespace IndianHealthService.ClinicalScheduling
         /// <param name="e">You know what that is</param>
         /// <param name="letter">Contains letter string</param>
         /// <param name="title">Title of the letter</param>
-        public static void PrintCancelLetter(dsRebookAppts.PatientApptsRow ptRow, PrintPageEventArgs e, string letter, string title)
+        public virtual void PrintCancelLetter(dsRebookAppts.PatientApptsRow ptRow, PrintPageEventArgs e, string letter, string title)
         {
             Rectangle printArea = e.MarginBounds;
             Graphics g = e.Graphics;
@@ -240,7 +440,7 @@ namespace IndianHealthService.ClinicalScheduling
         /// <param name="e">etc</param>
         /// <param name="letter">Text of the letter to print</param>
         /// <param name="title">Title to print at the top of the letter</param>
-        public static void PrintRebookLetter(dsRebookAppts.PatientApptsRow ptRow, PrintPageEventArgs e, string letter, string title)
+        public virtual void PrintRebookLetter(dsRebookAppts.PatientApptsRow ptRow, PrintPageEventArgs e, string letter, string title)
         {
             Rectangle printArea = e.MarginBounds;
             Graphics g = e.Graphics;
@@ -297,7 +497,7 @@ namespace IndianHealthService.ClinicalScheduling
         /// </summary>
         /// <param name="msg">The exact string to print.</param>
         /// <param name="e">Print Page event args</param>
-        public static void PrintMessage(string msg, PrintPageEventArgs e)
+        public virtual void PrintMessage(string msg, PrintPageEventArgs e)
         {
             e.Graphics.DrawString(msg, new Font(FontFamily.GenericSerif, 14),
                 Brushes.Black, e.MarginBounds);
@@ -309,7 +509,7 @@ namespace IndianHealthService.ClinicalScheduling
         /// <param name="a">Appointment Data Structure</param>
         /// <param name="title">String to print for title</param>
         /// <param name="e">etc</param>
-        public static void PrintRoutingSlip(CGAppointment a, string title, PrintPageEventArgs e)
+        public virtual void PrintRoutingSlip(CGAppointment a, string title, PrintPageEventArgs e)
         {
             Rectangle printArea = e.MarginBounds;
             Graphics g = e.Graphics;
@@ -353,7 +553,12 @@ namespace IndianHealthService.ClinicalScheduling
             //Print
             Font fFooter = new Font(FontFamily.GenericSerif, 8);
             g.DrawString("Printed: " + DateTime.Now, fFooter, Brushes.Black, printArea, sf2);
-
         }
+
     }
+    public abstract class PrintingCreator
+    {
+        public abstract Printing PrintFactory();
+    }
+
 }

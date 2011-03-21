@@ -41,7 +41,7 @@ namespace IndianHealthService.ClinicalScheduling
         private BMXNetConnectInfo.BMXNetEventDelegate CDocMgrEventDelegate;     // Delegate to respond to messages from VISTA. Responds to event: BMXNetConnectInfo.BMXNetEvent
 
         //Custom Printing
-        private CustomPrinting                          m_PrintingObject = null; 
+        private Printing                          m_PrintingObject = null; 
 		#endregion
 
         #region Properties
@@ -133,7 +133,7 @@ namespace IndianHealthService.ClinicalScheduling
             get { return this._dal; }
         }
 
-        public CustomPrinting PrintingObject
+        public Printing PrintingObject
         {
             get
             {
@@ -444,7 +444,7 @@ namespace IndianHealthService.ClinicalScheduling
             PrintingCreator Creator = null;
             if (DllLocation == string.Empty)
             {
-                this.m_PrintingObject = new CustomPrinting();
+                this.m_PrintingObject = new Printing();
             }
             else
             {

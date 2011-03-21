@@ -176,7 +176,7 @@ namespace IndianHealthService.ClinicalScheduling
         /// Update schedule based on info in RPMS
         /// <returns>Clears and repopluates m_appointments</returns>
         /// </summary>
-        private bool RefreshDaysSchedule()
+        private bool RefreshAppointments()
         {
             try
             {
@@ -238,7 +238,18 @@ namespace IndianHealthService.ClinicalScheduling
                     sWalkIn = r["WALKIN"].ToString();
                     bWalkIn = (sWalkIn == "1") ? true : false;
 
+                    Patient pt = new Patient()
+                    {
+                        DFN = Convert.ToInt32(sPatientID),
+                        Name = sPatientName,
+                        DOB = (DateTime)r["DOB"],
+                        ID = r["PID"].ToString(), 
+                        HRN = sHRN,
+                        Sex = r["SEX"].ToString() == "MALE" ? Sex.Male : Sex.Female
+                    };
+
                     pAppointment = new CGAppointment();
+                    pAppointment.Patient = pt;
                     pAppointment.CreateAppointment(dStart, dEnd, sNote, nKeyID, sResource);
                     pAppointment.PatientName = sPatientName;
                     pAppointment.PatientID = Convert.ToInt32(sPatientID);
@@ -395,7 +406,7 @@ namespace IndianHealthService.ClinicalScheduling
         private bool RefreshSchedule()
         {
             this.RefreshAvailabilitySchedule();
-            this.RefreshDaysSchedule();
+            this.RefreshAppointments();
             return true;
         }
 

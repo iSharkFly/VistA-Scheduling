@@ -301,7 +301,7 @@ namespace IndianHealthService.ClinicalScheduling
             _pageNumber++; //becomes one first time through
             
             // _currentResourcePrinting starts with zero. There will be at least this one.
-            ClinicalScheduling.Printing.PrintAppointments(_dsApptDisplay, e, _dtBegin, _dtEnd,
+            CGDocumentManager.Current.PrintingObject.PrintAppointments(_dsApptDisplay, e, _dtBegin, _dtEnd,
                     _currentResourcePrinting, ref _currentApptPrinting, _pageNumber);
 
             //If the printing routine says it needs more pages to print the appointments,
@@ -331,7 +331,7 @@ namespace IndianHealthService.ClinicalScheduling
             // no patients
             if (_dsApptDisplay.PatientAppts.Count == 0)
             {
-                ClinicalScheduling.Printing.PrintMessage("No Appointments found", e);
+                CGDocumentManager.Current.PrintingObject.PrintMessage("No Appointments found", e);
                 return;
             }
             // if there are patients
@@ -339,7 +339,7 @@ namespace IndianHealthService.ClinicalScheduling
             {
                 dsPatientApptDisplay2.BSDXResourceRow c = (dsPatientApptDisplay2.BSDXResourceRow)
                    _dsApptDisplay.PatientAppts[_currentApptPrinting].GetParentRow(_dsApptDisplay.Relations[0]);
-                ClinicalScheduling.Printing.PrintReminderLetter(_dsApptDisplay.PatientAppts[_currentApptPrinting], e, c.LETTER_TEXT, "Reminder Letter");
+                CGDocumentManager.Current.PrintingObject.PrintReminderLetter(_dsApptDisplay.PatientAppts[_currentApptPrinting], e, c.LETTER_TEXT, "Reminder Letter");
                 _currentApptPrinting++;
                 if (_currentApptPrinting < _dsApptDisplay.PatientAppts.Count)
                 {
@@ -358,7 +358,7 @@ namespace IndianHealthService.ClinicalScheduling
             // no patients
             if (_dsRebookAppts.PatientAppts.Count == 0)
             {
-                ClinicalScheduling.Printing.PrintMessage("No Appointments found", e);
+                CGDocumentManager.Current.PrintingObject.PrintMessage("No Appointments found", e);
                 return;
             }
             // if there are patients
@@ -366,7 +366,7 @@ namespace IndianHealthService.ClinicalScheduling
             {
                 dsRebookAppts.BSDXResourceRow c = (dsRebookAppts.BSDXResourceRow)
                    _dsRebookAppts.PatientAppts[_currentApptPrinting].GetParentRow(_dsRebookAppts.Relations[0]);
-                ClinicalScheduling.Printing.PrintCancelLetter(_dsRebookAppts.PatientAppts[_currentApptPrinting], e, c.CLINIC_CANCELLATION_LETTER, "Cancellation Letter");
+                CGDocumentManager.Current.PrintingObject.PrintCancelLetter(_dsRebookAppts.PatientAppts[_currentApptPrinting], e, c.CLINIC_CANCELLATION_LETTER, "Cancellation Letter");
                 _currentApptPrinting++;
                 if (_currentApptPrinting < _dsRebookAppts.PatientAppts.Count)
                 {
@@ -383,7 +383,7 @@ namespace IndianHealthService.ClinicalScheduling
             // no patients
             if (_dsRebookAppts.PatientAppts.Count == 0)
             {
-                ClinicalScheduling.Printing.PrintMessage("No Appointments found", e);
+                CGDocumentManager.Current.PrintingObject.PrintMessage("No Appointments found", e);
                 return;
             }
             // if there are patients
@@ -392,7 +392,7 @@ namespace IndianHealthService.ClinicalScheduling
                 dsRebookAppts.BSDXResourceRow c = (dsRebookAppts.BSDXResourceRow)
                    _dsRebookAppts.PatientAppts[_currentApptPrinting].GetParentRow(_dsRebookAppts.Relations[0]);
                 //XXX: Rebook letter rather oddly currently stored in NO SHOW LETTER field. What gives???
-                ClinicalScheduling.Printing.PrintRebookLetter(_dsRebookAppts.PatientAppts[_currentApptPrinting], e, c.NO_SHOW_LETTER, "Rebook Letter");
+                CGDocumentManager.Current.PrintingObject.PrintRebookLetter(_dsRebookAppts.PatientAppts[_currentApptPrinting], e, c.NO_SHOW_LETTER, "Rebook Letter");
                 _currentApptPrinting++;
                 if (_currentApptPrinting < _dsRebookAppts.PatientAppts.Count)
                 {

@@ -1,5 +1,4 @@
 using System;
-using System.Drawing;
 using System.Collections;
 using System.ComponentModel;
 using System.Windows.Forms;
@@ -8,6 +7,7 @@ using System.Data;
 using System.Threading;
 using IndianHealthService.BMXNet;
 using System.Runtime.InteropServices;
+using System.Drawing.Printing;
 
 namespace IndianHealthService.ClinicalScheduling
 {
@@ -96,9 +96,8 @@ namespace IndianHealthService.ClinicalScheduling
 		private System.Windows.Forms.MenuItem mnuOpenMultipleSchedules;
 		private System.Windows.Forms.MenuItem mnuDisplayWalkIns;
         private System.Windows.Forms.MenuItem mnuRPMSDivision;
-        private System.Drawing.Printing.PrintDocument printRoutingSlip;
         private MenuItem menuItem10;
-        private MenuItem ctxCalGridReprintRoutingSlip;
+        private MenuItem ctxCalGridReprintApptSlip;
         private IContainer components;
 
         #region Initialization
@@ -232,6 +231,7 @@ namespace IndianHealthService.ClinicalScheduling
             this.dateTimePicker1 = new System.Windows.Forms.DateTimePicker();
             this.lblResource = new System.Windows.Forms.Label();
             this.panelCenter = new System.Windows.Forms.Panel();
+            this.calendarGrid1 = new IndianHealthService.ClinicalScheduling.CalendarGrid();
             this.ctxCalendarGrid = new System.Windows.Forms.ContextMenu();
             this.ctxCalGridAdd = new System.Windows.Forms.MenuItem();
             this.ctxCalGridEdit = new System.Windows.Forms.MenuItem();
@@ -243,13 +243,11 @@ namespace IndianHealthService.ClinicalScheduling
             this.menuItem9 = new System.Windows.Forms.MenuItem();
             this.ctxCalGridWalkin = new System.Windows.Forms.MenuItem();
             this.menuItem10 = new System.Windows.Forms.MenuItem();
-            this.ctxCalGridReprintRoutingSlip = new System.Windows.Forms.MenuItem();
+            this.ctxCalGridReprintApptSlip = new System.Windows.Forms.MenuItem();
             this.panelBottom = new System.Windows.Forms.Panel();
             this.statusBar1 = new System.Windows.Forms.StatusBar();
             this.splitter1 = new System.Windows.Forms.Splitter();
             this.splitter2 = new System.Windows.Forms.Splitter();
-            this.printRoutingSlip = new System.Drawing.Printing.PrintDocument();
-            this.calendarGrid1 = new IndianHealthService.ClinicalScheduling.CalendarGrid();
             this.panelRight.SuspendLayout();
             this.panelClip.SuspendLayout();
             this.panelTop.SuspendLayout();
@@ -763,6 +761,35 @@ namespace IndianHealthService.ClinicalScheduling
             this.panelCenter.Size = new System.Drawing.Size(857, 345);
             this.panelCenter.TabIndex = 7;
             // 
+            // calendarGrid1
+            // 
+            this.calendarGrid1.AllowDrop = true;
+            this.calendarGrid1.Appointments = null;
+            this.calendarGrid1.ApptDragSource = null;
+            this.calendarGrid1.AutoScroll = true;
+            this.calendarGrid1.AutoScrollMinSize = new System.Drawing.Size(600, 1898);
+            this.calendarGrid1.AvailabilityArray = null;
+            this.calendarGrid1.BackColor = System.Drawing.SystemColors.Window;
+            this.calendarGrid1.Columns = 5;
+            this.calendarGrid1.ContextMenu = this.ctxCalendarGrid;
+            this.calendarGrid1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.calendarGrid1.DrawWalkIns = true;
+            this.calendarGrid1.GridBackColor = null;
+            this.calendarGrid1.GridEnter = false;
+            this.calendarGrid1.Location = new System.Drawing.Point(0, 0);
+            this.calendarGrid1.Name = "calendarGrid1";
+            this.calendarGrid1.Resources = ((System.Collections.ArrayList)(resources.GetObject("calendarGrid1.Resources")));
+            this.calendarGrid1.SelectedAppointment = 0;
+            this.calendarGrid1.Size = new System.Drawing.Size(857, 345);
+            this.calendarGrid1.StartDate = new System.DateTime(2003, 1, 27, 0, 0, 0, 0);
+            this.calendarGrid1.TabIndex = 0;
+            this.calendarGrid1.TimeScale = 20;
+            this.calendarGrid1.CGAppointmentChanged += new IndianHealthService.ClinicalScheduling.CalendarGrid.CGAppointmentChangedHandler(this.calendarGrid1_CGAppointmentChanged);
+            this.calendarGrid1.CGAppointmentAdded += new IndianHealthService.ClinicalScheduling.CalendarGrid.CGAppointmentChangedHandler(this.calendarGrid1_CGAppointmentAdded);
+            this.calendarGrid1.CGSelectionChanged += new IndianHealthService.ClinicalScheduling.CalendarGrid.CGSelectionChangedHandler(this.calendarGrid1_CGSelectionChanged);
+            this.calendarGrid1.DoubleClick += new System.EventHandler(this.calendarGrid1_DoubleClick);
+            this.calendarGrid1.MouseEnter += new System.EventHandler(this.calendarGrid1_MouseEnter);
+            // 
             // ctxCalendarGrid
             // 
             this.ctxCalendarGrid.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
@@ -776,7 +803,7 @@ namespace IndianHealthService.ClinicalScheduling
             this.menuItem9,
             this.ctxCalGridWalkin,
             this.menuItem10,
-            this.ctxCalGridReprintRoutingSlip});
+            this.ctxCalGridReprintApptSlip});
             this.ctxCalendarGrid.Popup += new System.EventHandler(this.ctxCalendarGrid_Popup);
             // 
             // ctxCalGridAdd
@@ -836,11 +863,11 @@ namespace IndianHealthService.ClinicalScheduling
             this.menuItem10.Index = 9;
             this.menuItem10.Text = "-";
             // 
-            // ctxCalGridReprintRoutingSlip
+            // ctxCalGridReprintApptSlip
             // 
-            this.ctxCalGridReprintRoutingSlip.Index = 10;
-            this.ctxCalGridReprintRoutingSlip.Text = "&Reprint Routing Slip";
-            this.ctxCalGridReprintRoutingSlip.Click += new System.EventHandler(this.ctxCalGridReprintRoutingSlip_Click);
+            this.ctxCalGridReprintApptSlip.Index = 10;
+            this.ctxCalGridReprintApptSlip.Text = "&Reprint Appointment Slip";
+            this.ctxCalGridReprintApptSlip.Click += new System.EventHandler(this.ctxCalGridReprintApptSlip_Click);
             // 
             // panelBottom
             // 
@@ -876,40 +903,6 @@ namespace IndianHealthService.ClinicalScheduling
             this.splitter2.Size = new System.Drawing.Size(3, 369);
             this.splitter2.TabIndex = 10;
             this.splitter2.TabStop = false;
-            // 
-            // printRoutingSlip
-            // 
-            this.printRoutingSlip.DocumentName = "Routing Slip";
-            this.printRoutingSlip.PrintPage += new System.Drawing.Printing.PrintPageEventHandler(this.printRoutingSlip_PrintPage);
-            // 
-            // calendarGrid1
-            // 
-            this.calendarGrid1.AllowDrop = true;
-            this.calendarGrid1.Appointments = null;
-            this.calendarGrid1.ApptDragSource = null;
-            this.calendarGrid1.AutoScroll = true;
-            this.calendarGrid1.AutoScrollMinSize = new System.Drawing.Size(600, 1898);
-            this.calendarGrid1.AvailabilityArray = null;
-            this.calendarGrid1.BackColor = System.Drawing.SystemColors.Window;
-            this.calendarGrid1.Columns = 5;
-            this.calendarGrid1.ContextMenu = this.ctxCalendarGrid;
-            this.calendarGrid1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.calendarGrid1.DrawWalkIns = true;
-            this.calendarGrid1.GridBackColor = null;
-            this.calendarGrid1.GridEnter = false;
-            this.calendarGrid1.Location = new System.Drawing.Point(0, 0);
-            this.calendarGrid1.Name = "calendarGrid1";
-            this.calendarGrid1.Resources = ((System.Collections.ArrayList)(resources.GetObject("calendarGrid1.Resources")));
-            this.calendarGrid1.SelectedAppointment = 0;
-            this.calendarGrid1.Size = new System.Drawing.Size(857, 345);
-            this.calendarGrid1.StartDate = new System.DateTime(2003, 1, 27, 0, 0, 0, 0);
-            this.calendarGrid1.TabIndex = 0;
-            this.calendarGrid1.TimeScale = 20;
-            this.calendarGrid1.CGAppointmentChanged += new IndianHealthService.ClinicalScheduling.CalendarGrid.CGAppointmentChangedHandler(this.calendarGrid1_CGAppointmentChanged);
-            this.calendarGrid1.CGAppointmentAdded += new IndianHealthService.ClinicalScheduling.CalendarGrid.CGAppointmentChangedHandler(this.calendarGrid1_CGAppointmentAdded);
-            this.calendarGrid1.CGSelectionChanged += new IndianHealthService.ClinicalScheduling.CalendarGrid.CGSelectionChangedHandler(this.calendarGrid1_CGSelectionChanged);
-            this.calendarGrid1.DoubleClick += new System.EventHandler(this.calendarGrid1_DoubleClick);
-            this.calendarGrid1.MouseEnter += new System.EventHandler(this.calendarGrid1_MouseEnter);
             // 
             // CGView
             // 
@@ -1223,7 +1216,7 @@ namespace IndianHealthService.ClinicalScheduling
 			ctxCalGridNoShowUndo.Enabled = bEditAppointments;
 			ctxCalGridWalkin.Enabled = ctxCalGridAdd.Enabled;
             //smh new code
-            ctxCalGridReprintRoutingSlip.Enabled = ctxCalGridEdit.Enabled;
+            ctxCalGridReprintApptSlip.Enabled = ctxCalGridEdit.Enabled;
 		    //end new code
         }
 
@@ -1264,9 +1257,20 @@ namespace IndianHealthService.ClinicalScheduling
 		}
 
         //new code smh
-        private void ctxCalGridReprintRoutingSlip_Click(object sender, EventArgs e)
+        private void ctxCalGridReprintApptSlip_Click(object sender, EventArgs e)
         {
-            printRoutingSlip.Print();
+            int apptID = this.CGrid.SelectedAppointment;
+            if (apptID <= 0) return;
+
+            CGAppointment a = (CGAppointment) this.Appointments.AppointmentTable[apptID];
+            
+            PrintDocument pd = new PrintDocument() { DocumentName = "Appointment Slip for Appt " + apptID };  //Autoinit for DocName
+            pd.PrintPage += (s, pe) =>  //son of a lambda
+            {
+                CGDocumentManager.Current.PrintingObject.PrintAppointmentSlip(a, pe);
+            };
+            
+            pd.Print();
         }
         //end new code
 
@@ -1995,7 +1999,7 @@ namespace IndianHealthService.ClinicalScheduling
 
                 //smh new code
                 if (dlgCheckin.PrintRouteSlip)
-                    this.printRoutingSlip.Print();
+                 //   this.printRoutingSlip.Print();
                 // end new code
 
                 //redraw grid
@@ -3246,7 +3250,7 @@ namespace IndianHealthService.ClinicalScheduling
         {
             int nApptID = this.calendarGrid1.SelectedAppointment;
             CGAppointment a = (CGAppointment)this.Appointments.AppointmentTable[nApptID];
-            ClinicalScheduling.Printing.PrintRoutingSlip(a, "Routing Slip", e);
+            CGDocumentManager.Current.PrintingObject.PrintRoutingSlip(a, "Routing Slip", e);
         }
 
         
