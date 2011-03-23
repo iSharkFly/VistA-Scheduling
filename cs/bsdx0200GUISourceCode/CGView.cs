@@ -1263,14 +1263,8 @@ namespace IndianHealthService.ClinicalScheduling
             if (apptID <= 0) return;
 
             CGAppointment a = (CGAppointment) this.Appointments.AppointmentTable[apptID];
-            
-            PrintDocument pd = new PrintDocument() { DocumentName = "Appointment Slip for Appt " + apptID };  //Autoinit for DocName
-            pd.PrintPage += (s, pe) =>  //son of a lambda
-            {
-                CGDocumentManager.Current.PrintingObject.PrintAppointmentSlip(a, pe);
-            };
-            
-            pd.Print();
+
+            PrintAppointmentSlip(a);
         }
         //end new code
 
@@ -1929,7 +1923,6 @@ namespace IndianHealthService.ClinicalScheduling
 
 		private void AppointmentCheckIn()
 		{
-			
 			int nApptID = this.calendarGrid1.SelectedAppointment;
 			Debug.Assert(nApptID != 0);
 
@@ -1949,35 +1942,9 @@ namespace IndianHealthService.ClinicalScheduling
 					MessageBox.Show(this, "It is too early to check in " + a.PatientName, "Windows Scheduling", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
 					return;
 				}
-				//Find the default provider for the resource & load into combo box
-				DataView rv = new DataView(this.m_DocManager.GlobalDataSet.Tables["Resources"]);
-				rv.Sort="RESOURCE_NAME ASC";
-				int nFind = rv.Find((string) a.Resource);
-				DataRowView drv = rv[nFind];
-				
-				string sHospLoc = drv["HOSPITAL_LOCATION_ID"].ToString();
-				sHospLoc = (sHospLoc == "")?"0":sHospLoc;
-				int nHospLoc = 0;
-				try
-				{
-					nHospLoc = Convert.ToInt32(sHospLoc);
-				}
-				catch(Exception ex)
-				{
-					Debug.Write("CGView.AppointmentCheckIn Error: " + ex.Message);
-				}
-				
-				string sProv = "";
-
-				if (nHospLoc > 0)
-				{
-					DataRow dr = drv.Row;
-					DataRow drHL = dr.GetParentRow(m_DocManager.GlobalDataSet.Relations["HospitalLocationResource"]);
-					sProv = drHL["DEFAULT_PROVIDER"].ToString();
-				}
 
 				DCheckIn dlgCheckin = new DCheckIn();
-				dlgCheckin.InitializePage(a, this.m_DocManager, sProv, nHospLoc);
+				dlgCheckin.InitializePage(a);
 				calendarGrid1.CGToolTip.Active = false;
 				if (dlgCheckin.ShowDialog(this) != DialogResult.OK)
 				{
@@ -1991,16 +1958,19 @@ namespace IndianHealthService.ClinicalScheduling
 
 				DateTime dtCheckIn = dlgCheckin.CheckInTime;
 
-				//Save to Database
+                //Tell appointment that it is checked in, for proper coloring;
+                //When you refresh from the DB, it will have this property.
+                a.CheckInTime = DateTime.Now;
+                
+                //Save to Database
                 this.Document.CheckInAppointment(nApptID, dtCheckIn);
 
-                //Tell appointment that it is checked in
-                a.CheckInTime = DateTime.Now;
+                //Get Provider (XXXXXXXX: NOT SAVED TO THE DATABASE RIGHT NOW)
+                a.Provider = dlgCheckin.Provider;
 
-                //smh new code
+                // Print Routing Slip if user checks that box...
                 if (dlgCheckin.PrintRouteSlip)
-                 //   this.printRoutingSlip.Print();
-                // end new code
+                    this.PrintRoutingSlip(a);
 
                 //redraw grid
 				this.calendarGrid1.Invalidate();
@@ -2217,12 +2187,10 @@ namespace IndianHealthService.ClinicalScheduling
 				//Call Document to add a new appointment. Document adds appointment to CGAppointments array.
 				this.Document.CreateAppointment(appt);
 
-                //Experimental now.
+                
                 if (dAppt.PrintAppointmentSlip)
                 {
-                    System.Drawing.Printing.PrintDocument pd = new System.Drawing.Printing.PrintDocument();
-                    pd.PrintPage += (object s, System.Drawing.Printing.PrintPageEventArgs e) => CGDocumentManager.Current.PrintingObject.PrintAppointmentSlip(appt, e);
-                    pd.Print();
+                    PrintAppointmentSlip(appt);
                 }
 
                 //Show the new set of appointments by calling UpdateArrays. Fetches Document's CGAppointments
@@ -3246,11 +3214,18 @@ namespace IndianHealthService.ClinicalScheduling
 			}
         }
 
-        private void printRoutingSlip_PrintPage(object sender, System.Drawing.Printing.PrintPageEventArgs e)
+        private void PrintRoutingSlip(CGAppointment appt)
         {
-            int nApptID = this.calendarGrid1.SelectedAppointment;
-            CGAppointment a = (CGAppointment)this.Appointments.AppointmentTable[nApptID];
-            CGDocumentManager.Current.PrintingObject.PrintRoutingSlip(a, "Routing Slip", e);
+            PrintDocument pd = new PrintDocument() { DocumentName = "Routing Slip for Appt " + appt.AppointmentKey };
+            pd.PrintPage += (object s, System.Drawing.Printing.PrintPageEventArgs e) => CGDocumentManager.Current.PrintingObject.PrintRoutingSlip(appt, "Routing Slip", e);
+            pd.Print();
+        }
+
+        private void PrintAppointmentSlip(CGAppointment appt)
+        {
+            PrintDocument pd = new PrintDocument() { DocumentName = "Appointment Slip for Appt " + appt.AppointmentKey };  //Autoinit for DocName
+            pd.PrintPage += (object s, System.Drawing.Printing.PrintPageEventArgs e) => CGDocumentManager.Current.PrintingObject.PrintAppointmentSlip(appt, e);
+            pd.Print();
         }
 
         
@@ -3310,6 +3285,9 @@ namespace IndianHealthService.ClinicalScheduling
 
         #endregion events
 
+        /// <summary>
+        /// Refresh grid if needed. 
+        /// </summary>
         void RequestRefreshGrid()
         {
             DateTime dDate = dateTimePicker1.Value.Date;

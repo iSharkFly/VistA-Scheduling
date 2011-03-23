@@ -93,6 +93,11 @@ namespace IndianHealthService.ClinicalScheduling
                 m_dsGlobal = value;
             }
         }
+
+        /// <summary>
+        /// More later...
+        /// </summary>
+        public UserPreferences UserPreferences { get; private set; }
  
         /// <summary>
         /// Returns the single CGDocumentManager object
@@ -460,6 +465,9 @@ namespace IndianHealthService.ClinicalScheduling
                 this.m_PrintingObject = Creator.PrintFactory();
             }
            
+            //User Preferences Object
+            _current.UserPreferences = new UserPreferences();
+
             //Create global dataset
 			_current.m_dsGlobal = new DataSet("GlobalDataSet");
 

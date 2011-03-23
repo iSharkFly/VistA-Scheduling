@@ -139,6 +139,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Provider.cs" />
+    <Compile Include="UserPreferences.cs" />
     <None Include="app.config" />
     <None Include="dsPatientApptDisplay2.xsc">
       <DependentUpon>dsPatientApptDisplay2.xsd</DependentUpon>
@@ -200,7 +202,7 @@
     <Compile Include="CGView.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="CustomPrinting.cs" />
+    <Compile Include="Printing.cs" />
     <Compile Include="DAccessBlock.cs">
       <SubType>Form</SubType>
     </Compile>

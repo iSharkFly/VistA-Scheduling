@@ -1053,8 +1053,6 @@ namespace IndianHealthService.ClinicalScheduling
             Debug.Assert(dtAppt.Rows.Count == 1);
             DataRow r = dtAppt.Rows[0];
             string sErrorID = r["ERRORID"].ToString();
-
-
         }
 
         public string DeleteAppointment(int nApptID)

@@ -3,8 +3,8 @@
     using System;
     using System.Drawing;
     /// <summary>
-    /// This class was regenerated from Calendargrid.dll using Reflector.exe
-    /// by Sam Habiel for WorldVista. The original source code is lost.
+    /// Data Structuer to Represent an Appointment
+    /// 
     /// </summary>
     [Serializable]
     public class CGAppointment
@@ -304,6 +304,7 @@
         }
 
         public Patient Patient { get; set; }
+        public Provider Provider { get; set; }
     }
 }
 

@@ -43,6 +43,11 @@ namespace IndianHealthService.ClinicalScheduling
             }
         }
 
+        /// <summary>
+        /// Returns User Friendly Age. If Age < 5, then Years and Months
+        /// If Age > 5, then only Years.
+        /// Humans tend to round down their ages. So I follow the same rule here.
+        /// </summary>
         public string UserFriendlyAge
         {
             get

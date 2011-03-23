@@ -93,6 +93,8 @@ namespace IndianHealthService.ClinicalScheduling
             this.label4 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.txtSex = new System.Windows.Forms.TextBox();
+            this.label18 = new System.Windows.Forms.Label();
             this.label14 = new System.Windows.Forms.Label();
             this.txtHRN = new System.Windows.Forms.TextBox();
             this.label6 = new System.Windows.Forms.Label();
@@ -128,8 +130,6 @@ namespace IndianHealthService.ClinicalScheduling
             this.patientApptsBindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.dsPatientApptDisplay2BindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.dsPatientApptDisplay2 = new IndianHealthService.ClinicalScheduling.dsPatientApptDisplay2();
-            this.label18 = new System.Windows.Forms.Label();
-            this.txtSex = new System.Windows.Forms.TextBox();
             this.tabControl1.SuspendLayout();
             this.tabAppointment.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -279,6 +279,24 @@ namespace IndianHealthService.ClinicalScheduling
             this.groupBox1.TabIndex = 12;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Patient ID";
+            // 
+            // txtSex
+            // 
+            this.txtSex.BackColor = System.Drawing.SystemColors.Control;
+            this.txtSex.Location = new System.Drawing.Point(273, 41);
+            this.txtSex.Name = "txtSex";
+            this.txtSex.ReadOnly = true;
+            this.txtSex.Size = new System.Drawing.Size(160, 20);
+            this.txtSex.TabIndex = 15;
+            // 
+            // label18
+            // 
+            this.label18.AutoSize = true;
+            this.label18.Location = new System.Drawing.Point(238, 44);
+            this.label18.Name = "label18";
+            this.label18.Size = new System.Drawing.Size(29, 13);
+            this.label18.TabIndex = 14;
+            this.label18.Text = "Sex:";
             // 
             // label14
             // 
@@ -557,6 +575,7 @@ namespace IndianHealthService.ClinicalScheduling
             this.chkPrint.TabIndex = 2;
             this.chkPrint.Text = "Print Appointment Letter";
             this.chkPrint.UseVisualStyleBackColor = true;
+            this.chkPrint.CheckedChanged += new System.EventHandler(this.chkPrint_CheckedChanged);
             // 
             // cmdCancel
             // 
@@ -591,24 +610,6 @@ namespace IndianHealthService.ClinicalScheduling
             // 
             this.dsPatientApptDisplay2.DataSetName = "dsPatientApptDisplay2";
             this.dsPatientApptDisplay2.SchemaSerializationMode = System.Data.SchemaSerializationMode.IncludeSchema;
-            // 
-            // label18
-            // 
-            this.label18.AutoSize = true;
-            this.label18.Location = new System.Drawing.Point(238, 44);
-            this.label18.Name = "label18";
-            this.label18.Size = new System.Drawing.Size(29, 13);
-            this.label18.TabIndex = 14;
-            this.label18.Text = "Sex:";
-            // 
-            // txtSex
-            // 
-            this.txtSex.BackColor = System.Drawing.SystemColors.Control;
-            this.txtSex.Location = new System.Drawing.Point(273, 41);
-            this.txtSex.Name = "txtSex";
-            this.txtSex.ReadOnly = true;
-            this.txtSex.Size = new System.Drawing.Size(160, 20);
-            this.txtSex.TabIndex = 15;
             // 
             // DAppointPage
             // 
@@ -716,6 +717,8 @@ namespace IndianHealthService.ClinicalScheduling
                 Control UC = new UCPatientAppts(m_DocManager, int.Parse(m_sPatientIEN));
                 UC.Dock = DockStyle.Fill;
                 groupBox4.Controls.Add(UC);
+
+                chkPrint.Checked = CGDocumentManager.Current.UserPreferences.PrintAppointmentSlipAutomacially;
             }
 			catch(Exception e)
 			{
@@ -856,6 +859,17 @@ namespace IndianHealthService.ClinicalScheduling
             }
         }
 		#endregion //Properties
+
+        /// <summary>
+        /// Save Print Slip preference in UserPreferences object. For now, it always starts false since
+        /// it isn't saved in the DB; but that will change in the future.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void chkPrint_CheckedChanged(object sender, EventArgs e)
+        {
+            CGDocumentManager.Current.UserPreferences.PrintAppointmentSlipAutomacially = chkPrint.Checked;
+        }
 
 
 	} //end Class

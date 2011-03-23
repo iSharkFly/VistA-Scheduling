@@ -6,6 +6,8 @@ using System.Windows.Forms;
 using System.Data;
 using System.Diagnostics;
 using IndianHealthService.BMXNet;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace IndianHealthService.ClinicalScheduling
 {
@@ -22,10 +24,6 @@ namespace IndianHealthService.ClinicalScheduling
             // Required for Windows Form Designer support
             //
             InitializeComponent();
-
-            //
-            // TODO: Add any constructor code after InitializeComponent call
-            //
         }
 
 
@@ -58,8 +56,8 @@ namespace IndianHealthService.ClinicalScheduling
         private DataTable m_dtForm;
         private DataView m_dvClinic;
         private DataView m_dvForm;
-        private bool m_bInit;
         public bool m_bPrintRouteSlip;
+        private List<Provider> _providers;
         private ToolTip toolTip1;
         
         #endregion Fields
@@ -67,13 +65,14 @@ namespace IndianHealthService.ClinicalScheduling
         #region Properties
 
         /// <summary>
-        /// Returns string representation of internal entry number of Provider in PROVIDER File
+        /// Returns Provider chosen for Check-In
         /// </summary>
-        public string ProviderIEN
+        public Provider Provider
         {
             get
             {
-                return this.m_sProviderIEN;
+                if (cboProvider.SelectedIndex < 1) return null; // because first item is empty placeholder
+                else return this._providers[cboProvider.SelectedIndex];
             }
         }
 
@@ -112,66 +111,113 @@ namespace IndianHealthService.ClinicalScheduling
         /// </summary>
         /// <param name="a">Appointment</param>
         /// <param name="docManager">Document Manager</param>
-        /// <param name="sDefaultProvider">Default provider</param>
-        public void InitializePage(CGAppointment a, CGDocumentManager docManager,
-            string sDefaultProvider, int nHospLoc)
+        public void InitializePage(CGAppointment a)
         {
-            m_bInit = true;
-            m_DocManager = docManager;
+            m_DocManager = CGDocumentManager.Current;
             m_dsGlobal = m_DocManager.GlobalDataSet;
-            int nFind = 0;
+
+            Int32? nHospLoc = (from resource in m_dsGlobal.Tables["Resources"].AsEnumerable()
+                           where resource.Field<string>("RESOURCE_NAME") == a.Resource
+                           select resource.Field<Int32?>("HOSPITAL_LOCATION_ID"))
+                           .SingleOrDefault();
+
+            //smh - following logic replaced with above...
+            /*
+            DataView rv = new DataView(this.m_DocManager.GlobalDataSet.Tables["Resources"]);
+            rv.Sort = "RESOURCE_NAME ASC";
+            int nFind = rv.Find((string)a.Resource);
+            DataRowView drv = rv[nFind];
+
+            string sHospLoc = drv["HOSPITAL_LOCATION_ID"].ToString();
+            sHospLoc = (sHospLoc == "") ? "0" : sHospLoc;
+            int nHospLoc = 0;
+            try
+            {
+                nHospLoc = Convert.ToInt32(sHospLoc);
+            }
+            catch (Exception ex)
+            {
+                Debug.Write("CGView.AppointmentCheckIn Error: " + ex.Message);
+            }
+            */
 
             //smh new code
             //if the resource is linked to a valid hospital location, grab this locations providers
             //from the provider multiple and put them in the combo box.
-            if (nHospLoc != 0)
+            if (nHospLoc != null)
             {
                 //RPC BSDX HOSP LOC PROVIDERS returns Table w/ Columns: 
                 //HOSPITAL_LOCATION_ID^BMXIEN (ie Prov IEN)^NAME^DEFALUT
                 string sCommandText = "BSDX HOSP LOC PROVIDERS^" + nHospLoc;
-                m_dtProvider = docManager.RPMSDataTable(sCommandText, "ClinicProviders");
-                m_dtProvider.DefaultView.Sort = "NAME ASC";
+                m_dtProvider = m_DocManager.RPMSDataTable(sCommandText, "ClinicProviders");
+                
+                _providers = (from providerRow in m_dtProvider.AsEnumerable()
+                              orderby providerRow.Field<string>("NAME")
+                             select new Provider
+                             {
+                                 IEN = providerRow.Field<int>("BMXIEN"),
+                                 Name = providerRow.Field<string>("NAME"),
+                                 Default = providerRow.Field<string>("DEFAULT") == "YES" ? true : false
+                             }).ToList();
 
-                cboProvider.DataSource = m_dtProvider;
-                cboProvider.DisplayMember = "NAME";
-                cboProvider.ValueMember = "BMXIEN";
 
-                //Add None to the top of the list
-                DataRow drProv = m_dtProvider.NewRow();
-                drProv.BeginEdit();
-                drProv["HOSPITAL_LOCATION_ID"] = 0;
-                drProv["NAME"] = "<None>";
-                drProv["BMXIEN"] = 0;
-                drProv.EndEdit();
-                m_dtProvider.Rows.InsertAt(drProv, 0);
-                cboProvider.SelectedIndex = 0;
+
+                //cboProvider.DisplayMember = "NAME";
+                //cboProvider.ValueMember = "BMXIEN";
+                _providers.Insert(0, new Provider { Name = "<None>", IEN = -1 });
+                cboProvider.DataSource = _providers;
+                cboProvider.SelectedIndex = _providers.FindIndex(prov => prov.Default);
+                // if no provider is default, set default to be <none> item.
+                if (cboProvider.SelectedIndex == -1) cboProvider.SelectedIndex = 0;
+                ////Add None to the top of the list
+                //DataRow drProv = m_dtProvider.NewRow();
+                //drProv.BeginEdit();
+                //drProv["HOSPITAL_LOCATION_ID"] = 0;
+                //drProv["NAME"] = "<None>";
+                //drProv["BMXIEN"] = 0;
+                //drProv.EndEdit();
+                //m_dtProvider.Rows.InsertAt(drProv, 0);
+                ////cboProvider.SelectedIndex = 0;
 
                 //Find default provider--search for Yes in Field DEFAULT            
-                DataRow[] nRow = m_dtProvider.Select("DEFAULT='YES'", "NAME ASC");
-                if (nRow.Length > 0) nFind = m_dtProvider.Rows.IndexOf(nRow[0]);
-                cboProvider.SelectedIndex = nFind;
+                //DataRow[] nRow = m_dtProvider.Select("DEFAULT='YES'", "NAME ASC");
+                //if (nRow.Length > 0) nFind = m_dtProvider.Rows.IndexOf(nRow[0]);
+                
 
             }
             //otherwise, just use the default provider table
             else
             {
-                m_dtProvider = m_dsGlobal.Tables["Provider"];
-                m_dtProvider.DefaultView.Sort = "NAME ASC";
 
-                cboProvider.DataSource = m_dtProvider;
-                cboProvider.DisplayMember = "NAME";
-                cboProvider.ValueMember = "BMXIEN";
+                _providers = (from providerRow in m_dsGlobal.Tables["Provider"].AsEnumerable()
+                              orderby providerRow.Field<string>("NAME")
+                              select new Provider
+                              {
+                                  IEN = providerRow.Field<int>("BMXIEN"),
+                                  Name = providerRow.Field<string>("NAME"),
+                                  Default = false
+                              }).ToList();
+
+                
+                /*m_dtProvider = m_dsGlobal.Tables["Provider"];
+                m_dtProvider.DefaultView.Sort = "NAME ASC";*/
+                _providers.Insert(0, new Provider { Name = "<None>", IEN = -1 });
+                cboProvider.DataSource = _providers;
+                cboProvider.SelectedIndex = 0;
+                //cboProvider.DisplayMember = "NAME";
+                //cboProvider.ValueMember = "BMXIEN";
 
                 //Add None to the top of the list
-                DataRow drProv = m_dtProvider.NewRow();
-                drProv.BeginEdit();
-                drProv["NAME"] = "<None>";
-                drProv["BMXIEN"] = 0;
-                drProv.EndEdit();
-                m_dtProvider.Rows.InsertAt(drProv, 0);
-                cboProvider.SelectedIndex = 0;
+                //DataRow drProv = m_dtProvider.NewRow();
+                //drProv.BeginEdit();
+                //drProv["NAME"] = "<None>";
+                //drProv["BMXIEN"] = 0;
+                //drProv.EndEdit();
+                //m_dtProvider.Rows.InsertAt(drProv, 0);
+                //cboProvider.SelectedIndex = 0;
             }
 
+                            
 
             m_sPatientName = a.PatientName;
             if (a.CheckInTime.Ticks != 0)
@@ -186,8 +232,10 @@ namespace IndianHealthService.ClinicalScheduling
                 m_dCheckIn = DateTime.Now;
             }
 
+            //Print Routing Slip based on user preferences.
+            chkRoutingSlip.Checked = CGDocumentManager.Current.UserPreferences.PrintRoutingSlipAutomatically;
+
             UpdateDialogData(true);
-            m_bInit = false;
         }
 
 
@@ -362,6 +410,7 @@ namespace IndianHealthService.ClinicalScheduling
             // 
             // cboProvider
             // 
+            this.cboProvider.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cboProvider.Location = new System.Drawing.Point(96, 88);
             this.cboProvider.Name = "cboProvider";
             this.cboProvider.Size = new System.Drawing.Size(240, 21);
@@ -383,6 +432,7 @@ namespace IndianHealthService.ClinicalScheduling
             this.chkRoutingSlip.TabIndex = 14;
             this.chkRoutingSlip.Text = "Print Routing Slip";
             this.toolTip1.SetToolTip(this.chkRoutingSlip, "Prints routing slip to the Windows Default Printer");
+            this.chkRoutingSlip.CheckedChanged += new System.EventHandler(this.chkRoutingSlip_CheckedChanged);
             // 
             // DCheckIn
             // 
@@ -417,6 +467,17 @@ namespace IndianHealthService.ClinicalScheduling
             this.UpdateDialogData(false);
         }
 
+        /// <summary>
+        /// Save this in User Preferences Object.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void chkRoutingSlip_CheckedChanged(object sender, EventArgs e)
+        {
+            CGDocumentManager.Current.UserPreferences.PrintRoutingSlipAutomatically = chkRoutingSlip.Checked;
+        }
+
         #endregion Events
+
     }
 }
