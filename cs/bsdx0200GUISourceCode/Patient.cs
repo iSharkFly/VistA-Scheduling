@@ -53,10 +53,10 @@ namespace IndianHealthService.ClinicalScheduling
             get
             {
                 if (Age.TotalDays / 365.24 > 5)
-                    return Math.Floor((Age.TotalDays / 365.24)).ToString() + " years";
+                    return Math.Floor((Age.TotalDays / 365.24)).ToString() + " " + strings.years;
                 else
-                    return Math.Floor((Age.TotalDays / 365.24)).ToString() + " years & "
-                     + Math.Floor(Age.TotalDays % 365.24 / 30).ToString() + " months";
+                    return Math.Floor((Age.TotalDays / 365.24)).ToString() + " " + strings.years + " " + strings.and + " "
+                     + Math.Floor(Age.TotalDays % 365.24 / 30).ToString() + " " + strings.months;
             }
         }
     }

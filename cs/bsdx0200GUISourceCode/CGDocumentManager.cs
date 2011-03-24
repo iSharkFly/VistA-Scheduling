@@ -7,6 +7,7 @@ using System.Threading;
 using IndianHealthService.BMXNet;
 using Mono.Options;
 using System.Runtime.InteropServices;
+using System.Globalization;
 
 namespace IndianHealthService.ClinicalScheduling
 {
@@ -31,6 +32,9 @@ namespace IndianHealthService.ClinicalScheduling
         private string                      m_Server="";
         private int                         m_Port=0;
         private string                      m_Encoding="";  //Encoding is "" by default;
+
+        //Globalization Object (tied to command line parameter /culture)
+        private string                      m_CultureName = "";
 
         //Data Access Layer
         private DAL                         _dal = null;
@@ -95,7 +99,7 @@ namespace IndianHealthService.ClinicalScheduling
         }
 
         /// <summary>
-        /// More later...
+        /// User Preferences Auto Property
         /// </summary>
         public UserPreferences UserPreferences { get; private set; }
  
@@ -170,6 +174,7 @@ namespace IndianHealthService.ClinicalScheduling
         /// /a or -a = Access Code
         /// /v or -v = Verify Code
         /// /e or -e = Encoding (name of encoding as known to windows, such as windows-1256)
+        /// /culture or -culture = Culture Name for UI Culture if you wish to override the Windows Culture
         /// </param>
         /// <remarks>
         /// Encoding decision is complex. This is the order of priority:
@@ -199,7 +204,8 @@ namespace IndianHealthService.ClinicalScheduling
                 { "p=", p => _current.m_Port = int.Parse(p) },
                 { "a=", a => _current.m_AccessCode = a },
                 { "v=", v => _current.m_VerifyCode = v },
-                { "e=", e => _current.m_Encoding = e}
+                { "e=", e => _current.m_Encoding = e},
+                { "culture=", culture => _current.m_CultureName = culture }
             };
 
             opset.Parse(args);
@@ -467,6 +473,10 @@ namespace IndianHealthService.ClinicalScheduling
            
             //User Preferences Object
             _current.UserPreferences = new UserPreferences();
+
+            //User Interface Culture (m_CultureName is set from the command line flag /culture)
+            try { Thread.CurrentThread.CurrentUICulture = new CultureInfo(m_CultureName); } // if "", invariant culture
+            catch (CultureNotFoundException) { Thread.CurrentThread.CurrentUICulture = CultureInfo.InvariantCulture; }
 
             //Create global dataset
 			_current.m_dsGlobal = new DataSet("GlobalDataSet");

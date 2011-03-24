@@ -140,6 +140,16 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Provider.cs" />
+    <Compile Include="strings.ar.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>strings.ar.resx</DependentUpon>
+    </Compile>
+    <Compile Include="strings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>strings.resx</DependentUpon>
+    </Compile>
     <Compile Include="UserPreferences.cs" />
     <None Include="app.config" />
     <None Include="dsPatientApptDisplay2.xsc">
@@ -411,6 +421,14 @@
     </EmbeddedResource>
     <EmbeddedResource Include="LoadingSplash.resx">
       <DependentUpon>LoadingSplash.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="strings.ar.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>strings.ar.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="strings.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>strings.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="UCPatientAppts.resx">
       <DependentUpon>UCPatientAppts.cs</DependentUpon>

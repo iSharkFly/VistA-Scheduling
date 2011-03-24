@@ -8,6 +8,7 @@ using System.Threading;
 using IndianHealthService.BMXNet;
 using System.Runtime.InteropServices;
 using System.Drawing.Printing;
+using System.Linq;
 
 namespace IndianHealthService.ClinicalScheduling
 {
@@ -1953,18 +1954,18 @@ namespace IndianHealthService.ClinicalScheduling
 				}
 				calendarGrid1.CGToolTip.Active = true;
 
-				if (bAlreadyCheckedIn == true)
-					return;
+                if (bAlreadyCheckedIn != true)
+                {
+                    DateTime dtCheckIn = dlgCheckin.CheckInTime;
 
-				DateTime dtCheckIn = dlgCheckin.CheckInTime;
+                    //Tell appointment that it is checked in, for proper coloring;
+                    //When you refresh from the DB, it will have this property.
+                    a.CheckInTime = DateTime.Now;
 
-                //Tell appointment that it is checked in, for proper coloring;
-                //When you refresh from the DB, it will have this property.
-                a.CheckInTime = DateTime.Now;
+                    //Save to Database
+                    this.Document.CheckInAppointment(nApptID, dtCheckIn);
+                }
                 
-                //Save to Database
-                this.Document.CheckInAppointment(nApptID, dtCheckIn);
-
                 //Get Provider (XXXXXXXX: NOT SAVED TO THE DATABASE RIGHT NOW)
                 a.Provider = dlgCheckin.Provider;
 
@@ -2102,8 +2103,6 @@ namespace IndianHealthService.ClinicalScheduling
 		{
 			try
 			{
-				
-			
 				//Get Time and Resource from Selected Cell
 				DateTime dStart = DateTime.Today;
 				DateTime dEnd = DateTime.Today;
@@ -3216,8 +3215,22 @@ namespace IndianHealthService.ClinicalScheduling
 
         private void PrintRoutingSlip(CGAppointment appt)
         {
+            //get this appointment's order
+            //Today's appointments
+            var todaysAppts = (from lkappts in this.Document.Appointments.AppointmentTable.Values.Cast<CGAppointment>()
+                               where lkappts.StartTime > appt.StartTime.Date && lkappts.StartTime < appt.StartTime.AddDays(1).Date
+                              orderby lkappts.StartTime
+                              select lkappts).ToList();
+            
+            //Find the order of the appointment
+            int apptOrder = todaysAppts.FindIndex(eachappt => eachappt.StartTime == appt.StartTime && eachappt.PatientID == appt.PatientID);
+ 
+            //Index is zero based, so add 1
+            apptOrder++;
+
+            //Send that to the routing slip as a parameter
             PrintDocument pd = new PrintDocument() { DocumentName = "Routing Slip for Appt " + appt.AppointmentKey };
-            pd.PrintPage += (object s, System.Drawing.Printing.PrintPageEventArgs e) => CGDocumentManager.Current.PrintingObject.PrintRoutingSlip(appt, "Routing Slip", e);
+            pd.PrintPage += (object s, System.Drawing.Printing.PrintPageEventArgs e) => CGDocumentManager.Current.PrintingObject.PrintRoutingSlip(appt, apptOrder, e);
             pd.Print();
         }
 

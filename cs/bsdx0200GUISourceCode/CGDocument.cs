@@ -1002,7 +1002,11 @@ namespace IndianHealthService.ClinicalScheduling
             aCopy.AppointmentKey = nApptID;
             this.m_appointments.AddAppointment(aCopy);
             
-            
+            //TODO: Improve
+            //Yucky hack for now... haven't investigated why we need to create a new CGAppointment beyond
+            //the one that we pass.
+            rApptInfo.AppointmentKey = nApptID;
+
             //Have make appointment from CGView responsible for requesting an update for the avialability.
             //bool bRet = RefreshAvailabilitySchedule();
 
