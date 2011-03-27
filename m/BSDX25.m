@@ -1,4 +1,4 @@
-BSDX25	; IHS/OIT/HMW - WINDOWS SCHEDULING RPCS ; 1/6/11 1:57pm
+BSDX25	; IHS/OIT/HMW - WINDOWS SCHEDULING RPCS ; 3/15/11 8:15pm
 	;;1.5V2;BSDX;;Mar 03, 2011
 	   ;
 	   ; Change Log:
@@ -9,7 +9,6 @@ CHECKIND(BSDXY,BSDXAPTID,BSDXCDT,BSDXCC,BSDXPRV,BSDXROU,BSDXVCL,BSDXVFM,BSDXOG)	
 	;Entry point for debugging
 	;
 	;I +$G(^BSDXDBUG("BREAK","CHECKIN")),+$G(^BSDXDBUG("BREAK"))=DUZ D DEBUG^%Serenji("CHECKIN^BSDX25(.BSDXY,BSDXAPTID,BSDXCDT,BSDXCC,BSDXPRV,BSDXROU,BSDXVCL,BSDXVFM,BSDXOG)",$P(^BSDXDBUG("BREAK"),U,2))
-	;E  G ENDBG
 	Q
 	;
 CHECKIN(BSDXY,BSDXAPTID,BSDXCDT)	; ,BSDXCC,BSDXPRV,BSDXROU,BSDXVCL,BSDXVFM,BSDXOG)	;EP Check in appointment
@@ -29,7 +28,7 @@ CHECKIN(BSDXY,BSDXAPTID,BSDXCDT)	; ,BSDXCC,BSDXPRV,BSDXROU,BSDXVCL,BSDXVFM,BSDXO
 	   ; ADO.net table with 1 column ErrorID, 1 row result
 	   ; - 0 if all okay
 	   ; - Another number or text if not
-ENDBG	;
+	
 	N BSDXNOD,BSDXPATID,BSDXSTART,DIK,DA,BSDXID,BSDXI,BSDXZ,BSDXIENS,BSDXVEN
 	N BSDXNOEV
 	S BSDXNOEV=1 ;Don't execute protocol
@@ -79,6 +78,63 @@ APCHK(BSDXZ,BSDXSC1,BSDXDFN,BSDXCDT,BSDXSTART)	        ;
 	S BSDXZ=$$CHECKIN1^BSDXAPI(BSDXDFN,BSDXSC1,BSDXSTART)
 	Q
 	;
+RMCI(BSDXY,BSDXAPPTID) ; EP - Remove Check-in from BSDX APPT and 2/44
+	; Called by RPC [Fill in later]
+	; 
+	; Parameters to pass:
+	; APPTID: IEN in file BSDX APPOINTMENT
+	;
+	; Return in global array:
+	; Record set with Column ERRORID; value of 0 AOK; other value 
+	;  --> means that something went wrong
+	;
+	N BSDXNOEV S BSDXNOEV=1 ;Don't execute protocol
+	;
+	N $ET S $ET="G ERROR^BSDX25" ; Error Trap
+	;
+	; Set return variable and kill contents
+	N BSDXY S BSDXY=$NAME(^BSDXTMP($J))
+	K @BSDXY
+	; 
+	N BSDXI S BSDXI=0 ; Initialize Counter
+	;
+	S ^BSDXTMP($J,BSDXI)="T00020ERRORID"_$C(30) ; Header of ADO recordset
+	;
+	TSTART ():SERIAL ; Perform Autolocking
+	;
+	; Check for Appointment ID (passed and exists in file)
+	I '+BSDXAPTID D ERR("1~Invalid Appointment ID") QUIT
+	I '$D(^BSDXAPPT(BSDXAPTID,0)) D ERR("2~Invalid Appointment ID") QUIT
+	;
+	; Remove checkin from BSDX APPOINTMENT entry
+	D BSDXCHK(BSDXAPTID,"@")
+	;
+	; Now, remove checkin from PIMS files 2/44
+	N BSDXNOD S BSDXNOD=^BSDXAPPT(BSDXAPTID,0)
+	N BSDXPATID S BSDXPATID=$P(BSDXNOD,U,5)	; DFN
+	N BSDXSTART S BSDXSTART=$P(BSDXNOD,U)	; Start Date
+	N BSDXSC1 S BSDXSC1=$P(BSDXNOD,U,7) ; Resource ID
+	; 
+	; If the resource doesn't exist, error out. DB is corrupt.
+	I BSDXSC1]"" D ERR("3~DB has corruption. Call Tech Support.") QUIT
+	I $D(^BSDXRES(BSDXSC1,0)) D ERR("4~DB has corruption. Call Tech Support.") QUIT 
+	;
+	N BSDXNOD S BSDXNOD=^BSDXRES(BSDXSC1,0) ; Resource 0 node
+	S BSDXSC1=$P(BSDXNOD,U,4) ;HOSPITAL LOCATION
+	;
+	N BSDXZ ; Scratch variable to hold error message
+	I BSDXSC1]"",$D(^SC(BSDXSC1,0)) S BSDXZ=$$RMCI^BSDXAPI(BSDXPAT,BSDXSC1,BSDXSTART)
+	I +$G(BSDXZ) D ERR("5~"_$P(BSDXZ,U,2)) QUIT
+	; 
+	TCOMMIT  ; Save Data into Globals
+	;
+	; Return ADO recordset
+	S BSDXI=BSDXI+1
+	S ^BSDXTMP($J,BSDXI)="0"_$C(30)
+	S BSDXI=BSDXI+1
+	S ^BSDXTMP($J,BSDXI)=$C(31)
+	Q
+	;
 CHKEVT(BSDXPAT,BSDXSTART,BSDXSC)	;EP Called by BSDX CHECKIN APPOINTMENT event
 	;when appointments CHECKIN via PIMS interface.
 	;Propagates CHECKIN to BSDXAPPT and raises refresh event to running GUI clients
@@ -121,14 +177,14 @@ CHKEVT3(BSDXRES)	;
 	Q
 	;
 ERROR	;
-	D ERR("RPMS Error")
+	D ERR("-20~Mumps Error")
 	Q
 	;
-ERR(ERRNO)	;Error processing
-	I +ERRNO S BSDXERR=ERRNO+134234112 ;vbObjectError
-	E  S BSDXERR=ERRNO
+ERR(BSDXERR)	;Error processing
+	I $TLEVEL>0 TROLLBACK
+	S BSDXERR=$TEXT(+0)_":"_$GET(BSDXERR) ; Append Routine Name
 	S BSDXI=BSDXI+1
 	S ^BSDXTMP($J,BSDXI)=BSDXERR_$C(30)
 	S BSDXI=BSDXI+1
 	S ^BSDXTMP($J,BSDXI)=$C(31)
-	Q
+	QUIT
