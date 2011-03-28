@@ -1,5 +1,5 @@
 BSDX01	; IHS/OIT/HMW - WINDOWS SCHEDULING RPCS ; 3/16/11 7:08am
-	;;1.5V2;BSDX;;Mar 03, 2011
+	;;1.5V3;BSDX;;Mar 16, 2011
 	;
 SUINFOD(BSDXY,BSDXDUZ)	;EP Debugging entry point
 	;D DEBUG^%Serenji("SUINFO^BSDX01(.BSDXY,BSDXDUZ)")
@@ -256,7 +256,7 @@ APSEC(BSDXKEY,BSDXDUZ)	;EP - Return TRUE (1) if user has keys BSDXKEY or XUPROGM
 	I '+BSDXIEN Q 0
 	I '$D(^VA(200,BSDXDUZ,51,BSDXIEN,0)) Q 0
 	Q 1
-SP(BSDXY,PARAM,YESNO) ; Save Param at User Level - EP
+SP(BSDXY,PARAM,YESNO)	; Save Param at User Level - EP
 	; Called by RPC: BSDX SET PARAM
 	; Input:
 	; - Param: Name of Parameter (prog name of course)
@@ -271,7 +271,7 @@ SP(BSDXY,PARAM,YESNO) ; Save Param at User Level - EP
 	S BSDXY=$G(ERROR)
 	QUIT
 	;
-GP(BSDXY,PARAM) ; Get Param - EP
+GP(BSDXY,PARAM)	; Get Param - EP
 	; Called by RPC: BSDX GET PARAM
 	; Input: Name of Parameter
 	; Output: Value of parameter: 0 or 1, for now.

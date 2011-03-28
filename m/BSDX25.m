@@ -1,12 +1,12 @@
 BSDX25	; IHS/OIT/HMW - WINDOWS SCHEDULING RPCS ; 3/16/11 2:21am
-	;;1.5V2;BSDX;;Mar 03, 2011
+	;;1.5V3;BSDX;;Mar 16, 2011
 	;
 	; Change Log:
 	; 3110106: SMH -> Changed Check-in EP - Removed unused paramters. Will change C#
 	;
 	;
-UT ; Unit Tests
- ; Make appointment, checkin, then uncheckin
+UT	; Unit Tests
+	; Make appointment, checkin, then uncheckin
 	N ZZZ
 	N APPTTIME S APPTTIME=$E($$NOW^XLFDT(),1,12)
 	D APPADD^BSDX07(.ZZZ,APPTTIME,APPTTIME+.0001,3,"Dr Office",30,"Sam's Note",1)
@@ -110,7 +110,7 @@ APCHK(BSDXZ,BSDXSC1,BSDXDFN,BSDXCDT,BSDXSTART)	        ;
 	S BSDXZ=$$CHECKIN1^BSDXAPI(BSDXDFN,BSDXSC1,BSDXSTART)
 	Q
 	;
-RMCI(BSDXY,BSDXAPPTID) ; EP - Remove Check-in from BSDX APPT and 2/44
+RMCI(BSDXY,BSDXAPPTID)	; EP - Remove Check-in from BSDX APPT and 2/44
 	; Called by RPC [Fill in later]
 	; 
 	; Parameters to pass:
@@ -223,11 +223,11 @@ CHKEVT3(BSDXRES)	;
 	;
 ERROR	;
 	S $ETRAP="D ^%ZTER HALT"  ; Emergency Error Trap for the wise
-    ; Rollback, otherwise ^XTER will be empty from future rollback
-    I $TL>0 TROLLBACK
-    D ^%ZTER
-    S $EC=""  ; Clear Error
-    ; Log error message and send to client
+	   ; Rollback, otherwise ^XTER will be empty from future rollback
+	   I $TL>0 TROLLBACK
+	   D ^%ZTER
+	   S $EC=""  ; Clear Error
+	   ; Log error message and send to client
 	D ERR("-20~Mumps Error")
 	Q
 	;
