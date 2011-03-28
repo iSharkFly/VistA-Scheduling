@@ -1,4 +1,4 @@
-BSDX25	; IHS/OIT/HMW - WINDOWS SCHEDULING RPCS ; 3/16/11 1:07am
+BSDX25	; IHS/OIT/HMW - WINDOWS SCHEDULING RPCS ; 3/16/11 2:21am
 	;;1.5V2;BSDX;;Mar 03, 2011
 	;
 	; Change Log:
@@ -133,7 +133,7 @@ RMCI(BSDXY,BSDXAPPTID) ; EP - Remove Check-in from BSDX APPT and 2/44
 	N $ET S $ET="G ERROR^BSDX25" ; Error Trap
 	;
 	; Set return variable and kill contents
-	N BSDXY S BSDXY=$NAME(^BSDXTMP($J))
+	S BSDXY=$NAME(^BSDXTMP($J))
 	K @BSDXY
 	; 
 	N BSDXI S BSDXI=0 ; Initialize Counter

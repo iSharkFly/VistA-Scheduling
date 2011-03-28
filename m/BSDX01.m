@@ -1,4 +1,4 @@
-BSDX01	; IHS/OIT/HMW - WINDOWS SCHEDULING RPCS ; 9/29/10 10:20am
+BSDX01	; IHS/OIT/HMW - WINDOWS SCHEDULING RPCS ; 3/16/11 7:08am
 	;;1.5V2;BSDX;;Mar 03, 2011
 	;
 SUINFOD(BSDXY,BSDXDUZ)	;EP Debugging entry point
@@ -256,6 +256,29 @@ APSEC(BSDXKEY,BSDXDUZ)	;EP - Return TRUE (1) if user has keys BSDXKEY or XUPROGM
 	I '+BSDXIEN Q 0
 	I '$D(^VA(200,BSDXDUZ,51,BSDXIEN,0)) Q 0
 	Q 1
+SP(BSDXY,PARAM,YESNO) ; Save Param at User Level - EP
+	; Called by RPC: BSDX SET PARAM
+	; Input:
+	; - Param: Name of Parameter (prog name of course)
+	; - Yes/No: 1 or 0
+	; Output: Error Code as string; 0 is good
+	;
+	; Security Protection
+	IF $EXTRACT(PARAM,1,4)'="BSDX" S BSDXY="-1^BSDX Params only allowed" QUIT
+	;
+	N ERROR
+	D PUT^XPAR("USR",PARAM,1,YESNO,.ERROR)
+	S BSDXY=$G(ERROR)
+	QUIT
+	;
+GP(BSDXY,PARAM) ; Get Param - EP
+	; Called by RPC: BSDX GET PARAM
+	; Input: Name of Parameter
+	; Output: Value of parameter: 0 or 1, for now.
+	;
+	S BSDXY=$$GET^XPAR("USR^LOC^SYS^PKG",PARAM,1,"I")
+	QUIT
+	;
 INDIV(BSDXSC)	; PEP - Is ^SC clinic in the same DUZ(2) as user?
 	   ; Input: BSDXSC - Hospital Location IEN
 	   ; Output: True or False
