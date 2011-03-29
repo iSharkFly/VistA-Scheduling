@@ -502,19 +502,16 @@ namespace IndianHealthService.ClinicalScheduling
             Version x = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
 
             //if version numbers mismatch, don't continue.
-            //TODO: For future: Include in v. 1.5
-            /*
-            if (!(x.Major.ToString() == sMajor && x.Minor.ToString() + x.Build.ToString() == sMinor))
+            if (!(x.Major.ToString() == sMajor && x.Minor.ToString() == sMinor))
             {
                 MessageBox.Show(
                     "Server runs version " + sMajor + "." + sMinor + "\r\n" +
                     "You are running " + x.ToString() + "\r\n\r\n" +
                     "Major, Minor and Build versions must match",
                     "Version Mismatch");
-                m_ds.Close();
-                return;
+                closeSplashDelegate();
+                return false;
             }
-            */
  
 
             //Change encoding
