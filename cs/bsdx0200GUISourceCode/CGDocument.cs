@@ -1295,6 +1295,12 @@ namespace IndianHealthService.ClinicalScheduling
             }
         }
 
+        //DON'T USE OBVIOUSLY. JUST FOR TESTING.
+        public void ThrowException()
+        {
+            throw new Exception("Hello World. I am an Exception.");
+        }
+
         #endregion Methods
 
     }//End class

@@ -185,6 +185,13 @@ namespace IndianHealthService.ClinicalScheduling
         [STAThread()]
         static void Main(string[] args)
         {
+            //Application wide error handler for unhandled errors (later I figure out that's only for WinForm ex'es)
+            Application.SetUnhandledExceptionMode(UnhandledExceptionMode.ThrowException);
+            Application.ThreadException += new ThreadExceptionEventHandler(App_ThreadException);
+
+            // Add the event handler for handling non-UI thread exceptions to the event. 
+            AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(App_DomainException);
+
 #if DEBUG
             // Print console messages to console if launched from console
             // Note: Imported From kernel32.dll
@@ -230,8 +237,9 @@ namespace IndianHealthService.ClinicalScheduling
             //Handle BMX Event
             Application.DoEvents();
 
-            //Application wide error handler for unhandled errors
-            Application.ThreadException += new ThreadExceptionEventHandler(App_ThreadException);
+            //test
+            //doc.ThrowException();
+            //test
 
 #if TRACE
             DateTime EndLoadTime = DateTime.Now;
@@ -246,18 +254,13 @@ namespace IndianHealthService.ClinicalScheduling
         }
 
         /// <summary>
-        /// Exception handler for application errors. TODO: Test
+        /// Exception handler for application errors. Only for WinForm Errors.
         /// </summary>
+        /// <remarks>Never tested. I can't get an error to go here!</remarks>
         /// <param name="sender"></param>
         /// <param name="e"></param>
         static void App_ThreadException(object sender, ThreadExceptionEventArgs e)
         {
-            if (e.Exception is System.Net.Sockets.SocketException)
-            {
-                MessageBox.Show("Looks like we lost our connection with the server\nClick OK to terminate the application.");
-                Application.Exit();
-            }
-
             string msg = "A problem has occured in this applicaton. \r\n\r\n" +
                 "\t" + e.Exception.Message + "\r\n\r\n" +
                 "Would you like to continue the application?";
@@ -268,6 +271,27 @@ namespace IndianHealthService.ClinicalScheduling
             else Application.Exit();
         }
 
+        /// <summary>
+        /// If we are here, we are dead meat.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        static void App_DomainException(object sender, UnhandledExceptionEventArgs e)
+        {
+            if (e.ExceptionObject is System.Net.Sockets.SocketException)
+            {
+                MessageBox.Show("Looks like we lost our connection with the server\nClick OK to terminate the application.");
+            }
+            else
+            {
+                Exception ex = e.ExceptionObject as Exception;
+
+                string msg = "A problem has occured in this applicaton. \r\n\r\n" +
+                    "\t" + ex.InnerException.Message;
+
+                MessageBox.Show(msg, "Unexpected Error");
+            }
+        }// here application terminates
 
         #region BMXNet Event Handler
         private void CDocMgrEventHandler(Object obj, BMXNet.BMXNetEventArgs e)
