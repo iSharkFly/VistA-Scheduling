@@ -733,6 +733,15 @@
             return rectangle;
         }
 
+        /// <summary>
+        /// Translates a StartTime into a Cell, for coloring
+        /// </summary>
+        /// <param name="dDate"></param>
+        /// <param name="nRow"></param>
+        /// <param name="nCol"></param>
+        /// <param name="bStartCell"></param>
+        /// <param name="sResource"></param>
+        /// <returns></returns>
         public bool GetCellFromTime(DateTime dDate, ref int nRow, ref int nCol, bool bStartCell, string sResource)
         {
             int num = (dDate.Hour * 60) + dDate.Minute;
@@ -1420,7 +1429,8 @@
             }
             set
             {
-                this.m_dtStart = value;
+                //this.m_dtStart = value;
+                this.m_dtStart = value.Date; // only date portion!!!//smh
             }
         }
 

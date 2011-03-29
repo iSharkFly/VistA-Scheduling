@@ -244,7 +244,7 @@ namespace IndianHealthService.ClinicalScheduling
                 this.m_dStart = this.dtStart.Value;
 
 				//End
-				this.m_dEnd = this.dtEnd.Value;
+                this.m_dEnd = this.dtEnd.Value;
 			}		
 		}
 
@@ -726,7 +726,9 @@ namespace IndianHealthService.ClinicalScheduling
 
             //Get Availabilities and Appointments from the DB
             //NB: m_sAmpm and m_sWeekDays don't have an effect on the M side side right now
-			string sSearchInfo = "1|" + m_sAmpm + "|" + m_sWeekDays;
+            m_dStart = m_dStart.Date; // move to 1200
+            m_dEnd = m_dEnd.Date.AddHours(23).AddMinutes(59).AddSeconds(59); //move to 235959
+            string sSearchInfo = "1|" + m_sAmpm + "|" + m_sWeekDays;
 			DataTable m_availTable = CGSchedLib.CreateAvailabilitySchedule(m_DocManager, m_alResources, m_dStart, m_dEnd, m_alAccessTypes, ScheduleType.Resource, sSearchInfo);
             DataTable m_apptTable = CGSchedLib.CreateAppointmentSchedule(m_DocManager, m_alResources, m_dStart, m_dEnd);
 

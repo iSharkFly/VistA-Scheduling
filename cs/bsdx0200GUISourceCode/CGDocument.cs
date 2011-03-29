@@ -337,6 +337,8 @@ namespace IndianHealthService.ClinicalScheduling
             try
             {
                 //Create new Document
+                this.SelectedDate = dDate.Date;
+
                 m_ScheduleType = (m_sResourcesArray.Count == 1) ? ScheduleType.Resource : ScheduleType.Clinic;
                 bool bRet = false;
                 
