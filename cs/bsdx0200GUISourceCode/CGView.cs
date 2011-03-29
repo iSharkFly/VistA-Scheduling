@@ -99,6 +99,10 @@ namespace IndianHealthService.ClinicalScheduling
         private System.Windows.Forms.MenuItem mnuRPMSDivision;
         private MenuItem menuItem10;
         private MenuItem ctxCalGridReprintApptSlip;
+        private MenuItem ctxCalGridUndoCheckin;
+        private MenuItem ctxPrintScheduleT0;
+        private MenuItem ctxPrintScheduleT1;
+        private MenuItem ctxPrintScheduleT3;
         private IContainer components;
 
         #region Initialization
@@ -221,6 +225,8 @@ namespace IndianHealthService.ClinicalScheduling
             this.ctxEditAvailability = new System.Windows.Forms.MenuItem();
             this.ctxProperties = new System.Windows.Forms.MenuItem();
             this.ctxFindAppt = new System.Windows.Forms.MenuItem();
+            this.ctxPrintScheduleT0 = new System.Windows.Forms.MenuItem();
+            this.ctxPrintScheduleT1 = new System.Windows.Forms.MenuItem();
             this.panelRight = new System.Windows.Forms.Panel();
             this.panelClip = new System.Windows.Forms.Panel();
             this.lstClip = new System.Windows.Forms.ListBox();
@@ -238,6 +244,7 @@ namespace IndianHealthService.ClinicalScheduling
             this.ctxCalGridEdit = new System.Windows.Forms.MenuItem();
             this.ctxCalGridDelete = new System.Windows.Forms.MenuItem();
             this.ctxCalGridCheckIn = new System.Windows.Forms.MenuItem();
+            this.ctxCalGridUndoCheckin = new System.Windows.Forms.MenuItem();
             this.menuItem2 = new System.Windows.Forms.MenuItem();
             this.ctxCalGridNoShow = new System.Windows.Forms.MenuItem();
             this.ctxCalGridNoShowUndo = new System.Windows.Forms.MenuItem();
@@ -249,6 +256,7 @@ namespace IndianHealthService.ClinicalScheduling
             this.statusBar1 = new System.Windows.Forms.StatusBar();
             this.splitter1 = new System.Windows.Forms.Splitter();
             this.splitter2 = new System.Windows.Forms.Splitter();
+            this.ctxPrintScheduleT3 = new System.Windows.Forms.MenuItem();
             this.panelRight.SuspendLayout();
             this.panelClip.SuspendLayout();
             this.panelTop.SuspendLayout();
@@ -615,7 +623,7 @@ namespace IndianHealthService.ClinicalScheduling
             this.tvSchedules.HotTracking = true;
             this.tvSchedules.Location = new System.Drawing.Point(0, 0);
             this.tvSchedules.Name = "tvSchedules";
-            this.tvSchedules.Size = new System.Drawing.Size(128, 393);
+            this.tvSchedules.Size = new System.Drawing.Size(128, 351);
             this.tvSchedules.Sorted = true;
             this.tvSchedules.TabIndex = 1;
             this.tvSchedules.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.tvSchedules_AfterSelect);
@@ -629,7 +637,10 @@ namespace IndianHealthService.ClinicalScheduling
             this.ctxOpenSchedule,
             this.ctxEditAvailability,
             this.ctxProperties,
-            this.ctxFindAppt});
+            this.ctxFindAppt,
+            this.ctxPrintScheduleT0,
+            this.ctxPrintScheduleT1,
+            this.ctxPrintScheduleT3});
             this.contextMenu1.Popup += new System.EventHandler(this.contextMenu1_Popup);
             // 
             // ctxOpenSchedule
@@ -648,14 +659,26 @@ namespace IndianHealthService.ClinicalScheduling
             // ctxProperties
             // 
             this.ctxProperties.Index = 2;
-            this.ctxProperties.Text = "&Properties";
+            this.ctxProperties.Text = "P&roperties";
             this.ctxProperties.Click += new System.EventHandler(this.ctxProperties_Click);
             // 
             // ctxFindAppt
             // 
             this.ctxFindAppt.Index = 3;
-            this.ctxFindAppt.Text = "Find Available Appointment";
+            this.ctxFindAppt.Text = "&Find Available Appointment";
             this.ctxFindAppt.Click += new System.EventHandler(this.ctxFindAppt_Click);
+            // 
+            // ctxPrintScheduleT0
+            // 
+            this.ctxPrintScheduleT0.Index = 4;
+            this.ctxPrintScheduleT0.Text = "Print Clinic Schedule(s) (T+&0)";
+            this.ctxPrintScheduleT0.Click += new System.EventHandler(this.ctxPrintScheduleT0_Click);
+            // 
+            // ctxPrintScheduleT1
+            // 
+            this.ctxPrintScheduleT1.Index = 5;
+            this.ctxPrintScheduleT1.Text = "Print Clinic Schedule(s) (T+&1)";
+            this.ctxPrintScheduleT1.Click += new System.EventHandler(this.ctxPrintScheduleT1_Click);
             // 
             // panelRight
             // 
@@ -663,7 +686,7 @@ namespace IndianHealthService.ClinicalScheduling
             this.panelRight.Dock = System.Windows.Forms.DockStyle.Right;
             this.panelRight.Location = new System.Drawing.Point(996, 0);
             this.panelRight.Name = "panelRight";
-            this.panelRight.Size = new System.Drawing.Size(128, 393);
+            this.panelRight.Size = new System.Drawing.Size(128, 351);
             this.panelRight.TabIndex = 3;
             this.panelRight.Visible = false;
             // 
@@ -759,7 +782,7 @@ namespace IndianHealthService.ClinicalScheduling
             this.panelCenter.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panelCenter.Location = new System.Drawing.Point(136, 24);
             this.panelCenter.Name = "panelCenter";
-            this.panelCenter.Size = new System.Drawing.Size(857, 345);
+            this.panelCenter.Size = new System.Drawing.Size(857, 303);
             this.panelCenter.TabIndex = 7;
             // 
             // calendarGrid1
@@ -781,7 +804,7 @@ namespace IndianHealthService.ClinicalScheduling
             this.calendarGrid1.Name = "calendarGrid1";
             this.calendarGrid1.Resources = ((System.Collections.ArrayList)(resources.GetObject("calendarGrid1.Resources")));
             this.calendarGrid1.SelectedAppointment = 0;
-            this.calendarGrid1.Size = new System.Drawing.Size(857, 345);
+            this.calendarGrid1.Size = new System.Drawing.Size(857, 303);
             this.calendarGrid1.StartDate = new System.DateTime(2003, 1, 27, 0, 0, 0, 0);
             this.calendarGrid1.TabIndex = 0;
             this.calendarGrid1.TimeScale = 20;
@@ -798,6 +821,7 @@ namespace IndianHealthService.ClinicalScheduling
             this.ctxCalGridEdit,
             this.ctxCalGridDelete,
             this.ctxCalGridCheckIn,
+            this.ctxCalGridUndoCheckin,
             this.menuItem2,
             this.ctxCalGridNoShow,
             this.ctxCalGridNoShowUndo,
@@ -831,42 +855,48 @@ namespace IndianHealthService.ClinicalScheduling
             this.ctxCalGridCheckIn.Text = "Check In Patient";
             this.ctxCalGridCheckIn.Click += new System.EventHandler(this.ctxCalGridCheckIn_Click);
             // 
+            // ctxCalGridUndoCheckin
+            // 
+            this.ctxCalGridUndoCheckin.Index = 4;
+            this.ctxCalGridUndoCheckin.Text = "&Undo Check In";
+            this.ctxCalGridUndoCheckin.Click += new System.EventHandler(this.ctxCalGridUndoCheckin_Click);
+            // 
             // menuItem2
             // 
-            this.menuItem2.Index = 4;
+            this.menuItem2.Index = 5;
             this.menuItem2.Text = "-";
             // 
             // ctxCalGridNoShow
             // 
-            this.ctxCalGridNoShow.Index = 5;
+            this.ctxCalGridNoShow.Index = 6;
             this.ctxCalGridNoShow.Text = "Mark as No Show";
             this.ctxCalGridNoShow.Click += new System.EventHandler(this.ctxCalGridNoShow_Click);
             // 
             // ctxCalGridNoShowUndo
             // 
-            this.ctxCalGridNoShowUndo.Index = 6;
+            this.ctxCalGridNoShowUndo.Index = 7;
             this.ctxCalGridNoShowUndo.Text = "Undo NoShow";
             this.ctxCalGridNoShowUndo.Click += new System.EventHandler(this.ctxCalGridNoShowUndo_Click);
             // 
             // menuItem9
             // 
-            this.menuItem9.Index = 7;
+            this.menuItem9.Index = 8;
             this.menuItem9.Text = "-";
             // 
             // ctxCalGridWalkin
             // 
-            this.ctxCalGridWalkin.Index = 8;
+            this.ctxCalGridWalkin.Index = 9;
             this.ctxCalGridWalkin.Text = "Create Wal&k-In Appointment";
             this.ctxCalGridWalkin.Click += new System.EventHandler(this.ctxCalGridWalkin_Click);
             // 
             // menuItem10
             // 
-            this.menuItem10.Index = 9;
+            this.menuItem10.Index = 10;
             this.menuItem10.Text = "-";
             // 
             // ctxCalGridReprintApptSlip
             // 
-            this.ctxCalGridReprintApptSlip.Index = 10;
+            this.ctxCalGridReprintApptSlip.Index = 11;
             this.ctxCalGridReprintApptSlip.Text = "&Reprint Appointment Slip";
             this.ctxCalGridReprintApptSlip.Click += new System.EventHandler(this.ctxCalGridReprintApptSlip_Click);
             // 
@@ -874,7 +904,7 @@ namespace IndianHealthService.ClinicalScheduling
             // 
             this.panelBottom.Controls.Add(this.statusBar1);
             this.panelBottom.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panelBottom.Location = new System.Drawing.Point(136, 369);
+            this.panelBottom.Location = new System.Drawing.Point(136, 327);
             this.panelBottom.Name = "panelBottom";
             this.panelBottom.Size = new System.Drawing.Size(857, 24);
             this.panelBottom.TabIndex = 8;
@@ -892,7 +922,7 @@ namespace IndianHealthService.ClinicalScheduling
             // 
             this.splitter1.Location = new System.Drawing.Point(128, 24);
             this.splitter1.Name = "splitter1";
-            this.splitter1.Size = new System.Drawing.Size(8, 369);
+            this.splitter1.Size = new System.Drawing.Size(8, 327);
             this.splitter1.TabIndex = 9;
             this.splitter1.TabStop = false;
             // 
@@ -901,14 +931,20 @@ namespace IndianHealthService.ClinicalScheduling
             this.splitter2.Dock = System.Windows.Forms.DockStyle.Right;
             this.splitter2.Location = new System.Drawing.Point(993, 24);
             this.splitter2.Name = "splitter2";
-            this.splitter2.Size = new System.Drawing.Size(3, 369);
+            this.splitter2.Size = new System.Drawing.Size(3, 327);
             this.splitter2.TabIndex = 10;
             this.splitter2.TabStop = false;
+            // 
+            // ctxPrintScheduleT3
+            // 
+            this.ctxPrintScheduleT3.Index = 6;
+            this.ctxPrintScheduleT3.Text = "Print Clinic Schedule(s) (T+&3)";
+            this.ctxPrintScheduleT3.Click += new System.EventHandler(this.ctxPrintScheduleT3_Click);
             // 
             // CGView
             // 
             this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
-            this.ClientSize = new System.Drawing.Size(1124, 393);
+            this.ClientSize = new System.Drawing.Size(1124, 351);
             this.Controls.Add(this.panelCenter);
             this.Controls.Add(this.panelBottom);
             this.Controls.Add(this.splitter2);
@@ -1096,6 +1132,11 @@ namespace IndianHealthService.ClinicalScheduling
 			AppointmentNoShow(false);
 		}
 
+        private void ctxCalGridUndoCheckin_Click(object sender, EventArgs e)
+        {
+            AppointmentUndoCheckin();
+        }
+
 		#endregion AppointmentMenu Handlers
 
 		#region ContextMenu1 Handlers
@@ -1106,6 +1147,9 @@ namespace IndianHealthService.ClinicalScheduling
 			bool bEnabled = (m_alSelectedTreeResourceArray.Count > 0)? true : false ;
 			this.ctxOpenSchedule.Enabled = bEnabled;
 			this.ctxFindAppt.Enabled = bEnabled;
+            this.ctxPrintScheduleT0.Enabled = bEnabled;
+            this.ctxPrintScheduleT1.Enabled = bEnabled;
+            this.ctxPrintScheduleT3.Enabled = bEnabled;
 
 			//properties not supported now
 			this.ctxProperties.Enabled = false;
@@ -1161,6 +1205,21 @@ namespace IndianHealthService.ClinicalScheduling
 			OpenSelectedSchedule(m_alSelectedTreeResourceArray, DateTime.Today);
 		}
 
+        private void ctxPrintScheduleT0_Click(object sender, EventArgs e)
+        {
+            PrintClinicSchedule(DateTime.Today, DateTime.Today);
+        }
+
+        private void ctxPrintScheduleT1_Click(object sender, EventArgs e)
+        {
+            PrintClinicSchedule(DateTime.Today.AddDays(1), DateTime.Today.AddDays(1));
+        }
+
+        private void ctxPrintScheduleT3_Click(object sender, EventArgs e)
+        {
+            PrintClinicSchedule(DateTime.Today.AddDays(3), DateTime.Today.AddDays(3));
+        }
+
 		private void ctxProperties_Click(object sender, System.EventArgs e)
 		{
 			//TODO: Implement Properties dialog
@@ -1213,12 +1272,13 @@ namespace IndianHealthService.ClinicalScheduling
 			ctxCalGridDelete.Enabled = bEditAppointments;
 			ctxCalGridEdit.Enabled = bEditAppointments;
 			ctxCalGridCheckIn.Enabled = bEditAppointments;
-			ctxCalGridNoShow.Enabled = bEditAppointments;
-			ctxCalGridNoShowUndo.Enabled = bEditAppointments;
+			ctxCalGridNoShow.Enabled = NoShowEnabled();
+            ctxCalGridNoShowUndo.Enabled = !NoShowEnabled() && calendarGrid1.SelectedAppointment > 0;
 			ctxCalGridWalkin.Enabled = ctxCalGridAdd.Enabled;
             //smh new code
-            ctxCalGridReprintApptSlip.Enabled = ctxCalGridEdit.Enabled;
-		    //end new code
+            ctxCalGridReprintApptSlip.Enabled = bEditAppointments;
+            ctxCalGridUndoCheckin.Enabled = UndoCheckinEnabled();
+            //end new code
         }
 
 		private void ctxCalGridAdd_Click(object sender, System.EventArgs e)
@@ -1341,6 +1401,21 @@ namespace IndianHealthService.ClinicalScheduling
                 bSlotsAvailable = (this.m_nSlots > 0);
                 return ((bSlotsAvailable) || (bModSchedule) || (bOverbook));
             }
+        }
+
+        private bool NoShowEnabled()
+        {
+            if (calendarGrid1.SelectedAppointment < 1)
+                return false;
+            CGAppointment appt = (CGAppointment)this.Appointments.AppointmentTable[calendarGrid1.SelectedAppointment];
+            return !appt.NoShow;
+        }
+
+        private bool UndoCheckinEnabled()
+        {
+            if (calendarGrid1.SelectedAppointment < 1) return false;
+            CGAppointment appt = (CGAppointment)this.Appointments.AppointmentTable[calendarGrid1.SelectedAppointment];
+            return appt.CheckInTime.Ticks > 0;
         }
 
 		/// <summary>
@@ -1685,19 +1760,20 @@ namespace IndianHealthService.ClinicalScheduling
 		}
 
 		/// <summary>
-		/// Marks all selected appointments as No Show
+        /// Marks all selected appointments as No Show from this.calendarGrid1.SelectedAppointments
 		/// </summary>
-		/// <param name="nApptID"></param>
-		/// <returns></returns>		
+		/// <param name="bNoShow">True - Mark as noshow; False - undo noshow</param>
 		private void AppointmentNoShow(bool bNoShow)
 		{
 
 			//bNoShow indicates whether to mark or un-mark as noshow
 			bool			bMarked = false;	//Indicates at least one attempt to mark as noshow succeeded
 			bool			bRebook = false;	//Stores user's response to auto-rebook dialog question
-			CGAppointments	alRebookList = new CGAppointments();
-			DNoShow dlg = new DNoShow();;
-			if (bNoShow == true)
+			CGAppointments	alRebookList = new CGAppointments();  // list of appointments to rebook
+
+		    DNoShow dlg = new DNoShow(); // no show dialog
+
+			if (bNoShow == true)  // if noshowing, show the dialog to ask the user
 			{
 				if (dlg.ShowDialog(this) == DialogResult.Cancel)
 				{
@@ -1713,16 +1789,16 @@ namespace IndianHealthService.ClinicalScheduling
 				Debug.Assert(nApptID != 0);
 				try
 				{
-					if ((bNoShow == true)
+					if ((bNoShow == true)  // if no-showing
 						&&
 						(a.StartTime.Date > DateTime.Today.Date)
 						&&
 						(MessageBox.Show(this, "The appointment for " + a.PatientName + " is in the future.  Are you sure you want to No-Show?", "Windows Scheduling", MessageBoxButtons.OKCancel, MessageBoxIcon.Question) != DialogResult.OK))
 					{
 					}
-					else
+					else  // otherwise, make or undo show
 					{
-						string sError = Document.AppointmentNoShow(nApptID, bNoShow);
+						string sError = Document.AppointmentNoShow(a, bNoShow);
 						if (sError != "1")
 							throw new Exception(sError);
 
@@ -1733,6 +1809,7 @@ namespace IndianHealthService.ClinicalScheduling
 				{
 					MessageBox.Show("Unable to mark appointment No Show: " +  ex.Message, "Clinical Scheduling");
 				}
+
 				if (bRebook == true)
 				{
 					try
@@ -1772,26 +1849,29 @@ namespace IndianHealthService.ClinicalScheduling
 						MessageBox.Show("Unable to rebook: " + ex.Message);
 					}
 				}
-			}
-			
-			if (bMarked == true)
-			{
-				//Notify other scheduling users that this schedule has changed
-				try
-				{
-					this.Document.RefreshDocument();
-					RaiseRPMSEvent("BSDX SCHEDULE" , m_Document.DocName);
-				}
-				catch (Exception ex)
-				{
-					Debug.Write(ex.Message);
-				}
-				this.calendarGrid1.Invalidate();
-				
-				AutoRebookFromList(alRebookList);
-			}			
+
+                if (bMarked == true)
+                {
+                    //Notify other scheduling users that this schedule has changed
+                    try
+                    {
+                        //this.Document.RefreshDocument(); no need for this; event raised back and prompts refresh itself.
+                        RaiseRPMSEvent("BSDX SCHEDULE", a.Resource);
+                    }
+                    catch (Exception ex)
+                    {
+                        Debug.Write(ex.Message);
+                    }
+                    this.calendarGrid1.Invalidate();
+                }						
+            }
+            AutoRebookFromList(alRebookList);
 		}
 		
+        /// <summary>
+        /// Prints Auto Rebook Letters; does nothing else to DB!!!
+        /// </summary>
+        /// <param name="alRebookList">List of appointments</param>
 		private void AutoRebookFromList(CGAppointments alRebookList)
 		{
 			//Print AutoRebook letters.
@@ -1835,92 +1915,88 @@ namespace IndianHealthService.ClinicalScheduling
 		/// <summary>
 		/// Delete all selected appointments
 		/// </summary>
-		private void AppointmentDelete() 
-		{
-			calendarGrid1.CGToolTip.Active = false;
-			CGAppointments alRebookList = new CGAppointments();
+        private void AppointmentDelete()
+        {
+            calendarGrid1.CGToolTip.Active = false;
+            CGAppointments alRebookList = new CGAppointments();
 
-			DCancelAppt dCancel = new DCancelAppt();
-			dCancel.InitializePage(this.m_DocManager);
-			if (dCancel.ShowDialog(this) != DialogResult.OK)
-			{
-				calendarGrid1.CGToolTip.Active = true;
-				return;
-			}
+            // check to see if any appointment is checked in first
+            foreach (CGAppointment a in this.calendarGrid1.SelectedAppointments.AppointmentTable.Values)
+            {
+                if (a.CheckInTime.Ticks > 0)
+                {
+                    MessageBox.Show("You must Un-checkin the appointment first before removing it.");
+                    return;
+                }
+            }
 
-			bool bClinic = dCancel.ClinicCancelled;
-			int nReason = dCancel.CancelReason;
-			string sRemarks = dCancel.CancelRemarks;
-			bool bRebook = dCancel.AutoRebook;
-			int nRebookStart = dCancel.RebookStartDays;
-			int nRebookMax = dCancel.RebookMaxDays;
-			int nRebookAccessType = dCancel.RebookAccessType;
+            DCancelAppt dCancel = new DCancelAppt();
+            dCancel.InitializePage(this.m_DocManager);
+            if (dCancel.ShowDialog(this) != DialogResult.OK)
+            {
+                calendarGrid1.CGToolTip.Active = true;
+                return;
+            }
 
-			calendarGrid1.CGToolTip.Active = true;
+            bool bClinic = dCancel.ClinicCancelled;
+            int nReason = dCancel.CancelReason;
+            string sRemarks = dCancel.CancelRemarks;
+            bool bRebook = dCancel.AutoRebook;
+            int nRebookStart = dCancel.RebookStartDays;
+            int nRebookMax = dCancel.RebookMaxDays;
+            int nRebookAccessType = dCancel.RebookAccessType;
 
-			bool bDeleted = false;
-			foreach (CGAppointment a in this.calendarGrid1.SelectedAppointments.AppointmentTable.Values)
-			{
-				int nApptID = a.AppointmentKey;
-				Debug.Assert(nApptID != 0);
-				try
-				{
-					string sError = Document.DeleteAppointment(nApptID,bClinic, nReason, sRemarks);
-					if (sError != "")
-						throw new Exception(sError);
+            calendarGrid1.CGToolTip.Active = true;
 
-					bDeleted = true;
-					if (bRebook == true)
-					{
-						try
-						{
-							//TODO: Parameterize  or dialogize the minum and maximum rebook days
-							CGAppointment aRebook;
-							int nMinimumdays = nRebookStart;
-							int nMaximumdays = nRebookMax;
-							string sResult = Document.AutoRebook(a, nRebookAccessType, nMinimumdays, nMaximumdays, out aRebook);
-							if (sResult == "1")
-							{
-								//Add appointment to list of rebooked appointments
-								alRebookList.AddAppointment(a);
-							}
+            foreach (CGAppointment a in this.calendarGrid1.SelectedAppointments.AppointmentTable.Values)
+            {
+                
+                int nApptID = a.AppointmentKey;
+                Debug.Assert(nApptID != 0);
+                try
+                {
+                    string sError = Document.DeleteAppointment(nApptID, bClinic, nReason, sRemarks);
+                    if (sError != "")
+                        throw new Exception(sError);
 
-						}
-						catch (Exception ex)
-						{
-							MessageBox.Show("Unable to rebook: " + ex.Message);
-						}
-					}
-				}
-				catch (Exception ex)
-				{
-					MessageBox.Show("Unable to delete appointment.  " +  ex.Message, "Clinical Scheduling");
-				}
+                    this.UpdateArrays(); //Redraw this calendar grid
 
-			}
-			if (bDeleted == true)
-			{
-				try
-				{
-                    this.UpdateArrays();
-					RaiseRPMSEvent("BSDX SCHEDULE" , m_Document.DocName);
+                    if (bRebook == true)
+                    {
+                        try
+                        {
+                            //TODO: Parameterize  or dialogize the minum and maximum rebook days
+                            CGAppointment aRebook;
+                            int nMinimumdays = nRebookStart;
+                            int nMaximumdays = nRebookMax;
+                            string sResult = Document.AutoRebook(a, nRebookAccessType, nMinimumdays, nMaximumdays, out aRebook);
+                            if (sResult == "1")
+                            {
+                                //Add appointment to list of rebooked appointments
+                                alRebookList.AddAppointment(a);
+                            }
 
-                    //Get the appointments and availabilities, async, from Server. Callback updates this thread's controls.
-                    OnUpdateScheduleDelegate ousd = new OnUpdateScheduleDelegate(OnUpdateSchedule);
-                    ousd.BeginInvoke(OnUpdateScheduleCallback, null);
-				}
-				catch (Exception ex)
-				{
-					Debug.Write(ex.Message);
-				}
-				this.calendarGrid1.Invalidate();
-				if (bRebook == true)
-				{
-					AutoRebookFromList(alRebookList);
-				}
-			}
+                        }
+                        catch (Exception ex)
+                        {
+                            MessageBox.Show("Unable to rebook: " + ex.Message);
+                        }
+                    }
 
-		}
+                    RaiseRPMSEvent("BSDX SCHEDULE", a.Resource);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Unable to delete appointment.  " + ex.Message, "Clinical Scheduling");
+                }
+
+
+                if (alRebookList.AppointmentCount > 0)
+                {
+                    AutoRebookFromList(alRebookList);
+                }
+            }
+        }
 
 		private void AppointmentCheckIn()
 		{
@@ -1982,6 +2058,27 @@ namespace IndianHealthService.ClinicalScheduling
 			}
 
 		}
+
+        private void AppointmentUndoCheckin()
+        {
+            Debug.Assert(calendarGrid1.SelectedAppointment > 0);
+
+            foreach (CGAppointment a in this.calendarGrid1.SelectedAppointments.AppointmentTable.Values)
+            {
+                string msg; //out var
+                bool didweSucceed = Document.AppointmentUndoCheckin(a, out msg);
+
+                if (!didweSucceed)
+                {
+                    MessageBox.Show("Error: " + msg);
+                    continue;
+                }
+
+                RaiseRPMSEvent("BSDX SCHEDULE", a.Resource);
+            }
+            
+            this.UpdateArrays();
+        }
 
 		private void AppointmentAddWalkin()
 		{
@@ -2069,11 +2166,7 @@ namespace IndianHealthService.ClinicalScheduling
                 //Show the new set of appointments by calling UpdateArrays. Fetches Document's CGAppointments
                 this.UpdateArrays();
 
-                //Get the appointments and availabilities, async, from Server. Callback updates this thread's controls.
-                OnUpdateScheduleDelegate ousd = new OnUpdateScheduleDelegate(OnUpdateSchedule);
-                ousd.BeginInvoke(OnUpdateScheduleCallback, null);
-
-
+                RaiseRPMSEvent("BSDX SCHEDULE", appt.Resource);
 			}
 			catch (Exception ex)
 			{
@@ -2086,17 +2179,6 @@ namespace IndianHealthService.ClinicalScheduling
                 MessageBox.Show("VISTA says: \r\n" + msg, "Unable to Make Walk-in Appointment");
                 return;
 			}
-
-            try
-            {
-                RaiseRPMSEvent("BSDX SCHEDULE", m_Document.DocName);
-            }
-            catch (Exception ex)
-            {
-                Debug.Write(ex.Message);
-            }
-			
-
 		}
 
 		private void AppointmentAddNew() 
@@ -2194,10 +2276,8 @@ namespace IndianHealthService.ClinicalScheduling
 
                 //Show the new set of appointments by calling UpdateArrays. Fetches Document's CGAppointments
                 this.UpdateArrays();
-                
-                //Get the appointments and availabilities, async, from Server. Callback updates this thread's controls.
-                OnUpdateScheduleDelegate ousd = new OnUpdateScheduleDelegate(OnUpdateSchedule);
-                ousd.BeginInvoke(OnUpdateScheduleCallback, null);
+
+                RaiseRPMSEvent("BSDX SCHEDULE", appt.Resource);
 			}
 			catch (Exception ex)
 			{   
@@ -2209,16 +2289,6 @@ namespace IndianHealthService.ClinicalScheduling
 
 				MessageBox.Show("VISTA says: \r\n" + msg, "Unable to Make Appointment");
 				return;
-			}
-
-			try
-			{
-				RaiseRPMSEvent("BSDX SCHEDULE" , m_Document.DocName);
-				this.calendarGrid1.Invalidate();
-			}
-			catch (Exception ex)
-			{
-				Debug.Write(ex.Message);
 			}
 		}
 
@@ -2331,7 +2401,7 @@ namespace IndianHealthService.ClinicalScheduling
             try
             {
                 //Signal RPMS to raise an event
-                m_ConnectInfo.RaiseEvent(sEvent, sParams, true);
+                m_ConnectInfo.RaiseEvent(sEvent, sParams, false);
             }
             catch (Exception ex)
             {
@@ -3366,10 +3436,20 @@ namespace IndianHealthService.ClinicalScheduling
         }
 
 
+        private void PrintClinicSchedule(DateTime dStart, DateTime dEnd)
+        {
+            DPatientLetter dpl = new DPatientLetter();
 
+            int[] resourceIENs = (from resource in CGDocumentManager.Current.GlobalDataSet.Tables["Resources"].AsEnumerable()
+                                  join resource_name in m_alSelectedTreeResourceArray.Cast<string>() on resource.Field<string>("RESOURCE_NAME") equals resource_name
+                                  select resource.Field<int>("RESOURCEID")
+                               ).ToArray<int>();
 
+            // + | is an oddity in the Mumps code which I haven't investigated yet.
+            dpl.InitializeFormClinicSchedule(this.DocManager, string.Join("|", resourceIENs) + "|", dStart, dEnd);
+            dpl.ShowDialog(this);
+        }
 
-        
 
 
     }//End class
