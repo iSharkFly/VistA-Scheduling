@@ -24,6 +24,8 @@ namespace IndianHealthService.ClinicalScheduling
             // Required for Windows Form Designer support
             //
             InitializeComponent();
+
+            
         }
 
 
@@ -59,6 +61,7 @@ namespace IndianHealthService.ClinicalScheduling
         public bool m_bPrintRouteSlip;
         private List<Provider> _providers;
         private ToolTip toolTip1;
+        private bool _myCodeIsFiringIstheCheckBoxChangedEvent; // To prevent the event from firing when I set the control from code
         
         #endregion Fields
 
@@ -232,8 +235,9 @@ namespace IndianHealthService.ClinicalScheduling
                 m_dCheckIn = DateTime.Now;
             }
 
-            //Print Routing Slip based on user preferences.
+            _myCodeIsFiringIstheCheckBoxChangedEvent = true;
             chkRoutingSlip.Checked = CGDocumentManager.Current.UserPreferences.PrintRoutingSlipAutomatically;
+            _myCodeIsFiringIstheCheckBoxChangedEvent = false;
 
             UpdateDialogData(true);
         }
@@ -474,6 +478,8 @@ namespace IndianHealthService.ClinicalScheduling
         /// <param name="e"></param>
         private void chkRoutingSlip_CheckedChanged(object sender, EventArgs e)
         {
+            if (_myCodeIsFiringIstheCheckBoxChangedEvent) return;
+
             CGDocumentManager.Current.UserPreferences.PrintRoutingSlipAutomatically = chkRoutingSlip.Checked;
         }
 

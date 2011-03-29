@@ -16,6 +16,7 @@ namespace IndianHealthService.ClinicalScheduling
         private BMXNetConnectInfo _thisConnection; // set in constructor
         
         delegate DataTable RPMSDataTableDelegate(string CommandString, string TableName); // for use in calling (Sync and Async)
+        delegate string TransmitRPCAsync(string RPCName, string Params); //same idea
 
         /// <summary>
         /// Constructor
@@ -171,6 +172,64 @@ namespace IndianHealthService.ClinicalScheduling
             string cmd = String.Format("BSDX CANCEL AV BY DATE^{0}^{1}^{2}", sResourceID, sBegin, sEnd);
             return RPMSDataTable(cmd, "Cancelled");
         }
+
+        /// <summary>
+        /// Remove the check-in for the appointment
+        /// </summary>
+        /// <param name="ApptID">Appointment IEN/Key</param>
+        /// <returns>Table with 1 columns: ERRORID. ErrorID of "0" is okay; 
+        /// any other (negative numbers plus text) is bad</returns>
+        public DataTable RemoveCheckIn(int ApptID)
+        {
+            string cmd = string.Format("BSDX REMOVE CHECK-IN^{0}", ApptID);
+            return RPMSDataTable(cmd, "");
+        }
+
+        /// <summary>
+        /// Save User Preference in DB For Printing Routing Slip
+        /// Uses Parameter BSDX AUTO PRINT RS
+        /// </summary>
+        /// <remarks>
+        /// Notice Code-Fu for Async Save...
+        /// </remarks>
+        public bool AutoPrintRoutingSlip
+        {
+            get
+            {
+                string val = _thisConnection.bmxNetLib.TransmitRPC("BSDX GET PARAM", "BSDX AUTO PRINT RS");  //1 = true; 0 = false; "" = not set
+                return val == "1" ? true : false;
+            }
+            set
+            {
+                TransmitRPCAsync _asyncTransmitter = new TransmitRPCAsync(_thisConnection.bmxNetLib.TransmitRPC);
+                // 0 = success; anything else is wrong. Not being tested here as its success is not critical to application use.
+                _asyncTransmitter.BeginInvoke("BSDX SET PARAM", String.Format("{0}^{1}", "BSDX AUTO PRINT RS", value ? "1" : "0"), null, null);
+            }
+        }
+
+        /// <summary>
+        /// Save User Preference in DB For Printing Routing Slip
+        /// Uses Parameter BSDX AUTO PRINT AS
+        /// </summary>
+        /// <remarks>
+        /// Notice Code-Fu for Async Save...
+        /// </remarks>
+        public bool AutoPrintAppointmentSlip
+        {
+            get
+            {
+                string val = _thisConnection.bmxNetLib.TransmitRPC("BSDX GET PARAM", "BSDX AUTO PRINT AS");  //1 = true; 0 = false; "" = not set
+                return val == "1" ? true : false;
+            }
+            set
+            {
+                TransmitRPCAsync _asyncTransmitter = new TransmitRPCAsync(_thisConnection.bmxNetLib.TransmitRPC);
+                // 0 = success; anything else is wrong. Not being tested here as its success is not critical to application use.
+                _asyncTransmitter.BeginInvoke("BSDX SET PARAM", String.Format("{0}^{1}", "BSDX AUTO PRINT AS", value ? "1" : "0"), null, null);
+            }
+        }
+
+
 
         /// <summary>
         /// Workhorse

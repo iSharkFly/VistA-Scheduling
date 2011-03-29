@@ -1245,14 +1245,14 @@ namespace IndianHealthService.ClinicalScheduling
 
         }
 
-        public string AppointmentNoShow(int nApptID, bool bNoShow)
+        public string AppointmentNoShow(CGAppointment a, bool bNoShow)
         {
             /*
              * BSDX NOSHOW RPC Returns 1  in ERRORID if  successfully sets NOSHOW flag in BSDX APPOINTMENT and, if applicable, File 2
              *Otherwise, returns negative numbers for failure and errormessage in ERRORTXT
              *
              */
-
+            int nApptID = a.AppointmentKey;
             string sTest = bNoShow.ToString();
             string sNoShow = (bNoShow == true) ? "1" : "0";
             string sSql = "BSDX NOSHOW^" + nApptID.ToString();
@@ -1269,9 +1269,30 @@ namespace IndianHealthService.ClinicalScheduling
                 return r["ERRORTEXT"].ToString();
             }
 
-            bool bRet = RefreshSchedule();
+            //All okay over here... then set appointment noshow or not no show...
+            a.NoShow = bNoShow ? true : false;
+
+            //bool bRet = RefreshSchedule();
 
             return sErrorID;
+        }
+
+        public bool AppointmentUndoCheckin(CGAppointment a, out string msg)
+        {
+            msg = "";
+            //zero good, anything else bad
+            DataTable dt = CGDocumentManager.Current.DAL.RemoveCheckIn(a.AppointmentKey);
+            if (dt.Rows[0][0].ToString() == "0")
+            {
+                a.CheckInTime = DateTime.MinValue; // remove check-in time.
+                return true;
+            }
+
+            else
+            {
+                msg = dt.Rows[0][0].ToString();
+                return false;
+            }
         }
 
         #endregion Methods

@@ -67,7 +67,7 @@ namespace IndianHealthService.ClinicalScheduling
             // DPatientLetter
             // 
             this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
-            this.ClientSize = new System.Drawing.Size(648, 398);
+            this.ClientSize = new System.Drawing.Size(748, 443);
             this.Name = "DPatientLetter";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Patient Letter";
@@ -403,5 +403,6 @@ namespace IndianHealthService.ClinicalScheduling
             // If we reach this point, we need to reset the counter (ticket #15 on https://trac.opensourcevista.net/ticket/15) 
             _currentApptPrinting = 0; 
         }
+
 	}
 }

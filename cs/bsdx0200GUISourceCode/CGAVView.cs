@@ -883,6 +883,7 @@ namespace IndianHealthService.ClinicalScheduling
 		{
 			//TODO:  Create these components
 			this.calendarGrid1.Resources = this.m_Document.Resources;
+            this.calendarGrid1.Appointments = (CGAppointments)this.m_Document.m_AVBlocks.Clone();
 			this.calendarGrid1.OnUpdateArrays();
 			this.lblResource.Text = this.m_Document.DocName;
 			
@@ -1041,12 +1042,9 @@ namespace IndianHealthService.ClinicalScheduling
 			/*
 			 * Display dialog to collect:
 			 * - Number of weeks to apply template
-			 * - Starting week Monday
+			 * - Starting week (application starts on Culture WeekStartDay of selected week)
 			 * - Template path & filename
 			 * 
-			 * for each week,
-			 *	Delete all availability during that week
-			 *  apply the template
 			 * 
 			 */
 			DAccessTemplate dlg = new DAccessTemplate();
@@ -1505,7 +1503,7 @@ namespace IndianHealthService.ClinicalScheduling
             this.Document.WeekNeedsRefresh(1, dtStart, out newStartDate, out newEndDate);
             dtStart = newStartDate;
             int nWeeksToApply = dlg.WeeksToApply;
-            DateTime dtEnd = dtStart.AddDays(6); // or 7?
+            DateTime dtEnd = dtStart.AddDays(6); // or 7? smh:: not 7 for sure.
 
             string sResourceID = this.m_Document.ResourceID.ToString();
 

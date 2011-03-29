@@ -251,7 +251,7 @@ namespace IndianHealthService.ClinicalScheduling
 				}
 				Debug.Write("CreateAvailabilityAuto -- new AV block created\n");
 
-				UpdateAllViews();
+				//UpdateAllViews();
 
 				aCopy.AppointmentKey = nApptID;
 				return nApptID;

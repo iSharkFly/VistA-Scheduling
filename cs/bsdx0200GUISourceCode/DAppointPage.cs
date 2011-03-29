@@ -670,6 +670,7 @@ namespace IndianHealthService.ClinicalScheduling
         private string          m_sEmail;
         private string          m_sCountry;
         private int          m_iAccessTypeID;
+        private bool _myCodeIsFiringIstheCheckBoxChangedEvent;
 
 		#endregion //fields
 
@@ -718,7 +719,9 @@ namespace IndianHealthService.ClinicalScheduling
                 UC.Dock = DockStyle.Fill;
                 groupBox4.Controls.Add(UC);
 
+                _myCodeIsFiringIstheCheckBoxChangedEvent = true;
                 chkPrint.Checked = CGDocumentManager.Current.UserPreferences.PrintAppointmentSlipAutomacially;
+                _myCodeIsFiringIstheCheckBoxChangedEvent = false;
             }
 			catch(Exception e)
 			{
@@ -861,13 +864,14 @@ namespace IndianHealthService.ClinicalScheduling
 		#endregion //Properties
 
         /// <summary>
-        /// Save Print Slip preference in UserPreferences object. For now, it always starts false since
-        /// it isn't saved in the DB; but that will change in the future.
+        /// Save Print Slip preference in UserPreferences object.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void chkPrint_CheckedChanged(object sender, EventArgs e)
         {
+            if (_myCodeIsFiringIstheCheckBoxChangedEvent) return;
+
             CGDocumentManager.Current.UserPreferences.PrintAppointmentSlipAutomacially = chkPrint.Checked;
         }
 
