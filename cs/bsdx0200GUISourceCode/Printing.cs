@@ -614,8 +614,8 @@ namespace IndianHealthService.ClinicalScheduling
             sb.AppendLine("DOB:" + "\t" + appt.Patient.DOB.ToShortDateString());
             sb.AppendLine();
             sb.AppendLine("Age:" + "\t" + appt.Patient.UserFriendlyAge);
-            sb.AppendLine();
-            sb.AppendLine("Sex:" + "\t" + appt.Patient.Sex.ToString());
+            //sb.AppendLine();
+            //sb.AppendLine("Sex:" + "\t" + appt.Patient.Sex.ToString());
 
             // Draw them
             g.DrawString(sb.ToString(), fBody, Brushes.Black, personalInfoInnerRectangle);

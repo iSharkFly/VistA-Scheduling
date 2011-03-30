@@ -225,6 +225,9 @@ namespace IndianHealthService.ClinicalScheduling
 					this.m_sPatientHRN = r["HRN"].ToString();
 					this.m_sPatientIEN = r["IEN"].ToString();
 					this.m_sPatientPID = r["PID"].ToString();
+                    DateTime d = Convert.ToDateTime(r["DOB"]);
+                    string sFormat = System.Globalization.DateTimeFormatInfo.CurrentInfo.ShortDatePattern;
+                    this.m_sPatientDOB = d.ToString(sFormat);
 					this.cmdOK.Enabled = true;
 					this.AcceptButton = cmdOK;
 					this.cmdOK.Focus();
@@ -367,6 +370,22 @@ namespace IndianHealthService.ClinicalScheduling
 				m_sPatientHRN = value;
 			}
 		}
+
+        public DateTime PatientDOB
+        {
+            get
+            {
+                return DateTime.Parse(m_sPatientDOB);
+            }
+        }
+
+        public string PatientPID
+        {
+            get
+            {
+                return m_sPatientPID;
+            }
+        }
 
 		#endregion //Properties
 
