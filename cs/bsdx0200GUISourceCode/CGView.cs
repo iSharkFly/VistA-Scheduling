@@ -103,6 +103,8 @@ namespace IndianHealthService.ClinicalScheduling
         private MenuItem ctxPrintScheduleT0;
         private MenuItem ctxPrintScheduleT1;
         private MenuItem ctxPrintScheduleT3;
+        private MenuItem menuItem12;
+        private MenuItem mnuRefresh;
         private IContainer components;
 
         #region Initialization
@@ -215,6 +217,8 @@ namespace IndianHealthService.ClinicalScheduling
             this.mnu30Minute = new System.Windows.Forms.MenuItem();
             this.mnuViewScheduleTree = new System.Windows.Forms.MenuItem();
             this.mnuViewRightPanel = new System.Windows.Forms.MenuItem();
+            this.menuItem12 = new System.Windows.Forms.MenuItem();
+            this.mnuRefresh = new System.Windows.Forms.MenuItem();
             this.mnuHelp = new System.Windows.Forms.MenuItem();
             this.mnuHelpAbout = new System.Windows.Forms.MenuItem();
             this.mnuTest = new System.Windows.Forms.MenuItem();
@@ -502,7 +506,9 @@ namespace IndianHealthService.ClinicalScheduling
             this.menuItem4,
             this.mnuTimeScale,
             this.mnuViewScheduleTree,
-            this.mnuViewRightPanel});
+            this.mnuViewRightPanel,
+            this.menuItem12,
+            this.mnuRefresh});
             this.mnuCalendar.Text = "&View";
             // 
             // mnuDisplayWalkIns
@@ -591,6 +597,18 @@ namespace IndianHealthService.ClinicalScheduling
             this.mnuViewRightPanel.Index = 7;
             this.mnuViewRightPanel.Text = "&Appointment Clipboard";
             this.mnuViewRightPanel.Click += new System.EventHandler(this.mnuViewRightPanel_Click);
+            // 
+            // menuItem12
+            // 
+            this.menuItem12.Index = 8;
+            this.menuItem12.Text = "-";
+            // 
+            // mnuRefresh
+            // 
+            this.mnuRefresh.Index = 9;
+            this.mnuRefresh.Shortcut = System.Windows.Forms.Shortcut.F5;
+            this.mnuRefresh.Text = "Refresh Data";
+            this.mnuRefresh.Click += new System.EventHandler(this.mnuRefresh_Click);
             // 
             // mnuHelp
             // 
@@ -2111,6 +2129,7 @@ namespace IndianHealthService.ClinicalScheduling
 
             foreach (CGAppointment a in this.calendarGrid1.SelectedAppointments.AppointmentTable.Values)
             {
+
                 string msg; //out var
                 bool didweSucceed = Document.AppointmentUndoCheckin(a, out msg);
 
@@ -3421,6 +3440,10 @@ namespace IndianHealthService.ClinicalScheduling
             }
         }
 
+        private void mnuRefresh_Click(object sender, EventArgs e)
+        {
+            ForceRefreshGrid();
+        }
 
         #endregion events
 
@@ -3470,6 +3493,20 @@ namespace IndianHealthService.ClinicalScheduling
             this.Document.UpdateAllViews();
         }
 
+        /// <summary>
+        /// This forces a grid refresh.
+        /// </summary>
+        void ForceRefreshGrid()
+        {
+            if (this.Document.m_sResourcesArray.Count == 0) return;
+            this.Cursor = Cursors.WaitCursor;
+            LoadSplash();
+            this.Document.RefreshDocument();
+            this.UpdateArrays();
+            StopSplash();
+            this.Cursor = Cursors.Default;
+        }
+
         LoadingSplash _loadingSplash; // Splash object a data point in class
 
         /// <summary>
@@ -3505,6 +3542,8 @@ namespace IndianHealthService.ClinicalScheduling
             dpl.InitializeFormClinicSchedule(this.DocManager, string.Join("|", resourceIENs) + "|", dStart, dEnd);
             dpl.ShowDialog(this);
         }
+
+
 
 
 
