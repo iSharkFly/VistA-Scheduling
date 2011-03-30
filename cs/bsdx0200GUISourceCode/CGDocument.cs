@@ -405,7 +405,7 @@ namespace IndianHealthService.ClinicalScheduling
         /// Refreshes Availablility and Schedules from RPMS.
         /// </summary>
         /// <returns>Success or Failure. Should be always Success.</returns>
-        private bool RefreshSchedule()
+        public bool RefreshSchedule()
         {
             this.RefreshAvailabilitySchedule();
             this.RefreshAppointments();

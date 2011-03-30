@@ -3501,7 +3501,7 @@ namespace IndianHealthService.ClinicalScheduling
             if (this.Document.m_sResourcesArray.Count == 0) return;
             this.Cursor = Cursors.WaitCursor;
             LoadSplash();
-            this.Document.RefreshDocument();
+            this.Document.RefreshSchedule();
             this.UpdateArrays();
             StopSplash();
             this.Cursor = Cursors.Default;
