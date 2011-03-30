@@ -227,6 +227,7 @@ namespace IndianHealthService.ClinicalScheduling
             this.ctxFindAppt = new System.Windows.Forms.MenuItem();
             this.ctxPrintScheduleT0 = new System.Windows.Forms.MenuItem();
             this.ctxPrintScheduleT1 = new System.Windows.Forms.MenuItem();
+            this.ctxPrintScheduleT3 = new System.Windows.Forms.MenuItem();
             this.panelRight = new System.Windows.Forms.Panel();
             this.panelClip = new System.Windows.Forms.Panel();
             this.lstClip = new System.Windows.Forms.ListBox();
@@ -238,7 +239,6 @@ namespace IndianHealthService.ClinicalScheduling
             this.dateTimePicker1 = new System.Windows.Forms.DateTimePicker();
             this.lblResource = new System.Windows.Forms.Label();
             this.panelCenter = new System.Windows.Forms.Panel();
-            this.calendarGrid1 = new IndianHealthService.ClinicalScheduling.CalendarGrid();
             this.ctxCalendarGrid = new System.Windows.Forms.ContextMenu();
             this.ctxCalGridAdd = new System.Windows.Forms.MenuItem();
             this.ctxCalGridEdit = new System.Windows.Forms.MenuItem();
@@ -256,7 +256,7 @@ namespace IndianHealthService.ClinicalScheduling
             this.statusBar1 = new System.Windows.Forms.StatusBar();
             this.splitter1 = new System.Windows.Forms.Splitter();
             this.splitter2 = new System.Windows.Forms.Splitter();
-            this.ctxPrintScheduleT3 = new System.Windows.Forms.MenuItem();
+            this.calendarGrid1 = new IndianHealthService.ClinicalScheduling.CalendarGrid();
             this.panelRight.SuspendLayout();
             this.panelClip.SuspendLayout();
             this.panelTop.SuspendLayout();
@@ -475,6 +475,7 @@ namespace IndianHealthService.ClinicalScheduling
             // mnuFindAppt
             // 
             this.mnuFindAppt.Index = 9;
+            this.mnuFindAppt.Shortcut = System.Windows.Forms.Shortcut.CtrlF;
             this.mnuFindAppt.Text = "&Find Available Appointment";
             this.mnuFindAppt.Click += new System.EventHandler(this.mnuFindAppt_Click);
             // 
@@ -549,6 +550,7 @@ namespace IndianHealthService.ClinicalScheduling
             // 
             // mnu10Minute
             // 
+            this.mnu10Minute.Enabled = false;
             this.mnu10Minute.Index = 0;
             this.mnu10Minute.Shortcut = System.Windows.Forms.Shortcut.Ctrl0;
             this.mnu10Minute.Text = "&10-Minute";
@@ -556,6 +558,7 @@ namespace IndianHealthService.ClinicalScheduling
             // 
             // mnu15Minute
             // 
+            this.mnu15Minute.Enabled = false;
             this.mnu15Minute.Index = 1;
             this.mnu15Minute.Shortcut = System.Windows.Forms.Shortcut.Ctrl4;
             this.mnu15Minute.Text = "1&5-Minute";
@@ -563,6 +566,7 @@ namespace IndianHealthService.ClinicalScheduling
             // 
             // mnu20Minute
             // 
+            this.mnu20Minute.Enabled = false;
             this.mnu20Minute.Index = 2;
             this.mnu20Minute.Shortcut = System.Windows.Forms.Shortcut.Ctrl3;
             this.mnu20Minute.Text = "&20-Minute";
@@ -570,6 +574,7 @@ namespace IndianHealthService.ClinicalScheduling
             // 
             // mnu30Minute
             // 
+            this.mnu30Minute.Enabled = false;
             this.mnu30Minute.Index = 3;
             this.mnu30Minute.Shortcut = System.Windows.Forms.Shortcut.Ctrl2;
             this.mnu30Minute.Text = "&30-Minute";
@@ -623,7 +628,7 @@ namespace IndianHealthService.ClinicalScheduling
             this.tvSchedules.HotTracking = true;
             this.tvSchedules.Location = new System.Drawing.Point(0, 0);
             this.tvSchedules.Name = "tvSchedules";
-            this.tvSchedules.Size = new System.Drawing.Size(128, 351);
+            this.tvSchedules.Size = new System.Drawing.Size(128, 204);
             this.tvSchedules.Sorted = true;
             this.tvSchedules.TabIndex = 1;
             this.tvSchedules.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.tvSchedules_AfterSelect);
@@ -680,13 +685,19 @@ namespace IndianHealthService.ClinicalScheduling
             this.ctxPrintScheduleT1.Text = "Print Clinic Schedule(s) (T+&1)";
             this.ctxPrintScheduleT1.Click += new System.EventHandler(this.ctxPrintScheduleT1_Click);
             // 
+            // ctxPrintScheduleT3
+            // 
+            this.ctxPrintScheduleT3.Index = 6;
+            this.ctxPrintScheduleT3.Text = "Print Clinic Schedule(s) (T+&3)";
+            this.ctxPrintScheduleT3.Click += new System.EventHandler(this.ctxPrintScheduleT3_Click);
+            // 
             // panelRight
             // 
             this.panelRight.Controls.Add(this.panelClip);
             this.panelRight.Dock = System.Windows.Forms.DockStyle.Right;
             this.panelRight.Location = new System.Drawing.Point(996, 0);
             this.panelRight.Name = "panelRight";
-            this.panelRight.Size = new System.Drawing.Size(128, 351);
+            this.panelRight.Size = new System.Drawing.Size(128, 204);
             this.panelRight.TabIndex = 3;
             this.panelRight.Visible = false;
             // 
@@ -782,37 +793,8 @@ namespace IndianHealthService.ClinicalScheduling
             this.panelCenter.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panelCenter.Location = new System.Drawing.Point(136, 24);
             this.panelCenter.Name = "panelCenter";
-            this.panelCenter.Size = new System.Drawing.Size(857, 303);
+            this.panelCenter.Size = new System.Drawing.Size(857, 156);
             this.panelCenter.TabIndex = 7;
-            // 
-            // calendarGrid1
-            // 
-            this.calendarGrid1.AllowDrop = true;
-            this.calendarGrid1.Appointments = null;
-            this.calendarGrid1.ApptDragSource = null;
-            this.calendarGrid1.AutoScroll = true;
-            this.calendarGrid1.AutoScrollMinSize = new System.Drawing.Size(600, 1898);
-            this.calendarGrid1.AvailabilityArray = null;
-            this.calendarGrid1.BackColor = System.Drawing.SystemColors.Window;
-            this.calendarGrid1.Columns = 5;
-            this.calendarGrid1.ContextMenu = this.ctxCalendarGrid;
-            this.calendarGrid1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.calendarGrid1.DrawWalkIns = true;
-            this.calendarGrid1.GridBackColor = null;
-            this.calendarGrid1.GridEnter = false;
-            this.calendarGrid1.Location = new System.Drawing.Point(0, 0);
-            this.calendarGrid1.Name = "calendarGrid1";
-            this.calendarGrid1.Resources = ((System.Collections.ArrayList)(resources.GetObject("calendarGrid1.Resources")));
-            this.calendarGrid1.SelectedAppointment = 0;
-            this.calendarGrid1.Size = new System.Drawing.Size(857, 303);
-            this.calendarGrid1.StartDate = new System.DateTime(2003, 1, 27, 0, 0, 0, 0);
-            this.calendarGrid1.TabIndex = 0;
-            this.calendarGrid1.TimeScale = 20;
-            this.calendarGrid1.CGAppointmentChanged += new IndianHealthService.ClinicalScheduling.CalendarGrid.CGAppointmentChangedHandler(this.calendarGrid1_CGAppointmentChanged);
-            this.calendarGrid1.CGAppointmentAdded += new IndianHealthService.ClinicalScheduling.CalendarGrid.CGAppointmentChangedHandler(this.calendarGrid1_CGAppointmentAdded);
-            this.calendarGrid1.CGSelectionChanged += new IndianHealthService.ClinicalScheduling.CalendarGrid.CGSelectionChangedHandler(this.calendarGrid1_CGSelectionChanged);
-            this.calendarGrid1.DoubleClick += new System.EventHandler(this.calendarGrid1_DoubleClick);
-            this.calendarGrid1.MouseEnter += new System.EventHandler(this.calendarGrid1_MouseEnter);
             // 
             // ctxCalendarGrid
             // 
@@ -904,7 +886,7 @@ namespace IndianHealthService.ClinicalScheduling
             // 
             this.panelBottom.Controls.Add(this.statusBar1);
             this.panelBottom.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panelBottom.Location = new System.Drawing.Point(136, 327);
+            this.panelBottom.Location = new System.Drawing.Point(136, 180);
             this.panelBottom.Name = "panelBottom";
             this.panelBottom.Size = new System.Drawing.Size(857, 24);
             this.panelBottom.TabIndex = 8;
@@ -922,7 +904,7 @@ namespace IndianHealthService.ClinicalScheduling
             // 
             this.splitter1.Location = new System.Drawing.Point(128, 24);
             this.splitter1.Name = "splitter1";
-            this.splitter1.Size = new System.Drawing.Size(8, 327);
+            this.splitter1.Size = new System.Drawing.Size(8, 180);
             this.splitter1.TabIndex = 9;
             this.splitter1.TabStop = false;
             // 
@@ -931,20 +913,43 @@ namespace IndianHealthService.ClinicalScheduling
             this.splitter2.Dock = System.Windows.Forms.DockStyle.Right;
             this.splitter2.Location = new System.Drawing.Point(993, 24);
             this.splitter2.Name = "splitter2";
-            this.splitter2.Size = new System.Drawing.Size(3, 327);
+            this.splitter2.Size = new System.Drawing.Size(3, 180);
             this.splitter2.TabIndex = 10;
             this.splitter2.TabStop = false;
             // 
-            // ctxPrintScheduleT3
+            // calendarGrid1
             // 
-            this.ctxPrintScheduleT3.Index = 6;
-            this.ctxPrintScheduleT3.Text = "Print Clinic Schedule(s) (T+&3)";
-            this.ctxPrintScheduleT3.Click += new System.EventHandler(this.ctxPrintScheduleT3_Click);
+            this.calendarGrid1.AllowDrop = true;
+            this.calendarGrid1.Appointments = null;
+            this.calendarGrid1.ApptDragSource = null;
+            this.calendarGrid1.AutoScroll = true;
+            this.calendarGrid1.AutoScrollMinSize = new System.Drawing.Size(600, 1898);
+            this.calendarGrid1.AvailabilityArray = null;
+            this.calendarGrid1.BackColor = System.Drawing.SystemColors.Window;
+            this.calendarGrid1.Columns = 5;
+            this.calendarGrid1.ContextMenu = this.ctxCalendarGrid;
+            this.calendarGrid1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.calendarGrid1.DrawWalkIns = true;
+            this.calendarGrid1.GridBackColor = null;
+            this.calendarGrid1.GridEnter = false;
+            this.calendarGrid1.Location = new System.Drawing.Point(0, 0);
+            this.calendarGrid1.Name = "calendarGrid1";
+            this.calendarGrid1.Resources = ((System.Collections.ArrayList)(resources.GetObject("calendarGrid1.Resources")));
+            this.calendarGrid1.SelectedAppointment = 0;
+            this.calendarGrid1.Size = new System.Drawing.Size(857, 156);
+            this.calendarGrid1.StartDate = new System.DateTime(2003, 1, 27, 0, 0, 0, 0);
+            this.calendarGrid1.TabIndex = 0;
+            this.calendarGrid1.TimeScale = 20;
+            this.calendarGrid1.CGAppointmentChanged += new IndianHealthService.ClinicalScheduling.CalendarGrid.CGAppointmentChangedHandler(this.calendarGrid1_CGAppointmentChanged);
+            this.calendarGrid1.CGAppointmentAdded += new IndianHealthService.ClinicalScheduling.CalendarGrid.CGAppointmentChangedHandler(this.calendarGrid1_CGAppointmentAdded);
+            this.calendarGrid1.CGSelectionChanged += new IndianHealthService.ClinicalScheduling.CalendarGrid.CGSelectionChangedHandler(this.calendarGrid1_CGSelectionChanged);
+            this.calendarGrid1.DoubleClick += new System.EventHandler(this.calendarGrid1_DoubleClick);
+            this.calendarGrid1.MouseEnter += new System.EventHandler(this.calendarGrid1_MouseEnter);
             // 
             // CGView
             // 
             this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
-            this.ClientSize = new System.Drawing.Size(1124, 351);
+            this.ClientSize = new System.Drawing.Size(1124, 204);
             this.Controls.Add(this.panelCenter);
             this.Controls.Add(this.panelBottom);
             this.Controls.Add(this.splitter2);
@@ -1546,7 +1551,7 @@ namespace IndianHealthService.ClinicalScheduling
 		private void OpenSelectedSchedule(ArrayList sSelectedTreeResourceArray, DateTime dDate)
 		{
 			//If resource already open, then navigate to its window
-			CGView v =this.DocManager.GetViewByResource(sSelectedTreeResourceArray);
+			CGView v = this.DocManager.GetViewByResource(sSelectedTreeResourceArray);
 			if (v != null) 
 			{
 				v.Activate();
@@ -1584,7 +1589,7 @@ namespace IndianHealthService.ClinicalScheduling
 				
             try
 			{
-				doc.OnOpenDocument(dDate);
+				doc.OnOpenDocument(dDate); //this typically creates a new view
 			}
 				
             catch (Exception ex)
@@ -1594,7 +1599,8 @@ namespace IndianHealthService.ClinicalScheduling
 				return;
 			}
 
-            //We are doing this--Again?
+            //We are doing this--again--to fetch the view we just opened in OnOpenDocument
+            //XXX: Yes, I know, this totally sucks. But I don't fully grasp the whole thing yet to refactor it.
 			v =this.DocManager.GetViewByResource(sSelectedTreeResourceArray);
 			
             //Position the Grid to start at a certain day.
@@ -1632,6 +1638,46 @@ namespace IndianHealthService.ClinicalScheduling
 			cg.TimeScale = nScale;
 
 			cg.PositionGrid(7);
+
+            //new code for v 1.5 //smh
+            //Disable entries that would make time scale smaller b/c users should not be able to
+            //make appointments for smaller time scales
+            if (nScale >= 10)
+            {
+                v.mnu10Minute.Enabled = true;
+                v.mnu15Minute.Enabled = true;
+                v.mnu20Minute.Enabled = true;
+                v.mnu30Minute.Enabled = true;
+            }
+            if (nScale >= 15)
+            {
+                v.mnu10Minute.Enabled = false;
+                v.mnu15Minute.Enabled = true;
+                v.mnu20Minute.Enabled = true;
+                v.mnu30Minute.Enabled = true;
+            }
+            if (nScale >= 20)
+            {
+                v.mnu10Minute.Enabled = false;
+                v.mnu15Minute.Enabled = false;
+                v.mnu20Minute.Enabled = true;
+                v.mnu30Minute.Enabled = true;
+            }
+            if (nScale >= 30)
+            {
+                v.mnu10Minute.Enabled = false;
+                v.mnu15Minute.Enabled = false;
+                v.mnu20Minute.Enabled = false;
+                v.mnu30Minute.Enabled = true;
+            }
+            if (nScale >= 60)
+            {
+                v.mnu10Minute.Enabled = false;
+                v.mnu15Minute.Enabled = false;
+                v.mnu20Minute.Enabled = false;
+                v.mnu30Minute.Enabled = false;
+            }
+            //end new code
 
 			//Get the OverBook and ModifySchedule permissions from ResourceUser table
 			//and populate the hashtables

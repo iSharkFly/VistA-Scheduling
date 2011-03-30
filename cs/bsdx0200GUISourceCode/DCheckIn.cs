@@ -47,17 +47,10 @@ namespace IndianHealthService.ClinicalScheduling
 
         private string m_sPatientName;
         private DateTime m_dCheckIn;
-        private string m_sProvider;
         private string m_sProviderIEN;
         private CGDocumentManager m_DocManager;
         private DataSet m_dsGlobal;
         private DataTable m_dtProvider;
-        private DataView m_dvCS;
-        private bool m_bProviderRequired;
-        private DataTable m_dtClinic;
-        private DataTable m_dtForm;
-        private DataView m_dvClinic;
-        private DataView m_dvForm;
         public bool m_bPrintRouteSlip;
         private List<Provider> _providers;
         private ToolTip toolTip1;

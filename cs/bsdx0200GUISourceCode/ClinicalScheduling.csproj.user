@@ -36,7 +36,7 @@
     <RemoteDebugMachine>
     </RemoteDebugMachine>
     <StartAction>Project</StartAction>
-    <StartArguments>/s=172.16.16.108 /p=9250 /a=BASMA.ALDWAIRI /v=SELEN.123 /culture=ar-JO</StartArguments>
+    <StartArguments>/s=172.16.16.108 /p=9250 /a=s.habiel /v=catdog.66 /culture=ar-JO</StartArguments>
     <StartPage>
     </StartPage>
     <StartProgram>C:\WINDOWS\Microsoft.NET\Framework\v1.1.4322\IEExec.exe</StartProgram>

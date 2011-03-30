@@ -336,7 +336,6 @@ namespace IndianHealthService.ClinicalScheduling
         {
             try
             {
-                //Create new Document
                 this.SelectedDate = dDate.Date;
 
                 m_ScheduleType = (m_sResourcesArray.Count == 1) ? ScheduleType.Resource : ScheduleType.Clinic;
@@ -360,6 +359,7 @@ namespace IndianHealthService.ClinicalScheduling
                 CGView view = null;
                 //If this document already has a view, the use it
                 //SAM: Why do this again???
+                //SAM: I think it's not needed; b/c 
                 Hashtable h = CGDocumentManager.Current.Views;
                 CGDocument d;
                 bool bReuseView = false;
@@ -951,26 +951,18 @@ namespace IndianHealthService.ClinicalScheduling
         /// <returns></returns>
         public int CreateAppointment(CGAppointment rApptInfo, bool bWalkin)
         {
-            string sStart;
-            string sEnd;
-            string sPatID;
-            string sResource;
-            string sNote;
-            string sLen;
-            string sApptID;
-
-            //sStart = rApptInfo.StartTime.ToString("M-d-yyyy@HH:mm");
-            //sEnd = rApptInfo.EndTime.ToString("M-d-yyyy@HH:mm");
-
             // i18n code -- Use culture neutral FMDates
-            sStart = FMDateTime.Create(rApptInfo.StartTime).FMDateString;
-            sEnd = FMDateTime.Create(rApptInfo.EndTime).FMDateString;
+            string sStart = FMDateTime.Create(rApptInfo.StartTime).FMDateString;
+            string sEnd = FMDateTime.Create(rApptInfo.EndTime).FMDateString;
 
             TimeSpan sp = rApptInfo.EndTime - rApptInfo.StartTime;
-            sLen = sp.TotalMinutes.ToString();
-            sPatID = rApptInfo.PatientID.ToString();
-            sNote = rApptInfo.Note;
-            sResource = rApptInfo.Resource;
+            string sLen = sp.TotalMinutes.ToString();
+            string sPatID = rApptInfo.PatientID.ToString();
+            string sNote = rApptInfo.Note;
+            string sResource = rApptInfo.Resource;
+
+            string sApptID;
+
             if (bWalkin == true)
             {
                 sApptID = "WALKIN";
@@ -980,34 +972,24 @@ namespace IndianHealthService.ClinicalScheduling
                 sApptID = rApptInfo.AccessTypeID.ToString();
             }
 
-            CGAppointment aCopy = new CGAppointment();
-            aCopy.CreateAppointment(rApptInfo.StartTime, rApptInfo.EndTime, sNote, 0, sResource);
-            aCopy.PatientID = rApptInfo.PatientID;
-            aCopy.PatientName = rApptInfo.PatientName;
-            aCopy.HealthRecordNumber = rApptInfo.HealthRecordNumber;
-            aCopy.AccessTypeID = rApptInfo.AccessTypeID;
-            aCopy.WalkIn = bWalkin ? true : false;
-
             string sSql = "BSDX ADD NEW APPOINTMENT^" + sStart + "^" + sEnd + "^" + sPatID + "^" + sResource + "^" + sLen + "^" + sNote + "^" + sApptID;
             System.Data.DataTable dtAppt = m_DocManager.RPMSDataTable(sSql, "NewAppointment");
-            int nApptID;
 
             Debug.Assert(dtAppt.Rows.Count == 1);
             DataRow r = dtAppt.Rows[0];
-            nApptID = Convert.ToInt32(r["APPOINTMENTID"]);
+            int nApptID = Convert.ToInt32(r["APPOINTMENTID"]);
             string sErrorID;
             sErrorID = r["ERRORID"].ToString();
             if ((sErrorID != "") || (nApptID < 1))
             {
                 throw new Exception(sErrorID);
             }
-            aCopy.AppointmentKey = nApptID;
-            this.m_appointments.AddAppointment(aCopy);
-            
-            //TODO: Improve
-            //Yucky hack for now... haven't investigated why we need to create a new CGAppointment beyond
-            //the one that we pass.
+
+            //next line is probably done elsewhere
+            rApptInfo.WalkIn = bWalkin ? true : false;
             rApptInfo.AppointmentKey = nApptID;
+
+            this.m_appointments.AddAppointment(rApptInfo);
 
             //Have make appointment from CGView responsible for requesting an update for the avialability.
             //bool bRet = RefreshAvailabilitySchedule();

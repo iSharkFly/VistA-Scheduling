@@ -531,7 +531,6 @@ namespace IndianHealthService.ClinicalScheduling
 		private DataTable			m_dtResources;
 		private CGResource			m_pResource;
 		private DataView			m_dvHospLoc;
-		private DataView			m_dvClinicParams;
 		
 		#endregion Fields
 
