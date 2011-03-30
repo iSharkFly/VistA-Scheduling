@@ -84,10 +84,9 @@ Known Bugs:
 - Speed issues (see below) <better in 1.5>
 - Date on Appt List header in Arabic doesn't show up correctly.
 - Error massages should be clearer for the end Users <fixed in 1.5>
-- Event raise for clinic groups raises the name of the group not the clinic. The receiving end in the C# code compares and checks for the clinic.
+- Event raise for clinic groups raises the name of the group not the clinic. The receiving end in the C# code compares and checks for the clinic. <fixed in 1.5>
 - When making a walk-in appointment, it lets you cancel check-in by pressing the cancel button, yet walk-in continues to be made.
 - If user has no access to any schedules but has access to application (has BSDXZMENU key), opening the appointment menu causes a crash.
-- Shortcut server/port is not overridden when cancel, retry and enter them manually.
 
 
 Other Bugs:
@@ -98,22 +97,21 @@ Enhancement requests:
 - Allow all users to access all clinics by default (EHS/PHH)
 - Summary Schedule report based on Clinic Schedule report. Remove Phone, Address, Appointment Made By, and on fields.
 - Alert user if a patient already has an appointment in the same clinic for today.
-- Print Appointment Letter when Appointment is made (PHH Users workflow).
-- Make printing an extensible module for end user customization (Oroville and PHH)
+- Print Appointment Letter when Appointment is made (PHH Users workflow). (solved in 1.5)
+- Make printing an extensible module for end user customization (Oroville and PHH) (solved in 1.5; not documented).
 - Be able to print mutiple copies of a report (request of a PHH user).
-- Appointment List print out doesn't show the date and time printed.
-- Add patient order to the routing slip
+- Appointment List print out doesn't show the date and time printed. (solved in 1.5)
+- Add patient order to the routing slip (solved in 1.5)
 - Double-click should open make appoitment
 - Double-click on appointment should edit appointment
 - Click right click issue on grid
-- Add right-click on tvClinics to Print schedule for the clinic
-- Print multiple copies of schedule for clinic.
-- Add ability to Cancel Walk-in appointments <Najjar>
+- Add right-click on tvClinics to Print schedule for the clinic (solved in 1.5)
+- Add ability to Cancel Walk-in appointments <Najjar> (solved in 1.5)
 - Make the manager for the division not for the Data Base <Najjar>
 - Map the Clerks (Users) to the Groups not the clinics <Najjar>
 - Add New Key to the system; allow the manager to map users to the clinics without having access to add and edit the clinics
 - In the Re-book function; system should inform the users if there is no available clinic, not just do nothing.
-- Select the provider from the Check-in option should print the provider on the routing slip
+- Select the provider from the Check-in option should print the provider on the routing slip (sovled in 1.5)
 - Make the reason for the cancellation editable can be configured site Specific
 - Have an overbook limit and it can be edited as in VistA Scheduling
 - Show a indicator if a patient got checked out or not.
