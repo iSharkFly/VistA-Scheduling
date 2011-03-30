@@ -184,7 +184,7 @@ namespace IndianHealthService.ClinicalScheduling
             sf.Alignment = StringAlignment.Center; //for title & header
 
             //string s = "Appointment Reminder Slip";
-            string s = strings.ApptRoutingSlip;
+            string s = strings.ApptReminderSlip;
             g.DrawString(s, fTitle, Brushes.Black, printArea, sf); //title
 
             // move down

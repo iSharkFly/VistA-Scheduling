@@ -126,7 +126,7 @@
   <data name="ApptInfo" xml:space="preserve">
     <value>تفاصيل الموعد</value>
   </data>
-  <data name="ApptRoutingSlip" xml:space="preserve">
+  <data name="ApptReminderSlip" xml:space="preserve">
     <value>بطاقة المراجعة</value>
   </data>
   <data name="Clinic" xml:space="preserve">

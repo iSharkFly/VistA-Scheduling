@@ -126,8 +126,8 @@
   <data name="ApptInfo" xml:space="preserve">
     <value>Appointment Details</value>
   </data>
-  <data name="ApptRoutingSlip" xml:space="preserve">
-    <value>Appointment Routing Slip</value>
+  <data name="ApptReminderSlip" xml:space="preserve">
+    <value>Appointment Reminder Slip</value>
   </data>
   <data name="Clinic" xml:space="preserve">
     <value>Clinic</value>

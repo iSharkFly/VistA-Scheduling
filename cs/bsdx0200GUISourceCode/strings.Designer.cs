@@ -88,11 +88,11 @@ namespace IndianHealthService.ClinicalScheduling {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Appointment Routing Slip.
+        ///   Looks up a localized string similar to Appointment Reminder Slip.
         /// </summary>
-        internal static string ApptRoutingSlip {
+        internal static string ApptReminderSlip {
             get {
-                return ResourceManager.GetString("ApptRoutingSlip", resourceCulture);
+                return ResourceManager.GetString("ApptReminderSlip", resourceCulture);
             }
         }
         

@@ -3344,7 +3344,7 @@ namespace IndianHealthService.ClinicalScheduling
             //get this appointment's order
             //Today's appointments
             var todaysAppts = (from lkappts in this.Document.Appointments.AppointmentTable.Values.Cast<CGAppointment>()
-                               where lkappts.StartTime > appt.StartTime.Date && lkappts.StartTime < appt.StartTime.AddDays(1).Date
+                               where lkappts.StartTime > appt.StartTime.Date && lkappts.StartTime < appt.StartTime.AddDays(1).Date && lkappts.Resource == appt.Resource
                               orderby lkappts.StartTime
                               select lkappts).ToList();
             
