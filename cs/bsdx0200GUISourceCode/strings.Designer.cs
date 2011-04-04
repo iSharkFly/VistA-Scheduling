@@ -79,6 +79,24 @@ namespace IndianHealthService.ClinicalScheduling {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Appointment Note.
+        /// </summary>
+        internal static string AppointmentNote {
+            get {
+                return ResourceManager.GetString("AppointmentNote", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Appointment Provider.
+        /// </summary>
+        internal static string AppointmentProvider {
+            get {
+                return ResourceManager.GetString("AppointmentProvider", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Appointment Details.
         /// </summary>
         internal static string ApptInfo {
@@ -187,6 +205,15 @@ namespace IndianHealthService.ClinicalScheduling {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Next Appointment Instructions.
+        /// </summary>
+        internal static string NextAppointmentInstructions {
+            get {
+                return ResourceManager.GetString("NextAppointmentInstructions", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to (no instructions provided).
         /// </summary>
         internal static string NoInstructionsProvided {
@@ -196,11 +223,29 @@ namespace IndianHealthService.ClinicalScheduling {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to (none).
+        /// </summary>
+        internal static string none {
+            get {
+                return ResourceManager.GetString("none", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Notes.
         /// </summary>
         internal static string Notes {
             get {
                 return ResourceManager.GetString("Notes", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Patient Order.
+        /// </summary>
+        internal static string PatientOrder {
+            get {
+                return ResourceManager.GetString("PatientOrder", resourceCulture);
             }
         }
         
@@ -219,6 +264,24 @@ namespace IndianHealthService.ClinicalScheduling {
         internal static string PtInfo {
             get {
                 return ResourceManager.GetString("PtInfo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Routing Slip.
+        /// </summary>
+        internal static string RoutingSlip {
+            get {
+                return ResourceManager.GetString("RoutingSlip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Scratch Area.
+        /// </summary>
+        internal static string ScratchArea {
+            get {
+                return ResourceManager.GetString("ScratchArea", resourceCulture);
             }
         }
         

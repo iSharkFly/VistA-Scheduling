@@ -180,4 +180,25 @@
   <data name="Male" xml:space="preserve">
     <value>Male</value>
   </data>
+  <data name="AppointmentNote" xml:space="preserve">
+    <value>Appointment Note</value>
+  </data>
+  <data name="AppointmentProvider" xml:space="preserve">
+    <value>Appointment Provider</value>
+  </data>
+  <data name="NextAppointmentInstructions" xml:space="preserve">
+    <value>Next Appointment Instructions</value>
+  </data>
+  <data name="none" xml:space="preserve">
+    <value>(none)</value>
+  </data>
+  <data name="PatientOrder" xml:space="preserve">
+    <value>Patient Order</value>
+  </data>
+  <data name="RoutingSlip" xml:space="preserve">
+    <value>Routing Slip</value>
+  </data>
+  <data name="ScratchArea" xml:space="preserve">
+    <value>Scratch Area</value>
+  </data>
 </root>

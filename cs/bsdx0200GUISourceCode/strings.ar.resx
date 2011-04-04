@@ -172,12 +172,33 @@
     <value>الوقت</value>
   </data>
   <data name="years" xml:space="preserve">
-    <value>سنوات</value>
+    <value>سنة</value>
   </data>
   <data name="Female" xml:space="preserve">
     <value>أنثى</value>
   </data>
   <data name="Male" xml:space="preserve">
     <value>ذكر</value>
+  </data>
+  <data name="AppointmentNote" xml:space="preserve">
+    <value>ملاحضات الموعد</value>
+  </data>
+  <data name="AppointmentProvider" xml:space="preserve">
+    <value>الموعد عند</value>
+  </data>
+  <data name="NextAppointmentInstructions" xml:space="preserve">
+    <value>تعليمات الموعد القادم</value>
+  </data>
+  <data name="none" xml:space="preserve">
+    <value>(غير متوفر)</value>
+  </data>
+  <data name="PatientOrder" xml:space="preserve">
+    <value>دور المريض</value>
+  </data>
+  <data name="RoutingSlip" xml:space="preserve">
+    <value>قسيمة التوجيه</value>
+  </data>
+  <data name="ScratchArea" xml:space="preserve">
+    <value>ملاحضات زائدة</value>
   </data>
 </root>

@@ -135,6 +135,9 @@ namespace IndianHealthService.ClinicalScheduling
                 //go to the next appointment
                 apptPrinting++;
             }
+
+
+            g.Dispose();
         }
 
         /// <summary>
@@ -163,13 +166,14 @@ namespace IndianHealthService.ClinicalScheduling
                 Height = pageArea.Height - (e.MarginBounds.Height + headerArea.Height)
             };
 
+            string s;
 
             // A few fonts
             Font fTitle = new Font(FontFamily.GenericSerif, 24, FontStyle.Bold); //for title
             Font fBody = new Font(FontFamily.GenericSerif, 12);
             Font fGroupTitle = new Font(FontFamily.GenericSansSerif, 10, FontStyle.Bold);
 
-            StringFormat sf0 = new StringFormat()
+            StringFormat sfCenterCenter = new StringFormat()
             {
                  Alignment = StringAlignment.Center,
                  LineAlignment = StringAlignment.Center
@@ -177,15 +181,21 @@ namespace IndianHealthService.ClinicalScheduling
             
             // Draw Header
             string division = CGDocumentManager.Current.ConnectInfo.DivisionName;
-            g.DrawString(division, fBody, Brushes.Black, headerArea, sf0);
-            
+            g.DrawString(division, fBody, Brushes.Black, headerArea, sfCenterCenter);
+
+            const int watermarkLength = 75;
+
+            // Move down for optional form paper
+            printArea.Y += watermarkLength;
+            printArea.Height -= watermarkLength;
+
             // Draw Title
-            StringFormat sf = new StringFormat();
-            sf.Alignment = StringAlignment.Center; //for title & header
+            StringFormat sfCenter = new StringFormat();
+            sfCenter.Alignment = StringAlignment.Center; //for title & header
 
             //string s = "Appointment Reminder Slip";
-            string s = strings.ApptReminderSlip;
-            g.DrawString(s, fTitle, Brushes.Black, printArea, sf); //title
+            s = strings.ApptReminderSlip;
+            g.DrawString(s, fTitle, Brushes.Black, printArea, sfCenter); //title
 
             // move down
             int titleHeight = (int)g.MeasureString(s, fTitle, printArea.Width).Height;
@@ -269,7 +279,7 @@ namespace IndianHealthService.ClinicalScheduling
 
             // Draw new Title
             s = strings.ClinicInstructions;
-            g.DrawString(s, fTitle, Brushes.Black, printArea, sf); //title
+            g.DrawString(s, fTitle, Brushes.Black, printArea, sfCenter); //title
 
             // move down
             titleHeight = (int)g.MeasureString(s, fTitle, printArea.Width).Height;
@@ -302,7 +312,7 @@ namespace IndianHealthService.ClinicalScheduling
             printArea.Height -= 5;
 
             s = strings.Notes;
-            g.DrawString(s, fTitle, Brushes.Black, printArea, sf); // Notes title
+            g.DrawString(s, fTitle, Brushes.Black, printArea, sfCenter); // Notes title
             
             // move down
             titleHeight = (int)g.MeasureString(s, fTitle, printArea.Width).Height;
@@ -323,8 +333,9 @@ namespace IndianHealthService.ClinicalScheduling
             //use sf0 to print the footer (center all the way)
             s = strings.Printed + ": " + DateTime.Now.ToString();
             Font fFooter = new Font(FontFamily.GenericSerif, 7);
-            g.DrawString(s, fFooter, Brushes.Black, footerArea, sf0);
+            g.DrawString(s, fFooter, Brushes.Black, footerArea, sfCenterCenter);
 
+            g.Dispose();
         }
 
 
@@ -403,6 +414,8 @@ namespace IndianHealthService.ClinicalScheduling
             address.AppendLine(ptRow.STREET);
             address.AppendLine(ptRow.CITY + ", " + ptRow.STATE + " " + ptRow.ZIP);
             g.DrawString(address.ToString(), fBody, Brushes.Black, printArea, sf);
+
+            g.Dispose();
         }
        
         /// <summary>
@@ -459,6 +472,8 @@ namespace IndianHealthService.ClinicalScheduling
             address.AppendLine(ptRow.STREET);
             address.AppendLine(ptRow.CITY + ", " + ptRow.STATE + " " + ptRow.ZIP);
             g.DrawString(address.ToString(), fBody, Brushes.Black, printArea, sf);
+
+            g.Dispose();
         }
 
         /// <summary>
@@ -517,6 +532,7 @@ namespace IndianHealthService.ClinicalScheduling
             address.AppendLine(ptRow.CITY + ", " + ptRow.STATE + " " + ptRow.ZIP);
             g.DrawString(address.ToString(), fBody, Brushes.Black, printArea, sf);
 
+            g.Dispose();
         }
 
         /// <summary>
@@ -529,6 +545,7 @@ namespace IndianHealthService.ClinicalScheduling
         {
             e.Graphics.DrawString(msg, new Font(FontFamily.GenericSerif, 14),
                 Brushes.Black, e.MarginBounds);
+            e.Graphics.Dispose();
         }
 
         /// <summary>
@@ -576,10 +593,16 @@ namespace IndianHealthService.ClinicalScheduling
             string division = CGDocumentManager.Current.ConnectInfo.DivisionName;
             g.DrawString(division, fBody, Brushes.Black, headerArea, sf0);
 
+            const int watermarkLength = 75;
+
+            // Move down for optional form paper
+            printArea.Y += watermarkLength;
+            printArea.Height -= watermarkLength;
+
             // Draw Title
             StringFormat sf = new StringFormat();
             sf.Alignment = StringAlignment.Center; //for title & header
-            string title = "Routing Slip";
+            string title = strings.RoutingSlip;
             g.DrawString(title, fTitle, Brushes.Black, printArea, sf); //title
 
             // move down
@@ -600,25 +623,31 @@ namespace IndianHealthService.ClinicalScheduling
             }
 
             // group header
-            g.DrawString("Patient Information", fGroupTitle, Brushes.Black, new Point(personalInfoRectangle.X, personalInfoRectangle.Y - 20));
+            s = strings.PtInfo;
+            StringFormat sf3 = new StringFormat(System.Threading.Thread.CurrentThread.CurrentUICulture.TextInfo.IsRightToLeft ? StringFormatFlags.DirectionRightToLeft : 0);
+            g.DrawString(s, fGroupTitle, Brushes.Black, new Rectangle(personalInfoRectangle.X, personalInfoRectangle.Y - 20, personalInfoRectangle.Width, 20), sf3);
+
+            StringFormat sf4 = new StringFormat(System.Threading.Thread.CurrentThread.CurrentUICulture.TextInfo.IsRightToLeft ? StringFormatFlags.DirectionRightToLeft : 0);
+            sf4.SetTabStops(0, new float[] { 75 });
+            sf4.SetDigitSubstitution(System.Threading.Thread.CurrentThread.CurrentUICulture.LCID, StringDigitSubstitute.Traditional);
 
             // inner rectangle for drawing strings:
             Rectangle personalInfoInnerRectangle = new Rectangle(personalInfoRectangle.X + 20, personalInfoRectangle.Y + 20, personalInfoRectangle.Width - 40, personalInfoRectangle.Height - 40);
 
             // Strings to write
             StringBuilder sb = new StringBuilder(500);
-            sb.AppendLine("Name:" + "\t" + appt.Patient.Name);
+            sb.AppendLine(strings.Name + ":" + "\t" + appt.Patient.Name);
             sb.AppendLine();
-            sb.AppendLine("ID#:" + "\t" + appt.Patient.ID);
+            sb.AppendLine(strings.ID + ":" + "\t" + appt.Patient.ID);
             sb.AppendLine();
-            sb.AppendLine("DOB:" + "\t" + appt.Patient.DOB.ToShortDateString());
+            sb.AppendLine(strings.DOB + ":" + "\t" + appt.Patient.DOB.ToShortDateString());
             sb.AppendLine();
-            sb.AppendLine("Age:" + "\t" + appt.Patient.UserFriendlyAge);
+            sb.AppendLine(strings.Age + ":" + "\t" + appt.Patient.UserFriendlyAge);
             //sb.AppendLine();
             //sb.AppendLine("Sex:" + "\t" + appt.Patient.Sex.ToString());
 
             // Draw them
-            g.DrawString(sb.ToString(), fBody, Brushes.Black, personalInfoInnerRectangle);
+            g.DrawString(sb.ToString(), fBody, Brushes.Black, personalInfoInnerRectangle, sf4);
 
             // draw curved rectangle
             Rectangle apptInfoRectangle = new Rectangle(e.MarginBounds.X + e.MarginBounds.Width - 280, printArea.Y + 30, 280, part1Height);
@@ -628,27 +657,28 @@ namespace IndianHealthService.ClinicalScheduling
             }
 
             // group header
-            g.DrawString("Appointment Information", fGroupTitle, Brushes.Black, new Point(apptInfoRectangle.X, apptInfoRectangle.Y - 20));
+            s = strings.ApptInfo;
+            g.DrawString(s, fGroupTitle, Brushes.Black, new Rectangle(apptInfoRectangle.X, apptInfoRectangle.Y - 20, apptInfoRectangle.Width, 20), sf3);
 
             // Strings to write
             sb = new StringBuilder();
-            sb.AppendLine("Clinic:");
+            sb.AppendLine(strings.Clinic + ":");
             sb.AppendLine(appt.Resource);
             sb.AppendLine();
-            sb.AppendLine("Appointment Provider:"); 
-            sb.AppendLine((appt.Provider == null) ? "(none)" : appt.Provider.ToString());  //Appt Provider or (none) if null
+            sb.AppendLine(strings.AppointmentProvider + ":"); 
+            sb.AppendLine((appt.Provider == null) ? strings.none : appt.Provider.ToString());  //Appt Provider or (none) if null
             sb.AppendLine();
-            sb.AppendLine("Patient Order:" + "\t" + apptOrder);
-            sb.AppendLine("Date: " + "\t" + appt.StartTime.ToShortDateString() + " " + appt.StartTime.ToShortTimeString());
+            sb.AppendLine(strings.PatientOrder + ":" + "\t" + apptOrder);
+            sb.AppendLine(strings.Date + ":" + "\t" + appt.StartTime.ToShortDateString() + " " + appt.StartTime.ToShortTimeString());
             sb.AppendLine();
-            sb.AppendLine("Appointment Note: ");
-            sb.AppendLine(String.IsNullOrWhiteSpace(appt.Note)? "(none)" : appt.Note);
+            sb.AppendLine(strings.AppointmentNote + ":");
+            sb.AppendLine(String.IsNullOrWhiteSpace(appt.Note)? strings.none : appt.Note);
 
             // Draw them
             Rectangle apptInfoInnerRectangle = new Rectangle(apptInfoRectangle.X + 20, apptInfoRectangle.Y + 20, apptInfoRectangle.Width - 40, apptInfoRectangle.Height - 40);
 
             // Draw them
-            g.DrawString(sb.ToString(), fBody, Brushes.Black, apptInfoInnerRectangle);
+            g.DrawString(sb.ToString(), fBody, Brushes.Black, apptInfoInnerRectangle, sf4);
 
             // Move Drawing Rectangle Down
             printArea.Y += apptInfoRectangle.Height + 30 + 20;
@@ -664,14 +694,13 @@ namespace IndianHealthService.ClinicalScheduling
             printArea.Y += 5;
             printArea.Height -= 5;
 
-            s = "Scratch Area";
-            g.DrawString(s, fGroupTitle, Brushes.Black, printArea); 
+            s = strings.ScratchArea;
+            g.DrawString(s, fGroupTitle, Brushes.Black, printArea, sf3); 
 
             // move down
-            printArea.Y += 300;
-            printArea.Height -= 300;
+            printArea.Y += 240;
+            printArea.Height -= 240;
 
-            //TODO: Put Next Appointment Area
             using (Pen dashpen = new Pen(Color.Black))
             {
                 dashpen.DashStyle = DashStyle.Dot;
@@ -681,12 +710,12 @@ namespace IndianHealthService.ClinicalScheduling
             printArea.Y += 5;
             printArea.Height -= 5;
 
-            s = "Next Appointment Instructions";
-            g.DrawString(s, fGroupTitle, Brushes.Black, printArea);
+            s = strings.NextAppointmentInstructions;
+            g.DrawString(s, fGroupTitle, Brushes.Black, printArea, sf3);
 
             // Draw Footer
             //use sf0 to print the footer (center all the way)
-            s = "Printed: " + DateTime.Now.ToString();
+            s = strings.Printed + ": " + DateTime.Now.ToString();
             Font fFooter = new Font(FontFamily.GenericSerif, 7);
             g.DrawString(s, fFooter, Brushes.Black, footerArea, sf0);
 

@@ -496,10 +496,20 @@ namespace IndianHealthService.ClinicalScheduling
             }
            
             
-
             //User Interface Culture (m_CultureName is set from the command line flag /culture)
-            try { Thread.CurrentThread.CurrentUICulture = new CultureInfo(m_CultureName); } // if "", invariant culture
-            catch (CultureNotFoundException) { Thread.CurrentThread.CurrentUICulture = CultureInfo.InvariantCulture; }
+            //
+            //If passed, set that try that culture; fail over to Invariant Culture
+            if (m_CultureName != String.Empty)
+            {
+                try { Thread.CurrentThread.CurrentUICulture = new CultureInfo(m_CultureName); }
+                catch (CultureNotFoundException) { Thread.CurrentThread.CurrentUICulture = CultureInfo.InvariantCulture; }
+            }
+            //otherwise, use the Current Computer Culture, EVEN IF (!!) the UI Culture is different.
+            //this allows localization even if Windows still displays messages in English.
+            else
+            {
+                Thread.CurrentThread.CurrentUICulture = Thread.CurrentThread.CurrentCulture;
+            }
 
             //Create global dataset
 			_current.m_dsGlobal = new DataSet("GlobalDataSet");
