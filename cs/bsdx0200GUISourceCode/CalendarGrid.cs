@@ -8,6 +8,7 @@
     using System.Runtime.CompilerServices;
     using System.Runtime.InteropServices;
     using System.Windows.Forms;
+    using System.Linq;
 
     /// <summary>
     /// This class is reponsible for rendering the Calendar Grid.
@@ -124,24 +125,33 @@
         {
             try
             {
+                //calculate each cell's height
                 SizeF ef = g.MeasureString("Test", this.m_fCell);
                 this.m_cellHeight = ((int) ef.Height) + 4;
-                int nColumns = this.m_nColumns;
-                int num2 = 60 / this.m_nTimeScale;
-                int num3 = 24 * num2;
-                nColumns++;
-                num3++;
-                this.m_cellWidth = 600 / nColumns;
+
+                int nColumns = this.m_nColumns; // columns set via property
+                int slotsPerHour = 60 / this.m_nTimeScale; //time scale set via property
+                int slotsPerDay = 24 * slotsPerHour;
+                nColumns++; // add extra column for time display
+                slotsPerDay++; // not sure here why that's don't
+
+                //calculate each cell's height
+                this.m_cellWidth = 600 / nColumns; // base size is 600 pixels
+                // if larger:
                 if (base.ClientRectangle.Width > 600)
                 {
                     this.m_cellWidth = (base.ClientRectangle.Width - this.m_col0Width) / (nColumns - 1);
                 }
+                // if only one column
                 if (this.m_nColumns == 1)
                 {
                     this.m_cellWidth = base.ClientRectangle.Width - this.m_col0Width;
                 }
+                //next line seems to be useless (we don't use X and Y below)
                 g.TranslateTransform((float) base.AutoScrollPosition.X, (float) base.AutoScrollPosition.Y);
-                for (int i = num3; i > -1; i--)
+                
+                //now, build the grid cells
+                for (int i = slotsPerDay; i > -1; i--)
                 {
                     for (int j = 1; j < nColumns; j++)
                     {
@@ -232,6 +242,54 @@
             }
         }
 
+        void CalendarGrid_DragOver(object sender, DragEventArgs e)
+        {
+            //Translate point to client point
+            Point pt = this.PointToClient(new Point(e.X, e.Y));
+            
+            //clear selections
+            foreach (DictionaryEntry entry in this.m_gridCells.CellHashTable)
+            {
+                CGCell cell = (CGCell)entry.Value;
+                cell.IsSelected = false;
+            }
+            this.m_selectedRange.Cells.ClearAllCells();
+
+            //select a cell based on current drag position to visually assist the user
+            int nRow = -1;
+            int nCol = -1;
+            if (this.HitTest(pt.X, pt.Y, ref nRow, ref nCol))
+            {
+                CGCell cellFromRowCol = this.m_gridCells.GetCellFromRowCol(nRow, nCol);
+                if (cellFromRowCol != null)
+                {
+                    this.m_currentCell = cellFromRowCol;
+                    this.m_selectedRange.StartCell = null;
+                    this.m_selectedRange.EndCell = null;
+                    this.m_selectedRange.CreateRange(this.m_gridCells, cellFromRowCol, cellFromRowCol);
+
+                    cellFromRowCol.IsSelected = true;
+                }
+
+                base.Invalidate();
+            }
+
+            //if Y axis is outside the top or bottom
+
+            if ((pt.Y + 40 >= this.ClientRectangle.Bottom) || (pt.Y - 40 <= this.ClientRectangle.Top))
+            {
+                //start auto scrolling. m_bScrollDown decides whether we scroll up or down.
+                this.m_bScrollDown = (pt.Y + 40) >= this.ClientRectangle.Bottom;
+                AutoDragStart();
+            }
+
+            //if Y axis within client rectagle, stop dragging (whether you started or not)
+            if ((pt.Y + 40 < this.ClientRectangle.Bottom) && (pt.Y - 40 > this.ClientRectangle.Top))
+            {
+                AutoDragStop();
+            }
+        }
+
         private void CalendarGrid_MouseDown(object sender, MouseEventArgs e)
         {
             //watch.Restart();
@@ -246,13 +304,48 @@
                 this.m_bMouseDown = true;
                 this.OnLButtonDown(e.X, e.Y, true);
             }
+            //new code!!! smh 4/13/2011 -- refactor later
+            
+            else if (e.Button == MouseButtons.Right)
+            {
+                // clear all selected cells, but ONLY if the the pointer is NOT over one of the cells in
+                // the selected range
+
+                int nRow = -1;
+                int nCol = -1;
+                CGCell cellFromRowCol = null;
+                bool _isCellInRange = false;
+                if (this.HitTest(e.X, e.Y, ref nRow, ref nCol))
+                {
+                    cellFromRowCol = this.m_gridCells.GetCellFromRowCol(nRow, nCol);
+                }
+
+                if (cellFromRowCol != null)
+                    _isCellInRange = this.m_selectedRange.CellIsInRange(cellFromRowCol);
+
+                if (!_isCellInRange)
+                {
+                    foreach (DictionaryEntry entry in this.m_gridCells.CellHashTable)
+                    {
+                        CGCell cell = (CGCell)entry.Value;
+                        cell.IsSelected = false;
+                    }
+                    this.m_selectedRange.Cells.ClearAllCells();
+                }
+
+                // clear all selected appointments
+                this.m_SelectedAppointments.ClearAllAppointments();
+                foreach (CGAppointment a in this.m_Appointments.AppointmentTable.Values) a.Selected = false;
+                this.m_nSelectID = 0;
+
+                OnRButtonDown(e.X, e.Y, _isCellInRange);
+            }
+             
+            //end new code!!! /smh 4/13/2011
         }
 
         private void CalendarGrid_MouseMove(object Sender, MouseEventArgs e)
         {
-            //test
-            //System.Diagnostics.Debug.Write(watch.ElapsedMilliseconds + "\n");
-            //test
 
             //if the left mouse button is down and we are moving the mouse...
             if (this.m_bMouseDown)
@@ -287,13 +380,14 @@
                         base.DoDragDrop(data, DragDropEffects.Move);
                         this.m_bDragDropStart = true;
                     }
-                }
+               }
             }
             else
             {
-                //test
-                AutoDragStop(); //is this needed?
-                //test
+            
+                AutoDragStop(); //is this needed?  //just in case maybe
+
+                //this code below displays the tooltip if we are moving the mouse over an appointment
                 int y = e.Y - base.AutoScrollPosition.Y;
                 int x = e.X - base.AutoScrollPosition.X;
                 Point pt = new Point(x, y);
@@ -306,29 +400,6 @@
                     }
                 }
                 this.m_toolTip.RemoveAll();
-
-                ////smh new code -- select cell
-                //int nRow = -1;
-                //int nCol = -1;
-
-                ////Is the mouse over a known cell? If so, highlight cell
-                //if (this.HitTest(x, y, ref nRow, ref nCol))
-                //{
-                //    CGCell cellFromRowCol = this.m_gridCells.GetCellFromRowCol(nRow, nCol);
-                //    if (cellFromRowCol != null)
-                //    {
-                //        this.m_currentCell = cellFromRowCol;
-                //        this.m_selectedRange.StartCell = null;
-                //        this.m_selectedRange.EndCell = null;
-                //        this.m_selectedRange.CreateRange(this.m_gridCells, cellFromRowCol, cellFromRowCol);
-                //        this.m_bSelectingRange = true;
-                //        cellFromRowCol.IsSelected = true;
-                //        base.Invalidate(this.m_currentCell.CellRectangle);
-                //        //base.Invalidate();
-                //    }
-                //}
-
-
             }
         }
 
@@ -514,7 +585,7 @@
             
             // flag is true only if there are no cells what so ever in the screen
             // Only true when no resource is selected.
-            bool flag = this.m_gridCells.CellCount == 0;
+            bool noCellsFlag = this.m_gridCells.CellCount == 0;
 
             // Move the base point from the client screen to the scrolling region top-left corner.
             g.TranslateTransform((float) base.AutoScrollPosition.X, (float) base.AutoScrollPosition.Y);
@@ -599,40 +670,45 @@
                     {
                         num12 = this.m_col0Width;
                     }
-                    if (k > 1)      // 
+                    if (k > 1)      // if we are subsequent columns, adjust accordingly
                     {
                         num12 = this.m_col0Width + (this.m_cellWidth * (k - 1));
                     }
+                    //make a rectangle for the cell
                     Point point4 = new Point(num12, j * this.m_cellHeight);
                     Rectangle r = new Rectangle(point4.X, point4.Y, this.m_cellWidth, this.m_cellHeight);
-                    if (j != 0)
+                    if (j != 0) // if we are not at the top (we are starting from the bottom)
                     {
-                        CGCell cellFromRowCol = null;
-                        if (flag)
+                        CGCell cellFromRowCol = null; 
+                        if (noCellsFlag)  //if there are no cells, create the cell
                         {
                             cellFromRowCol = new CGCell(r, j, k);
                             this.m_gridCells.AddCell(cellFromRowCol);
                         }
-                        else
+                        else // otherwise, get the cell from the m_gridCells array
                         {
                             cellFromRowCol = this.m_gridCells.GetCellFromRowCol(j, k);
                             cellFromRowCol.CellRectangle = r;
                         }
-                        if (this.m_sResourcesArray.Count > 0)
+                        if (this.m_sResourcesArray.Count > 0) // if we have any resources open
                         {
                             //IMP
                             //this is the place where we the selected cells are drawn in Light Light Blue.
                             //IMP
+                            // if cell is selected, draw it in Aquamarine (light light blue)
                             if (this.m_selectedRange.CellIsInRange(cellFromRowCol))
                             {
                                 g.FillRectangle(Brushes.Aquamarine, r);
                                 //g.FillRectangle(Brushes.AntiqueWhite, r);
                             }
+                            // otherwise, draw it from Appointment Type Color set by BuildGridCellsArray()
                             else
                             {
                                 g.FillRectangle(cellFromRowCol.AppointmentTypeColor, r);
                             }
+                            // finally the drawing
                             g.DrawRectangle(pen, r.X, r.Y, r.Width, r.Height);
+                            // once done with availabilities, draw the appointments
                             if (j == 1)
                             {
                                 this.DrawAppointments(g, this.m_col0Width, this.m_cellWidth, this.m_cellHeight);
@@ -640,6 +716,8 @@
                         }
                         continue;
                     }
+                    
+                    //Below draws the top column either containing the dates or resources
                     if (!this.m_bScroll)
                     {
                         g.TranslateTransform(0f, (float) -base.AutoScrollPosition.Y);
@@ -921,15 +999,70 @@
             this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.CalendarGrid_MouseDown);
             this.MouseUp += new System.Windows.Forms.MouseEventHandler(this.CalendarGrid_MouseUp);
             this.DragEnter += new System.Windows.Forms.DragEventHandler(this.CalendarGrid_DragEnter);
+            this.DragOver += new DragEventHandler(CalendarGrid_DragOver);
             this.ResumeLayout(false);
 
         }
 
+ 
         private static int MinSince80(DateTime d)
         {
             DateTime time = new DateTime(1980, 1, 1, 0, 0, 0);
             TimeSpan span = (TimeSpan) (d - time);
             return (int) span.TotalMinutes;
+        }
+
+        //new code1!! smh 4/14/2011
+        private void OnRButtonDown(int X, int Y, bool RangeAlreadySelected)
+        {
+            //if right mouse button is clicked, select an appointment if mouse hovers over one
+            foreach (CGAppointment appointment3 in this.m_Appointments.AppointmentTable.Values)
+            {
+                int y = Y - base.AutoScrollPosition.Y;
+                int x = X - base.AutoScrollPosition.X;
+                Point pt = new Point(x, y);
+
+                if (!appointment3.GridRectangle.Contains(pt))
+                {
+                    continue;
+                }
+                this.m_bMouseDown = false;
+
+                this.m_SelectedAppointments.AddAppointment(appointment3);
+                appointment3.Selected = true;
+                this.m_nSelectID = appointment3.AppointmentKey;
+                //this.m_bGridEnter = true;
+            }
+
+            // if we find an appointment, redraw the grid
+            if (this.m_SelectedAppointments.AppointmentCount > 0)
+            {
+                base.Invalidate();
+                return;
+            }
+
+            // Otherwise, select a cell, but only if we don't don't have an existing range
+            if (RangeAlreadySelected) return;
+
+            // Ok, select cell here
+            int nRow = -1;
+            int nCol = -1;
+            if (this.HitTest(X, Y, ref nRow, ref nCol))
+            {
+                CGCell cellFromRowCol = this.m_gridCells.GetCellFromRowCol(nRow, nCol);
+                if (cellFromRowCol != null)
+                {
+                    this.m_currentCell = cellFromRowCol;
+                    this.m_selectedRange.StartCell = null;
+                    this.m_selectedRange.EndCell = null;
+                    this.m_selectedRange.CreateRange(this.m_gridCells, cellFromRowCol, cellFromRowCol);
+
+                    cellFromRowCol.IsSelected = true;
+                }
+
+                base.Invalidate();
+                return;
+            }
         }
 
         private void OnLButtonDown(int X, int Y, bool bStart)
@@ -1066,11 +1199,14 @@
         {
             if (this.m_gridCells.CellCount != 0)
             {
+                // this happens for the CGAVView Grid
                 foreach (DictionaryEntry entry in this.m_gridCells.CellHashTable)
                 {
                     CGCell cell = (CGCell) entry.Value;
                     cell.AppointmentTypeColor = (this.m_GridBackColor == "blue") ? Brushes.CornflowerBlue : Brushes.Khaki;
                 }
+                // won't happen for CGAVView Grid b/c it has no availabilites
+                // BUT, will happen for normal CGView Grid if there any availabilies
                 if ((this.m_pAvArray != null) && (this.m_pAvArray.Count != 0))
                 {
                     foreach (CGAvailability availability in this.m_pAvArray)
@@ -1079,9 +1215,12 @@
                         int nCol = 0;
                         int num3 = 0;
                         int num4 = 0;
+                        // pick the color from the availability
                         Brush brush = new SolidBrush(Color.FromArgb(availability.Red, availability.Green, availability.Blue));
+                        // get starting and ending cell
                         this.GetCellFromTime(availability.StartTime, ref nRow, ref nCol, true, availability.ResourceList);
                         this.GetCellFromTime(availability.EndTime, ref num3, ref num4, false, availability.ResourceList);
+                        // for each of the range cells between starting and ending, change their color
                         for (int i = nCol; i <= num4; i++)
                         {
                             for (int j = nRow; (i == num4) && (j <= num3); j++)
@@ -1327,12 +1466,15 @@
                 if ((value > 0) && (value < 11))
                 {
                     this.m_nColumns = value;
-                    this.m_gridCells.ClearAllCells();
-                    this.m_selectedRange.Cells.ClearAllCells();
+                    //new line
+                    this.SetColumnInfo();  // redoes the columns if we have multiple resources
+                    //end new line
+                    this.m_gridCells.ClearAllCells();               //remove all cells
+                    this.m_selectedRange.Cells.ClearAllCells();     //remove selected range
                     Graphics g = base.CreateGraphics();
-                    this.BuildGridCellsArray(g);
-                    this.SetAppointmentTypes();
-                    base.Invalidate();
+                    this.BuildGridCellsArray(g);                    //rebuild the cells
+                    this.SetAppointmentTypes();                     //set the colors on the cells for availabilities
+                    base.Invalidate();                              //Fire paint to call DrawGrid
                 }
             }
         }

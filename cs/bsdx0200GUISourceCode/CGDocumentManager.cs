@@ -399,7 +399,7 @@ namespace IndianHealthService.ClinicalScheduling
                 }
                 catch (System.Net.Sockets.SocketException)
                 {
-                    MessageBox.Show("Cannot connect to VistA. Network Error");
+                    m_ds.RemoteMsgBox("Can't connect to server! Network Error");
                     return false;
                 }
             }
@@ -437,11 +437,11 @@ namespace IndianHealthService.ClinicalScheduling
                 }
                 catch (System.Net.Sockets.SocketException)
                 {
-                    MessageBox.Show("Cannot connect to VistA. Network Error");
+                    m_ds.RemoteMsgBox("Cannot connect to VistA. Network Error");
                 }
                 catch (BMXNetException ex)
                 {
-                    if (MessageBox.Show("Unable to connect to VistA.  " + ex.Message, "Clinical Scheduling", MessageBoxButtons.RetryCancel) == DialogResult.Retry)
+                    if (m_ds.RemoteMsgBox("Unable to connect to VistA.  " + ex.Message, "Clinical Scheduling", MessageBoxButtons.RetryCancel) == DialogResult.Retry)
                     {
                         bRetry = true;
                         //I hate this, but this is how the library is designed. It throws an error if the user cancels. XXX: Won't fix library until BMX 4.0 port.

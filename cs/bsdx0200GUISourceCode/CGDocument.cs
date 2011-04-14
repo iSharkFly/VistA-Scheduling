@@ -1015,12 +1015,6 @@ namespace IndianHealthService.ClinicalScheduling
                 string sErrorID = r["ERRORID"].ToString();
                 if (sErrorID == "-1")
                     pAppt.Note = sNote;
-
-                if (this.m_appointments.AppointmentTable.ContainsKey(nApptID))
-                {
-                    bool bRet = RefreshAvailabilitySchedule();
-                    UpdateAllViews();
-                }
             }
             catch (Exception ex)
             {

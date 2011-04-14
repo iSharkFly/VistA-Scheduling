@@ -427,18 +427,21 @@ namespace IndianHealthService.ClinicalScheduling
             // mnuNewAppointment
             // 
             this.mnuNewAppointment.Index = 0;
+            this.mnuNewAppointment.Shortcut = System.Windows.Forms.Shortcut.Ins;
             this.mnuNewAppointment.Text = "&New Appointment";
             this.mnuNewAppointment.Click += new System.EventHandler(this.mnuNewAppointment_Click);
             // 
             // mnuEditAppointment
             // 
             this.mnuEditAppointment.Index = 1;
+            this.mnuEditAppointment.Shortcut = System.Windows.Forms.Shortcut.F2;
             this.mnuEditAppointment.Text = "&Edit Appointment";
             this.mnuEditAppointment.Click += new System.EventHandler(this.mnuEditAppointment_Click);
             // 
             // mnuDeleteAppointment
             // 
             this.mnuDeleteAppointment.Index = 2;
+            this.mnuDeleteAppointment.Shortcut = System.Windows.Forms.Shortcut.Del;
             this.mnuDeleteAppointment.Text = "Cance&l Appointment";
             this.mnuDeleteAppointment.Click += new System.EventHandler(this.mnuDeleteAppointment_Click);
             // 
@@ -480,7 +483,7 @@ namespace IndianHealthService.ClinicalScheduling
             // 
             this.mnuFindAppt.Index = 9;
             this.mnuFindAppt.Shortcut = System.Windows.Forms.Shortcut.CtrlF;
-            this.mnuFindAppt.Text = "&Find Available Appointment";
+            this.mnuFindAppt.Text = "&Find Empty Slots";
             this.mnuFindAppt.Click += new System.EventHandler(this.mnuFindAppt_Click);
             // 
             // mnuCheckIn
@@ -646,7 +649,7 @@ namespace IndianHealthService.ClinicalScheduling
             this.tvSchedules.HotTracking = true;
             this.tvSchedules.Location = new System.Drawing.Point(0, 0);
             this.tvSchedules.Name = "tvSchedules";
-            this.tvSchedules.Size = new System.Drawing.Size(128, 359);
+            this.tvSchedules.Size = new System.Drawing.Size(128, 317);
             this.tvSchedules.Sorted = true;
             this.tvSchedules.TabIndex = 1;
             this.tvSchedules.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.tvSchedules_AfterSelect);
@@ -688,7 +691,7 @@ namespace IndianHealthService.ClinicalScheduling
             // ctxFindAppt
             // 
             this.ctxFindAppt.Index = 3;
-            this.ctxFindAppt.Text = "&Find Available Appointment";
+            this.ctxFindAppt.Text = "&Find Empty Slots";
             this.ctxFindAppt.Click += new System.EventHandler(this.ctxFindAppt_Click);
             // 
             // ctxPrintScheduleT0
@@ -715,7 +718,7 @@ namespace IndianHealthService.ClinicalScheduling
             this.panelRight.Dock = System.Windows.Forms.DockStyle.Right;
             this.panelRight.Location = new System.Drawing.Point(996, 0);
             this.panelRight.Name = "panelRight";
-            this.panelRight.Size = new System.Drawing.Size(128, 359);
+            this.panelRight.Size = new System.Drawing.Size(128, 317);
             this.panelRight.TabIndex = 3;
             this.panelRight.Visible = false;
             // 
@@ -811,7 +814,7 @@ namespace IndianHealthService.ClinicalScheduling
             this.panelCenter.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panelCenter.Location = new System.Drawing.Point(136, 24);
             this.panelCenter.Name = "panelCenter";
-            this.panelCenter.Size = new System.Drawing.Size(857, 311);
+            this.panelCenter.Size = new System.Drawing.Size(857, 269);
             this.panelCenter.TabIndex = 7;
             // 
             // ctxCalendarGrid
@@ -904,7 +907,7 @@ namespace IndianHealthService.ClinicalScheduling
             // 
             this.panelBottom.Controls.Add(this.statusBar1);
             this.panelBottom.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panelBottom.Location = new System.Drawing.Point(136, 335);
+            this.panelBottom.Location = new System.Drawing.Point(136, 293);
             this.panelBottom.Name = "panelBottom";
             this.panelBottom.Size = new System.Drawing.Size(857, 24);
             this.panelBottom.TabIndex = 8;
@@ -922,7 +925,7 @@ namespace IndianHealthService.ClinicalScheduling
             // 
             this.splitter1.Location = new System.Drawing.Point(128, 24);
             this.splitter1.Name = "splitter1";
-            this.splitter1.Size = new System.Drawing.Size(8, 335);
+            this.splitter1.Size = new System.Drawing.Size(8, 293);
             this.splitter1.TabIndex = 9;
             this.splitter1.TabStop = false;
             // 
@@ -931,7 +934,7 @@ namespace IndianHealthService.ClinicalScheduling
             this.splitter2.Dock = System.Windows.Forms.DockStyle.Right;
             this.splitter2.Location = new System.Drawing.Point(993, 24);
             this.splitter2.Name = "splitter2";
-            this.splitter2.Size = new System.Drawing.Size(3, 335);
+            this.splitter2.Size = new System.Drawing.Size(3, 293);
             this.splitter2.TabIndex = 10;
             this.splitter2.TabStop = false;
             // 
@@ -954,7 +957,7 @@ namespace IndianHealthService.ClinicalScheduling
             this.calendarGrid1.Name = "calendarGrid1";
             this.calendarGrid1.Resources = ((System.Collections.ArrayList)(resources.GetObject("calendarGrid1.Resources")));
             this.calendarGrid1.SelectedAppointment = 0;
-            this.calendarGrid1.Size = new System.Drawing.Size(857, 311);
+            this.calendarGrid1.Size = new System.Drawing.Size(857, 269);
             this.calendarGrid1.StartDate = new System.DateTime(2003, 1, 27, 0, 0, 0, 0);
             this.calendarGrid1.TabIndex = 0;
             this.calendarGrid1.TimeScale = 20;
@@ -967,7 +970,7 @@ namespace IndianHealthService.ClinicalScheduling
             // CGView
             // 
             this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
-            this.ClientSize = new System.Drawing.Size(1124, 359);
+            this.ClientSize = new System.Drawing.Size(1124, 317);
             this.Controls.Add(this.panelCenter);
             this.Controls.Add(this.panelBottom);
             this.Controls.Add(this.splitter2);
@@ -1816,6 +1819,16 @@ namespace IndianHealthService.ClinicalScheduling
 				//Call Document to edit appointment
 				this.Document.EditAppointment(a, sNote);
 
+                if (dAppt.PrintAppointmentSlip)
+                {
+                    PrintAppointmentSlip(a);
+                }
+
+                //Redraw appointments
+                this.UpdateArrays();
+
+                //Then tell RPMS that we are updated
+                RaiseRPMSEvent("BSDX SCHEDULE", a.Resource);
 			}
 			catch (Exception ex)
 			{
@@ -2683,8 +2696,6 @@ namespace IndianHealthService.ClinicalScheduling
 
 			this.calendarGrid1.Columns = 5;
             this.Document.m_nColumnCount = 5; // MJL 1/17/2007
-            //this.Document.UpdateAllViews();
-            //TODO: Is there a way to just reuse the existing arrays? How far in the future do they go?
             RequestRefreshGrid();
 		}
 
@@ -2692,7 +2703,6 @@ namespace IndianHealthService.ClinicalScheduling
 		{
 			this.calendarGrid1.Columns = 7;
             this.Document.m_nColumnCount = 7; // MJL 1/17/2007
-            //TODO: Is there a way to just reuse the existing arrays? How far in the future do they go?
             RequestRefreshGrid();
         }
 
@@ -2952,6 +2962,8 @@ namespace IndianHealthService.ClinicalScheduling
                 appt.Note = e.Appointment.Note;
                 appt.HealthRecordNumber = e.Appointment.HealthRecordNumber;
                 appt.AccessTypeID = e.AccessTypeID;
+                appt.Patient = e.Appointment.Patient;
+
                 this.Document.CreateAppointment(appt);
 
                 //CGAppointment a = new CGAppointment();
@@ -3507,25 +3519,34 @@ namespace IndianHealthService.ClinicalScheduling
             this.Cursor = Cursors.Default;
         }
 
-        LoadingSplash _loadingSplash; // Splash object a data point in class
+        //private delegate DialogResult dLoadingSplash(IWin32Window owner);
+        string _tempStatusBartext;
 
         /// <summary>
-        /// Loads a splash that says "Loading"
+        /// Loads a splash that says "Loading" -- removed it april 13 2010
         /// </summary>
         private void LoadSplash()
         {
-            _loadingSplash = new LoadingSplash();
-            _loadingSplash.StartPosition = FormStartPosition.CenterScreen;  //XXX: Don't like this, but will do for now.
-            _loadingSplash.UseWaitCursor = true;    // tell user we are working
-            Thread threadSplash = new Thread(new ThreadStart(() => _loadingSplash.ShowDialog())); // lambda
-            threadSplash.IsBackground = true; //expendable thread -- exit even if still running.
-            threadSplash.Name = "Loading Thread";
-            threadSplash.Start();
+            _tempStatusBartext = this.statusBar1.Text;
+            this.statusBar1.Text = "Refreshing Schedule...";
+            //_loadingSplash = new LoadingSplash();
+            //_loadingSplash.StartPosition = FormStartPosition.CenterScreen;  //XXX: Don't like this, but will do for now.
+            //_loadingSplash.UseWaitCursor = true;    // tell user we are working
+            //_loadingSplash.Show(this);
+            //Thread threadSplash = new Thread(tstart);
+            //threadSplash.IsBackground = true;
+            //threadSplash.Name = "Loading Thread";
+            //threadSplash.Start(this);
+
+            //Thread threadSplash = new Thread(new ThreadStart(() => _loadingSplash.ShowDialog())); // lambda
+            //threadSplash.IsBackground = true; //expendable thread -- exit even if still running.
+            //threadSplash.Name = "Loading Thread";
+            //threadSplash.Start();
         }
 
         private void StopSplash()
         {
-            _loadingSplash.RemoteClose();
+            this.statusBar1.Text = _tempStatusBartext;
         }
 
 

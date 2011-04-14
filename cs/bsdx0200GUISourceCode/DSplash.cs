@@ -7,7 +7,10 @@ using System.Windows.Forms;
 namespace IndianHealthService.ClinicalScheduling
 {
 	/// <summary>
-	/// Summary description for DSplash.
+	/// Program loading splash screen. Notice the numerous remote methods intended
+    /// to mickey mouse the form from another thread.
+    /// 
+    /// I don't know of a better way of doing this right now.
 	/// </summary>
 	public class DSplash : System.Windows.Forms.Form
 	{
@@ -146,6 +149,8 @@ namespace IndianHealthService.ClinicalScheduling
         public delegate void dSetStatus(string sStatus);
         public delegate void dAny();
         public delegate void dProgressBarSet(int number);
+        public delegate DialogResult dMessageBox(IWin32Window owner, string message);
+        public delegate DialogResult dMessageBox2(IWin32Window owner, string message, string caption, MessageBoxButtons btns);
 		
         public void SetStatus(string sStatus)
 		{
@@ -164,9 +169,33 @@ namespace IndianHealthService.ClinicalScheduling
 			this.lblVersion.Text = "Version " + Application.ProductVersion;
 		}
 
+        public DialogResult RemoteMsgBox(string msg)
+        {
+            dMessageBox d = new dMessageBox(MessageBox.Show);
+            return (DialogResult)this.Invoke(d, this, msg);
+        }
+
+        public DialogResult RemoteMsgBox(string msg, string caption, MessageBoxButtons btns)
+        {
+            dMessageBox2 d = new dMessageBox2(MessageBox.Show);
+            return (DialogResult)this.Invoke(d, this, msg, caption, btns);
+        }
+
         public void RemoteClose()
         {
             dAny d = new dAny(this.Close);
+            this.Invoke(d);
+        }
+
+        public void RemoteActivate()
+        {
+            dAny d = new dAny(this.Activate);
+            this.Invoke(d);
+        }
+
+        public void RemoteHide()
+        {
+            dAny d = new dAny(this.Hide);
             this.Invoke(d);
         }
 

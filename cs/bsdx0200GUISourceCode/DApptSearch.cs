@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Windows.Forms;
 using System.Data;
 using System.Linq;
-//using System.Data.OleDb;
 
 namespace IndianHealthService.ClinicalScheduling
 {
@@ -113,7 +112,7 @@ namespace IndianHealthService.ClinicalScheduling
 		public void InitializePage(ArrayList alResources, CGDocumentManager docManager)
 		{
 
-            this.Text = "Searching for Appointments in: " + string.Join(" | ", alResources.Cast<string>());
+            this.Text = "Searching for available slots in: " + string.Join(" | ", alResources.Cast<string>());
             
             this.m_DocManager = docManager;
 			this.m_dsGlobal = m_DocManager.GlobalDataSet;
@@ -274,6 +273,7 @@ namespace IndianHealthService.ClinicalScheduling
 		private void InitializeComponent()
 		{
             this.panel1 = new System.Windows.Forms.Panel();
+            this.lblMessage = new System.Windows.Forms.Label();
             this.cmdSearch = new System.Windows.Forms.Button();
             this.cmdCancel = new System.Windows.Forms.Button();
             this.btnAccept = new System.Windows.Forms.Button();
@@ -312,7 +312,6 @@ namespace IndianHealthService.ClinicalScheduling
             this.colResource = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.colSlots = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.colAccessType = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.lblMessage = new System.Windows.Forms.Label();
             this.panel1.SuspendLayout();
             this.pnlDescription.SuspendLayout();
             this.grpDescription.SuspendLayout();
@@ -333,6 +332,16 @@ namespace IndianHealthService.ClinicalScheduling
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(923, 40);
             this.panel1.TabIndex = 4;
+            // 
+            // lblMessage
+            // 
+            this.lblMessage.AutoSize = true;
+            this.lblMessage.Font = new System.Drawing.Font("Tahoma", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblMessage.ForeColor = System.Drawing.Color.Red;
+            this.lblMessage.Location = new System.Drawing.Point(337, 16);
+            this.lblMessage.Name = "lblMessage";
+            this.lblMessage.Size = new System.Drawing.Size(0, 16);
+            this.lblMessage.TabIndex = 3;
             // 
             // cmdSearch
             // 
@@ -389,9 +398,9 @@ namespace IndianHealthService.ClinicalScheduling
             this.lblDescription.Name = "lblDescription";
             this.lblDescription.Size = new System.Drawing.Size(917, 45);
             this.lblDescription.TabIndex = 1;
-            this.lblDescription.Text = "Search for available appointment times using this panel.  You may narrow your sea" +
-                "rch by selecting an access type or by selecting specific days of the week or tim" +
-                "es of day.";
+            this.lblDescription.Text = "Search for available slots times using this panel.  You may narrow your search by" +
+                " selecting an access type or by selecting specific days of the week or times of " +
+                "day.";
             // 
             // groupBox1
             // 
@@ -676,16 +685,6 @@ namespace IndianHealthService.ClinicalScheduling
             this.colAccessType.Text = "Access Type";
             this.colAccessType.Width = 101;
             // 
-            // lblMessage
-            // 
-            this.lblMessage.AutoSize = true;
-            this.lblMessage.Font = new System.Drawing.Font("Tahoma", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblMessage.ForeColor = System.Drawing.Color.Red;
-            this.lblMessage.Location = new System.Drawing.Point(337, 16);
-            this.lblMessage.Name = "lblMessage";
-            this.lblMessage.Size = new System.Drawing.Size(0, 16);
-            this.lblMessage.TabIndex = 3;
-            // 
             // DApptSearch
             // 
             this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
@@ -898,7 +897,7 @@ namespace IndianHealthService.ClinicalScheduling
             lstResults.Items.Clear(); //empty it from old data
 
             if (items.Length > 0) lstResults.Items.AddRange(items); // add new data
-            else this.lblMessage.Text = "No available Appointment Slots Found!";
+            else this.lblMessage.Text = "No available slots found!";
 
             lstResults.EndUpdate(); // ok done adding items, draw now.
             //--End Update Listview
@@ -943,11 +942,11 @@ namespace IndianHealthService.ClinicalScheduling
             if (lstResults.SelectedIndices.Count == 0)
             {
                 this.DialogResult = DialogResult.None;
-                lblMessage.Text = "No Appointment Slot selected!";
+                lblMessage.Text = "No slot selected!";
                 return;
             }
 
-            long availabilityKey = long.Parse(lstResults.SelectedItems[0].SubItems[0].Text);
+            int availabilityKey = Int32.Parse(lstResults.SelectedItems[0].SubItems[0].Text);
             _selectedAvailability = (from av in lstResultantAvailabilities
                                      where av.AvailabilityType == availabilityKey
                                      select av).Single<CGAvailability>();
