@@ -146,3 +146,6 @@ v1.5 (Alpha released Jan 27 2010, Alpha 2 end of Feb, Alpha 3 Mar 30)
 - Version check added in the load logic.
 - Upon Demand refresh by pressing F5 added to CalendarGrid.
 - Time scales are now sensitive to the original time scale of the clinic. You can increase them, but you can't decrease them.
+- Click-right click issue resolved.
+- Drag shows destination now when dragging over grid.
+- Drag scrolls grid up or down if needed.
