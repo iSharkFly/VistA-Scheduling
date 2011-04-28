@@ -196,9 +196,9 @@
     <value>دور المريض</value>
   </data>
   <data name="RoutingSlip" xml:space="preserve">
-    <value>قسيمة التوجيه</value>
+    <value>بطاقة الزيارة</value>
   </data>
   <data name="ScratchArea" xml:space="preserve">
-    <value>ملاحضات زائدة</value>
+    <value>ملاحظات زائدة</value>
   </data>
 </root>

@@ -552,7 +552,7 @@ namespace IndianHealthService.ClinicalScheduling
         /// Print Routing Slip
         /// </summary>
         /// <param name="a">Appointment Data Structure</param>
-        /// <param name="title">String to print for title</param>
+        /// <param name="apptOrder">Order of Appointment</param>
         /// <param name="e">etc</param>
         public virtual void PrintRoutingSlip(CGAppointment appt, int apptOrder, PrintPageEventArgs e)
         {
@@ -696,7 +696,8 @@ namespace IndianHealthService.ClinicalScheduling
 
             s = strings.ScratchArea;
             g.DrawString(s, fGroupTitle, Brushes.Black, printArea, sf3); 
-
+            
+            /* Per Al-Najjar, we don't want the next appointment instructions section
             // move down
             printArea.Y += 240;
             printArea.Height -= 240;
@@ -712,6 +713,7 @@ namespace IndianHealthService.ClinicalScheduling
 
             s = strings.NextAppointmentInstructions;
             g.DrawString(s, fGroupTitle, Brushes.Black, printArea, sf3);
+            */
 
             // Draw Footer
             //use sf0 to print the footer (center all the way)
