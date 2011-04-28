@@ -117,11 +117,8 @@ v1.5 (Alpha released Jan 27 2010, Alpha 2 end of Feb, Alpha 3 Mar 30)
 - Clearer error messages for end users.
 - Splash screen Upon Start-up with progress bar
 - Check-in Dialog cleaned up from extraneous elements; new algorithm for parsing out providers.
-- BSDX Checkin Appointment has changed parameters.
 - Application wide error handlers to handle application errors.
-- Various focus issues with main form fixed (but these are causing some side effects).
 - DateTime Picker format and behavior change. Schedule is no longer updated based on a value change but only when leaving the box or pressing the enter key.
-- Splash screen when opening new clinics or changing dates added to main form.
 - Polling for events and responding to them is now done asynchornously.
 - A lot of refactoring to avoid calling the server when it's not needed. This involved not asking the server for updates after each operation as that's very expensive.
 - Main form will be responsible for redrawing itself; not by the data manager.
@@ -129,7 +126,7 @@ v1.5 (Alpha released Jan 27 2010, Alpha 2 end of Feb, Alpha 3 Mar 30)
 - More comprehensive message to user on Status Bar on what original slot has as well as what the current selection from the grid comes up.
 - Custom printing framework (not used though) incorporated into main code base. Thanks Tariq.
 - Holiday lookup is now better and won't fail when you use a different culture.
-- New print slip when an appointment is make.
+- New print slip when an appointment is made.
 - Find Appointment Dialog now works very reliably.
 - Sex of patient now pulled in the appointment objects; however, support for that is not universal yet (e.g. Walk-in's don't have a Sex yet!)
 - DOB of patient now pulled; more universal; also there is an object that calculates the patient age.
@@ -138,10 +135,10 @@ v1.5 (Alpha released Jan 27 2010, Alpha 2 end of Feb, Alpha 3 Mar 30)
 - Routing Slip now prints patient order.
 - Bug when redrawing appointments while saving Slots on the Edit Resource Availability window fixed.
 - New context menu option on Grid to uncheck-in a patient
-- New context menu option to Print Clinic Schedules for Today, Tomorrow, and 3 days from today.
+- New context menu option on Schedule Tree to Print Clinic Schedules for Today, Tomorrow, and 3 days from today.
 - New logic to prevent checked-in appointments from being deleted.
 - Context menus for Noshow and Undo noshow have changed logic for when they become enabled.
-- Events are not going to be raised back to the originating control anymore.
+- Events are not going to be raised back to the originating Calendar Grid anymore.
 - Appointment Reminder Slip has been Arabized, and an extra resource is shipped in order to accomplish that.
 - Version check added in the load logic.
 - Upon Demand refresh by pressing F5 added to CalendarGrid.
