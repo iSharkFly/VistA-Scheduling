@@ -1,12 +1,13 @@
-BSDX33	; IHS/OIT/HMW - WINDOWS SCHEDULING RPCS ; 7/15/10 12:33pm
+BSDX33	; IHS/OIT/HMW - WINDOWS SCHEDULING RPCS ; 4/28/11 10:29am
 	;;1.5;BSDX;;Apr 28, 2011
-	   ; Mods by WV/STAR
-	   ;
-	   ; Change Log:
-	   ; July 13, 2010
-	   ; v 1.3 adds fixes Rebooking behavior in application (see RBNEXT)
-	   ; also adds i18 support - Dates passed in FM format from application
-	   ; in tag SETRBK and RBNEXT
+	; Licensed under LGPL
+	; Mods by WV/STAR
+	;
+	; Change Log:
+	; July 13, 2010
+	; v 1.3 adds fixes Rebooking behavior in application (see RBNEXT)
+	; also adds i18 support - Dates passed in FM format from application
+	; in tag SETRBK and RBNEXT
 	;
 	;
 	Q

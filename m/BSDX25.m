@@ -1,5 +1,6 @@
-BSDX25	; IHS/OIT/HMW - WINDOWS SCHEDULING RPCS ; 3/16/11 2:21am
+BSDX25	; VW/UJO/SMH - WINDOWS SCHEDULING RPCS ; 4/28/11 10:24am
 	;;1.5;BSDX;;Apr 28, 2011
+	; Licensed under LGPL
 	;
 	; Change Log:
 	; 3110106: SMH -> Changed Check-in EP - Removed unused paramters. Will change C#

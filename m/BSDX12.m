@@ -1,9 +1,10 @@
-BSDX12	; IHS/OIT/HMW - WINDOWS SCHEDULING RPCS ; 7/18/10 2:14pm
+BSDX12	; IHS/OIT/HMW - WINDOWS SCHEDULING RPCS ; 4/28/11 10:18am
 	;;1.5;BSDX;;Apr 28, 2011
-	   ; 
-	   ; Change Log:
-	   ; v 1.3 - i18n support - 3100718
-	   ; BSDXSTART and BSDXEND passed in FM Dates, not US dates
+	; Licensed under LGPL
+	; 
+	; Change Log:
+	; v 1.3 - i18n support - 3100718
+	; BSDXSTART and BSDXEND passed in FM Dates, not US dates
 	;
 	;
 AVADD(BSDXY,BSDXSTART,BSDXEND,BSDXTYPID,BSDXRES,BSDXSLOTS,BSDXNOTE)	 ;EP

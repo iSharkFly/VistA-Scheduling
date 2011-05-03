@@ -1,13 +1,14 @@
-BSDX29	; IHS/OIT/HMW - WINDOWS SCHEDULING RPCS ; 12/6/10 12:39pm
+BSDX29	; IHS/OIT/HMW - WINDOWS SCHEDULING RPCS ; 4/28/11 10:25am
 	;;1.5;BSDX;;Apr 28, 2011
+	; Licensed under LGPL
 	; 
 	; Change Log:
 	; v1.3 by WV/SMH on 3100713
 	; - Beginning and Ending dates passed as FM Dates
-	   ; v1.42 by WV/SMH on 3101023
-	   ; - Transaction moved; now restartable too.
-	   ; --> Thanks to Zach Gonzalez and Rick Marshall.
-	   ; - Refactoring of major portions of routine
+	; v1.42 by WV/SMH on 3101023
+	; - Transaction moved; now restartable too.
+	; --> Thanks to Zach Gonzalez and Rick Marshall.
+	; - Refactoring of major portions of routine
 	;
 BSDXCPD(BSDXY,BSDXRES,BSDX44,BSDXBEG,BSDXEND)	;EP
 	;Entry point for debugging

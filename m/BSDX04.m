@@ -1,5 +1,6 @@
-BSDX04	; IHS/OIT/HMW - WINDOWS SCHEDULING RPCS ;  ; 2/27/11 6:32am
+BSDX04	; IHS/OIT/HMW - WINDOWS SCHEDULING RPCS ;  ; 4/28/11 10:15am
 	;;1.5;BSDX;;Apr 28, 2011
+	; Licensed under LGPL
 	; Change Log:
 	; July 11 2010: Pass BSDXSTART and END as FM dates rather than US formatted dates
 	;       for i18n

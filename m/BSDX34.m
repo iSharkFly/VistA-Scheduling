@@ -1,8 +1,9 @@
-BSDX34	; IHS/OIT/HMW - WINDOWS SCHEDULING RPCS ; 7/15/10 12:37pm
+BSDX34	; IHS/OIT/HMW - WINDOWS SCHEDULING RPCS ; 4/28/11 10:29am
 	;;1.5;BSDX;;Apr 28, 2011
-	   ;
-	   ; Change Log:
-	   ; July 10 2010: 
+	; Licensed under LGPL  
+	;
+	; Change Log:
+	; July 10 2010: 
 	; CANCLIN AND RBCLIN: Dates passed in FM format for i18n
 	;
 	Q

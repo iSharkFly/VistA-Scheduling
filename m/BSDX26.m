@@ -1,5 +1,6 @@
-BSDX26	 ; IHS/OIT/HMW - WINDOWS SCHEDULING RPCS ; 12/6/10 12:38pm
+BSDX26	 ; IHS/OIT/HMW - WINDOWS SCHEDULING RPCS ; 4/28/11 10:24am
 	   ;;1.5;BSDX;;Apr 28, 2011
+	   ; Licensed under LGPL
 	   ; Change History:
 	   ; 3101023 - UJO/SMH - Addition of restartable transaction; relocation of tx.
 	   ; --> Thanks to Zach Gonzalez and Rick Marshall

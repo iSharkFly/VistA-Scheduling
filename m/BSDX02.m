@@ -1,8 +1,8 @@
-BSDX02	; IHS/OIT/HMW - WINDOWS SCHEDULING RPCS ; 3/21/11 11:49am
+BSDX02	; IHS/OIT/HMW - WINDOWS SCHEDULING RPCS ; 4/28/11 10:14am
 	;;1.5;BSDX;;Apr 28, 2011
-	   ; 
-	   ; Change Log
-	   ; July 15 2010: UJO/SMH - Pass FM dates in instead of US dates for i18n
+	;Licensed under LGPL 
+	; Change Log
+	; July 15 2010: UJO/SMH - Pass FM dates in instead of US dates for i18n
 	; March 21 2011: UJO/SMH (v 1.5) - Return new fields: Patient SEX, PID, and DOB
 	;
 	;

@@ -1,5 +1,6 @@
-BSDX07	; IHS/OIT/HMW - WINDOWS SCHEDULING RPCS  ; 3/15/11 11:50am
+BSDX07	; VW/UJO/SMH - WINDOWS SCHEDULING RPCS  ; 4/28/11 10:17am
 	   ;;1.5;BSDX;;Apr 28, 2011
+	   ; Licensed under LGPL
 	   ;
 	   ; Change Log:
 	   ; UJO/SMH

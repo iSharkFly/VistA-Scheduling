@@ -1,5 +1,6 @@
-BSDX05	 ; IHS/OIT/HMW - WINDOWS SCHEDULING RPCS ; 12/6/10 5:36pm
+BSDX05	 ; IHS/OIT/HMW - WINDOWS SCHEDULING RPCS ; 4/28/11 10:16am
 	   ;;1.5;BSDX;;Apr 28, 2011
+	   ; Licensed under LGPL
 	   ;
 	   ; Change Log:
 	   ; UJO/SMH - July 11 2010: pass FM Dates for Start and End rather than US Dates
