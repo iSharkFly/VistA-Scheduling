@@ -155,7 +155,7 @@ namespace IndianHealthService.ClinicalScheduling
             {
                 X = e.MarginBounds.X,
                 Y = e.PageBounds.Y,
-                Height = e.MarginBounds.Y - e.PageBounds.Y,
+                Height = e.MarginBounds.Y - e.PageBounds.Y - 50,
                 Width = e.MarginBounds.Width
             };
             Rectangle footerArea = new Rectangle()
@@ -562,9 +562,9 @@ namespace IndianHealthService.ClinicalScheduling
             Rectangle pageArea = e.PageBounds;
             Rectangle headerArea = new Rectangle()
             {
-                X = e.MarginBounds.X,
-                Y = e.PageBounds.Y,
-                Height = e.MarginBounds.Y - e.PageBounds.Y,
+                X = e.MarginBounds.X, 
+                Y = e.PageBounds.Y,  //0
+                Height = e.MarginBounds.Y - e.PageBounds.Y - 50, //100px - 50px
                 Width = e.MarginBounds.Width
             };
             Rectangle footerArea = new Rectangle()

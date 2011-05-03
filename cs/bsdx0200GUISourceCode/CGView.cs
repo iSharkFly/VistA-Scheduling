@@ -2002,7 +2002,7 @@ namespace IndianHealthService.ClinicalScheduling
             {
                 if (a.CheckInTime.Ticks > 0)
                 {
-                    MessageBox.Show("You must Un-checkin the appointment first before removing it.");
+                    MessageBox.Show("You must undo the check-in first before removing the appointment.");
                     return;
                 }
             }
