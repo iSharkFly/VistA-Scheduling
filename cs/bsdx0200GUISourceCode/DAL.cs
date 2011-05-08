@@ -1,4 +1,6 @@
-﻿using System;
+﻿/* Licensed under LGPL */
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Data;
@@ -183,6 +185,52 @@ namespace IndianHealthService.ClinicalScheduling
         {
             string cmd = string.Format("BSDX REMOVE CHECK-IN^{0}", ApptID);
             return RPMSDataTable(cmd, "");
+        }
+
+        /// <summary>
+        /// Gets All radiology exams for a Patient in a specific hospital location
+        /// </summary>
+        /// <param name="DFN"></param>
+        /// <param name="SCIEN">Hospital Location IEN</param>
+        /// <returns>Generic List of type RadiologyExam</returns>
+        public List<RadiologyExam> GetRadiologyExamsForPatientinHL(int DFN, int SCIEN)
+        {
+            string cmd = string.Format("BSDX GET RAD EXAM FOR PT^{0}^{1}", DFN, SCIEN);
+            DataTable tbl = RPMSDataTable(cmd, "");
+            return (from row in tbl.AsEnumerable()
+                    select new RadiologyExam
+                    {
+                        IEN = row.Field<int>("BMXIEN"),
+                        Status = row.Field<string>("STATUS"),
+                        Procedure = row.Field<string>("PROCEDURE"),
+                        RequestDate = row.Field<DateTime>("REQUEST_DATE")
+                    }).ToList();
+        }
+
+        /// <summary>
+        /// Schedules a Single Radiology Exam for a patient
+        /// </summary>
+        /// <param name="DFN"></param>
+        /// <param name="examIEN">IEN of exam in 75.1 (RAD/NUC MED ORDERS) file</param>
+        /// <param name="dStart">Start DateTime of appointment</param>
+        /// <returns>should always return true</returns>
+        public bool ScheduleRadiologyExam(int DFN, int examIEN, DateTime dStart)
+        {
+            string fmStartDate = FMDateTime.Create(dStart).FMDateString;
+            string result = _thisConnection.bmxNetLib.TransmitRPC("BSDX SCHEDULE RAD EXAM", string.Format("{0}^{1}^{2}", DFN, examIEN, fmStartDate));
+            return result == "1" ? true : false;
+        }
+
+        /// <summary>
+        /// Put the radiology exam on Hold because the appointment has been cancelled for it
+        /// </summary>
+        /// <param name="DFN"></param>
+        /// <param name="examIEN">IEN of exam in 75.1 (RAD/NUC MED ORDERS) file</param>
+        /// <returns>should always return true</returns>
+        public bool CancelRadiologyExam(int DFN, int examIEN)
+        {
+            string result = _thisConnection.bmxNetLib.TransmitRPC("BSDX HOLD RAD EXAM", string.Format("{0}^{1}", DFN, examIEN));
+            return result == "1" ? true : false;
         }
 
         /// <summary>

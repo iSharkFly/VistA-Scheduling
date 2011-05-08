@@ -237,6 +237,7 @@ namespace IndianHealthService.ClinicalScheduling
                     nAccessTypeID = (int)r["ACCESSTYPEID"];
                     sWalkIn = r["WALKIN"].ToString();
                     bWalkIn = (sWalkIn == "1") ? true : false;
+                    int? RadiologyExamIEN = r["RADIOLOGY_EXAM"] as Int32?; //new in v 1.6 - Get Radiology Exam
 
                     Patient pt = new Patient()
                     {
@@ -261,6 +262,7 @@ namespace IndianHealthService.ClinicalScheduling
                     pAppointment.HealthRecordNumber = sHRN;
                     pAppointment.AccessTypeID = nAccessTypeID;
                     pAppointment.WalkIn = bWalkIn;
+                    pAppointment.RadiologyExamIEN = RadiologyExamIEN;
                     this.m_appointments.AddAppointment(pAppointment);
 
                 }
@@ -972,7 +974,7 @@ namespace IndianHealthService.ClinicalScheduling
                 sApptID = rApptInfo.AccessTypeID.ToString();
             }
 
-            string sSql = "BSDX ADD NEW APPOINTMENT^" + sStart + "^" + sEnd + "^" + sPatID + "^" + sResource + "^" + sLen + "^" + sNote + "^" + sApptID;
+            string sSql = "BSDX ADD NEW APPOINTMENT^" + sStart + "^" + sEnd + "^" + sPatID + "^" + sResource + "^" + sLen + "^" + sNote + "^" + sApptID + "^" + rApptInfo.RadiologyExamIEN;
             System.Data.DataTable dtAppt = m_DocManager.RPMSDataTable(sSql, "NewAppointment");
 
             Debug.Assert(dtAppt.Rows.Count == 1);

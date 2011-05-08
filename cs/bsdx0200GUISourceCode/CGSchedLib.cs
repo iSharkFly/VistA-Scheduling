@@ -1,8 +1,6 @@
 using System;
 using System.Data;
 using System.Collections;
-using System.Diagnostics;
-using System.Drawing;
 
 namespace IndianHealthService.ClinicalScheduling
 {

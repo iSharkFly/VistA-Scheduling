@@ -479,7 +479,7 @@
                     if (bRet && (!appointment.WalkIn || this.m_bDrawWalkIns))
                     {
                         rect.Inflate(-10, 0);
-                        num = (int) this.m_ApptOverlapTable[appointment.m_nKey];
+                        num = (int) this.m_ApptOverlapTable[appointment.AppointmentKey];
                         num2 = rect.Right - rect.Left;
                         x = num2 / (num + 1);
                         rect.Width = x;
@@ -1266,7 +1266,7 @@
                     num2 = appointment.EndTime.Minute + (60 * appointment.EndTime.Hour);
                     x = (this.m_sResourcesArray.Count > 1) ? (((int) this.m_ColumnInfoTable[resource]) + 1) : appointment.StartTime.DayOfYear;
                     Rectangle rectangle = new Rectangle(x, y, 1, num2 - y);
-                    hashtable.Add(appointment.m_nKey, rectangle);
+                    hashtable.Add(appointment.AppointmentKey, rectangle);
                 }
             }
             this.m_ApptOverlapTable.Clear();

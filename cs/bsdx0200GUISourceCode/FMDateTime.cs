@@ -16,7 +16,7 @@
  * 
  * 
 
- Mods by Sam Habiel to use in Scheduling GUI.
+ Modified by Sam Habiel to use in Scheduling GUI. Modified class licensed under LGPL.
  */
 
 
@@ -248,6 +248,12 @@ namespace IndianHealthService.ClinicalScheduling
 		{
 			return Create (d, FMDateTimePrecision.DateAndTime);
 		}
+
+        /*public static string FMDate (this DateTime d)
+        {
+            return Create(d, FMDateTimePrecision.DateAndTime).FMDateString;
+        }*/
+
 
 		public static FMDateTime Parse (string str)
 		{

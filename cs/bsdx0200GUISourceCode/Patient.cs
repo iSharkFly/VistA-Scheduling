@@ -17,6 +17,7 @@ namespace IndianHealthService.ClinicalScheduling
     /// <summary>
     /// Puppet standing for a Real Patient
     /// </summary>
+    [Serializable]
     public class Patient
     {
         public int DFN { get; set; }

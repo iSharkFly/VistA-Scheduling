@@ -8,6 +8,7 @@ namespace IndianHealthService.ClinicalScheduling
     /// <summary>
     /// Provider puppet
     /// </summary>
+    [Serializable]
     public class Provider
     {
         public int IEN { get; set; }

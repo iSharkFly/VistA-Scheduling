@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows.Forms;
 using System.Diagnostics;
@@ -47,7 +48,7 @@ namespace IndianHealthService.ClinicalScheduling
 		private System.Windows.Forms.Panel panelCenter;
 		private System.Windows.Forms.Panel panelBottom;
 		private System.Windows.Forms.Label lblResource;
-		private System.Windows.Forms.ContextMenu contextMenu1;
+		private System.Windows.Forms.ContextMenu ctxResourceTree;
 		private System.Windows.Forms.MenuItem ctxOpenSchedule;
 		private System.Windows.Forms.MenuItem ctxEditAvailability;
 		private System.Windows.Forms.MenuItem ctxProperties;
@@ -89,15 +90,15 @@ namespace IndianHealthService.ClinicalScheduling
 		private System.Windows.Forms.MenuItem mnuPrintRebookLetters;
 		private System.Windows.Forms.MenuItem mnuPrintCancellationLetters;
 		private System.Windows.Forms.MenuItem mnuWalkIn;
-		private System.Windows.Forms.MenuItem menuItem5;
-		private System.Windows.Forms.MenuItem menuItem8;
+		private System.Windows.Forms.MenuItem sepApptMenu1;
+		private System.Windows.Forms.MenuItem sepApptMenu2;
 		private System.Windows.Forms.MenuItem ctxCalGridWalkin;
-		private System.Windows.Forms.MenuItem menuItem2;
-		private System.Windows.Forms.MenuItem menuItem9;
+		private System.Windows.Forms.MenuItem ctxCalGridSep1;
+		private System.Windows.Forms.MenuItem ctxCalGridSep2;
 		private System.Windows.Forms.MenuItem mnuOpenMultipleSchedules;
 		private System.Windows.Forms.MenuItem mnuDisplayWalkIns;
         private System.Windows.Forms.MenuItem mnuRPMSDivision;
-        private MenuItem menuItem10;
+        private MenuItem ctxCalGridSep3;
         private MenuItem ctxCalGridReprintApptSlip;
         private MenuItem ctxCalGridUndoCheckin;
         private MenuItem ctxPrintScheduleT0;
@@ -105,6 +106,13 @@ namespace IndianHealthService.ClinicalScheduling
         private MenuItem ctxPrintScheduleT3;
         private MenuItem menuItem12;
         private MenuItem mnuRefresh;
+        private MenuItem ctxCalGridMkRadAppt;
+        private MenuItem ctxCalGridCancelRadAppt;
+        private MenuItem mnuMkRadAppt;
+        private MenuItem mnuCancelRadAppt;
+        private MenuItem mnuUndoCheckin;
+        private MenuItem sepApptMenu3;
+        private MenuItem mnuReprintApptSlip;
         private IContainer components;
 
         #region Initialization
@@ -193,17 +201,22 @@ namespace IndianHealthService.ClinicalScheduling
             this.mnuClose = new System.Windows.Forms.MenuItem();
             this.mnuAppointment = new System.Windows.Forms.MenuItem();
             this.mnuNewAppointment = new System.Windows.Forms.MenuItem();
+            this.mnuWalkIn = new System.Windows.Forms.MenuItem();
+            this.mnuMkRadAppt = new System.Windows.Forms.MenuItem();
             this.mnuEditAppointment = new System.Windows.Forms.MenuItem();
             this.mnuDeleteAppointment = new System.Windows.Forms.MenuItem();
-            this.menuItem5 = new System.Windows.Forms.MenuItem();
+            this.mnuCancelRadAppt = new System.Windows.Forms.MenuItem();
+            this.sepApptMenu1 = new System.Windows.Forms.MenuItem();
             this.mnuNoShow = new System.Windows.Forms.MenuItem();
             this.mnuNoShowUndo = new System.Windows.Forms.MenuItem();
-            this.menuItem8 = new System.Windows.Forms.MenuItem();
-            this.mnuCopyAppointment = new System.Windows.Forms.MenuItem();
-            this.mnuWalkIn = new System.Windows.Forms.MenuItem();
-            this.mnuFindAppt = new System.Windows.Forms.MenuItem();
+            this.sepApptMenu2 = new System.Windows.Forms.MenuItem();
             this.mnuCheckIn = new System.Windows.Forms.MenuItem();
+            this.mnuUndoCheckin = new System.Windows.Forms.MenuItem();
+            this.sepApptMenu3 = new System.Windows.Forms.MenuItem();
+            this.mnuFindAppt = new System.Windows.Forms.MenuItem();
+            this.mnuCopyAppointment = new System.Windows.Forms.MenuItem();
             this.mnuViewPatientAppts = new System.Windows.Forms.MenuItem();
+            this.mnuReprintApptSlip = new System.Windows.Forms.MenuItem();
             this.mnuCalendar = new System.Windows.Forms.MenuItem();
             this.mnuDisplayWalkIns = new System.Windows.Forms.MenuItem();
             this.mnu1Day = new System.Windows.Forms.MenuItem();
@@ -224,7 +237,7 @@ namespace IndianHealthService.ClinicalScheduling
             this.mnuTest = new System.Windows.Forms.MenuItem();
             this.mnuTest1 = new System.Windows.Forms.MenuItem();
             this.tvSchedules = new System.Windows.Forms.TreeView();
-            this.contextMenu1 = new System.Windows.Forms.ContextMenu();
+            this.ctxResourceTree = new System.Windows.Forms.ContextMenu();
             this.ctxOpenSchedule = new System.Windows.Forms.MenuItem();
             this.ctxEditAvailability = new System.Windows.Forms.MenuItem();
             this.ctxProperties = new System.Windows.Forms.MenuItem();
@@ -245,16 +258,18 @@ namespace IndianHealthService.ClinicalScheduling
             this.panelCenter = new System.Windows.Forms.Panel();
             this.ctxCalendarGrid = new System.Windows.Forms.ContextMenu();
             this.ctxCalGridAdd = new System.Windows.Forms.MenuItem();
+            this.ctxCalGridMkRadAppt = new System.Windows.Forms.MenuItem();
             this.ctxCalGridEdit = new System.Windows.Forms.MenuItem();
             this.ctxCalGridDelete = new System.Windows.Forms.MenuItem();
+            this.ctxCalGridCancelRadAppt = new System.Windows.Forms.MenuItem();
             this.ctxCalGridCheckIn = new System.Windows.Forms.MenuItem();
             this.ctxCalGridUndoCheckin = new System.Windows.Forms.MenuItem();
-            this.menuItem2 = new System.Windows.Forms.MenuItem();
+            this.ctxCalGridSep1 = new System.Windows.Forms.MenuItem();
             this.ctxCalGridNoShow = new System.Windows.Forms.MenuItem();
             this.ctxCalGridNoShowUndo = new System.Windows.Forms.MenuItem();
-            this.menuItem9 = new System.Windows.Forms.MenuItem();
+            this.ctxCalGridSep2 = new System.Windows.Forms.MenuItem();
             this.ctxCalGridWalkin = new System.Windows.Forms.MenuItem();
-            this.menuItem10 = new System.Windows.Forms.MenuItem();
+            this.ctxCalGridSep3 = new System.Windows.Forms.MenuItem();
             this.ctxCalGridReprintApptSlip = new System.Windows.Forms.MenuItem();
             this.panelBottom = new System.Windows.Forms.Panel();
             this.statusBar1 = new System.Windows.Forms.StatusBar();
@@ -368,7 +383,7 @@ namespace IndianHealthService.ClinicalScheduling
             // mnuPrintReminderLetters
             // 
             this.mnuPrintReminderLetters.Index = 10;
-            this.mnuPrintReminderLetters.Shortcut = System.Windows.Forms.Shortcut.CtrlI;
+            this.mnuPrintReminderLetters.Shortcut = System.Windows.Forms.Shortcut.CtrlE;
             this.mnuPrintReminderLetters.Text = "Print Rem&inder Letters";
             this.mnuPrintReminderLetters.Click += new System.EventHandler(this.mnuPrintReminderLetters_Click);
             // 
@@ -410,17 +425,22 @@ namespace IndianHealthService.ClinicalScheduling
             this.mnuAppointment.Index = 1;
             this.mnuAppointment.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
             this.mnuNewAppointment,
+            this.mnuWalkIn,
+            this.mnuMkRadAppt,
             this.mnuEditAppointment,
             this.mnuDeleteAppointment,
-            this.menuItem5,
+            this.mnuCancelRadAppt,
+            this.sepApptMenu1,
             this.mnuNoShow,
             this.mnuNoShowUndo,
-            this.menuItem8,
-            this.mnuCopyAppointment,
-            this.mnuWalkIn,
-            this.mnuFindAppt,
+            this.sepApptMenu2,
             this.mnuCheckIn,
-            this.mnuViewPatientAppts});
+            this.mnuUndoCheckin,
+            this.sepApptMenu3,
+            this.mnuFindAppt,
+            this.mnuCopyAppointment,
+            this.mnuViewPatientAppts,
+            this.mnuReprintApptSlip});
             this.mnuAppointment.Text = "&Appointment";
             this.mnuAppointment.Popup += new System.EventHandler(this.mnuAppointment_Popup);
             // 
@@ -431,72 +451,111 @@ namespace IndianHealthService.ClinicalScheduling
             this.mnuNewAppointment.Text = "&New Appointment";
             this.mnuNewAppointment.Click += new System.EventHandler(this.mnuNewAppointment_Click);
             // 
+            // mnuWalkIn
+            // 
+            this.mnuWalkIn.Index = 1;
+            this.mnuWalkIn.Shortcut = System.Windows.Forms.Shortcut.ShiftIns;
+            this.mnuWalkIn.Text = "Create Wal&k-In Appointment";
+            this.mnuWalkIn.Click += new System.EventHandler(this.mnuWalkIn_Click);
+            // 
+            // mnuMkRadAppt
+            // 
+            this.mnuMkRadAppt.Index = 2;
+            this.mnuMkRadAppt.Shortcut = System.Windows.Forms.Shortcut.CtrlIns;
+            this.mnuMkRadAppt.Text = "Make Radiology Appointment";
+            this.mnuMkRadAppt.Click += new System.EventHandler(this.mnuMkRadAppt_Click);
+            // 
             // mnuEditAppointment
             // 
-            this.mnuEditAppointment.Index = 1;
+            this.mnuEditAppointment.Index = 3;
             this.mnuEditAppointment.Shortcut = System.Windows.Forms.Shortcut.F2;
             this.mnuEditAppointment.Text = "&Edit Appointment";
             this.mnuEditAppointment.Click += new System.EventHandler(this.mnuEditAppointment_Click);
             // 
             // mnuDeleteAppointment
             // 
-            this.mnuDeleteAppointment.Index = 2;
+            this.mnuDeleteAppointment.Index = 4;
             this.mnuDeleteAppointment.Shortcut = System.Windows.Forms.Shortcut.Del;
             this.mnuDeleteAppointment.Text = "Cance&l Appointment";
             this.mnuDeleteAppointment.Click += new System.EventHandler(this.mnuDeleteAppointment_Click);
             // 
-            // menuItem5
+            // mnuCancelRadAppt
             // 
-            this.menuItem5.Index = 3;
-            this.menuItem5.Text = "-";
+            this.mnuCancelRadAppt.Index = 5;
+            this.mnuCancelRadAppt.Shortcut = System.Windows.Forms.Shortcut.CtrlDel;
+            this.mnuCancelRadAppt.Text = "Cancel Radiology Appointment";
+            this.mnuCancelRadAppt.Click += new System.EventHandler(this.mnuCancelRadAppt_Click);
+            // 
+            // sepApptMenu1
+            // 
+            this.sepApptMenu1.Index = 6;
+            this.sepApptMenu1.Text = "-";
             // 
             // mnuNoShow
             // 
-            this.mnuNoShow.Index = 4;
+            this.mnuNoShow.Index = 7;
+            this.mnuNoShow.Shortcut = System.Windows.Forms.Shortcut.CtrlN;
             this.mnuNoShow.Text = "Mark as No Sho&w";
             this.mnuNoShow.Click += new System.EventHandler(this.mnuNoShow_Click);
             // 
             // mnuNoShowUndo
             // 
-            this.mnuNoShowUndo.Index = 5;
+            this.mnuNoShowUndo.Index = 8;
+            this.mnuNoShowUndo.Shortcut = System.Windows.Forms.Shortcut.CtrlShiftN;
             this.mnuNoShowUndo.Text = "&Undo No Show";
             this.mnuNoShowUndo.Click += new System.EventHandler(this.mnuNoShowUndo_Click);
             // 
-            // menuItem8
+            // sepApptMenu2
             // 
-            this.menuItem8.Index = 6;
-            this.menuItem8.Text = "-";
-            // 
-            // mnuCopyAppointment
-            // 
-            this.mnuCopyAppointment.Index = 7;
-            this.mnuCopyAppointment.Text = "&Copy  Appointment to Clipboard";
-            this.mnuCopyAppointment.Click += new System.EventHandler(this.mnuCopyAppointment_Click);
-            // 
-            // mnuWalkIn
-            // 
-            this.mnuWalkIn.Index = 8;
-            this.mnuWalkIn.Text = "Create Wal&k-In Appointment";
-            this.mnuWalkIn.Click += new System.EventHandler(this.mnuWalkIn_Click);
-            // 
-            // mnuFindAppt
-            // 
-            this.mnuFindAppt.Index = 9;
-            this.mnuFindAppt.Shortcut = System.Windows.Forms.Shortcut.CtrlF;
-            this.mnuFindAppt.Text = "&Find Empty Slots";
-            this.mnuFindAppt.Click += new System.EventHandler(this.mnuFindAppt_Click);
+            this.sepApptMenu2.Index = 9;
+            this.sepApptMenu2.Text = "-";
             // 
             // mnuCheckIn
             // 
             this.mnuCheckIn.Index = 10;
+            this.mnuCheckIn.Shortcut = System.Windows.Forms.Shortcut.CtrlI;
             this.mnuCheckIn.Text = "Check &In Patient";
             this.mnuCheckIn.Click += new System.EventHandler(this.mnuCheckIn_Click);
             // 
+            // mnuUndoCheckin
+            // 
+            this.mnuUndoCheckin.Index = 11;
+            this.mnuUndoCheckin.Shortcut = System.Windows.Forms.Shortcut.CtrlShiftI;
+            this.mnuUndoCheckin.Text = "Undo Checkin";
+            this.mnuUndoCheckin.Click += new System.EventHandler(this.mnuUndoCheckin_Click);
+            // 
+            // sepApptMenu3
+            // 
+            this.sepApptMenu3.Index = 12;
+            this.sepApptMenu3.Text = "-";
+            // 
+            // mnuFindAppt
+            // 
+            this.mnuFindAppt.Index = 13;
+            this.mnuFindAppt.Shortcut = System.Windows.Forms.Shortcut.CtrlF;
+            this.mnuFindAppt.Text = "&Find Empty Slots";
+            this.mnuFindAppt.Click += new System.EventHandler(this.mnuFindAppt_Click);
+            // 
+            // mnuCopyAppointment
+            // 
+            this.mnuCopyAppointment.Index = 14;
+            this.mnuCopyAppointment.Shortcut = System.Windows.Forms.Shortcut.CtrlC;
+            this.mnuCopyAppointment.Text = "&Copy  Appointment to Clipboard";
+            this.mnuCopyAppointment.Click += new System.EventHandler(this.mnuCopyAppointment_Click);
+            // 
             // mnuViewPatientAppts
             // 
-            this.mnuViewPatientAppts.Index = 11;
+            this.mnuViewPatientAppts.Index = 15;
+            this.mnuViewPatientAppts.Shortcut = System.Windows.Forms.Shortcut.CtrlShiftZ;
             this.mnuViewPatientAppts.Text = "&View Patient Appointments";
             this.mnuViewPatientAppts.Click += new System.EventHandler(this.mnuViewPatientAppts_Click);
+            // 
+            // mnuReprintApptSlip
+            // 
+            this.mnuReprintApptSlip.Index = 16;
+            this.mnuReprintApptSlip.Shortcut = System.Windows.Forms.Shortcut.CtrlShiftP;
+            this.mnuReprintApptSlip.Text = "Reprint Appointment Slip";
+            this.mnuReprintApptSlip.Click += new System.EventHandler(this.mnuReprintApptSlip_Click);
             // 
             // mnuCalendar
             // 
@@ -518,6 +577,7 @@ namespace IndianHealthService.ClinicalScheduling
             // 
             this.mnuDisplayWalkIns.Checked = true;
             this.mnuDisplayWalkIns.Index = 0;
+            this.mnuDisplayWalkIns.Shortcut = System.Windows.Forms.Shortcut.F12;
             this.mnuDisplayWalkIns.Text = "&Display Walk-Ins";
             this.mnuDisplayWalkIns.Click += new System.EventHandler(this.mnuDisplayWalkIns_Click);
             // 
@@ -591,7 +651,9 @@ namespace IndianHealthService.ClinicalScheduling
             // 
             // mnuViewScheduleTree
             // 
+            this.mnuViewScheduleTree.Checked = true;
             this.mnuViewScheduleTree.Index = 6;
+            this.mnuViewScheduleTree.Shortcut = System.Windows.Forms.Shortcut.F4;
             this.mnuViewScheduleTree.Text = "&Schedule Tree";
             this.mnuViewScheduleTree.Click += new System.EventHandler(this.mnuViewScheduleTree_Click);
             // 
@@ -644,12 +706,12 @@ namespace IndianHealthService.ClinicalScheduling
             // tvSchedules
             // 
             this.tvSchedules.BackColor = System.Drawing.SystemColors.ControlLight;
-            this.tvSchedules.ContextMenu = this.contextMenu1;
+            this.tvSchedules.ContextMenu = this.ctxResourceTree;
             this.tvSchedules.Dock = System.Windows.Forms.DockStyle.Left;
             this.tvSchedules.HotTracking = true;
             this.tvSchedules.Location = new System.Drawing.Point(0, 0);
             this.tvSchedules.Name = "tvSchedules";
-            this.tvSchedules.Size = new System.Drawing.Size(128, 317);
+            this.tvSchedules.Size = new System.Drawing.Size(128, 392);
             this.tvSchedules.Sorted = true;
             this.tvSchedules.TabIndex = 1;
             this.tvSchedules.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.tvSchedules_AfterSelect);
@@ -657,9 +719,9 @@ namespace IndianHealthService.ClinicalScheduling
             this.tvSchedules.DoubleClick += new System.EventHandler(this.tvSchedules_DoubleClick);
             this.tvSchedules.MouseEnter += new System.EventHandler(this.tvSchedules_MouseEnter);
             // 
-            // contextMenu1
+            // ctxResourceTree
             // 
-            this.contextMenu1.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
+            this.ctxResourceTree.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
             this.ctxOpenSchedule,
             this.ctxEditAvailability,
             this.ctxProperties,
@@ -667,7 +729,7 @@ namespace IndianHealthService.ClinicalScheduling
             this.ctxPrintScheduleT0,
             this.ctxPrintScheduleT1,
             this.ctxPrintScheduleT3});
-            this.contextMenu1.Popup += new System.EventHandler(this.contextMenu1_Popup);
+            this.ctxResourceTree.Popup += new System.EventHandler(this.contextMenu1_Popup);
             // 
             // ctxOpenSchedule
             // 
@@ -718,7 +780,7 @@ namespace IndianHealthService.ClinicalScheduling
             this.panelRight.Dock = System.Windows.Forms.DockStyle.Right;
             this.panelRight.Location = new System.Drawing.Point(996, 0);
             this.panelRight.Name = "panelRight";
-            this.panelRight.Size = new System.Drawing.Size(128, 317);
+            this.panelRight.Size = new System.Drawing.Size(128, 392);
             this.panelRight.TabIndex = 3;
             this.panelRight.Visible = false;
             // 
@@ -814,23 +876,25 @@ namespace IndianHealthService.ClinicalScheduling
             this.panelCenter.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panelCenter.Location = new System.Drawing.Point(136, 24);
             this.panelCenter.Name = "panelCenter";
-            this.panelCenter.Size = new System.Drawing.Size(857, 269);
+            this.panelCenter.Size = new System.Drawing.Size(857, 344);
             this.panelCenter.TabIndex = 7;
             // 
             // ctxCalendarGrid
             // 
             this.ctxCalendarGrid.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
             this.ctxCalGridAdd,
+            this.ctxCalGridMkRadAppt,
             this.ctxCalGridEdit,
             this.ctxCalGridDelete,
+            this.ctxCalGridCancelRadAppt,
             this.ctxCalGridCheckIn,
             this.ctxCalGridUndoCheckin,
-            this.menuItem2,
+            this.ctxCalGridSep1,
             this.ctxCalGridNoShow,
             this.ctxCalGridNoShowUndo,
-            this.menuItem9,
+            this.ctxCalGridSep2,
             this.ctxCalGridWalkin,
-            this.menuItem10,
+            this.ctxCalGridSep3,
             this.ctxCalGridReprintApptSlip});
             this.ctxCalendarGrid.Popup += new System.EventHandler(this.ctxCalendarGrid_Popup);
             // 
@@ -840,66 +904,78 @@ namespace IndianHealthService.ClinicalScheduling
             this.ctxCalGridAdd.Text = "Add Appointment";
             this.ctxCalGridAdd.Click += new System.EventHandler(this.ctxCalGridAdd_Click);
             // 
+            // ctxCalGridMkRadAppt
+            // 
+            this.ctxCalGridMkRadAppt.Index = 1;
+            this.ctxCalGridMkRadAppt.Text = "Make Radiology Appointment";
+            this.ctxCalGridMkRadAppt.Click += new System.EventHandler(this.ctxCalGridMkRadAppt_Click);
+            // 
             // ctxCalGridEdit
             // 
-            this.ctxCalGridEdit.Index = 1;
+            this.ctxCalGridEdit.Index = 2;
             this.ctxCalGridEdit.Text = "Edit Appointment";
             this.ctxCalGridEdit.Click += new System.EventHandler(this.ctxCalGridEdit_Click);
             // 
             // ctxCalGridDelete
             // 
-            this.ctxCalGridDelete.Index = 2;
+            this.ctxCalGridDelete.Index = 3;
             this.ctxCalGridDelete.Text = "Cancel Appointment";
             this.ctxCalGridDelete.Click += new System.EventHandler(this.ctxCalGridDelete_Click);
             // 
+            // ctxCalGridCancelRadAppt
+            // 
+            this.ctxCalGridCancelRadAppt.Index = 4;
+            this.ctxCalGridCancelRadAppt.Text = "Cancel Radiology Appointment";
+            this.ctxCalGridCancelRadAppt.Click += new System.EventHandler(this.ctxCalGridCancelRadAppt_Click);
+            // 
             // ctxCalGridCheckIn
             // 
-            this.ctxCalGridCheckIn.Index = 3;
+            this.ctxCalGridCheckIn.Index = 5;
             this.ctxCalGridCheckIn.Text = "Check In Patient";
             this.ctxCalGridCheckIn.Click += new System.EventHandler(this.ctxCalGridCheckIn_Click);
             // 
             // ctxCalGridUndoCheckin
             // 
-            this.ctxCalGridUndoCheckin.Index = 4;
+            this.ctxCalGridUndoCheckin.Index = 6;
             this.ctxCalGridUndoCheckin.Text = "&Undo Check In";
             this.ctxCalGridUndoCheckin.Click += new System.EventHandler(this.ctxCalGridUndoCheckin_Click);
             // 
-            // menuItem2
+            // ctxCalGridSep1
             // 
-            this.menuItem2.Index = 5;
-            this.menuItem2.Text = "-";
+            this.ctxCalGridSep1.Index = 7;
+            this.ctxCalGridSep1.Text = "-";
             // 
             // ctxCalGridNoShow
             // 
-            this.ctxCalGridNoShow.Index = 6;
+            this.ctxCalGridNoShow.Index = 8;
             this.ctxCalGridNoShow.Text = "Mark as No Show";
             this.ctxCalGridNoShow.Click += new System.EventHandler(this.ctxCalGridNoShow_Click);
             // 
             // ctxCalGridNoShowUndo
             // 
-            this.ctxCalGridNoShowUndo.Index = 7;
+            this.ctxCalGridNoShowUndo.Index = 9;
             this.ctxCalGridNoShowUndo.Text = "Undo NoShow";
             this.ctxCalGridNoShowUndo.Click += new System.EventHandler(this.ctxCalGridNoShowUndo_Click);
             // 
-            // menuItem9
+            // ctxCalGridSep2
             // 
-            this.menuItem9.Index = 8;
-            this.menuItem9.Text = "-";
+            this.ctxCalGridSep2.Index = 10;
+            this.ctxCalGridSep2.Text = "-";
             // 
             // ctxCalGridWalkin
             // 
-            this.ctxCalGridWalkin.Index = 9;
+            this.ctxCalGridWalkin.Index = 11;
             this.ctxCalGridWalkin.Text = "Create Wal&k-In Appointment";
             this.ctxCalGridWalkin.Click += new System.EventHandler(this.ctxCalGridWalkin_Click);
             // 
-            // menuItem10
+            // ctxCalGridSep3
             // 
-            this.menuItem10.Index = 10;
-            this.menuItem10.Text = "-";
+            this.ctxCalGridSep3.Index = 12;
+            this.ctxCalGridSep3.Text = "-";
             // 
             // ctxCalGridReprintApptSlip
             // 
-            this.ctxCalGridReprintApptSlip.Index = 11;
+            this.ctxCalGridReprintApptSlip.Index = 13;
             this.ctxCalGridReprintApptSlip.Text = "&Reprint Appointment Slip";
             this.ctxCalGridReprintApptSlip.Click += new System.EventHandler(this.ctxCalGridReprintApptSlip_Click);
             // 
@@ -907,7 +983,7 @@ namespace IndianHealthService.ClinicalScheduling
             // 
             this.panelBottom.Controls.Add(this.statusBar1);
             this.panelBottom.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panelBottom.Location = new System.Drawing.Point(136, 293);
+            this.panelBottom.Location = new System.Drawing.Point(136, 368);
             this.panelBottom.Name = "panelBottom";
             this.panelBottom.Size = new System.Drawing.Size(857, 24);
             this.panelBottom.TabIndex = 8;
@@ -925,7 +1001,7 @@ namespace IndianHealthService.ClinicalScheduling
             // 
             this.splitter1.Location = new System.Drawing.Point(128, 24);
             this.splitter1.Name = "splitter1";
-            this.splitter1.Size = new System.Drawing.Size(8, 293);
+            this.splitter1.Size = new System.Drawing.Size(8, 368);
             this.splitter1.TabIndex = 9;
             this.splitter1.TabStop = false;
             // 
@@ -934,7 +1010,7 @@ namespace IndianHealthService.ClinicalScheduling
             this.splitter2.Dock = System.Windows.Forms.DockStyle.Right;
             this.splitter2.Location = new System.Drawing.Point(993, 24);
             this.splitter2.Name = "splitter2";
-            this.splitter2.Size = new System.Drawing.Size(3, 293);
+            this.splitter2.Size = new System.Drawing.Size(3, 368);
             this.splitter2.TabIndex = 10;
             this.splitter2.TabStop = false;
             // 
@@ -957,7 +1033,7 @@ namespace IndianHealthService.ClinicalScheduling
             this.calendarGrid1.Name = "calendarGrid1";
             this.calendarGrid1.Resources = ((System.Collections.ArrayList)(resources.GetObject("calendarGrid1.Resources")));
             this.calendarGrid1.SelectedAppointment = 0;
-            this.calendarGrid1.Size = new System.Drawing.Size(857, 269);
+            this.calendarGrid1.Size = new System.Drawing.Size(857, 344);
             this.calendarGrid1.StartDate = new System.DateTime(2003, 1, 27, 0, 0, 0, 0);
             this.calendarGrid1.TabIndex = 0;
             this.calendarGrid1.TimeScale = 20;
@@ -970,7 +1046,7 @@ namespace IndianHealthService.ClinicalScheduling
             // CGView
             // 
             this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
-            this.ClientSize = new System.Drawing.Size(1124, 317);
+            this.ClientSize = new System.Drawing.Size(1124, 392);
             this.Controls.Add(this.panelCenter);
             this.Controls.Add(this.panelBottom);
             this.Controls.Add(this.splitter2);
@@ -1081,26 +1157,35 @@ namespace IndianHealthService.ClinicalScheduling
 
 		#endregion
 
-
 		#region AppointmentMenu Handlers
 
 		private void mnuAppointment_Popup(object sender, System.EventArgs e)
 		{
-			bool bEnabled = (this.Document.Resources.Count > 0)? true : false ;
-			this.mnuFindAppt.Enabled = bEnabled;
+            // our flags
+			bool _findApptsEnabled = (this.Document.Resources.Count > 0)? true : false ;
+            bool _addApptsEnabled = AddAppointmentEnabled();
+            bool _editApptsEnabled = EditAppointmentEnabled();
+            bool _isRadAppt = IsThisARadiologyResource();
+            bool _noShowEnabled = NoShowEnabled();
+            bool _undoCheckinEnabled = UndoCheckinEnabled();
+            //end flags
 
-			//Toggle availability of make, edit, checkin and delete appointments
-			//based on whether a range is selected.
+            mnuNewAppointment.Enabled = _addApptsEnabled && !_isRadAppt;
+            mnuWalkIn.Enabled = _addApptsEnabled && !_isRadAppt;
+            mnuMkRadAppt.Enabled = _isRadAppt && _addApptsEnabled;
 
-			mnuNewAppointment.Enabled = AddAppointmentEnabled();
-			this.mnuWalkIn.Enabled = mnuNewAppointment.Enabled;
-			bool bEditAppointments = this.EditAppointmentEnabled();
+            mnuEditAppointment.Enabled = _editApptsEnabled && !_isRadAppt;
+            mnuDeleteAppointment.Enabled = _editApptsEnabled && !_isRadAppt;
+            mnuCancelRadAppt.Enabled = _isRadAppt && _editApptsEnabled;
+            mnuNoShow.Enabled = _noShowEnabled && _editApptsEnabled;
+            mnuNoShowUndo.Enabled = !_noShowEnabled && _editApptsEnabled;
+            mnuCheckIn.Enabled = _editApptsEnabled && !_isRadAppt;
+            mnuUndoCheckin.Enabled = _undoCheckinEnabled && !_isRadAppt;
 
-			mnuDeleteAppointment.Enabled = bEditAppointments;
-			mnuCheckIn.Enabled = bEditAppointments;
-			mnuEditAppointment.Enabled = bEditAppointments;
-			mnuNoShow.Enabled = bEditAppointments;
-			mnuNoShowUndo.Enabled = bEditAppointments;
+            mnuFindAppt.Enabled = _findApptsEnabled;
+            mnuCopyAppointment.Enabled = _editApptsEnabled && !_isRadAppt;
+            mnuViewPatientAppts.Enabled = true;
+            mnuReprintApptSlip.Enabled = _editApptsEnabled;
 		}
 
 		private void mnuCheckIn_Click(object sender, System.EventArgs e)
@@ -1117,12 +1202,12 @@ namespace IndianHealthService.ClinicalScheduling
 			{
 				foreach (CGAppointment a in this.calendarGrid1.SelectedAppointments.AppointmentTable.Values)
 				{
-					if (m_ClipList.AppointmentTable.Contains((int) a.AppointmentKey))
+                    if (m_ClipList.AppointmentTable.Contains((int)a.AppointmentKey))
 					{
 						return;
 					}
 					m_ClipList.AddAppointment(a);
-					lstClip.Items.Add(a.PatientName);
+                    lstClip.Items.Add(a);
 				}
 			}
 			catch (Exception ex)
@@ -1161,6 +1246,31 @@ namespace IndianHealthService.ClinicalScheduling
         private void ctxCalGridUndoCheckin_Click(object sender, EventArgs e)
         {
             AppointmentUndoCheckin();
+        }
+
+        private void mnuMkRadAppt_Click(object sender, EventArgs e)
+        {
+            AppointmentAddNewRadiology();
+        }
+
+        private void mnuCancelRadAppt_Click(object sender, EventArgs e)
+        {
+            AppointmentDeleteOneRadiology();
+        }
+
+        private void mnuUndoCheckin_Click(object sender, EventArgs e)
+        {
+            AppointmentUndoCheckin();
+        }
+
+        private void mnuReprintApptSlip_Click(object sender, EventArgs e)
+        {
+            int apptID = this.CGrid.SelectedAppointment;
+            if (apptID <= 0) return;
+
+            CGAppointment a = (CGAppointment)this.Appointments.AppointmentTable[apptID];
+
+            PrintAppointmentSlip(a);
         }
 
 		#endregion AppointmentMenu Handlers
@@ -1291,20 +1401,60 @@ namespace IndianHealthService.ClinicalScheduling
 
 		private void ctxCalendarGrid_Popup(object sender, System.EventArgs e)
 		{
+            bool bEditAppointments = (EditAppointmentEnabled() && (calendarGrid1.SelectedAppointment > 0)) ;
+
+            if (IsThisARadiologyResource())//this is a radiology resource
+            {
+                ctxCalGridAdd.Visible = false;
+                ctxCalGridDelete.Visible = false;
+                ctxCalGridEdit.Visible = false;
+                ctxCalGridCheckIn.Visible = false;
+                ctxCalGridNoShow.Visible = false;
+                ctxCalGridNoShowUndo.Visible = false;
+                ctxCalGridWalkin.Visible = false;
+                ctxCalGridUndoCheckin.Visible = false;
+                ctxCalGridSep1.Visible = false;
+                ctxCalGridSep2.Visible = false;
+
+                ctxCalGridMkRadAppt.Visible = true;
+                ctxCalGridCancelRadAppt.Visible = true;
+
+                
+            }
+
+            else // this is a normal resource
+            {
+                ctxCalGridAdd.Visible = true;
+                ctxCalGridDelete.Visible = true;
+                ctxCalGridEdit.Visible = true;
+                ctxCalGridCheckIn.Visible = true;
+                ctxCalGridNoShow.Visible = true;
+                ctxCalGridNoShowUndo.Visible = true;
+                ctxCalGridWalkin.Visible = true;
+                ctxCalGridUndoCheckin.Visible = true;
+                ctxCalGridSep1.Visible = true;
+                ctxCalGridSep2.Visible = true;
+
+                ctxCalGridMkRadAppt.Visible = false;
+                ctxCalGridCancelRadAppt.Visible = false;
+            }
+
 			//Toggle availability of make, edit, checkin and delete appointments
 			//based on whether appropriate element is selected.
 			ctxCalGridAdd.Enabled = AddAppointmentEnabled();
-			bool bEditAppointments = (EditAppointmentEnabled() && (calendarGrid1.SelectedAppointment > 0)) ;
+			
 			ctxCalGridDelete.Enabled = bEditAppointments;
 			ctxCalGridEdit.Enabled = bEditAppointments;
 			ctxCalGridCheckIn.Enabled = bEditAppointments;
 			ctxCalGridNoShow.Enabled = NoShowEnabled();
             ctxCalGridNoShowUndo.Enabled = !NoShowEnabled() && calendarGrid1.SelectedAppointment > 0;
 			ctxCalGridWalkin.Enabled = ctxCalGridAdd.Enabled;
-            //smh new code
             ctxCalGridReprintApptSlip.Enabled = bEditAppointments;
             ctxCalGridUndoCheckin.Enabled = UndoCheckinEnabled();
-            //end new code
+
+            //if the rad ones are visible, then these apply
+            ctxCalGridMkRadAppt.Enabled = !bEditAppointments;
+            ctxCalGridCancelRadAppt.Enabled = bEditAppointments;
         }
 
 		private void ctxCalGridAdd_Click(object sender, System.EventArgs e)
@@ -1343,7 +1493,16 @@ namespace IndianHealthService.ClinicalScheduling
 			AppointmentNoShow(false);
 		}
 
-        //new code smh
+        private void ctxCalGridMkRadAppt_Click(object sender, EventArgs e)
+        {
+            AppointmentAddNewRadiology();
+        }
+
+        private void ctxCalGridCancelRadAppt_Click(object sender, EventArgs e)
+        {
+            AppointmentDeleteOneRadiology();
+        }
+
         private void ctxCalGridReprintApptSlip_Click(object sender, EventArgs e)
         {
             int apptID = this.CGrid.SelectedAppointment;
@@ -1353,11 +1512,67 @@ namespace IndianHealthService.ClinicalScheduling
 
             PrintAppointmentSlip(a);
         }
-        //end new code
 
 		#endregion ctxCalGridMenu Handlers
 
 		#region Methods
+
+        /// <summary>
+        /// Decides whether this is a Radiology Resource. Local Helper to decide what menu items to enable/display
+        /// </summary>
+        /// <returns></returns>
+        private bool IsThisARadiologyResource()
+        {
+            //I don't like this logic!!! but works for now!
+            //Note: I use banana peeling model below
+
+            //If no cell is selected AND no appointment is selected, then it's false
+            if (this.calendarGrid1.SelectedRange.Cells.CellCount < 1 && this.calendarGrid1.SelectedAppointment < 1)
+                return false;
+
+            //If an appointment is selected then...
+            if (this.calendarGrid1.SelectedAppointment > 0)
+            {
+                CGAppointment appt = this.Appointments.AppointmentTable[this.calendarGrid1.SelectedAppointment] as CGAppointment;
+                if (appt == null) return false; //appt doesn't exist; old appointment and grid wasn't refreshed yet
+                if (appt.RadiologyExamIEN.HasValue && appt.RadiologyExamIEN.Value > 0) return true; //this appointment is a radiology appointment since it has that member
+                else return false;
+
+            }
+
+            //Otherwise, we are for sure dealing with a cell.
+            //We need to determine if the cell resource is mapped to a Radiology Hospital Location.
+            DateTime dStart;
+            DateTime dEnd;
+            string sResource;
+            
+            // Get resource
+            bool bRet = this.calendarGrid1.GetSelectedTime(out dStart, out dEnd, out sResource);
+            
+            // If we fail, return false (but this is not supposed to ever happen)
+            if (bRet == false)
+            {
+                return false;
+            }
+
+            // see if resource is mapped to a Radiology Hospital Location.
+            return IsThisARadiologyResource(sResource);
+        }
+
+        private bool IsThisARadiologyResource(string sResource)
+        {
+            // see if resource is mapped to a Radiology Hospital Location.
+            return (   //select all Hospital Locations which are radiology locations
+                       from hl in CGDocumentManager.Current.GlobalDataSet.Tables["HospitalLocation"].AsEnumerable()
+                       where hl.Field<string>("IS_RADIOLOGY_LOCATION") == "1"
+                       //join this to the resources table using the foreign ID (plain jane relational join)
+                       join res in CGDocumentManager.Current.GlobalDataSet.Tables["Resources"].AsEnumerable()
+                       on hl.Field<int>("HOSPITAL_LOCATION_ID") equals res.Field<int>("HOSPITAL_LOCATION_ID")
+                       //then filter this down to the resource that we have
+                       where res.Field<string>("RESOURCE_NAME") == sResource
+                       //if we have any row left, then it is true.
+                       select hl).Any();
+        }
 
         private bool EditAppointmentEnabled()
         {
@@ -1980,6 +2195,30 @@ namespace IndianHealthService.ClinicalScheduling
 		}
 
 		/// <summary>
+        /// Delete one Radiology Appointment
+        /// </summary>
+        private void AppointmentDeleteOneRadiology()
+        {
+            Debug.Assert(this.calendarGrid1.SelectedAppointment > 0);
+
+            CGAppointment a = this.Appointments.AppointmentTable[this.calendarGrid1.SelectedAppointment] as CGAppointment;
+
+            Debug.Assert(a.RadiologyExamIEN.HasValue);
+
+            //Prior to making expensive db calls, tell the grid nothing is selected anymore so nobody would try to pick it up
+            this.calendarGrid1.SelectedAppointment = 0;
+
+            //Cancel Radiology Exam
+            CGDocumentManager.Current.DAL.CancelRadiologyExam(a.PatientID, a.RadiologyExamIEN.Value);
+
+            //Now, Cancel the appointment
+            this.Document.DeleteAppointment(a.AppointmentKey);
+
+            //redraw the grid to display new set of appointments after this appt was removed.
+            this.UpdateArrays();
+        }
+
+		/// <summary>
 		/// Delete appointment ApptID
 		/// </summary>
 		/// <param name="nApptID"></param>
@@ -2014,6 +2253,11 @@ namespace IndianHealthService.ClinicalScheduling
                 calendarGrid1.CGToolTip.Active = true;
                 return;
             }
+
+            //At this point, the appointment will be deleted...
+            //Remove the Selected Appointment from the grid because we don't anybody to think there's still
+            //an appointment selected while we are still updating the grid
+            this.calendarGrid1.SelectedAppointment = 0;
 
             bool bClinic = dCancel.ClinicCancelled;
             int nReason = dCancel.CancelReason;
@@ -2379,6 +2623,85 @@ namespace IndianHealthService.ClinicalScheduling
 				return;
 			}
 		}
+
+        /// <summary>
+        /// Add a new Radiology Appointment to VISTA (внЪь as my mom calls it)
+        /// </summary>
+        private void AppointmentAddNewRadiology()
+        {
+            DateTime dStart, dEnd;  //return vales for below
+            string sResource;       //ditto
+            int nAccessTypeID = 0;  //ditto
+
+            this.calendarGrid1.GetSelectedTime(out dStart, out dEnd, out sResource);
+            this.calendarGrid1.GetSelectedType(out nAccessTypeID);
+
+            Debug.Assert(sResource != null);
+            Debug.Assert(dStart > DateTime.MinValue);
+
+            //Display a dialog to collect Patient Name
+            DPatientLookup dPat = new DPatientLookup();
+            dPat.DocManager = m_DocManager;
+
+            if (dPat.ShowDialog(this) == DialogResult.Cancel)
+            {
+                return;
+            }
+
+            int DFN = Int32.Parse(dPat.PatientIEN);
+            // Hospital Location IEN
+            int hlIEN = (from resource in CGDocumentManager.Current.GlobalDataSet.Tables["Resources"].AsEnumerable()
+                         where resource.Field<string>("RESOURCE_NAME") == sResource
+                         select resource.Field<int>("HOSPITAL_LOCATION_ID")).FirstOrDefault();
+
+            //Get Radiology Exams from the DB
+            List<RadiologyExam> _radExams = CGDocumentManager.Current.DAL.GetRadiologyExamsForPatientinHL(DFN, hlIEN);
+
+            //If none found...
+            if (!_radExams.Any())
+            {
+                MessageBox.Show("Patient does not have any radiology exams to register.");
+                return;
+            }
+
+            //Display a form for the user to select radiology exams.
+            DRadExamsSelect _radform = new DRadExamsSelect(_radExams);
+
+            if (_radform.ShowDialog() == DialogResult.Cancel) return;
+
+            //Get some return values
+            int _examien = _radform.ExamIEN;
+            string _procedurename = _radform.ProcedureName;
+
+            //Save Radiology Exam Schedule Info to Radiology Package
+            CGDocumentManager.Current.DAL.ScheduleRadiologyExam(DFN, _examien, dStart);
+
+            //Now create and save the appointment
+            CGAppointment appt = new CGAppointment();
+            string _sNote = "Radiology Exam (" + _examien + "): " + _procedurename;
+            appt.CreateAppointment(dStart, dEnd, _sNote, 0, sResource);
+            appt.PatientID = Int32.Parse(dPat.PatientIEN);
+            appt.PatientName = dPat.PatientName;
+            appt.AccessTypeID = nAccessTypeID;
+            appt.RadiologyExamIEN = _examien;
+            appt.Patient = new Patient
+            {
+                DFN = Convert.ToInt32(dPat.PatientIEN),
+                ID = dPat.PatientPID,
+                Name = dPat.PatientName,
+                HRN = dPat.HealthRecordNumber,
+                DOB = dPat.PatientDOB
+            };
+
+            this.Document.CreateAppointment(appt);
+
+            //Print Appointment Slip if requested
+            if (_radform.PrintAppointmentSlip) this.PrintAppointmentSlip(appt);
+
+            //Now redraw the grid to display the new appointments
+            this.UpdateArrays();
+        }
+
 
         #region BMX Event Processing and Callbacks
         /// <summary>
@@ -2891,9 +3214,25 @@ namespace IndianHealthService.ClinicalScheduling
 		{
 			try
 			{
+                // added April 13 2011
+                // Can't edit radiology appointments (Why? b/c it's intimately tied to Radiology Entry of the Hosp Loc)
+                if (e.Appointment.RadiologyExamIEN.HasValue && e.Appointment.RadiologyExamIEN.Value > 0)
+                {
+                    MessageBox.Show("You cannot move a radiology appointment.", "Clinical Scheduling");
+                    return;
+                }
+
+                // added May 5 2011
+                // Can't move an appointment to a radiology resource
+                if (IsThisARadiologyResource(e.Resource))
+                {
+                    MessageBox.Show("You cannot move an appointment to a radiology location.", "Clinical Scheduling");
+                    return;
+                }
+                
 				if (e.Appointment.CheckInTime.Ticks > 0)
 				{
-					MessageBox.Show("You cannot change the appointment time because the patient has already checked in.", "Clinical Scheduling",  MessageBoxButtons.OKCancel, MessageBoxIcon.Information);
+					MessageBox.Show("You cannot change the appointment time because the patient has already checked in.", "Clinical Scheduling");
 					return;
 				}
 
@@ -3563,9 +3902,6 @@ namespace IndianHealthService.ClinicalScheduling
             dpl.InitializeFormClinicSchedule(this.DocManager, string.Join("|", resourceIENs) + "|", dStart, dEnd);
             dpl.ShowDialog(this);
         }
-
-
-
 
 
     }//End class

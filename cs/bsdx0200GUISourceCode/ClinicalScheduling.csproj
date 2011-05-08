@@ -139,7 +139,14 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DRadExamsSelect.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="DRadExamsSelect.Designer.cs">
+      <DependentUpon>DRadExamsSelect.cs</DependentUpon>
+    </Compile>
     <Compile Include="Provider.cs" />
+    <Compile Include="RadiologyExam.cs" />
     <Compile Include="strings.ar.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -151,7 +158,6 @@
       <DependentUpon>strings.resx</DependentUpon>
     </Compile>
     <Compile Include="UserPreferences.cs" />
-    <None Include="app.config" />
     <None Include="dsPatientApptDisplay2.xsc">
       <DependentUpon>dsPatientApptDisplay2.xsd</DependentUpon>
     </None>
@@ -390,6 +396,9 @@
     <EmbeddedResource Include="DPatientLookup.resx">
       <DependentUpon>DPatientLookup.cs</DependentUpon>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DRadExamsSelect.resx">
+      <DependentUpon>DRadExamsSelect.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="DResource.resx">
       <DependentUpon>DResource.cs</DependentUpon>

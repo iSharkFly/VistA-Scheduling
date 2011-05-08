@@ -1,4 +1,6 @@
-﻿using System;
+﻿/*Licensed under LGPL*/
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
