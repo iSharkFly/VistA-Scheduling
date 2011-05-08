@@ -27,7 +27,15 @@ PTLOOKRS(BSDXY,BSDXP,BSDXC)	 ;EP Patient Lookup
 	S BSDXRET="T00030NAME^T00030HRN^T00030PID^D00030DOB^T00030IEN"_$C(30)
 	I '+$G(DUZ) S BSDXY=BSDXRET_$C(31) Q
 	I '$D(DUZ(2)) S BSDXY=BSDXRET_$C(31) Q
-	
+DFN ;If DFN is passed as `nnnn, just return that patient
+	I $E(BSDXP)="`" DO  SET BSDXY=BSDXRET_$C(31) QUIT
+	. N BSDXIEN S BSDXIEN=$E(BSDXP,2,99)
+	. I BSDXIEN'=+BSDXIEN QUIT  ; BSDXIEN must be numeric
+	. N NAME S NAME=$P(^DPT(BSDXIEN,0),U)
+	. N HRN S HRN=$P($G(^AUPNPAT(BSDXIEN,41,DUZ(2),0)),U,2)
+	. N PID S PID=$P(^DPT(BSDXIEN,.36),U,3)
+	. N DOB S DOB=$$FMTE^XLFDT($P(^DPT(BSDXIEN,0),U,3))
+	. S BSDXRET=BSDXRET_NAME_U_HRN_U_PID_U_DOB_U_BSDXIEN_$C(30)
 PID	;PID Lookup
 	   ; If this ID exists, go get it. If "UJOPID" index doesn't exist,
 	   ; won't work anyways.

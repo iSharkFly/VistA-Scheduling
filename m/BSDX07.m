@@ -10,6 +10,7 @@ BSDX07	; VW/UJO/SMH - WINDOWS SCHEDULING RPCS  ; 4/28/11 10:17am
 	   ; v1.42 Oct 30 2010 - Extensive refactoring.
 	   ; v1.5  Mar 15 2011 - End time does not have to have time anymore.
 	   ;      It could be midnight of the next day
+	   ; v1.6 Apr 11 2011 - Support for Scheduling Radiology Exams...
 	   ;
 	   ; Error Reference:
 	   ; -1: Patient Record is locked. This means something is wrong!!!!
@@ -78,7 +79,8 @@ UT	; Unit Tests
 	   I '$D(^SC(2,"S",3110123.09)) W "Error Making Appt-4"
 	   QUIT
 	   ; 
-APPADD(BSDXY,BSDXSTART,BSDXEND,BSDXPATID,BSDXRES,BSDXLEN,BSDXNOTE,BSDXATID)	;EP
+APPADD(BSDXY,BSDXSTART,BSDXEND,BSDXPATID,BSDXRES,BSDXLEN,BSDXNOTE,BSDXATID,BSDXRADEXAM)	;EP
+	   ;
 	   ;Called by RPC: BSDX ADD NEW APPOINTMENT
 	   ;
 	   ;Add new appointment to 3 files
@@ -97,6 +99,7 @@ APPADD(BSDXY,BSDXSTART,BSDXEND,BSDXPATID,BSDXRES,BSDXLEN,BSDXNOTE,BSDXATID)	;EP
 	   ;BSDXATID is used for 2 purposes:
 	   ; if BSDXATID = "WALKIN" then BSDAPI is called to create a walkin appt.
 	   ; if BSDXATID = a number, then it is the access type id (used for rebooking)
+	   ;BSDXRADEXAM is used to store the Radiology Exam to which this appointment is tied to (optional)
 	   ;
 	   ;Return:
 	   ; ADO.net Recordset having fields:
@@ -105,6 +108,8 @@ APPADD(BSDXY,BSDXSTART,BSDXEND,BSDXPATID,BSDXRES,BSDXLEN,BSDXNOTE,BSDXATID)	;EP
 	   ;Test lines:
 	   ;BSDX ADD NEW APPOINTMENT^3091122.0930^3091122.1000^370^Dr Office^30^EXAM^WALKIN
 	   ;
+	   ; Deal with optional arguments
+	   S BSDXRADEXAM=$G(BSDXRADEXAM)
 	   ; Return Array; set Return and clear array
 	   S BSDXY=$NA(^BSDXTMP($J))
 	   K ^BSDXTMP($J)
@@ -172,7 +177,7 @@ APPADD(BSDXY,BSDXSTART,BSDXEND,BSDXPATID,BSDXRES,BSDXLEN,BSDXNOTE,BSDXATID)	;EP
 	   ;
 	   ; Done with all checks, let's make appointment in BSDX APPOINTMENT
 	   N BSDXAPPTID
-	   S BSDXAPPTID=$$BSDXADD(BSDXSTART,BSDXEND,BSDXPATID,BSDXRESD,BSDXATID)
+	   S BSDXAPPTID=$$BSDXADD(BSDXSTART,BSDXEND,BSDXPATID,BSDXRESD,BSDXATID,BSDXRADEXAM)
 	   I 'BSDXAPPTID D ERR(BSDXI,"-9~BSDX07 Error: Unable to add appointment to BSDX APPOINTMENT file.") Q
 	   I BSDXNOTE]"" D BSDXWP(BSDXAPPTID,BSDXNOTE)
 	   ;
@@ -216,7 +221,7 @@ STRIP(BSDXZ)	   ;Replace control characters with spaces
 	   F BSDXI=1:1:$L(BSDXZ) I (32>$A($E(BSDXZ,BSDXI))) S BSDXZ=$E(BSDXZ,1,BSDXI-1)_" "_$E(BSDXZ,BSDXI+1,999)
 	   Q BSDXZ
 	   ;
-BSDXADD(BSDXSTART,BSDXEND,BSDXPATID,BSDXRESD,BSDXATID)	 ;ADD BSDX APPOINTMENT ENTRY
+BSDXADD(BSDXSTART,BSDXEND,BSDXPATID,BSDXRESD,BSDXATID,BSDXRADEXAM)	 ;ADD BSDX APPOINTMENT ENTRY
 	   ;Returns ien in BSDXAPPT or 0 if failed
 	   ;Create entry in BSDX APPOINTMENT
 	   N BSDXAPPTID
@@ -228,6 +233,7 @@ BSDXADD(BSDXSTART,BSDXEND,BSDXPATID,BSDXRESD,BSDXATID)	 ;ADD BSDX APPOINTMENT EN
 	   S BSDXFDA(9002018.4,"+1,",.09)=$$NOW^XLFDT
 	   S:BSDXATID="WALKIN" BSDXFDA(9002018.4,"+1,",.13)="y"
 	   S:BSDXATID?.N BSDXFDA(9002018.4,"+1,",.06)=BSDXATID
+	   S BSDXFDA(9002018.4,"+1,",.14)=BSDXRADEXAM
 	   N BSDXIEN,BSDXMSG
 	   D UPDATE^DIE("","BSDXFDA","BSDXIEN","BSDXMSG")
 	   S BSDXAPPTID=+$G(BSDXIEN(1))
