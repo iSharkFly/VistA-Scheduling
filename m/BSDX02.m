@@ -1,5 +1,5 @@
-BSDX02	; IHS/OIT/HMW - WINDOWS SCHEDULING RPCS ; 4/28/11 10:14am
-	;;1.5;BSDX;;Apr 28, 2011
+BSDX02	; IHS/OIT/HMW - WINDOWS SCHEDULING RPCS ; 5/11/11 11:33am
+	;;1.6T1;BSDX;;May 11, 2011
 	;Licensed under LGPL 
 	; Change Log
 	; July 15 2010: UJO/SMH - Pass FM dates in instead of US dates for i18n
@@ -99,7 +99,7 @@ STCOMM(BSDXAD,BSDXRESN)	     ;
 	; Note strange way I retrieve the value. B/c DOB Output Transform
 	; Outputs it in MM/DD/YYYY format, which is ambigous for C#.
 	N DOB S DOB=$$FMTE^XLFDT($$GET1^DIQ(2,BSDXPATD,.03,"I"))  ; DOB
-	N RADEX S RADEX=$P(BSDXNOD,U,14)
+	N RADEX S RADEX=$P(BSDXNOD,U,14) ;Radiology exam
 	S ^BSDXTMP($J,BSDXI)=SEX_U_PID_U_DOB_U_RADEX_$C(30)
 	; end new code
 	Q

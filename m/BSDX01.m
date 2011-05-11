@@ -1,5 +1,5 @@
 BSDX01	; IHS/OIT/HMW - WINDOWS SCHEDULING RPCS ; 4/28/11 10:14am
-	;;1.5;BSDX;;Apr 28, 2011
+	;;1.6T1;BSDX;;May 11, 2011
 	; Licensed under LGPL
 	;
 SUINFOD(BSDXY,BSDXDUZ)	;EP Debugging entry point
@@ -319,71 +319,71 @@ UnitTestINDIV2
 	   I $$INDIV2(27)'=1 W "ERROR",!
 	   QUIT
 	   ;
-GETRADEX(BSDXY,DFN,SCIEN) ; Get All Pending and On Hold Radiology Exams for Patient; RPC EP; UJO/SMH new in v 1.6
- ; RPC: BSDX GET RAD EXAM FOR PT; Return: Global Array
- ;
- ; Input: DFN - you should know; SCIEN - IEN of Hospital Location
- ; Output: ADO Datatable with the following columns:
- ; - BMXIEN: Radiology Exam IEN in file 75.1 (RAD/NUC MED ORDERS)
- ; - STATUS: Pending Or Hold Status
- ; - PROCEDURE: Text Procedure Name
- ; - REQUEST_DATE: Date Procedure was requested
- ;
- ; Error Processing: Silent failure. 
- ;
- S BSDXY=$NA(^BMXTEMP($J))
- K @BSDXY
- ;
- N BSDXI S BSDXI=0
- S @BSDXY@(BSDXI)="I00015BMXIEN^T00015STATUS^T00100PROCEDURE^D00030REQUEST_DATE"_$C(30)
- ;
- N BSDXRLIEN S BSDXRLIEN=$ORDER(^RA(79.1,"B",SCIEN,""))  ; IEN of HL in file 79.1, to get Radiology Imaging IEN
- I 'BSDXRLIEN GOTO END
- ;
- N BSDXOUT,BSDXERR ; Out, Error
- ;
- ; File 75.1 = RAD/NUC MED ORDERS
- ; Fields 5 = Request Status; 2 = Procedure; 16 = Requested Entered Date Time
- ; Filter Field: First piece is DFN, 5th piece is 3 or 5 (Status of Pending Or Hold); 20th piece is Radiology Location requested
- D LIST^DIC(75.1,"","@;5;2;16","P","","","","B","I $P(^(0),U)=DFN&(35[$P(^(0),U,5))&($P(^(0),U,20)=BSDXRLIEN)","","BSDXOUT","BSDXERR")
- ;
- IF $DATA(BSDXERR) GOTO END
- ;
- I +BSDXOUT("DILIST",0)>0 FOR BSDXI=1:1:+BSDXOUT("DILIST",0) DO  ; if we have data, fetch the data in each row and store it in the return variable
- . N BMXIEN,BMXSTAUS,BMXPROC,BMXDATE ; Proc IEN, Proc Status, Proc Name
- . S BMXIEN=$P(BSDXOUT("DILIST",BSDXI,0),U) ; IEN
- . S BMXSTATUS=$P(BSDXOUT("DILIST",BSDXI,0),U,2) ; Status
- . S BMXPROC=$P(BSDXOUT("DILIST",BSDXI,0),U,3) ; Procedure Name
- . S BMXDATE=$TR($P(BSDXOUT("DILIST",BSDXI,0),U,4),"@"," ") ; Request Entered Date Time
- . S @BSDXY@(BSDXI)=BMXIEN_U_BMXSTATUS_U_BMXPROC_U_BMXDATE_$C(30)
-END ; Errors Jump Here...
- S @BSDXY@(BSDXI+1)=$C(31)
- QUIT
- ;
-SCHRAEX(BSDXY,RADFN,RAOIFN,RAOSCH) ; Schedule a Radiology Exam; RPC EP; UJO/SMH new in v 1.6
- ; RPC: BSDX SCHEDULE RAD EXAM; Return: Single Value
- ;
- ; Input: 
- ; - RADFN -> DFN
- ; - RAOIFN -> Radiology Order IEN in file 75.1
- ; - RAOSCH -> Scheduled Time for Exam
- ; Output: Always "1"
- ;
- S RAOSCH=+RAOSCH ; Strip the trailing zeros from the Fileman Date produced by C#
- N RAOSTS S RAOSTS=8  ; Status of Scheduled
- D ^RAORDU  ; API in Rad expects RADFN, RAOIFN, RAOSCH, and RAOSTS
- S BSDXY=1 ; Success
- QUIT
- ;
-HOLDRAEX(BSDXY,RADFN,RAOIFN) ; Hold a Radiology Exam; RPC EP; UJO/SMH new in v 1.6
- ; RPC: BSDX HOLD RAD EXAM; Return: Single Vale
- ;
- ; Input:
- ; - RADFN -> DFN
- ; - RAOIFN -> Radiology Order IEN in file 75.1
- ; Output: Always "1"
- N RAOSTS S RAOSTS=3  ; Status of Hold
- N RAOREA S RAOREA=20 ; Reason: Exam Cancelled
- D ^RAORDU
- S BSDXY=1 ; Success
- QUIT
+GETRADEX(BSDXY,DFN,SCIEN)	; Get All Pending and On Hold Radiology Exams for Patient; RPC EP; UJO/SMH new in v 1.6
+	; RPC: BSDX GET RAD EXAM FOR PT; Return: Global Array
+	;
+	; Input: DFN - you should know; SCIEN - IEN of Hospital Location
+	; Output: ADO Datatable with the following columns:
+	; - BMXIEN: Radiology Exam IEN in file 75.1 (RAD/NUC MED ORDERS)
+	; - STATUS: Pending Or Hold Status
+	; - PROCEDURE: Text Procedure Name
+	; - REQUEST_DATE: Date Procedure was requested
+	;
+	; Error Processing: Silent failure. 
+	;
+	S BSDXY=$NA(^BMXTEMP($J))
+	K @BSDXY
+	;
+	N BSDXI S BSDXI=0
+	S @BSDXY@(BSDXI)="I00015BMXIEN^T00015STATUS^T00100PROCEDURE^D00030REQUEST_DATE"_$C(30)
+	;
+	N BSDXRLIEN S BSDXRLIEN=$ORDER(^RA(79.1,"B",SCIEN,""))  ; IEN of HL in file 79.1, to get Radiology Imaging IEN
+	I 'BSDXRLIEN GOTO END
+	;
+	N BSDXOUT,BSDXERR ; Out, Error
+	;
+	; File 75.1 = RAD/NUC MED ORDERS
+	; Fields 5 = Request Status; 2 = Procedure; 16 = Requested Entered Date Time
+	; Filter Field: First piece is DFN, 5th piece is 3 or 5 (Status of Pending Or Hold); 20th piece is Radiology Location requested
+	D LIST^DIC(75.1,"","@;5;2;16","P","","","","B","I $P(^(0),U)=DFN&(35[$P(^(0),U,5))&($P(^(0),U,20)=BSDXRLIEN)","","BSDXOUT","BSDXERR")
+	;
+	IF $DATA(BSDXERR) GOTO END
+	;
+	I +BSDXOUT("DILIST",0)>0 FOR BSDXI=1:1:+BSDXOUT("DILIST",0) DO  ; if we have data, fetch the data in each row and store it in the return variable
+	. N BMXIEN,BMXSTAUS,BMXPROC,BMXDATE ; Proc IEN, Proc Status, Proc Name
+	. S BMXIEN=$P(BSDXOUT("DILIST",BSDXI,0),U) ; IEN
+	. S BMXSTATUS=$P(BSDXOUT("DILIST",BSDXI,0),U,2) ; Status
+	. S BMXPROC=$P(BSDXOUT("DILIST",BSDXI,0),U,3) ; Procedure Name
+	. S BMXDATE=$TR($P(BSDXOUT("DILIST",BSDXI,0),U,4),"@"," ") ; Request Entered Date Time
+	. S @BSDXY@(BSDXI)=BMXIEN_U_BMXSTATUS_U_BMXPROC_U_BMXDATE_$C(30)
+END	; Errors Jump Here...
+	S @BSDXY@(BSDXI+1)=$C(31)
+	QUIT
+	;
+SCHRAEX(BSDXY,RADFN,RAOIFN,RAOSCH)	; Schedule a Radiology Exam; RPC EP; UJO/SMH new in v 1.6
+	; RPC: BSDX SCHEDULE RAD EXAM; Return: Single Value
+	;
+	; Input: 
+	; - RADFN -> DFN
+	; - RAOIFN -> Radiology Order IEN in file 75.1
+	; - RAOSCH -> Scheduled Time for Exam
+	; Output: Always "1"
+	;
+	S RAOSCH=+RAOSCH ; Strip the trailing zeros from the Fileman Date produced by C#
+	N RAOSTS S RAOSTS=8  ; Status of Scheduled
+	D ^RAORDU  ; API in Rad expects RADFN, RAOIFN, RAOSCH, and RAOSTS
+	S BSDXY=1 ; Success
+	QUIT
+	;
+HOLDRAEX(BSDXY,RADFN,RAOIFN)	; Hold a Radiology Exam; RPC EP; UJO/SMH new in v 1.6
+	; RPC: BSDX HOLD RAD EXAM; Return: Single Vale
+	;
+	; Input:
+	; - RADFN -> DFN
+	; - RAOIFN -> Radiology Order IEN in file 75.1
+	; Output: Always "1"
+	N RAOSTS S RAOSTS=3  ; Status of Hold
+	N RAOREA S RAOREA=20 ; Reason: Exam Cancelled
+	D ^RAORDU
+	S BSDXY=1 ; Success
+	QUIT

@@ -1,5 +1,5 @@
 BSDX28	; IHS/OIT/HMW - WINDOWS SCHEDULING RPCS ; 4/28/11 10:25am
-	;;1.5;BSDX;;Apr 28, 2011
+	;;1.6T1;BSDX;;May 11, 2011
 	; Licensed under LGPL
 	; Change Log:
 	; HMW 3050721 Added test for inactivated record
@@ -27,7 +27,7 @@ PTLOOKRS(BSDXY,BSDXP,BSDXC)	 ;EP Patient Lookup
 	S BSDXRET="T00030NAME^T00030HRN^T00030PID^D00030DOB^T00030IEN"_$C(30)
 	I '+$G(DUZ) S BSDXY=BSDXRET_$C(31) Q
 	I '$D(DUZ(2)) S BSDXY=BSDXRET_$C(31) Q
-DFN ;If DFN is passed as `nnnn, just return that patient
+DFN	;If DFN is passed as `nnnn, just return that patient
 	I $E(BSDXP)="`" DO  SET BSDXY=BSDXRET_$C(31) QUIT
 	. N BSDXIEN S BSDXIEN=$E(BSDXP,2,99)
 	. I BSDXIEN'=+BSDXIEN QUIT  ; BSDXIEN must be numeric

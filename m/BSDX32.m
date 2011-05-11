@@ -1,6 +1,10 @@
-BSDX32	; IHS/OIT/HMW - WINDOWS SCHEDULING RPCS ; 4/28/11 10:28am
-	;;1.5;BSDX;;Apr 28, 2011
+BSDX32	; IHS/OIT/HMW - WINDOWS SCHEDULING RPCS ; 5/11/11 10:39am
+	;;1.6T1;BSDX;;May 11, 2011
 	; Licensed under LGPL
+	;
+	; Change Log:
+	; April 2011: Added Field "IS_RADIOLOGY_LOCATION" to help decide if the Hospital Location
+	; should be treated in the GUI as a Radiology Location
 	;
 	;
 ERROR	;
@@ -51,6 +55,7 @@ HOSPLOC(BSDXY)	;EP
 	. . Q
 	. ; Decide if this is a radiology location - Check "B" index of ^RA(79.1 global to see if HL is there
 	. N BSDXISRAD S BSDXISRAD=''$DATA(^RA(79.1,"B",BSDXIEN))
+	. ;
 	. S BSDXI=BSDXI+1
 	. S ^BSDXTMP($J,BSDXI)=BSDXIEN_U_BSDXNAM_U_BSDXPRV_U_BSDXSCOD_U_BSDXINA_U_BSDXREA_U_BSDXISRAD_$C(30)
 	. Q

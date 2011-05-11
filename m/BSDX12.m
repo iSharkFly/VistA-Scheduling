@@ -1,5 +1,5 @@
 BSDX12	; IHS/OIT/HMW - WINDOWS SCHEDULING RPCS ; 4/28/11 10:18am
-	;;1.5;BSDX;;Apr 28, 2011
+	;;1.6T1;BSDX;;May 11, 2011
 	; Licensed under LGPL
 	; 
 	; Change Log:
