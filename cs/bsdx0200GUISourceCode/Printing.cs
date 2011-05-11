@@ -193,7 +193,6 @@ namespace IndianHealthService.ClinicalScheduling
             StringFormat sfCenter = new StringFormat();
             sfCenter.Alignment = StringAlignment.Center; //for title & header
 
-            //string s = "Appointment Reminder Slip";
             s = strings.ApptReminderSlip;
             g.DrawString(s, fTitle, Brushes.Black, printArea, sfCenter); //title
 
@@ -228,7 +227,8 @@ namespace IndianHealthService.ClinicalScheduling
             sb.AppendLine();
             sb.AppendLine(strings.ID + ":" + "\t" + appt.Patient.ID);
             sb.AppendLine();
-            sb.AppendLine(strings.DOB + ":" + "\t" + appt.Patient.DOB.ToShortDateString());
+            s = appt.Patient.DOB.ToString("dd") + " " + appt.Patient.DOB.ToString("MMM") + ", " + appt.Patient.DOB.Year;
+            sb.AppendLine(strings.DOB + ":" + "\t" + s);
             sb.AppendLine();
             sb.AppendLine(strings.Age + ":" + "\t" + appt.Patient.UserFriendlyAge);
             sb.AppendLine();
@@ -256,7 +256,8 @@ namespace IndianHealthService.ClinicalScheduling
             sb = new StringBuilder();
             sb.AppendLine(strings.Clinic + ":" + "\t" + appt.Resource);
             sb.AppendLine();
-            sb.AppendLine(strings.Date + ":" + "\t" + appt.StartTime.ToShortDateString());
+            s = appt.StartTime.ToString("dd") + " " + appt.StartTime.ToString("MMM") + ", " + appt.StartTime.Year;
+            sb.AppendLine(strings.Date + ":" + "\t" + s);
             sb.AppendLine();
             sb.AppendLine(strings.Day + ":" + "\t" + appt.StartTime.ToString("dddd"));
             sb.AppendLine();
@@ -640,7 +641,8 @@ namespace IndianHealthService.ClinicalScheduling
             sb.AppendLine();
             sb.AppendLine(strings.ID + ":" + "\t" + appt.Patient.ID);
             sb.AppendLine();
-            sb.AppendLine(strings.DOB + ":" + "\t" + appt.Patient.DOB.ToShortDateString());
+            s = appt.Patient.DOB.ToString("dd") + " " + appt.Patient.DOB.ToString("MMM") + ", " + appt.Patient.DOB.Year;
+            sb.AppendLine(strings.DOB + ":" + "\t" + s);
             sb.AppendLine();
             sb.AppendLine(strings.Age + ":" + "\t" + appt.Patient.UserFriendlyAge);
             //sb.AppendLine();

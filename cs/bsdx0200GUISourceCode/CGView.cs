@@ -256,6 +256,7 @@ namespace IndianHealthService.ClinicalScheduling
             this.dateTimePicker1 = new System.Windows.Forms.DateTimePicker();
             this.lblResource = new System.Windows.Forms.Label();
             this.panelCenter = new System.Windows.Forms.Panel();
+            this.calendarGrid1 = new IndianHealthService.ClinicalScheduling.CalendarGrid();
             this.ctxCalendarGrid = new System.Windows.Forms.ContextMenu();
             this.ctxCalGridAdd = new System.Windows.Forms.MenuItem();
             this.ctxCalGridMkRadAppt = new System.Windows.Forms.MenuItem();
@@ -275,7 +276,6 @@ namespace IndianHealthService.ClinicalScheduling
             this.statusBar1 = new System.Windows.Forms.StatusBar();
             this.splitter1 = new System.Windows.Forms.Splitter();
             this.splitter2 = new System.Windows.Forms.Splitter();
-            this.calendarGrid1 = new IndianHealthService.ClinicalScheduling.CalendarGrid();
             this.panelRight.SuspendLayout();
             this.panelClip.SuspendLayout();
             this.panelTop.SuspendLayout();
@@ -879,6 +879,35 @@ namespace IndianHealthService.ClinicalScheduling
             this.panelCenter.Size = new System.Drawing.Size(857, 344);
             this.panelCenter.TabIndex = 7;
             // 
+            // calendarGrid1
+            // 
+            this.calendarGrid1.AllowDrop = true;
+            this.calendarGrid1.Appointments = null;
+            this.calendarGrid1.ApptDragSource = null;
+            this.calendarGrid1.AutoScroll = true;
+            this.calendarGrid1.AutoScrollMinSize = new System.Drawing.Size(600, 1898);
+            this.calendarGrid1.AvailabilityArray = null;
+            this.calendarGrid1.BackColor = System.Drawing.SystemColors.Window;
+            this.calendarGrid1.Columns = 5;
+            this.calendarGrid1.ContextMenu = this.ctxCalendarGrid;
+            this.calendarGrid1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.calendarGrid1.DrawWalkIns = true;
+            this.calendarGrid1.GridBackColor = null;
+            this.calendarGrid1.GridEnter = false;
+            this.calendarGrid1.Location = new System.Drawing.Point(0, 0);
+            this.calendarGrid1.Name = "calendarGrid1";
+            this.calendarGrid1.Resources = ((System.Collections.ArrayList)(resources.GetObject("calendarGrid1.Resources")));
+            this.calendarGrid1.SelectedAppointment = 0;
+            this.calendarGrid1.Size = new System.Drawing.Size(857, 344);
+            this.calendarGrid1.StartDate = new System.DateTime(2003, 1, 27, 0, 0, 0, 0);
+            this.calendarGrid1.TabIndex = 0;
+            this.calendarGrid1.TimeScale = 20;
+            this.calendarGrid1.CGAppointmentChanged += new IndianHealthService.ClinicalScheduling.CalendarGrid.CGAppointmentChangedHandler(this.calendarGrid1_CGAppointmentChanged);
+            this.calendarGrid1.CGAppointmentAdded += new IndianHealthService.ClinicalScheduling.CalendarGrid.CGAppointmentChangedHandler(this.calendarGrid1_CGAppointmentAdded);
+            this.calendarGrid1.CGSelectionChanged += new IndianHealthService.ClinicalScheduling.CalendarGrid.CGSelectionChangedHandler(this.calendarGrid1_CGSelectionChanged);
+            this.calendarGrid1.DoubleClick += new System.EventHandler(this.calendarGrid1_DoubleClick);
+            this.calendarGrid1.MouseEnter += new System.EventHandler(this.calendarGrid1_MouseEnter);
+            // 
             // ctxCalendarGrid
             // 
             this.ctxCalendarGrid.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
@@ -1013,35 +1042,6 @@ namespace IndianHealthService.ClinicalScheduling
             this.splitter2.Size = new System.Drawing.Size(3, 368);
             this.splitter2.TabIndex = 10;
             this.splitter2.TabStop = false;
-            // 
-            // calendarGrid1
-            // 
-            this.calendarGrid1.AllowDrop = true;
-            this.calendarGrid1.Appointments = null;
-            this.calendarGrid1.ApptDragSource = null;
-            this.calendarGrid1.AutoScroll = true;
-            this.calendarGrid1.AutoScrollMinSize = new System.Drawing.Size(600, 1898);
-            this.calendarGrid1.AvailabilityArray = null;
-            this.calendarGrid1.BackColor = System.Drawing.SystemColors.Window;
-            this.calendarGrid1.Columns = 5;
-            this.calendarGrid1.ContextMenu = this.ctxCalendarGrid;
-            this.calendarGrid1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.calendarGrid1.DrawWalkIns = true;
-            this.calendarGrid1.GridBackColor = null;
-            this.calendarGrid1.GridEnter = false;
-            this.calendarGrid1.Location = new System.Drawing.Point(0, 0);
-            this.calendarGrid1.Name = "calendarGrid1";
-            this.calendarGrid1.Resources = ((System.Collections.ArrayList)(resources.GetObject("calendarGrid1.Resources")));
-            this.calendarGrid1.SelectedAppointment = 0;
-            this.calendarGrid1.Size = new System.Drawing.Size(857, 344);
-            this.calendarGrid1.StartDate = new System.DateTime(2003, 1, 27, 0, 0, 0, 0);
-            this.calendarGrid1.TabIndex = 0;
-            this.calendarGrid1.TimeScale = 20;
-            this.calendarGrid1.CGAppointmentChanged += new IndianHealthService.ClinicalScheduling.CalendarGrid.CGAppointmentChangedHandler(this.calendarGrid1_CGAppointmentChanged);
-            this.calendarGrid1.CGAppointmentAdded += new IndianHealthService.ClinicalScheduling.CalendarGrid.CGAppointmentChangedHandler(this.calendarGrid1_CGAppointmentAdded);
-            this.calendarGrid1.CGSelectionChanged += new IndianHealthService.ClinicalScheduling.CalendarGrid.CGSelectionChangedHandler(this.calendarGrid1_CGSelectionChanged);
-            this.calendarGrid1.DoubleClick += new System.EventHandler(this.calendarGrid1_DoubleClick);
-            this.calendarGrid1.MouseEnter += new System.EventHandler(this.calendarGrid1_MouseEnter);
             // 
             // CGView
             // 
@@ -1401,9 +1401,16 @@ namespace IndianHealthService.ClinicalScheduling
 
 		private void ctxCalendarGrid_Popup(object sender, System.EventArgs e)
 		{
-            bool bEditAppointments = (EditAppointmentEnabled() && (calendarGrid1.SelectedAppointment > 0)) ;
+            // our flags
+            bool _findApptsEnabled = (this.Document.Resources.Count > 0) ? true : false;
+            bool _addApptsEnabled = AddAppointmentEnabled();
+            bool _editApptsEnabled = EditAppointmentEnabled();
+            bool _isRadAppt = IsThisARadiologyResource();
+            bool _noShowEnabled = NoShowEnabled();
+            bool _undoCheckinEnabled = UndoCheckinEnabled();
+            //end flags
 
-            if (IsThisARadiologyResource())//this is a radiology resource
+            if (_isRadAppt)//this is a radiology resource
             {
                 ctxCalGridAdd.Visible = false;
                 ctxCalGridDelete.Visible = false;
@@ -1438,23 +1445,23 @@ namespace IndianHealthService.ClinicalScheduling
                 ctxCalGridMkRadAppt.Visible = false;
                 ctxCalGridCancelRadAppt.Visible = false;
             }
-
-			//Toggle availability of make, edit, checkin and delete appointments
+           
+			//Toggle availability of make, edit, checkin and delete appointments etc
 			//based on whether appropriate element is selected.
-			ctxCalGridAdd.Enabled = AddAppointmentEnabled();
-			
-			ctxCalGridDelete.Enabled = bEditAppointments;
-			ctxCalGridEdit.Enabled = bEditAppointments;
-			ctxCalGridCheckIn.Enabled = bEditAppointments;
-			ctxCalGridNoShow.Enabled = NoShowEnabled();
-            ctxCalGridNoShowUndo.Enabled = !NoShowEnabled() && calendarGrid1.SelectedAppointment > 0;
-			ctxCalGridWalkin.Enabled = ctxCalGridAdd.Enabled;
-            ctxCalGridReprintApptSlip.Enabled = bEditAppointments;
-            ctxCalGridUndoCheckin.Enabled = UndoCheckinEnabled();
+            ctxCalGridAdd.Enabled = _addApptsEnabled && !_isRadAppt;
+			ctxCalGridWalkin.Enabled = _addApptsEnabled && !_isRadAppt;
+            ctxCalGridEdit.Enabled = _editApptsEnabled && !_isRadAppt;;
+            ctxCalGridDelete.Enabled = _editApptsEnabled && !_isRadAppt;
+
+            ctxCalGridCheckIn.Enabled = _editApptsEnabled && !_isRadAppt;
+            ctxCalGridUndoCheckin.Enabled = _undoCheckinEnabled && !_isRadAppt;
+            ctxCalGridNoShow.Enabled = _noShowEnabled && _editApptsEnabled;
+            ctxCalGridNoShowUndo.Enabled = !_noShowEnabled && _editApptsEnabled;
+            ctxCalGridReprintApptSlip.Enabled = _editApptsEnabled;
 
             //if the rad ones are visible, then these apply
-            ctxCalGridMkRadAppt.Enabled = !bEditAppointments;
-            ctxCalGridCancelRadAppt.Enabled = bEditAppointments;
+            ctxCalGridMkRadAppt.Enabled = _isRadAppt && _addApptsEnabled;
+            ctxCalGridCancelRadAppt.Enabled = _isRadAppt && _editApptsEnabled;
         }
 
 		private void ctxCalGridAdd_Click(object sender, System.EventArgs e)
@@ -1638,6 +1645,9 @@ namespace IndianHealthService.ClinicalScheduling
                 bModAppts = (bool)this.m_htChangeAppts[sResource];
                 if (bModAppts == false)
                     return false;
+
+                CGAvailability resultantAvail;
+                m_nSlots = m_Document.SlotsAvailable(dStart, dEnd, sResource, this.calendarGrid1.TimeScale, out resultantAvail);
 
                 bSlotsAvailable = (this.m_nSlots > 0);
                 return ((bSlotsAvailable) || (bModSchedule) || (bOverbook));
@@ -2208,14 +2218,16 @@ namespace IndianHealthService.ClinicalScheduling
             //Prior to making expensive db calls, tell the grid nothing is selected anymore so nobody would try to pick it up
             this.calendarGrid1.SelectedAppointment = 0;
 
-            //Cancel Radiology Exam
-            CGDocumentManager.Current.DAL.CancelRadiologyExam(a.PatientID, a.RadiologyExamIEN.Value);
-
             //Now, Cancel the appointment
             this.Document.DeleteAppointment(a.AppointmentKey);
 
+            //Cancel Radiology Exam
+            CGDocumentManager.Current.DAL.CancelRadiologyExam(a.PatientID, a.RadiologyExamIEN.Value);
+
             //redraw the grid to display new set of appointments after this appt was removed.
             this.UpdateArrays();
+
+            RaiseRPMSEvent("BSDX SCHEDULE", a.Resource);
         }
 
 		/// <summary>
@@ -2629,77 +2641,107 @@ namespace IndianHealthService.ClinicalScheduling
         /// </summary>
         private void AppointmentAddNewRadiology()
         {
-            DateTime dStart, dEnd;  //return vales for below
-            string sResource;       //ditto
-            int nAccessTypeID = 0;  //ditto
-
-            this.calendarGrid1.GetSelectedTime(out dStart, out dEnd, out sResource);
-            this.calendarGrid1.GetSelectedType(out nAccessTypeID);
-
-            Debug.Assert(sResource != null);
-            Debug.Assert(dStart > DateTime.MinValue);
-
-            //Display a dialog to collect Patient Name
-            DPatientLookup dPat = new DPatientLookup();
-            dPat.DocManager = m_DocManager;
-
-            if (dPat.ShowDialog(this) == DialogResult.Cancel)
+            try
             {
+                DateTime dStart, dEnd;  //return vales for below
+                string sResource;       //ditto
+                int nAccessTypeID = 0;  //ditto
+
+                this.calendarGrid1.GetSelectedTime(out dStart, out dEnd, out sResource);
+                this.calendarGrid1.GetSelectedType(out nAccessTypeID);
+
+                Debug.Assert(sResource != null);
+                Debug.Assert(dStart > DateTime.MinValue);
+
+                //Get Slots
+                CGAvailability resultantAvail;
+                m_nSlots = m_Document.SlotsAvailable(dStart, dEnd, sResource, this.calendarGrid1.TimeScale, out resultantAvail);
+
+                if (m_nSlots < 1)
+                {
+                    DialogResult dr = MessageBox.Show(this, "There are no slots available at the selected time.  Do you want to overbook this appointment?", "Clinical Scheduling", MessageBoxButtons.YesNo);
+                    if (dr != DialogResult.Yes)
+                    {
+                        return;
+                    }
+                }
+
+                //Display a dialog to collect Patient Name
+                DPatientLookup dPat = new DPatientLookup();
+                dPat.DocManager = m_DocManager;
+
+                if (dPat.ShowDialog(this) == DialogResult.Cancel)
+                {
+                    return;
+                }
+
+                int DFN = Int32.Parse(dPat.PatientIEN);
+                // Hospital Location IEN
+                int hlIEN = (from resource in CGDocumentManager.Current.GlobalDataSet.Tables["Resources"].AsEnumerable()
+                             where resource.Field<string>("RESOURCE_NAME") == sResource
+                             select resource.Field<int>("HOSPITAL_LOCATION_ID")).FirstOrDefault();
+
+                //Get Radiology Exams from the DB
+                List<RadiologyExam> _radExams = CGDocumentManager.Current.DAL.GetRadiologyExamsForPatientinHL(DFN, hlIEN);
+
+                //If none found...
+                if (!_radExams.Any())
+                {
+                    MessageBox.Show("Patient does not have any radiology exams to register.");
+                    return;
+                }
+
+                //Display a form for the user to select radiology exams.
+                DRadExamsSelect _radform = new DRadExamsSelect(_radExams);
+
+                if (_radform.ShowDialog() == DialogResult.Cancel) return;
+
+                //Get some return values
+                int _examien = _radform.ExamIEN;
+                string _procedurename = _radform.ProcedureName;
+
+                //Now create and save the appointment
+                CGAppointment appt = new CGAppointment();
+                string _sNote = "Radiology Exam (" + _examien + "): " + _procedurename;
+                appt.CreateAppointment(dStart, dEnd, _sNote, 0, sResource);
+                appt.PatientID = Int32.Parse(dPat.PatientIEN);
+                appt.PatientName = dPat.PatientName;
+                appt.AccessTypeID = nAccessTypeID;
+                appt.RadiologyExamIEN = _examien;
+                appt.Patient = new Patient
+                {
+                    DFN = Convert.ToInt32(dPat.PatientIEN),
+                    ID = dPat.PatientPID,
+                    Name = dPat.PatientName,
+                    HRN = dPat.HealthRecordNumber,
+                    DOB = dPat.PatientDOB
+                };
+
+                this.Document.CreateAppointment(appt);
+
+                //Save Radiology Exam Schedule Info to Radiology Package
+                CGDocumentManager.Current.DAL.ScheduleRadiologyExam(DFN, _examien, dStart);
+
+                //Print Appointment Slip if requested
+                if (_radform.PrintAppointmentSlip) this.PrintAppointmentSlip(appt);
+
+                //Now redraw the grid to display the new appointments
+                this.UpdateArrays();
+
+                //Raise event to other clients
+                RaiseRPMSEvent("BSDX SCHEDULE", appt.Resource);
+            }
+            catch (Exception ex)
+            {
+                string msg;
+                if (BMXNetLib.Piece(ex.Message, "~", 1) == "-10") // -10 means that BSDXAPI reported an error.
+                    msg = BMXNetLib.Piece(ex.Message, "~", 4);
+                else
+                    msg = ex.Message;
+
+                MessageBox.Show("VISTA says: \r\n" + msg, "Unable to Make Appointment");
                 return;
             }
-
-            int DFN = Int32.Parse(dPat.PatientIEN);
-            // Hospital Location IEN
-            int hlIEN = (from resource in CGDocumentManager.Current.GlobalDataSet.Tables["Resources"].AsEnumerable()
-                         where resource.Field<string>("RESOURCE_NAME") == sResource
-                         select resource.Field<int>("HOSPITAL_LOCATION_ID")).FirstOrDefault();
-
-            //Get Radiology Exams from the DB
-            List<RadiologyExam> _radExams = CGDocumentManager.Current.DAL.GetRadiologyExamsForPatientinHL(DFN, hlIEN);
-
-            //If none found...
-            if (!_radExams.Any())
-            {
-                MessageBox.Show("Patient does not have any radiology exams to register.");
-                return;
-            }
-
-            //Display a form for the user to select radiology exams.
-            DRadExamsSelect _radform = new DRadExamsSelect(_radExams);
-
-            if (_radform.ShowDialog() == DialogResult.Cancel) return;
-
-            //Get some return values
-            int _examien = _radform.ExamIEN;
-            string _procedurename = _radform.ProcedureName;
-
-            //Save Radiology Exam Schedule Info to Radiology Package
-            CGDocumentManager.Current.DAL.ScheduleRadiologyExam(DFN, _examien, dStart);
-
-            //Now create and save the appointment
-            CGAppointment appt = new CGAppointment();
-            string _sNote = "Radiology Exam (" + _examien + "): " + _procedurename;
-            appt.CreateAppointment(dStart, dEnd, _sNote, 0, sResource);
-            appt.PatientID = Int32.Parse(dPat.PatientIEN);
-            appt.PatientName = dPat.PatientName;
-            appt.AccessTypeID = nAccessTypeID;
-            appt.RadiologyExamIEN = _examien;
-            appt.Patient = new Patient
-            {
-                DFN = Convert.ToInt32(dPat.PatientIEN),
-                ID = dPat.PatientPID,
-                Name = dPat.PatientName,
-                HRN = dPat.HealthRecordNumber,
-                DOB = dPat.PatientDOB
-            };
-
-            this.Document.CreateAppointment(appt);
-
-            //Print Appointment Slip if requested
-            if (_radform.PrintAppointmentSlip) this.PrintAppointmentSlip(appt);
-
-            //Now redraw the grid to display the new appointments
-            this.UpdateArrays();
         }
 
 
