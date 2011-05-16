@@ -1,5 +1,5 @@
-BSDX01	; IHS/OIT/HMW - WINDOWS SCHEDULING RPCS ; 4/28/11 10:14am
-	;;1.6T1;BSDX;;May 11, 2011
+BSDX01	; IHS/OIT/HMW - WINDOWS SCHEDULING RPCS ; 5/16/11 2:46pm
+	;;1.6T2;BSDX;;May 16, 2011
 	; Licensed under LGPL
 	;
 SUINFOD(BSDXY,BSDXDUZ)	;EP Debugging entry point
@@ -376,14 +376,36 @@ SCHRAEX(BSDXY,RADFN,RAOIFN,RAOSCH)	; Schedule a Radiology Exam; RPC EP; UJO/SMH 
 	QUIT
 	;
 HOLDRAEX(BSDXY,RADFN,RAOIFN)	; Hold a Radiology Exam; RPC EP; UJO/SMH new in v 1.6
-	; RPC: BSDX HOLD RAD EXAM; Return: Single Vale
+	; RPC: BSDX HOLD RAD EXAM; Return: Single Value
 	;
 	; Input:
 	; - RADFN -> DFN
 	; - RAOIFN -> Radiology Order IEN in file 75.1
-	; Output: Always "1"
+	; Output: 1 OR 0 for success or failure.
+	; Can we hold?
+	N CANHOLD
+	D CANHOLD(.CANHOLD,RAOIFN)
+	I 'CANHOLD S BSDXY=0 QUIT
+	;
 	N RAOSTS S RAOSTS=3  ; Status of Hold
-	N RAOREA S RAOREA=20 ; Reason: Exam Cancelled
+	N RAOREA ; Reason, stored in file 75.2
+	I $D(^RA(75.2,100)) S RAOREA=100  ; Custom site Reason
+	E  I $D(^RA(75.2,20))  S RAOREA=20 ; Reason: Exam Cancelled
+	E   ; Else is empty. I won't set RAOREA at all.
 	D ^RAORDU
 	S BSDXY=1 ; Success
+	QUIT
+	;
+CANHOLD(BSDXY,RAOIFN)	; Can we hold this Exam? RPC EP; UJO/SMH new in 1.6
+	; RPC: BSDX CAN HOLD RAD EXAM; Return: Single Value
+	;
+	; Input:
+	; - RAOIFN -> Radiology Order IEN in file 75.1
+	; Output: 0 or 1 for false or true
+	;
+	N STATUS S STATUS=$$GET1^DIQ(75.1,RAOIFN,"REQUEST STATUS","I")
+	; 1 = discontinued; 2 = Complete; 6 = Active
+	; if any one of these, cannot hold exam; otherwise, we can
+	I 126[STATUS S BSDXY=0 QUIT
+	ELSE  S BSDXY=1 QUIT
 	QUIT

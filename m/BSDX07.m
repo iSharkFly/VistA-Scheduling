@@ -1,5 +1,5 @@
 BSDX07	; VW/UJO/SMH - WINDOWS SCHEDULING RPCS  ; 4/28/11 10:17am
-	   ;;1.6T1;BSDX;;May 11, 2011
+	   ;;1.6T2;BSDX;;May 16, 2011
 	   ; Licensed under LGPL
 	   ;
 	   ; Change Log:
