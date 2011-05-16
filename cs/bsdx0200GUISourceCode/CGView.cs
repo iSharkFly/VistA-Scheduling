@@ -2215,7 +2215,16 @@ namespace IndianHealthService.ClinicalScheduling
 
             Debug.Assert(a.RadiologyExamIEN.HasValue);
 
-            //Prior to making expensive db calls, tell the grid nothing is selected anymore so nobody would try to pick it up
+            //Can we cancel the appointment?
+            bool _canCancel = CGDocumentManager.Current.DAL.CanCancelRadExam(a.RadiologyExamIEN.Value);
+
+            if (!_canCancel)
+            {
+                MessageBox.Show(this,"You cannot cancel this request. It has either been discontinued, or registered for an examination");
+                return;
+            }
+
+            //Prior to making expensive db calls, tell the grid nothing is selected anymore so nobody would try to pick it up later
             this.calendarGrid1.SelectedAppointment = 0;
 
             //Now, Cancel the appointment
@@ -2227,6 +2236,7 @@ namespace IndianHealthService.ClinicalScheduling
             //redraw the grid to display new set of appointments after this appt was removed.
             this.UpdateArrays();
 
+            //Tell other instances that this schedule has been updated
             RaiseRPMSEvent("BSDX SCHEDULE", a.Resource);
         }
 
@@ -3469,6 +3479,13 @@ namespace IndianHealthService.ClinicalScheduling
 				{
 					return;
 				}
+
+                if (a.RadiologyExamIEN.HasValue)
+                {
+                    MessageBox.Show("Cannot move a radiology appointment to the clipboard");
+                    return;
+                }
+
 				m_ClipList.AddAppointment(a);
 				lstClip.Items.Add(a);
 			}

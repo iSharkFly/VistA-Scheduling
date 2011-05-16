@@ -232,6 +232,17 @@ namespace IndianHealthService.ClinicalScheduling
             string result = _thisConnection.bmxNetLib.TransmitRPC("BSDX HOLD RAD EXAM", string.Format("{0}^{1}", DFN, examIEN));
             return result == "1" ? true : false;
         }
+        
+        /// <summary>
+        /// Can we Cancel an Exam appointment? Exams that are discontinued, Active or Complete cannot be discontinued
+        /// </summary>
+        /// <param name="examIEN">IEN of exam in 75.1 (RAD/NUC MED ORDERS) file</param>
+        /// <returns>true or false</returns>
+        public bool CanCancelRadExam(int examIEN)
+        {
+            string result = _thisConnection.bmxNetLib.TransmitRPC("BSDX CAN HOLD RAD EXAM", examIEN.ToString());
+            return result == "1" ? true : false;
+        }
 
         /// <summary>
         /// Save User Preference in DB For Printing Routing Slip
