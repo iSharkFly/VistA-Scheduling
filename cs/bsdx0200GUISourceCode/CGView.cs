@@ -2220,7 +2220,7 @@ namespace IndianHealthService.ClinicalScheduling
 
             if (!_canCancel)
             {
-                MessageBox.Show(this, "This appointment cannot be cancelled.\nReason:\nThe exam associated with this appointment is active.");
+                MessageBox.Show(this, "This appointment cannot be cancelled.\nReason:\nThe exam associated with this appointment is active/complete/discontinued.");
                 return;
             }
 
