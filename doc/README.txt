@@ -11,18 +11,18 @@ SD 5.3
 SD 5.3 patch 11310 (to fix a problem with the code from the VA that IHS has fixed)
 BMX 2.3
 
-For a Virgin WorldVistA 6-08/3-09 release install the following in this order:
-1. XB 4                 (see https://trac.opensourcevista.net/svn/IHS-VA_UTILITIES-XB/tag/rel_20091207) 
-2. BMX 2.3              (see https://trac.opensourcevista.net/svn/BMXNET_RPMS_dotNET_UTILITIES-BMX/trunk/k)
-3. XWB 1.1 patch 113102 (see https://trac.opensourcevista.net/svn/BMXNET_RPMS_dotNET_UTILITIES-BMX/trunk/k)
-4. BSDX 1.5             (see https://trac.opensourcevista.net/svn/Scheduling/trunk/kids)
-5. SD 5.3 patch 11310   (see https://trac.opensourcevista.net/svn/Scheduling/trunk/kids)
+For a Virgin WorldVistA 6-08/3-09 release install the following kids builds in this order:
+1. XB 4                 (in https://trac.opensourcevista.net/svn/IHS-VA_UTILITIES-XB/tag/rel_20091207/xb0400.k.WV.zip) 
+2. BMX 2.3              (in https://trac.opensourcevista.net/svn/BMXNET_RPMS_dotNET_UTILITIES-BMX/tag/2.3/bmx_0230.zip)
+3. XWB 1.1 patch 113102 (in https://trac.opensourcevista.net/svn/BMXNET_RPMS_dotNET_UTILITIES-BMX/tag/2.3/bmx_0230.zip)
+4. BSDX 1.5             (in https://trac.opensourcevista.net/svn/Scheduling/tag/1.5/bsdx_0150.zip)
+5. SD 5.3 patch 11310   (in https://trac.opensourcevista.net/svn/Scheduling/tag/1.5/bsdx_0150.zip)
 
-Client (download from https://trac.opensourcevista.net/svn/Scheduling/trunk/cs/bsdx0200GUISourceCode/bin/Release):
+Client (in https://trac.opensourcevista.net/svn/Scheduling/tag/1.5/bsdx_0150.zip):
 ClinicalScheduling.exe
 BMXNet23.dll
 
-To enable Arabic Support, download the Resources dll file as well in the 'ar' folder the way it is on the svn.
+To enable Arabic Support, use the ar folder's contents as is in the zip file.
 
 Client does not need installation. Both files have to be located in the same folder.
 
@@ -81,7 +81,7 @@ Known Bugs:
 - If user has no access to any schedules but has access to application (has BSDXZMENU key), opening the appointment menu causes a crash.
 - Clipboard takes the same patient multiple times over.
 - Patient search is slow with common names due to slow performance of FIND^DIC
-
+- If DB has a deleted PIMS appointment but the BSDX appointment is still there, the appointment will not get deleted on a cancel.
 
 Other Bugs:
 Put them on the trac server where you got this software.
