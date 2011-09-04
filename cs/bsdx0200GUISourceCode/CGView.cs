@@ -1938,7 +1938,10 @@ namespace IndianHealthService.ClinicalScheduling
 			v.m_htChangeAppts = new Hashtable(sSelectedTreeResourceArray.Count);
 			dt = this.DocManager.GlobalDataSet.Tables["ResourceUser"];
 			dv = new DataView(dt, "", "RESOURCENAME ASC", DataViewRowState.OriginalRows);
-			dv.RowFilter = "USERNAME = '" + this.DocManager.ConnectInfo.UserName + "'";
+
+            //dv.RowFilter = "USERNAME = '" + filte_name + "'";
+            dv.RowFilter = String.Format("USERNAME = '{0}'", this.DocManager.ConnectInfo.UserName.Replace("'", "''"));
+
 			for (int j=0; j < dv.Count; j++)
 			{
 				drv = dv[j];
