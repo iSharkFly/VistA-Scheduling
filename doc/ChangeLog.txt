@@ -146,3 +146,11 @@ v1.5 (Final released on May 03 2011)
 - Click-right click issue resolved.
 - Drag shows destination now when dragging over grid.
 - Drag scrolls grid up or down if needed.
+
+v 1.6 (released Sep 9 2011)
+- Added support for Scheduling and Cancelling appointments for Radiology Exams in VISTA. Works with the Radiology Package.
+- Can search for patient using DFN by using accent grave mark before the DFN of the patient in the pt search box.
+- Fixed a couple of bugs introduced in 1.5
+  -> ability to add appointment depends on new algo introduced in 1.5.
+  -> Fixed the bug preventing the saving of new access templates (new classes in 1.5 were not serializable)
+- If a provider's name contained a quote (like O'HARA), it caused the GUI to crash. Now fixed. 

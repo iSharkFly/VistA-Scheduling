@@ -1,4 +1,4 @@
-BSDX 1.5 for WorldVista
+BSDX 1.6 for WorldVista
 Licensed under LGPL. http://www.gnu.org/licenses/lgpl-2.1.html
 
 This is a Scheduling GUI package for WorldVistA.
@@ -15,10 +15,10 @@ For a Virgin WorldVistA 6-08/3-09 release install the following kids builds in t
 1. XB 4                 (in https://trac.opensourcevista.net/svn/IHS-VA_UTILITIES-XB/tag/rel_20091207/xb0400.k.WV.zip) 
 2. BMX 2.3              (in https://trac.opensourcevista.net/svn/BMXNET_RPMS_dotNET_UTILITIES-BMX/tag/2.3/bmx_0230.zip)
 3. XWB 1.1 patch 113102 (in https://trac.opensourcevista.net/svn/BMXNET_RPMS_dotNET_UTILITIES-BMX/tag/2.3/bmx_0230.zip)
-4. BSDX 1.5             (in https://trac.opensourcevista.net/svn/Scheduling/tag/1.5/bsdx_0150.zip)
-5. SD 5.3 patch 11310   (in https://trac.opensourcevista.net/svn/Scheduling/tag/1.5/bsdx_0150.zip)
+4. BSDX 1.6             (in https://trac.opensourcevista.net/svn/Scheduling/tag/1.6/bsdx_0160.zip)
+5. SD 5.3 patch 11310   (in https://trac.opensourcevista.net/svn/Scheduling/tag/1.6/bsdx_0160.zip)
 
-Client (in https://trac.opensourcevista.net/svn/Scheduling/tag/1.5/bsdx_0150.zip):
+Client (in https://trac.opensourcevista.net/svn/Scheduling/tag/1.6/bsdx_0160.zip):
 ClinicalScheduling.exe
 BMXNet23.dll
 
@@ -26,7 +26,7 @@ To enable Arabic Support, use the ar folder's contents as is in the zip file.
 
 Client does not need installation. Both files have to be located in the same folder.
 
-For users who used a previous version, you only need to download and install BSDX 1.5 kids and ClinicalScheduling.exe plus the BMXNet23.dll library. If BMX Server version is outdated, you need to install the new version.
+For users who used a previous version, you only need to download and install BSDX 1.6 kids and ClinicalScheduling.exe plus the BMXNet23.dll library. If BMX Server version is outdated, you need to install the new version.
 
 Post-installation tasks:
 After installation, complete the following tasks to configure Windows Scheduling:
