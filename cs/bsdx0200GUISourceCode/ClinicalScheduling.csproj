@@ -478,7 +478,7 @@
     <Folder Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\bmx\BMXNet\BMXNet.csproj">
+    <ProjectReference Include="..\BMX2\BMXNet\BMXNet.csproj">
       <Project>{DE8E4CC9-4F3A-4E32-8DFE-EE5692E8FC45}</Project>
       <Name>BMXNet</Name>
     </ProjectReference>
