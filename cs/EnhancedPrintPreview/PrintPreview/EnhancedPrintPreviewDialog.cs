@@ -387,8 +387,16 @@ namespace VR.PrintPreview {
             this.printPreviewControl1.InvalidatePreview();
         }
 
-
+        private void tsBtnLandScapePortrait_ButtonClick(object sender, EventArgs e)
+        {
+            if (this.Document.DefaultPageSettings.Landscape == false) // portrait - d to Landscape
+            {
+                landcapeToolStripMenuItem_Click(sender, e);
+            }
+            else // landscape - d to portrait
+            {
+                portraitToolStripMenuItem_Click(sender, e);
+            }
+        }
     }
-
-
 }

@@ -226,6 +226,7 @@ namespace VR.PrintPreview {
             this.portraitToolStripMenuItem});
             resources.ApplyResources(this.tsBtnLandScapePortrait, "tsBtnLandScapePortrait");
             this.tsBtnLandScapePortrait.Name = "tsBtnLandScapePortrait";
+            this.tsBtnLandScapePortrait.ButtonClick += new System.EventHandler(this.tsBtnLandScapePortrait_ButtonClick);
             // 
             // landcapeToolStripMenuItem
             // 
