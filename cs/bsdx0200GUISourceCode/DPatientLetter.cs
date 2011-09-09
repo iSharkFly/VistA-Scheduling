@@ -9,7 +9,7 @@ namespace IndianHealthService.ClinicalScheduling
 	/// <summary>
 	/// Handles Printing of letters (Reminder, Rebook, Cancellation) and a Report. Contains a Print Preview dialog.
 	/// </summary>
-	public class DPatientLetter : System.Windows.Forms.PrintPreviewDialog
+	public class DPatientLetter : VR.PrintPreview.EnhancedPrintPreviewDialog
     {
 		/// <summary>
 		/// Required designer variable.
@@ -110,7 +110,7 @@ namespace IndianHealthService.ClinicalScheduling
                 _dsApptDisplay.PatientAppts.Merge(PatientAppts);
                 _dsApptDisplay.BSDXResource.Merge(Resources);
 
-                this.PrintPreviewControl.Document = printAppts;
+                this.Document = printAppts;
             }
 			catch (Exception ex)
 			{
@@ -151,7 +151,7 @@ namespace IndianHealthService.ClinicalScheduling
 				throw ex;
 			}
 
-            PrintPreviewControl.Document = printRebookLetters;
+            this.Document = printRebookLetters;
 
 		}
 
@@ -184,7 +184,7 @@ namespace IndianHealthService.ClinicalScheduling
                 throw ex;
             }
 
-            PrintPreviewControl.Document = printRebookLetters;
+            this.Document = printRebookLetters;
         }
 
         /// <summary>
@@ -213,7 +213,7 @@ namespace IndianHealthService.ClinicalScheduling
                 _dsRebookAppts.PatientAppts.Merge(PatientAppts);
                 _dsRebookAppts.BSDXResource.Merge(Resources);
                 
-                PrintPreviewControl.Document = printCancelLetters;
+                this.Document = printCancelLetters;
 
 			}
 			catch (Exception ex)
@@ -255,7 +255,7 @@ namespace IndianHealthService.ClinicalScheduling
                 _dsApptDisplay.PatientAppts.Merge(PatientAppts);
                 _dsApptDisplay.BSDXResource.Merge(Resources);
 
-                this.PrintPreviewControl.Document = printReminderLetters;
+                this.Document = printReminderLetters;
 				
 			}
 			catch (Exception ex)
@@ -296,7 +296,7 @@ namespace IndianHealthService.ClinicalScheduling
 
 
         private void printAppts_PrintPage(object sender, System.Drawing.Printing.PrintPageEventArgs e)
-        {
+        {            
             //Each time we enter here, we start off with a new page number - we start off with zero
             _pageNumber++; //becomes one first time through
             

@@ -4,6 +4,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClinicalScheduling", "Clini
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BMXNet", "..\BMX2\BMXNet\BMXNet.csproj", "{DE8E4CC9-4F3A-4E32-8DFE-EE5692E8FC45}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PrintPreview", "..\EnhancedPrintPreview2\PrintPreview\PrintPreview.csproj", "{9E8D433B-EFD1-4253-BD2C-C4E0DB0BFD0E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -18,6 +20,10 @@ Global
 		{DE8E4CC9-4F3A-4E32-8DFE-EE5692E8FC45}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DE8E4CC9-4F3A-4E32-8DFE-EE5692E8FC45}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DE8E4CC9-4F3A-4E32-8DFE-EE5692E8FC45}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9E8D433B-EFD1-4253-BD2C-C4E0DB0BFD0E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9E8D433B-EFD1-4253-BD2C-C4E0DB0BFD0E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9E8D433B-EFD1-4253-BD2C-C4E0DB0BFD0E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9E8D433B-EFD1-4253-BD2C-C4E0DB0BFD0E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

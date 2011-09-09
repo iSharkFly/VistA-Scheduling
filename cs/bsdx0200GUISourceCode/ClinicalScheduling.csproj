@@ -482,6 +482,10 @@
       <Project>{DE8E4CC9-4F3A-4E32-8DFE-EE5692E8FC45}</Project>
       <Name>BMXNet</Name>
     </ProjectReference>
+    <ProjectReference Include="..\EnhancedPrintPreview2\PrintPreview\PrintPreview.csproj">
+      <Project>{9E8D433B-EFD1-4253-BD2C-C4E0DB0BFD0E}</Project>
+      <Name>PrintPreview</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
