@@ -1,0 +1,111 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Font Name="Tahoma" Size="8.25" />
+  <Class Name="VR.PrintPreview.EnhancedPrintPreviewDialog">
+    <Position X="0.5" Y="0.5" Width="2.25" />
+    <TypeIdentifier>
+      <FileName>EnhancedPrintPreviewDialog.cs</FileName>
+      <HashCode>wAgCIA0QISCAAYBAMUDAAIATiEMHoACHYRAAJICBAAg=</HashCode>
+    </TypeIdentifier>
+    <ShowAsCollectionAssociation>
+      <Property Name="AdditionalTextList" />
+    </ShowAsCollectionAssociation>
+    <Members>
+      <Field Name="components" Hidden="true" />
+      <Method Name="Dispose" Hidden="true" />
+      <Method Name="EnhancedPrintPreviewDialog" Hidden="true" />
+      <Method Name="InitializeComponent" Hidden="true" />
+      <Field Name="mAdditionalTextList" Hidden="true" />
+      <Field Name="mDocument" Hidden="true" />
+      <Method Name="mDocument_BeginPrint" Hidden="true" />
+      <Method Name="mDocument_EndPrint" Hidden="true" />
+      <Method Name="mDocument_PrintPage" Hidden="true" />
+      <Field Name="mPageSetupDialog" Hidden="true" />
+      <Field Name="mPrintDialog" Hidden="true" />
+      <Field Name="mShowPageSettingsButton" Hidden="true" />
+      <Field Name="mShowPrinterSettingsBeforePrint" Hidden="true" />
+      <Field Name="mShowPrinterSettingsButton" Hidden="true" />
+      <Field Name="mTotalPages" Hidden="true" />
+      <Field Name="mVisibilePages" Hidden="true" />
+      <Method Name="Navigate_Click" Hidden="true" />
+      <Method Name="NumOfPages_Click" Hidden="true" />
+      <Field Name="pagesToolStripMenuItem" Hidden="true" />
+      <Field Name="pagesToolStripMenuItem1" Hidden="true" />
+      <Field Name="pagesToolStripMenuItem2" Hidden="true" />
+      <Field Name="pagesToolStripMenuItem3" Hidden="true" />
+      <Field Name="pageToolStripMenuItem" Hidden="true" />
+      <Field Name="printPreviewControl1" Hidden="true" />
+      <Method Name="printPreviewControl1_StartPageChanged" Hidden="true" />
+      <Method Name="RadPrintPreview_FormClosing" Hidden="true" />
+      <Method Name="SwitchPrintDocumentHandlers" Hidden="true" />
+      <Field Name="toolStrip1" Hidden="true" />
+      <Field Name="toolStripSeparator" Hidden="true" />
+      <Field Name="toolStripSeparator1" Hidden="true" />
+      <Field Name="toolStripSeparator2" Hidden="true" />
+      <Field Name="tsBtnNext" Hidden="true" />
+      <Field Name="tsBtnPageSettings" Hidden="true" />
+      <Method Name="tsBtnPageSettings_Click" Hidden="true" />
+      <Field Name="tsBtnPrev" Hidden="true" />
+      <Field Name="tsBtnPrint" Hidden="true" />
+      <Method Name="tsBtnPrint_Click" Hidden="true" />
+      <Field Name="tsBtnPrinterSettings" Hidden="true" />
+      <Method Name="tsBtnPrinterSettings_Click" Hidden="true" />
+      <Field Name="tsBtnZoom" Hidden="true" />
+      <Method Name="tsBtnZoom_Click" Hidden="true" />
+      <Field Name="tsComboZoom" Hidden="true" />
+      <Method Name="tsComboZoom_KeyPress" Hidden="true" />
+      <Method Name="tsComboZoom_Leave" Hidden="true" />
+      <Field Name="tsDDownPages" Hidden="true" />
+      <Field Name="tsLblTotalPages" Hidden="true" />
+      <Field Name="tsTxtCurrentPage" Hidden="true" />
+      <Method Name="tsTxtCurrentPage_Leave" Hidden="true" />
+    </Members>
+    <AssociationLine Name="AdditionalTextList" Type="VR.PrintPreview.AdditionalText" ManuallyRouted="true" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="1.5" Y="2.752" />
+        <Point X="1.5" Y="3.637" />
+        <Point X="3.975" Y="3.637" />
+        <Point X="3.975" Y="2.685" />
+      </Path>
+      <MemberNameLabel ManuallyPlaced="true">
+        <Position X="0.737" Y="0.662" />
+      </MemberNameLabel>
+    </AssociationLine>
+  </Class>
+  <Class Name="VR.PrintPreview.AdditionalText">
+    <Position X="3" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>AdditionalText.cs</FileName>
+      <HashCode>AAIAAAAAAgAAAALgAAAAIAAAAAAAAADIAAAAiAACAAA=</HashCode>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Position" />
+    </ShowAsAssociation>
+    <Members>
+      <Field Name="brush" Hidden="true" />
+      <Field Name="font" Hidden="true" />
+      <Field Name="offsetX" Hidden="true" />
+      <Field Name="offsetY" Hidden="true" />
+      <Field Name="position" Hidden="true" />
+      <Field Name="text" Hidden="true" />
+    </Members>
+    <AssociationLine Name="Position" Type="VR.PrintPreview.TextPosition" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="4.167" Y="2.685" />
+        <Point X="4.167" Y="3.621" />
+        <Point X="5.375" Y="3.621" />
+        <Point X="5.375" Y="3.246" />
+      </Path>
+      <MemberNameLabel ManuallyPlaced="true" ManuallySized="true">
+        <Position X="0.081" Y="0.089" Height="0.16" Width="0.798" />
+      </MemberNameLabel>
+    </AssociationLine>
+  </Class>
+  <Enum Name="VR.PrintPreview.TextPosition">
+    <Position X="4.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>AdditionalText.cs</FileName>
+      <HashCode>AAECABACAAAAAAABCAQAAAAAACBAAAAAAAAAgAEABAg=</HashCode>
+    </TypeIdentifier>
+  </Enum>
+</ClassDiagram>

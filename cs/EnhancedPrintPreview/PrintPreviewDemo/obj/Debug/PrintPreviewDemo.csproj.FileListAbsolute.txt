@@ -1,0 +1,12 @@
+C:\Documents and Settings\Kevin\My Documents\Visual Studio 2010\Projects\EnhancedPrintPreview\PrintPreviewDemo\bin\Debug\PrintPreviewDemo.exe
+C:\Documents and Settings\Kevin\My Documents\Visual Studio 2010\Projects\EnhancedPrintPreview\PrintPreviewDemo\bin\Debug\PrintPreviewDemo.pdb
+C:\Documents and Settings\Kevin\My Documents\Visual Studio 2010\Projects\EnhancedPrintPreview\PrintPreviewDemo\bin\Debug\PrintPreview.dll
+C:\Documents and Settings\Kevin\My Documents\Visual Studio 2010\Projects\EnhancedPrintPreview\PrintPreviewDemo\bin\Debug\PrintPreview.pdb
+C:\Documents and Settings\Kevin\My Documents\Visual Studio 2010\Projects\EnhancedPrintPreview\PrintPreviewDemo\bin\Debug\it-IT\PrintPreview.resources.dll
+C:\Documents and Settings\Kevin\My Documents\Visual Studio 2010\Projects\EnhancedPrintPreview\PrintPreviewDemo\obj\Debug\ResolveAssemblyReference.cache
+C:\Documents and Settings\Kevin\My Documents\Visual Studio 2010\Projects\EnhancedPrintPreview\PrintPreviewDemo\obj\Debug\PrintPreviewDemo.Form1.resources
+C:\Documents and Settings\Kevin\My Documents\Visual Studio 2010\Projects\EnhancedPrintPreview\PrintPreviewDemo\obj\Debug\PrintPreviewDemo.Properties.Resources.resources
+C:\Documents and Settings\Kevin\My Documents\Visual Studio 2010\Projects\EnhancedPrintPreview\PrintPreviewDemo\obj\Debug\GenerateResource.read.1.tlog
+C:\Documents and Settings\Kevin\My Documents\Visual Studio 2010\Projects\EnhancedPrintPreview\PrintPreviewDemo\obj\Debug\GenerateResource.write.1.tlog
+C:\Documents and Settings\Kevin\My Documents\Visual Studio 2010\Projects\EnhancedPrintPreview\PrintPreviewDemo\obj\Debug\PrintPreviewDemo.exe
+C:\Documents and Settings\Kevin\My Documents\Visual Studio 2010\Projects\EnhancedPrintPreview\PrintPreviewDemo\obj\Debug\PrintPreviewDemo.pdb
