@@ -82,6 +82,9 @@ Known Bugs:
 - Clipboard takes the same patient multiple times over.
 - Patient search is slow with common names due to slow performance of FIND^DIC
 - If DB has a deleted PIMS appointment but the BSDX appointment is still there, the appointment will not get deleted on a cancel.
+- Making an appointment from Legacy PIMS fails in v1.6 because of a missing parameter added in 1.6.
+--> Line ADDEVT+18^BSDX07 needs to say S BSDXAPPTID=$$BSDXADD(BSDXSTART,BSDXEND,BSDXPATID,BSDXRES,BSDXWKIN,"")
+--> instead of S BSDXAPPTID=$$BSDXADD(BSDXSTART,BSDXEND,BSDXPATID,BSDXRES,BSDXWKIN)
 
 Other Bugs:
 Put them on the trac server where you got this software.
