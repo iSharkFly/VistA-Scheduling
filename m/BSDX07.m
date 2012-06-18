@@ -1,84 +1,106 @@
-BSDX07	; VW/UJO/SMH - WINDOWS SCHEDULING RPCS  ; 4/28/11 10:17am
-	   ;;1.6T2;BSDX;;May 16, 2011
-	   ; Licensed under LGPL
-	   ;
-	   ; Change Log:
-	   ; UJO/SMH
-	   ; v1.3 July 13 2010 - Add support i18n - Dates input as FM dates, not US.
-	   ; v1.42 Oct 22 2010 - Transaction now restartable by providing arguments
-	   ;   thanks to Rick Marshall and Zach Gonzalez at Oroville.
-	   ; v1.42 Oct 30 2010 - Extensive refactoring.
-	   ; v1.5  Mar 15 2011 - End time does not have to have time anymore.
-	   ;      It could be midnight of the next day
-	   ; v1.6 Apr 11 2011 - Support for Scheduling Radiology Exams...
-	   ;
-	   ; Error Reference:
-	   ; -1: Patient Record is locked. This means something is wrong!!!!
-	   ; -2: Start Time is not a valid Fileman date
-	   ; -3: End Time is not a valid Fileman date
-	   ; v1.5:obsolete::-4: End Time does not have time inside of it.
-	   ; -5: BSDXPATID is not numeric
-	   ; -6: Patient Does not exist in ^DPT
-	   ; -7: Resource Name does not exist in B index of BSDX RESOURCE
-	   ; -8: Resouce doesn't exist in ^BSDXRES
-	   ; -9: Couldn't add appointment to BSDX APPOINTMENT
-	   ; -10: Couldn't add appointment to files 2 and/or 44
-	   ; -100: Mumps Error
+BSDX07	; VW/UJO/SMH - WINDOWS SCHEDULING RPCS  ; 6/18/12 2:27pm
+	;;1.7T1;BSDX;;Aug 31, 2011;Build 18
+	; Licensed under LGPL
+	;
+	; Change Log:
+	; UJO/SMH
+	; v1.3 July 13 2010 - Add support i18n - Dates input as FM dates, not US.
+	; v1.42 Oct 22 2010 - Transaction now restartable by providing arguments
+	;   thanks to Rick Marshall and Zach Gonzalez at Oroville.
+	; v1.42 Oct 30 2010 - Extensive refactoring.
+	; v1.5  Mar 15 2011 - End time does not have to have time anymore.
+	;      It could be midnight of the next day
+	; v1.6 Apr 11 2011 - Support for Scheduling Radiology Exams...
+	;
+	; Error Reference:
+	; -1: Patient Record is locked. This means something is wrong!!!!
+	; -2: Start Time is not a valid Fileman date
+	; -3: End Time is not a valid Fileman date
+	; v1.5:obsolete::-4: End Time does not have time inside of it.
+	; -5: BSDXPATID is not numeric
+	; -6: Patient Does not exist in ^DPT
+	; -7: Resource Name does not exist in B index of BSDX RESOURCE
+	; -8: Resouce doesn't exist in ^BSDXRES
+	; -9: Couldn't add appointment to BSDX APPOINTMENT
+	; -10: Couldn't add appointment to files 2 and/or 44
+	; -100: Mumps Error
 	
 APPADDD(BSDXY,BSDXSTART,BSDXEND,BSDXPATID,BSDXRES,BSDXLEN,BSDXNOTE,BSDXATID)	   ;EP
-	   ;Entry point for debugging
-	   D DEBUG^%Serenji("APPADD^BSDX07(.BSDXY,BSDXSTART,BSDXEND,BSDXPATID,BSDXRES,BSDXLEN,BSDXNOTE,BSDXATID)")
-	   Q
-	   ;
+	;Entry point for debugging
+	D DEBUG^%Serenji("APPADD^BSDX07(.BSDXY,BSDXSTART,BSDXEND,BSDXPATID,BSDXRES,BSDXLEN,BSDXNOTE,BSDXATID)")
+	Q
+	;
 UT	; Unit Tests
-	   N ZZZ
-	   ; Test for bad start date
-	   D APPADD(.ZZZ,2100123,3100123.3,2,"Dr Office",30,"Sam's Note",1)
-	   I +$P(^BSDXTMP($J,1),U,2)'=-2 W "Error in -2",!
-	   ; Test for bad end date
-	   D APPADD(.ZZZ,3100123,2100123.3,2,"Dr Office",30,"Sam's Note",1)
-	   I +$P(^BSDXTMP($J,1),U,2)'=-3 W "Error in -3",!
-	   ; Test for end date without time
-	   D APPADD(.ZZZ,3100123.1,3100123,2,"Dr Office",30,"Sam's Note",1)
-	   I +$P(^BSDXTMP($J,1),U,2)'=-4 W "Error in -4",!
-	   ; Test for mumps error
-	   S bsdxdie=1
-	   D APPADD(.ZZZ,3100123.09,3100123.093,2,"Dr Office",30,"Sam's Note",1)
-	   I +$P(^BSDXTMP($J,1),U,2)'=-100 W "Error in -100: M Error",!
-	   K bsdxdie
-	   ; Test for TRESTART
-	   s bsdxrestart=1
-	   D APPADD(.ZZZ,3100123.09,3100123.093,3,"Dr Office",30,"Sam's Note",1)
-	   I +$P(^BSDXTMP($J,1),U,2)'=0&(+$P(^BSDXTMP($J,1),U,2)'=-10) W "Error in TRESTART",!
-	   k bsdxrestart
-	   ; Test for non-numeric patient
-	   D APPADD(.ZZZ,3100123.09,3100123.093,"CAT,DOG","Dr Office",30,"Sam's Note",1)
-	   I +$P(^BSDXTMP($J,1),U,2)'=-5 W "Error in -5",!
-	   ; Test for a non-existent patient
-	   D APPADD(.ZZZ,3100123.09,3100123.093,8989898989,"Dr Office",30,"Sam's Note",1)
-	   I +$P(^BSDXTMP($J,1),U,2)'=-6 W "Error in -6",!
-	   ; Test for a non-existent resource name
-	   D APPADD(.ZZZ,3100123.09,3100123.093,3,"lkajsflkjsadf",30,"Sam's Note",1)
-	   I +$P(^BSDXTMP($J,1),U,2)'=-7 W "Error in -7",!
-	   ; Test for corrupted resource
-	   ; Can't test for -8 since it requires DB corruption
-	   ; Test for inability to add appointment to BSDX Appointment
-	   ; Also requires something wrong in the DB
-	   ; Test for inability to add appointment to 2,44
-	   ; Test by creating a duplicate appointment
-	   D APPADD(.ZZZ,3100123.09,3100123.093,3,"Dr Office",30,"Sam's Note",1)
-	   D APPADD(.ZZZ,3100123.09,3100123.093,3,"Dr Office",30,"Sam's Note",1)
-	   I +$P(^BSDXTMP($J,1),U,2)'=-10 W "Error in -10",!
-	   ; Test for normality:
-	   D APPADD(.ZZZ,3110123.09,3110123.093,3,"Dr Office",30,"Sam's Note",1)
-	   ; Does Appt exist?
-	   N APPID S APPID=+$P(^BSDXTMP($J,1),U)
-	   I 'APPID W "Error Making Appt-1" QUIT
-	   I +^BSDXAPPT(APPID,0)'=3110123.09 W "Error Making Appt-2"
-	   I '$D(^DPT(3,"S",3110123.09)) W "Error Making Appt-3"
-	   I '$D(^SC(2,"S",3110123.09)) W "Error Making Appt-4"
-	   QUIT
-	   ; 
+    ; Set-up - Create Clinics
+	N RESNAM S RESNAM="UTCLINIC"
+    N HLRESIENS ; holds output of UTCR^BSDX35 - HL IEN^Resource IEN
+    D
+    . N $ET S $ET="D ^%ZTER B"
+	. S HLRESIENS=$$UTCR^BSDX35(RESNAM)
+    . I %<0 S $EC=",U1," ; not supposed to happen
+    ;
+    N HLIEN,RESIEN 
+    S HLIEN=$P(HLRESIENS,U)
+    S RESIEN=$P(HLRESIENS,U,2)
+    ;
+    ; Get start and end times
+    N TIMES S TIMES=$$TIMES^BSDX35 ; appt time^end time
+    N APPTTIME S APPTTIME=$P(TIMES,U)
+    N ENDTIME S ENDTIME=$P(TIMES,U,2)
+    ;
+	N ZZZ
+	; Test for normality:
+	D APPADD(.ZZZ,APPTTIME,ENDTIME,3,RESNAM,30,"Sam's Note",1)
+	; Does Appt exist?
+	N APPID S APPID=+$P(^BSDXTMP($J,1),U)
+	I 'APPID W "Error Making Appt-1" QUIT
+	I +^BSDXAPPT(APPID,0)'=APPTTIME W "Error Making Appt-2"
+	I '$D(^DPT(3,"S",APPTTIME)) W "Error Making Appt-3"
+	I '$D(^SC(HLIEN,"S",APPTTIME)) W "Error Making Appt-4"
+    ;
+	; Test for bad start date
+	D APPADD(.ZZZ,2100123,3100123.3,2,RESNAM,30,"Sam's Note",1)
+	I +$P(^BSDXTMP($J,1),U,2)'=-2 W "Error in -2",!
+	; Test for bad end date
+	D APPADD(.ZZZ,3100123,2100123.3,2,RESNAM,30,"Sam's Note",1)
+	I +$P(^BSDXTMP($J,1),U,2)'=-3 W "Error in -3",!
+	; Test for end date without time - obsolete
+	; D APPADD(.ZZZ,3100123.1,3100123,2,RESNAM,30,"Sam's Note",1)
+	; I +$P(^BSDXTMP($J,1),U,2)'=-4 W "Error in -4",!
+	; Test for mumps error
+	S bsdxdie=1
+	D APPADD(.ZZZ,APPTTIME,ENDTIME,2,RESNAM,30,"Sam's Note",1)
+	I +$P(^BSDXTMP($J,1),U,2)'=-100 W "Error in -100: M Error",!
+	K bsdxdie
+	; Test for TRESTART
+	s bsdxrestart=1
+	D APPADD(.ZZZ,APPTTIME,ENDTIME,3,RESNAM,30,"Sam's Note",1)
+	I +$P(^BSDXTMP($J,1),U,2)'=0&(+$P(^BSDXTMP($J,1),U,2)'=-10) W "Error in TRESTART",!
+	k bsdxrestart
+	; Test for non-numeric patient
+	D APPADD(.ZZZ,APPTTIME,ENDTIME,"CAT,DOG",RESNAM,30,"Sam's Note",1)
+	I +$P(^BSDXTMP($J,1),U,2)'=-5 W "Error in -5",!
+	; Test for a non-existent patient
+	D APPADD(.ZZZ,APPTTIME,ENDTIME,8989898989,RESNAM,30,"Sam's Note",1)
+	I +$P(^BSDXTMP($J,1),U,2)'=-6 W "Error in -6",!
+	; Test for a non-existent resource name
+	D APPADD(.ZZZ,APPTTIME,ENDTIME,3,"lkajsflkjsadf",30,"Sam's Note",1)
+	I +$P(^BSDXTMP($J,1),U,2)'=-7 W "Error in -7",!
+	; Test for corrupted resource
+	; Can't test for -8 since it requires DB corruption
+	; Test for inability to add appointment to BSDX Appointment
+	; Also requires something wrong in the DB
+	; Test for inability to add appointment to 2,44
+	; Test by creating a duplicate appointment
+    ; Get start and end times
+    N TIMES S TIMES=$$TIMES^BSDX35 ; appt time^end time
+    N APPTTIME S APPTTIME=$P(TIMES,U)
+    N ENDTIME S ENDTIME=$P(TIMES,U,2)
+	D APPADD(.ZZZ,APPTTIME,ENDTIME,3,RESNAM,30,"Sam's Note",1)
+	D APPADD(.ZZZ,APPTTIME,ENDTIME,3,RESNAM,30,"Sam's Note",1)
+	I +$P(^BSDXTMP($J,1),U,2)'=-10 W "Error in -10",!
+	QUIT
+	; 
 APPADD(BSDXY,BSDXSTART,BSDXEND,BSDXPATID,BSDXRES,BSDXLEN,BSDXNOTE,BSDXATID,BSDXRADEXAM)	;EP
 	   ;
 	   ;Called by RPC: BSDX ADD NEW APPOINTMENT
