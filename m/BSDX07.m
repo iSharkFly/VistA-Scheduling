@@ -1,4 +1,4 @@
-BSDX07	; VW/UJO/SMH - WINDOWS SCHEDULING RPCS  ; 6/18/12 2:27pm
+BSDX07	; VW/UJO/SMH - WINDOWS SCHEDULING RPCS  ; 6/18/12 5:12pm
 	;;1.7T1;BSDX;;Aug 31, 2011;Build 18
 	; Licensed under LGPL
 	;
@@ -24,7 +24,7 @@ BSDX07	; VW/UJO/SMH - WINDOWS SCHEDULING RPCS  ; 6/18/12 2:27pm
 	; -9: Couldn't add appointment to BSDX APPOINTMENT
 	; -10: Couldn't add appointment to files 2 and/or 44
 	; -100: Mumps Error
-	
+	;
 APPADDD(BSDXY,BSDXSTART,BSDXEND,BSDXPATID,BSDXRES,BSDXLEN,BSDXNOTE,BSDXATID)	   ;EP
 	;Entry point for debugging
 	D DEBUG^%Serenji("APPADD^BSDX07(.BSDXY,BSDXSTART,BSDXEND,BSDXPATID,BSDXRES,BSDXLEN,BSDXNOTE,BSDXATID)")
@@ -37,9 +37,9 @@ UT	; Unit Tests
     D
     . N $ET S $ET="D ^%ZTER B"
 	. S HLRESIENS=$$UTCR^BSDX35(RESNAM)
-    . I %<0 S $EC=",U1," ; not supposed to happen
+    . I HLRESIENS<0 S $EC=",U1," ; not supposed to happen
     ;
-    N HLIEN,RESIEN 
+    N HLIEN,RESIEN
     S HLIEN=$P(HLRESIENS,U)
     S RESIEN=$P(HLRESIENS,U,2)
     ;
@@ -58,6 +58,14 @@ UT	; Unit Tests
 	I '$D(^DPT(3,"S",APPTTIME)) W "Error Making Appt-3"
 	I '$D(^SC(HLIEN,"S",APPTTIME)) W "Error Making Appt-4"
     ;
+    ; Do it again for a different patient
+	D APPADD(.ZZZ,APPTTIME,ENDTIME,2,RESNAM,30,"Sam's Note",1)
+	N APPID S APPID=+$P(^BSDXTMP($J,1),U) B
+	I 'APPID W "Error Making Appt-5" QUIT
+	I +^BSDXAPPT(APPID,0)'=APPTTIME W "Error Making Appt-6"
+	I '$D(^DPT(2,"S",APPTTIME)) W "Error Making Appt-7"
+	I '$D(^SC(HLIEN,"S",APPTTIME)) W "Error Making Appt-8"
+    ;
 	; Test for bad start date
 	D APPADD(.ZZZ,2100123,3100123.3,2,RESNAM,30,"Sam's Note",1)
 	I +$P(^BSDXTMP($J,1),U,2)'=-2 W "Error in -2",!
@@ -68,15 +76,15 @@ UT	; Unit Tests
 	; D APPADD(.ZZZ,3100123.1,3100123,2,RESNAM,30,"Sam's Note",1)
 	; I +$P(^BSDXTMP($J,1),U,2)'=-4 W "Error in -4",!
 	; Test for mumps error
-	S bsdxdie=1
-	D APPADD(.ZZZ,APPTTIME,ENDTIME,2,RESNAM,30,"Sam's Note",1)
+	S BSDXDIE=1
+	D APPADD(.ZZZ,APPTTIME,ENDTIME,1,RESNAM,30,"Sam's Note",1)
 	I +$P(^BSDXTMP($J,1),U,2)'=-100 W "Error in -100: M Error",!
-	K bsdxdie
+	K BSDXDIE
 	; Test for TRESTART
-	s bsdxrestart=1
+	s BSDXRESTART=1
 	D APPADD(.ZZZ,APPTTIME,ENDTIME,3,RESNAM,30,"Sam's Note",1)
 	I +$P(^BSDXTMP($J,1),U,2)'=0&(+$P(^BSDXTMP($J,1),U,2)'=-10) W "Error in TRESTART",!
-	k bsdxrestart
+	k BSDXRESTART
 	; Test for non-numeric patient
 	D APPADD(.ZZZ,APPTTIME,ENDTIME,"CAT,DOG",RESNAM,30,"Sam's Note",1)
 	I +$P(^BSDXTMP($J,1),U,2)'=-5 W "Error in -5",!
@@ -157,10 +165,10 @@ APPADD(BSDXY,BSDXSTART,BSDXEND,BSDXPATID,BSDXRES,BSDXLEN,BSDXNOTE,BSDXATID,BSDXR
 	   N BSDXERR S BSDXERR=0
 	   ;
 	   ;;;test for error inside transaction. See if %ZTER works
-	   I $G(bsdxdie) S X=1/0
+	   I $G(BSDXDIE) S X=1/0
 	   ;;;test
 	   ;;;test for TRESTART
-	   I $G(bsdxrestart) K bsdxrestart TRESTART
+	   I $G(BSDXRESTART) K BSDXRESTART TRESTART
 	   ;;;test
 	   ;
 	   ; -- Start and End Date Processing --
@@ -255,7 +263,7 @@ BSDXADD(BSDXSTART,BSDXEND,BSDXPATID,BSDXRESD,BSDXATID,BSDXRADEXAM)	 ;ADD BSDX AP
 	   S BSDXFDA(9002018.4,"+1,",.09)=$$NOW^XLFDT
 	   S:BSDXATID="WALKIN" BSDXFDA(9002018.4,"+1,",.13)="y"
 	   S:BSDXATID?.N BSDXFDA(9002018.4,"+1,",.06)=BSDXATID
-	   S BSDXFDA(9002018.4,"+1,",.14)=BSDXRADEXAM
+	   S BSDXFDA(9002018.4,"+1,",.14)=$G(BSDXRADEXAM)
 	   N BSDXIEN,BSDXMSG
 	   D UPDATE^DIE("","BSDXFDA","BSDXIEN","BSDXMSG")
 	   S BSDXAPPTID=+$G(BSDXIEN(1))

@@ -1,5 +1,5 @@
-BSDX26	 ; IHS/OIT/HMW - WINDOWS SCHEDULING RPCS ; 4/28/11 10:24am
-	   ;;1.6T2;BSDX;;May 16, 2011
+BSDX26	 ; IHS/OIT/HMW - WINDOWS SCHEDULING RPCS ; 6/18/12 5:33pm
+	   ;;1.7T1;BSDX;;Aug 31, 2011;Build 18
 	   ; Licensed under LGPL
 	   ; Change History:
 	   ; 3101023 - UJO/SMH - Addition of restartable transaction; relocation of tx.
@@ -103,7 +103,7 @@ EDITAPT(BSDXY,BSDXAPTID,BSDXNOTE)	  ;EP Edit appointment (only note text can be 
 	   N DATE S DATE=+^BSDXAPPT(BSDXAPTID,0) ; Date of APPT
 	   N BSDXRES S BSDXRES=0 ; Result
 	   ; Update Note only if we have a linked hospital location.
-	   I HLIEN S BSDXRES=$$UPDATENOTE^BSDXAPI(PTIEN,HLIEN,DATE,BSDXNOTE(.5))
+	   I HLIEN S BSDXRES=$$UPDATENT^BSDXAPI(PTIEN,HLIEN,DATE,BSDXNOTE(.5))
 	   ; If we get an error (denoted by -1 in BSDXRES), return error to client
 	   I BSDXRES<0 D ERR(BSDXI,"-4~BSDX26: BSDXAPI reports an error: "_BSDXRES) QUIT
 	   ;Return Recordset
