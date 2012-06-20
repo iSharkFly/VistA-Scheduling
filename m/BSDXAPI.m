@@ -1,5 +1,5 @@
-BSDXAPI	; IHS/ANMC/LJF & VW/SMH - SCHEDULING APIs ; 6/18/12 5:31pm
-	;;1.6;BSDX;;Aug 31, 2011;Build 18
+BSDXAPI	; IHS/ANMC/LJF & VW/SMH - SCHEDULING APIs ; 6/19/12 5:42pm
+	;;1.7T1;BSDX;;Aug 31, 2011;Build 18
 	; Licensed under LGPL  
 	;
 	;Orignal routine is BSDAPI by IHS/LJF, HMW, and MAW
@@ -31,10 +31,12 @@ BSDXAPI	; IHS/ANMC/LJF & VW/SMH - SCHEDULING APIs ; 6/18/12 5:31pm
 	; 2011-01-26 (v.1.5)
 	; More user friendly message if patient already has appointment in $$MAKE:
 	;  Spits out pt name and user friendly date.
-    ; 2012-06-18 (v 1.7)
+	; 2012-06-18 (v 1.7)
 	; Removing transacions. Means that code SHOULD NOT fail. Took all checks
-    ;  out for making an appointment to MAKECK. We call this first to make sure
-    ; that the appointment is okay to make before committing to make it.
+	;  out for making an appointment to MAKECK. We call this first to make sure
+	; that the appointment is okay to make before committing to make it. We
+	; still have the provision to delete the data though if we fail when we 
+	; actually make the appointment
 	;
 MAKE1(DFN,CLIN,TYP,DATE,LEN,INFO)	; Simplified PEP w/ parameters for $$MAKE - making appointment
 	; Call like this for DFN 23435 having an appointment at Hospital Location 33
@@ -69,13 +71,13 @@ MAKE(BSDR)	;PEP; call to store appt made
 	;
 	N BSDXMKCK S BSDXMKCK=$$MAKECK(.BSDR) ; Check if we can make appointment
 	I BSDXMKCK Q BSDXMKCK ; If we can't, quit with the reason why.
-    ; Otherwise, we continue
 	;
-	NEW DIC,DA,Y,X,DD,DO,DLAYGO
+	;Otherwise, we continue
+	;
+	N BSDXFDA,BSDXIENS,BSDXMSG ; FILE/UPDATE^DIE variables
 	;
 	I $D(^DPT(BSDR("PAT"),"S",BSDR("ADT"),0)),$P(^(0),U,2)["C" D
 	. ; "un-cancel" existing appt in file 2
-	. N BSDXFDA,BSDXIENS,BSDXMSG
 	. S BSDXIENS=BSDR("ADT")_","_BSDR("PAT")_","
 	. S BSDXFDA(2.98,BSDXIENS,".01")=BSDR("CLN")
 	. S BSDXFDA(2.98,BSDXIENS,"3")=""
@@ -87,26 +89,27 @@ MAKE(BSDR)	;PEP; call to store appt made
 	. S BSDXFDA(2.98,BSDXIENS,"19")=""
 	. S BSDXFDA(2.98,BSDXIENS,"20")=$$NOW^XLFDT
 	. D FILE^DIE("","BSDXFDA","BSDXMSG")
-	. N BSDXTEMP S BSDXTEMP=$G(BSDXMSG)
-	E  D  
-	. N BSDXFDA,BSDXIENS,BSDXMSG
+	Q:$D(BSDXMSG) 1_U_"Fileman edit to DPT error: Patient="_BSDR("PAT")_" Appt="_BSDR("ADT")_" Error="_BSDXMSG("DIERR",1,"TEXT",1)
+	;
+	E  D  ; File new appointment/edit existing appointment in file 2
 	. S BSDXIENS="?+2,"_BSDR("PAT")_","
 	. S BSDXIENS(2)=BSDR("ADT")
 	. S BSDXFDA(2.98,BSDXIENS,.01)=BSDR("CLN")
 	. S BSDXFDA(2.98,BSDXIENS,"9")=BSDR("TYP")
 	. S BSDXFDA(2.98,BSDXIENS,"9.5")=9
 	. S BSDXFDA(2.98,BSDXIENS,"20")=$$NOW^XLFDT
-	. D UPDATE^DIE("","BSDXFDA","BSDXIENS","BSDXERR(1)")
-	I $G(BSDXERR(1)) Q 1_U_"FileMan add to DPT error: Patient="_BSDR("PAT")_" Appt="_BSDR("ADT")
-    ; add appt to file 44
-	K DIC,DA,X,Y,DLAYGO,DD,DO
+	. D UPDATE^DIE("","BSDXFDA","BSDXIENS","BSDXMSG")
+	Q:$D(BSDXMSG) 1_U_"FileMan add to DPT error: Patient="_BSDR("PAT")_" Appt="_BSDR("ADT")_" Error="_BSDXMSG("DIERR",1,"TEXT",1)
+	;
+	; add appt to file 44. This adds it to the FIRST subfile (Appointment)
+	N DIC,DA,Y,X,DD,DO,DLAYGO
 	I '$D(^SC(BSDR("CLN"),"S",0)) S ^SC(BSDR("CLN"),"S",0)="^44.001DA^^"
 	I '$D(^SC(BSDR("CLN"),"S",BSDR("ADT"),0)) D  I Y<1 Q 1_U_"Error adding date to file 44: Clinic="_BSDR("CLN")_" Date="_BSDR("ADT")
 	. S DIC="^SC("_BSDR("CLN")_",""S"",",DA(1)=BSDR("CLN"),(X,DINUM)=BSDR("ADT")
 	. S DIC("P")="44.001DA",DIC(0)="L",DLAYGO=44.001
 	. S Y=1 I '$D(@(DIC_X_")")) D FILE^DICN
-    
 	;
+	; add appt for file 44, second subfile (Appointment/Patient)
 	; Sep 28 2010: Changed old style API to new style API. Keep for reference //smh
 	;K DIC,DA,X,Y,DLAYGO,DD,DO,DINUM
 	;S DIC="^SC("_BSDR("CLN")_",""S"","_BSDR("ADT")_",1,"
@@ -135,14 +138,18 @@ MAKE(BSDR)	;PEP; call to store appt made
 	Q 0
 	;
 MAKECK(BSDR) ; $$ - Is it okay to make an appointment? ; PEP
+	; Input: Same as $$MAKE
+	; Output: 1^error or 0 for success
+	; NB: This subroutine saves no data. Only checks whether it's okay.
+	;
 	I '$D(^DPT(+$G(BSDR("PAT")),0)) Q 1_U_"Patient not on file: "_$G(BSDR("PAT"))
 	I '$D(^SC(+$G(BSDR("CLN")),0)) Q 1_U_"Clinic not on file: "_$G(BSDR("CLN"))
 	I ($G(BSDR("TYP"))<3)!($G(BSDR("TYP"))>4) Q 1_U_"Appt Type error: "_$G(BSDR("TYP"))
 	I $G(BSDR("ADT")) S BSDR("ADT")=+$E(BSDR("ADT"),1,12)  ;remove seconds
 	I $G(BSDR("ADT"))'?7N.1".".4N Q 1_U_"Appt Date/Time error: "_$G(BSDR("ADT"))
 	;
-    ; Appt Length check removed in v 1.5
-    ;
+	; Appt Length check removed in v 1.5
+	;
 	I '$D(^VA(200,+$G(BSDR("USR")),0)) Q 1_U_"User Who Made Appt Error: "_$G(BSDR("USR"))
 	; More verbose error message in v1.5
 	; Following block to give an error message to user if there is already an appointment for patient. More verbose than others.
@@ -159,25 +166,27 @@ MAKECK(BSDR) ; $$ - Is it okay to make an appointment? ; PEP
 	. . N BSDXRESNAM S BSDXRESNAM=$P(^BSDXRES(BSDXRESIEN,0),U)
 	. . S BSDXERR=BSDXERR_$C(13,10)_"Scheduling GUI clinic: "_BSDXRESNAM ; tell the user of the BSDX clinic
 	Q 0
-    ;
-UNMAKE(BSDR) ; Reverse Make - Private $$
-    ; Only used in Emergiencies where Fileman data filing fails.
-    ; If previous data exists, which caused an error, it's destroyed.
-    N BSDXFDA,BSDXIENS
-	S BSDXIENS=BSDR("ADT")_","_BSDR("PAT")_","
-	S BSDXFDA(2.98,BSDXIENS,".01")="@"
-    ;
-    I '$D(^SC(BSDR("CLN"),"S",BSDR("ADT"),1)) QUIT 0 ; No stuff in HL file
-    N X S X=0 F  S X=$O(^SC(BSDR("CLN"),"S",BSDR("ADT"),1,X)) Q:'X  Q:+^(X,0)=BSDR("PAT")
 	;
-    I 'X QUIT 0 ; Patient doesn't have appointment
-    ;
-    S BSDXIENS=X_","_BSDR("ADT")_","_BSDR("CLN")_","
-	S BSDXFDA(44.003,BSDXIENS,.01)="@"
-    N BSDXMSG
-    D FILE^DIE("","BSDXFDA","BSDXMSG")
-    I $D(BSDXMSG) S $EC=",U1," ; If we get an error here, we are REALLY out of control
-    QUIT 0
+UNMAKE(BSDR) ; Reverse Make - Private $$
+	; Only used in Emergiencies where Fileman data filing fails.
+	; If previous data exists, which caused an error, it's destroyed.
+	; NB: ^DIK stops for nobody
+	; Input: Same array as $$MAKE
+	; Output: Always 0
+	NEW DIK,DA
+	S DIK="^DPT("_BSDR("PAT")_",""S"","
+	S DA(1)=BSDR("PAT"),DA=BSDX("ADT")
+	D ^DIK
+	;
+	N IEN S IEN=$$SCIEN(BSDR("PAT"),BSDR("CLN"),BSDR("ADT"))
+	I 'IEN QUIT 0
+	;
+	NEW DIK,DA
+	S DIK="^SC("_BSDR("CLN")_",""S"","_BSDR("ADT")_",1,"
+	S DA(2)=BSDR("CLN"),DA(1)=BSDR("ADT"),DA=IEN
+	D ^DIK
+	QUIT 0
+	;
 CHECKIN1(DFN,CLIN,APDATE)	; Simplified PEP w/ parameters for $$CHECKIN - Checking in
 	; Call like this for DFN 23435 checking in now at Hospital Location 33
 	; for appt at Dec 20, 2009 @ 10:11:59 
