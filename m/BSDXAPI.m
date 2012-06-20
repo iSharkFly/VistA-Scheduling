@@ -1,9 +1,9 @@
-BSDXAPI	; IHS/ANMC/LJF & VW/SMH - SCHEDULING APIs ; 6/19/12 5:42pm
+BSDXAPI	; IHS/ANMC/LJF & VW/SMH - SCHEDULING APIs ; 6/20/12 12:40pm
 	;;1.7T1;BSDX;;Aug 31, 2011;Build 18
 	; Licensed under LGPL  
 	;
 	;Orignal routine is BSDAPI by IHS/LJF, HMW, and MAW
-	;local mods (many) by WV/SMH
+	; mods (many) by WV/SMH
 	;Move to BSDX namespace as BSDXAPI from BSDAPI by WV/SMH
 	; Change History:
 	; 2010-11-5: (1.42)
@@ -86,10 +86,13 @@ MAKE(BSDR)	;PEP; call to store appt made
 	. S BSDXFDA(2.98,BSDXIENS,"14")=""
 	. S BSDXFDA(2.98,BSDXIENS,"15")=""
 	. S BSDXFDA(2.98,BSDXIENS,"16")=""
+	. S BSDXFDA(2.98,BSDXIENS,"17")="@" ; v 1.7; cancellation remarks were left over
 	. S BSDXFDA(2.98,BSDXIENS,"19")=""
 	. S BSDXFDA(2.98,BSDXIENS,"20")=$$NOW^XLFDT
 	. D FILE^DIE("","BSDXFDA","BSDXMSG")
 	Q:$D(BSDXMSG) 1_U_"Fileman edit to DPT error: Patient="_BSDR("PAT")_" Appt="_BSDR("ADT")_" Error="_BSDXMSG("DIERR",1,"TEXT",1)
+	;
+	Q:$G(BSDXSIMERR2) 1_U_$NA(BSDXSIMERR2) ; Unit Test line
 	;
 	E  D  ; File new appointment/edit existing appointment in file 2
 	. S BSDXIENS="?+2,"_BSDR("PAT")_","
@@ -101,6 +104,8 @@ MAKE(BSDR)	;PEP; call to store appt made
 	. D UPDATE^DIE("","BSDXFDA","BSDXIENS","BSDXMSG")
 	Q:$D(BSDXMSG) 1_U_"FileMan add to DPT error: Patient="_BSDR("PAT")_" Appt="_BSDR("ADT")_" Error="_BSDXMSG("DIERR",1,"TEXT",1)
 	;
+	Q:$G(BSDXSIMERR3) 1_U_$NA(BSDXSIMERR3) ; Unit Test line
+	;
 	; add appt to file 44. This adds it to the FIRST subfile (Appointment)
 	N DIC,DA,Y,X,DD,DO,DLAYGO
 	I '$D(^SC(BSDR("CLN"),"S",0)) S ^SC(BSDR("CLN"),"S",0)="^44.001DA^^"
@@ -108,6 +113,8 @@ MAKE(BSDR)	;PEP; call to store appt made
 	. S DIC="^SC("_BSDR("CLN")_",""S"",",DA(1)=BSDR("CLN"),(X,DINUM)=BSDR("ADT")
 	. S DIC("P")="44.001DA",DIC(0)="L",DLAYGO=44.001
 	. S Y=1 I '$D(@(DIC_X_")")) D FILE^DICN
+	;
+	Q:$G(BSDXSIMERR4) 1_U_$NA(BSDXSIMERR4) ; Unit Test line
 	;
 	; add appt for file 44, second subfile (Appointment/Patient)
 	; Sep 28 2010: Changed old style API to new style API. Keep for reference //smh
@@ -129,6 +136,9 @@ MAKE(BSDR)	;PEP; call to store appt made
 	D UPDATE^DIE("","BSDXFDA","","BSDXERR")
 	;
 	I $D(BSDXERR) Q 1_U_"Error adding appt to file 44: Clinic="_BSDR("CLN")_" Date="_BSDR("ADT")_" Patient="_BSDR("PAT")_" Error: "_BSDXERR("DIERR",1,"TEXT",1)
+	;
+	;Q:$G(BSDXSIMERR5) 1_U_$NA(BSDXSIMERR5) ; Unit Test line
+	S:$G(BSDXSIMERR5) X=1/0
 	;
 	; call event driver
 	NEW DFN,SDT,SDCL,SDDA,SDMODE
@@ -175,7 +185,7 @@ UNMAKE(BSDR) ; Reverse Make - Private $$
 	; Output: Always 0
 	NEW DIK,DA
 	S DIK="^DPT("_BSDR("PAT")_",""S"","
-	S DA(1)=BSDR("PAT"),DA=BSDX("ADT")
+	S DA(1)=BSDR("PAT"),DA=BSDR("ADT")
 	D ^DIK
 	;
 	N IEN S IEN=$$SCIEN(BSDR("PAT"),BSDR("CLN"),BSDR("ADT"))

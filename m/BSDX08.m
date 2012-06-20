@@ -1,5 +1,5 @@
-BSDX08	; VW/UJO/SMH - WINDOWS SCHEDULING RPCS ; 4/28/11 10:17am
-	;;1.6T2;BSDX;;May 16, 2011
+BSDX08	; VW/UJO/SMH - WINDOWS SCHEDULING RPCS ; 6/20/12 3:52pm
+	;;1.6;BSDX;;Aug 31, 2011;Build 18
 	; 
 	; Original by HMW. New Written by Sam Habiel. Licensed under LGPL.
 	; 
@@ -34,18 +34,35 @@ BSDX08	; VW/UJO/SMH - WINDOWS SCHEDULING RPCS ; 4/28/11 10:17am
 	;
 APPDELD(BSDXY,BSDXAPTID,BSDXTYP,BSDXCR,BSDXNOT)	;EP
 	;Entry point for debugging
-	D DEBUG^%Serenji("APPDEL^BSDX08(.BSDXY,BSDXAPTID,BSDXTYP,BSDXCR,BSDXNOT)")
+	;D DEBUG^%Serenji("APPDEL^BSDX08(.BSDXY,BSDXAPTID,BSDXTYP,BSDXCR,BSDXNOT)")
 	Q
 	;
 UT	; Unit Tests
+	N RESNAM S RESNAM="UTCLINIC"
+	N HLRESIENS ; holds output of UTCR^BSDX35 - HL IEN^Resource IEN
+	D
+	. N $ET S $ET="D ^%ZTER B"
+	. S HLRESIENS=$$UTCR^BSDX35(RESNAM)
+	. I HLRESIENS<0 S $EC=",U1," ; not supposed to happen - hard crash if so
+	;
+	N HLIEN,RESIEN
+	S HLIEN=$P(HLRESIENS,U)
+	S RESIEN=$P(HLRESIENS,U,2)
+	;
+	; Get start and end times
+	N TIMES S TIMES=$$TIMES^BSDX35 ; appt time^end time
+	N APPTTIME S APPTTIME=$P(TIMES,U)
+	N ENDTIME S ENDTIME=$P(TIMES,U,2)
+	;
 	; Test 1: Make normal appointment and cancel it. See if every thing works
-	N ZZZ
-	D APPADD^BSDX07(.ZZZ,3110123.2,3110123.3,4,"Dr Office",10,"Sam's Note",1)
+	N ZZZ,DFN
+	S DFN=3
+	D APPADD^BSDX07(.ZZZ,APPTTIME,ENDTIME,DFN,RESNAM,30,"Sam's Note",1)
 	S APPID=+$P(^BSDXTMP($J,1),U)
 	D APPDEL^BSDX08(.ZZZ,APPID,"PC",1,"Sam's Cancel Note")
 	I $P(^BSDXAPPT(APPID,0),U,12)'>0 W "Error in Cancellation-1"
-	I $O(^SC(2,"S",3110123.2,1,0))]"" W "Error in Cancellation-2"
-	I $P(^DPT(4,"S",3110123.2,0),U,2)'="PC" W "Error in Cancellation-3"
+	I $O(^SC(2,"S",APPTTIME,1,0))]"" W "Error in Cancellation-2"
+	I $P(^DPT(4,"S",APPTTIME,0),U,2)'="PC" W "Error in Cancellation-3"
 	I ^DPT(4,"S",3110123.2,"R")'="Sam's Cancel Note" W "Error in Cancellation-4"
 	;
 	; Test 2: Check for -1

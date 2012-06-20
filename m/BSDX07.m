@@ -1,4 +1,4 @@
-BSDX07	; VW/UJO/SMH - WINDOWS SCHEDULING RPCS  ; 6/19/12 5:34pm
+BSDX07	; VW/UJO/SMH - WINDOWS SCHEDULING RPCS  ; 6/20/12 3:28pm
 	;;1.7T1;BSDX;;Aug 31, 2011;Build 18
 	; Licensed under LGPL
 	;
@@ -11,6 +11,7 @@ BSDX07	; VW/UJO/SMH - WINDOWS SCHEDULING RPCS  ; 6/19/12 5:34pm
 	; v1.5  Mar 15 2011 - End time does not have to have time anymore.
 	;      It could be midnight of the next day
 	; v1.6 Apr 11 2011 - Support for Scheduling Radiology Exams...
+	; v1.7 Jun 20 2012 - Refactoring to remove transactions - many changes
 	;
 	; Error Reference:
 	; -1: Patient Record is locked. This means something is wrong!!!!
@@ -37,7 +38,7 @@ UT	; Unit Tests - Assumes you have Patients with DFNs 1,2 and 3
 	D
 	. N $ET S $ET="D ^%ZTER B"
 	. S HLRESIENS=$$UTCR^BSDX35(RESNAM)
-	. I HLRESIENS<0 S $EC=",U1," ; not supposed to happen
+	. I HLRESIENS<0 S $EC=",U1," ; not supposed to happen - hard crash if so
 	;
 	N HLIEN,RESIEN
 	S HLIEN=$P(HLRESIENS,U)
@@ -83,21 +84,37 @@ UT	; Unit Tests - Assumes you have Patients with DFNs 1,2 and 3
 	S BSDX("PAT")=DFN
 	S BSDX("CLN")=HLIEN
 	S BSDX("ADT")=APPTTIME
-	D BSDXDEL^BSDX07(APPID)
-	S %=$$UNMAKE^BSDXAPI(.BSDX)
+	D ROLLBACK(APPID,.BSDX)
 	I +$G(^BSDXAPPT(APPID,0)) W "Error in deleting appointment-1",!
 	I $D(^DPT(DFN,"S",APPTTIME)) W "Error in deleting appointment-2",!
 	I $$SCIEN^BSDXAPI(DFN,HLIEN,APPTTIME) W "Error in deleting appointment-3",!
 	;
+	; Again for a different patient (5)
+	S DFN=5
+	D APPADD(.ZZZ,APPTTIME,ENDTIME,DFN,RESNAM,30,"Sam's Note",1)
+	N APPID S APPID=+$P(^BSDXTMP($J,1),U)
+	I 'APPID W "Error Making Appt-13" QUIT
+	I +^BSDXAPPT(APPID,0)'=APPTTIME W "Error Making Appt-14"
+	I '$D(^DPT(DFN,"S",APPTTIME)) W "Error Making Appt-15"
+	I '$$SCIEN^BSDXAPI(DFN,HLIEN,APPTTIME) W "Error Making Appt-16"
+	; Now cancel that appointment
+	D APPDEL^BSDX08(.ZZZ,APPID,"PC",1,"Sam's Cancel Note")
+	; Now make it again
+	D APPADD(.ZZZ,APPTTIME,ENDTIME,DFN,RESNAM,30,"Sam's Note",1)
+	N APPID S APPID=+$P(^BSDXTMP($J,1),U)
+	I 'APPID W "Error Making Appt-17" QUIT
+	I +^BSDXAPPT(APPID,0)'=APPTTIME W "Error Making Appt-18"
+	I '$D(^DPT(DFN,"S",APPTTIME)) W "Error Making Appt-19"
+	I '$$SCIEN^BSDXAPI(DFN,HLIEN,APPTTIME) W "Error Making Appt-20"
+	;
 	; Delete appointment set for Patient 1 (not made)... needs to not crash
 	D
 	. N $ET S $ET="D ^%ZTER S $EC="""" W ""Failure to del non-existent appt"",!"
-	. D BSDXDEL^BSDX07(9999999)
 	. N BSDX
 	. S BSDX("PAT")=1
 	. S BSDX("CLN")=HLIEN
 	. S BSDX("ADT")=APPTTIME
-	. S %=$$UNMAKE^BSDXAPI(.BSDX)
+	. D ROLLBACK(APPID,.BSDX)
 	;
 	; Test for bad start date
 	D APPADD(.ZZZ,2100123,3100123.3,2,RESNAM,30,"Sam's Note",1)
@@ -140,6 +157,42 @@ UT	; Unit Tests - Assumes you have Patients with DFNs 1,2 and 3
 	D APPADD(.ZZZ,APPTTIME,ENDTIME,3,RESNAM,30,"Sam's Note",1)
 	D APPADD(.ZZZ,APPTTIME,ENDTIME,3,RESNAM,30,"Sam's Note",1)
 	I +$P(^BSDXTMP($J,1),U,2)'=-10 W "Error in -10",!
+	;
+	; Test that rollback occurs properly in various places
+	N TIMES S TIMES=$$TIMES^BSDX35 ; appt time^end time
+	N APPTTIME S APPTTIME=$P(TIMES,U)
+	N ENDTIME S ENDTIME=$P(TIMES,U,2)
+	S DFN=4
+	N BSDXSIMERR1 S BSDXSIMERR1=1
+	D APPADD(.ZZZ,APPTTIME,ENDTIME,DFN,RESNAM,30,"Sam's Note",1)
+	N APPID S APPID=$O(^BSDXAPPT("B",APPTTIME,""))
+	I +APPID W "Error in deleting appointment-4",!
+	I $D(^DPT(DFN,"S",APPTTIME)) W "Error in deleting appointment-5",!
+	I $$SCIEN^BSDXAPI(DFN,HLIEN,APPTTIME) W "Error in deleting appointment-6",!
+	;
+	K BSDXSIMERR1
+	N BSDXSIMERR2 S BSDXSIMERR2=1
+	D APPADD(.ZZZ,APPTTIME,ENDTIME,DFN,RESNAM,30,"Sam's Note",1)
+	N APPID S APPID=$O(^BSDXAPPT("B",APPTTIME,""))
+	I +APPID W "Error in deleting appointment-7",!
+	I $D(^DPT(DFN,"S",APPTTIME)) W "Error in deleting appointment-8",!
+	I $$SCIEN^BSDXAPI(DFN,HLIEN,APPTTIME) W "Error in deleting appointment-9",!
+	;
+	K BSDXSIMERR2
+	N BSDXSIMERR4 S BSDXSIMERR4=1
+	D APPADD(.ZZZ,APPTTIME,ENDTIME,DFN,RESNAM,30,"Sam's Note",1)
+	N APPID S APPID=$O(^BSDXAPPT("B",APPTTIME,""))
+	I +APPID W "Error in deleting appointment-16",!
+	I $D(^DPT(DFN,"S",APPTTIME)) W "Error in deleting appointment-17",!
+	I $$SCIEN^BSDXAPI(DFN,HLIEN,APPTTIME) W "Error in deleting appointment-18",!
+	;
+	K BSDXSIMERR4
+	N BSDXSIMERR5 S BSDXSIMERR5=1
+	D APPADD(.ZZZ,APPTTIME,ENDTIME,DFN,RESNAM,30,"Sam's Note",1)
+	N APPID S APPID=$O(^BSDXAPPT("B",APPTTIME,""))
+	I +APPID W "Error in deleting appointment-19",!
+	I $D(^DPT(DFN,"S",APPTTIME)) W "Error in deleting appointment-20",!
+	I $$SCIEN^BSDXAPI(DFN,HLIEN,APPTTIME) W "Error in deleting appointment-21",!
 	QUIT
 	; 
 APPADD(BSDXY,BSDXSTART,BSDXEND,BSDXPATID,BSDXRES,BSDXLEN,BSDXNOTE,BSDXATID,BSDXRADEXAM)	;EP
@@ -167,6 +220,9 @@ APPADD(BSDXY,BSDXSTART,BSDXEND,BSDXPATID,BSDXRES,BSDXLEN,BSDXNOTE,BSDXATID,BSDXR
 	;Return:
 	; ADO.net Recordset having fields:
 	; AppointmentID and ErrorNumber
+	;
+	; NB: Specifying BSDXLEN and BSDXEND is redundant. For future programmers
+	; to sort out
 	;
 	;Test lines:
 	;BSDX ADD NEW APPOINTMENT^3091122.0930^3091122.1000^370^Dr Office^30^EXAM^WALKIN
@@ -260,7 +316,11 @@ APPADD(BSDXY,BSDXSTART,BSDXEND,BSDXPATID,BSDXRES,BSDXLEN,BSDXNOTE,BSDXATID,BSDXR
 	N BSDXAPPTID
 	S BSDXAPPTID=$$BSDXADD(BSDXSTART,BSDXEND,BSDXPATID,BSDXRESD,BSDXATID,BSDXRADEXAM)
 	I 'BSDXAPPTID D ERR(BSDXI,"-9~BSDX07 Error: Unable to add appointment to BSDX APPOINTMENT file.") Q  ; no roll back needed! No appts made.
-	I BSDXNOTE]"" D BSDXWP(BSDXAPPTID,BSDXNOTE) ; TODO: check for error and rollback
+	I BSDXNOTE]"" D BSDXWP(BSDXAPPTID,BSDXNOTE) ; no error checks are made here
+	; I don't think it's important b/c users can detect right away if the WP
+	; filing fails.
+	;
+	I $G(BSDXSIMERR1) D ERR(BSDXI,"-11~BSDX07 Error: Simulated Error"),ROLLBACK(BSDXAPPTID,.BSDXC) Q  ; UT Line
 	;
 	; Only if we have a valid Hosp Loc can we make an appointment in 2/44
 	; Use BSDXC array from before.
@@ -268,8 +328,7 @@ APPADD(BSDXY,BSDXSTART,BSDXEND,BSDXPATID,BSDXRES,BSDXLEN,BSDXNOTE,BSDXATID,BSDXR
 	I +BSDXSCD,$D(^SC(BSDXSCD,0)) D  I +BSDXERR D ERR(BSDXI,"-10~BSDX07 Error: MAKE^BSDXAPI returned error code: "_BSDXERR),ROLLBACK(BSDXAPPTID,.BSDXC) Q
 	. S BSDXERR=$$MAKE^BSDXAPI(.BSDXC)
 	. Q:BSDXERR
-	. ;Update RPMS Clinic availability
-	. D AVUPDT(BSDXSCD,BSDXSTART,BSDXLEN)
+	. D AVUPDT(BSDXSCD,BSDXSTART,BSDXLEN) ; Update RPMS Clinic availability
 	;
 	;Return Recordset
 	L -^BSDXAPPT(BSDXPATID)
@@ -345,20 +404,13 @@ ADDEVT3(BSDXRES)	   ;
 	D EVENT^BMXMEVN("BSDX SCHEDULE",BSDXRESN)
 	Q
 	;
-ERR(BSDXI,BSDXERR)	 ;Error processing
-	S BSDXI=BSDXI+1
-	S BSDXERR=$TR(BSDXERR,"^","~")
-	S ^BSDXTMP($J,BSDXI)="0^"_BSDXERR_$C(30)
-	S BSDXI=BSDXI+1
-	S ^BSDXTMP($J,BSDXI)=$C(31)
-	L -^BSDXAPPT(BSDXPATID)
-	Q
-	;
 ROLLBACK(BSDXAPPTID,BSDXC) ; Private EP; Roll back appointment set
 	; DO NOT USE except as an emergency measure - only if unforseen error occurs
 	; Input: 
 	; Appointment ID to remove from ^BSDXAPPT
 	; BSDXC array (see array format in $$MAKE^BSDXAPI)
+	; NB: I am not sure whether I want to do $G to protect??
+	; I send the variables to this EP from the Symbol Table in ETRAP
 	D BSDXDEL^BSDX07(BSDXAPPTID)
 	S:$D(BSDXC) %=$$UNMAKE^BSDXAPI(.BSDXC) ; rtn value always 0
 	QUIT
@@ -370,14 +422,24 @@ BSDXDEL(BSDXAPPTID)	;Private EP ; Deletes appointment BSDXAPPTID from ^BSDXAPPT
 	D ^DIK
 	Q
 	;
+ERR(BSDXI,BSDXERR)	 ;Error processing - different from error trap.
+	S BSDXI=BSDXI+1
+	S BSDXERR=$TR(BSDXERR,"^","~")
+	S ^BSDXTMP($J,BSDXI)="0^"_BSDXERR_$C(30)
+	S BSDXI=BSDXI+1
+	S ^BSDXTMP($J,BSDXI)=$C(31)
+	L -^BSDXAPPT(BSDXPATID)
+	Q
+	;
 ETRAP	  ;EP Error trap entry
 	N $ET S $ET="D ^%ZTER HALT"  ; Emergency Error Trap
 	D ^%ZTER
 	S $EC=""  ; Clear Error
+	I +$G(BSDXAPPTID) D ROLLBACK(BSDXAPPTID,.BSDXC) ; Rollback if BSDXAPPTID exists
 	; Log error message and send to client
 	I '$D(BSDXI) N BSDXI S BSDXI=0
 	D ERR(BSDXI,"-100~BSDX07 Error: "_$G(%ZTERZE))
-	Q
+	Q:$Q 1_U_"Mumps Error" Q
 	;
 DAY	;;^SUN^MON^TUES^WEDNES^THURS^FRI^SATUR
 	;
