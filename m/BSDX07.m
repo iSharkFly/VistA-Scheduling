@@ -1,4 +1,4 @@
-BSDX07	; VW/UJO/SMH - WINDOWS SCHEDULING RPCS  ; 6/20/12 3:28pm
+BSDX07	; VW/UJO/SMH - WINDOWS SCHEDULING RPCS  ; 6/21/12 3:54pm
 	;;1.7T1;BSDX;;Aug 31, 2011;Build 18
 	; Licensed under LGPL
 	;
@@ -6,7 +6,6 @@ BSDX07	; VW/UJO/SMH - WINDOWS SCHEDULING RPCS  ; 6/20/12 3:28pm
 	; UJO/SMH
 	; v1.3 July 13 2010 - Add support i18n - Dates input as FM dates, not US.
 	; v1.42 Oct 22 2010 - Transaction now restartable by providing arguments
-	;   thanks to Rick Marshall and Zach Gonzalez at Oroville.
 	; v1.42 Oct 30 2010 - Extensive refactoring.
 	; v1.5  Mar 15 2011 - End time does not have to have time anymore.
 	;      It could be midnight of the next day
@@ -31,170 +30,6 @@ APPADDD(BSDXY,BSDXSTART,BSDXEND,BSDXPATID,BSDXRES,BSDXLEN,BSDXNOTE,BSDXATID)	   
 	; D DEBUG^%Serenji("APPADD^BSDX07(.BSDXY,BSDXSTART,BSDXEND,BSDXPATID,BSDXRES,BSDXLEN,BSDXNOTE,BSDXATID)")
 	Q
 	;
-UT	; Unit Tests - Assumes you have Patients with DFNs 1,2 and 3
-	; Set-up - Create Clinics
-	N RESNAM S RESNAM="UTCLINIC"
-	N HLRESIENS ; holds output of UTCR^BSDX35 - HL IEN^Resource IEN
-	D
-	. N $ET S $ET="D ^%ZTER B"
-	. S HLRESIENS=$$UTCR^BSDX35(RESNAM)
-	. I HLRESIENS<0 S $EC=",U1," ; not supposed to happen - hard crash if so
-	;
-	N HLIEN,RESIEN
-	S HLIEN=$P(HLRESIENS,U)
-	S RESIEN=$P(HLRESIENS,U,2)
-	;
-	; Get start and end times
-	N TIMES S TIMES=$$TIMES^BSDX35 ; appt time^end time
-	N APPTTIME S APPTTIME=$P(TIMES,U)
-	N ENDTIME S ENDTIME=$P(TIMES,U,2)
-	;
-	N ZZZ,DFN
-	; Test for normality:
-	S DFN=3
-	D APPADD(.ZZZ,APPTTIME,ENDTIME,DFN,RESNAM,30,"Sam's Note",1)
-	; Does Appt exist?
-	N APPID S APPID=+$P(^BSDXTMP($J,1),U)
-	I 'APPID W "Error Making Appt-1" QUIT
-	I +^BSDXAPPT(APPID,0)'=APPTTIME W "Error Making Appt-2"
-	I '$D(^DPT(DFN,"S",APPTTIME)) W "Error Making Appt-3"
-	I '$$SCIEN^BSDXAPI(DFN,HLIEN,APPTTIME) W "Error Making Appt-4"
-	;
-	; Do it again for a different patient
-	S DFN=2
-	D APPADD(.ZZZ,APPTTIME,ENDTIME,DFN,RESNAM,30,"Sam's Note",1)
-	N APPID S APPID=+$P(^BSDXTMP($J,1),U)
-	I 'APPID W "Error Making Appt-5" QUIT
-	I +^BSDXAPPT(APPID,0)'=APPTTIME W "Error Making Appt-6"
-	I '$D(^DPT(DFN,"S",APPTTIME)) W "Error Making Appt-7"
-	I '$$SCIEN^BSDXAPI(DFN,HLIEN,APPTTIME) W "Error Making Appt-8"
-	;
-	; Again for a different patient (4)
-	S DFN=4
-	D APPADD(.ZZZ,APPTTIME,ENDTIME,DFN,RESNAM,30,"Sam's Note",1)
-	N APPID S APPID=+$P(^BSDXTMP($J,1),U)
-	I 'APPID W "Error Making Appt-9" QUIT
-	I +^BSDXAPPT(APPID,0)'=APPTTIME W "Error Making Appt-10"
-	I '$D(^DPT(DFN,"S",APPTTIME)) W "Error Making Appt-11"
-	I '$$SCIEN^BSDXAPI(DFN,HLIEN,APPTTIME) W "Error Making Appt-12"
-	;
-	; Delete appointment set for Patient 4 (made above)
-	N BSDX,DFN
-	S DFN=4
-	S BSDX("PAT")=DFN
-	S BSDX("CLN")=HLIEN
-	S BSDX("ADT")=APPTTIME
-	D ROLLBACK(APPID,.BSDX)
-	I +$G(^BSDXAPPT(APPID,0)) W "Error in deleting appointment-1",!
-	I $D(^DPT(DFN,"S",APPTTIME)) W "Error in deleting appointment-2",!
-	I $$SCIEN^BSDXAPI(DFN,HLIEN,APPTTIME) W "Error in deleting appointment-3",!
-	;
-	; Again for a different patient (5)
-	S DFN=5
-	D APPADD(.ZZZ,APPTTIME,ENDTIME,DFN,RESNAM,30,"Sam's Note",1)
-	N APPID S APPID=+$P(^BSDXTMP($J,1),U)
-	I 'APPID W "Error Making Appt-13" QUIT
-	I +^BSDXAPPT(APPID,0)'=APPTTIME W "Error Making Appt-14"
-	I '$D(^DPT(DFN,"S",APPTTIME)) W "Error Making Appt-15"
-	I '$$SCIEN^BSDXAPI(DFN,HLIEN,APPTTIME) W "Error Making Appt-16"
-	; Now cancel that appointment
-	D APPDEL^BSDX08(.ZZZ,APPID,"PC",1,"Sam's Cancel Note")
-	; Now make it again
-	D APPADD(.ZZZ,APPTTIME,ENDTIME,DFN,RESNAM,30,"Sam's Note",1)
-	N APPID S APPID=+$P(^BSDXTMP($J,1),U)
-	I 'APPID W "Error Making Appt-17" QUIT
-	I +^BSDXAPPT(APPID,0)'=APPTTIME W "Error Making Appt-18"
-	I '$D(^DPT(DFN,"S",APPTTIME)) W "Error Making Appt-19"
-	I '$$SCIEN^BSDXAPI(DFN,HLIEN,APPTTIME) W "Error Making Appt-20"
-	;
-	; Delete appointment set for Patient 1 (not made)... needs to not crash
-	D
-	. N $ET S $ET="D ^%ZTER S $EC="""" W ""Failure to del non-existent appt"",!"
-	. N BSDX
-	. S BSDX("PAT")=1
-	. S BSDX("CLN")=HLIEN
-	. S BSDX("ADT")=APPTTIME
-	. D ROLLBACK(APPID,.BSDX)
-	;
-	; Test for bad start date
-	D APPADD(.ZZZ,2100123,3100123.3,2,RESNAM,30,"Sam's Note",1)
-	I +$P(^BSDXTMP($J,1),U,2)'=-2 W "Error in -2",!
-	; Test for bad end date
-	D APPADD(.ZZZ,3100123,2100123.3,2,RESNAM,30,"Sam's Note",1)
-	I +$P(^BSDXTMP($J,1),U,2)'=-3 W "Error in -3",!
-	; Test for end date without time - obsolete
-	; D APPADD(.ZZZ,3100123.1,3100123,2,RESNAM,30,"Sam's Note",1)
-	; I +$P(^BSDXTMP($J,1),U,2)'=-4 W "Error in -4",!
-	; Test for mumps error
-	S BSDXDIE=1
-	D APPADD(.ZZZ,APPTTIME,ENDTIME,1,RESNAM,30,"Sam's Note",1)
-	I +$P(^BSDXTMP($J,1),U,2)'=-100 W "Error in -100: M Error",!
-	K BSDXDIE
-	; Test for TRESTART -- retired in v 1.7
-	; S BSDXRESTART=1
-	; D APPADD(.ZZZ,APPTTIME,ENDTIME,3,RESNAM,30,"Sam's Note",1)
-	; I +$P(^BSDXTMP($J,1),U,2)'=0&(+$P(^BSDXTMP($J,1),U,2)'=-10) W "Error in TRESTART",!
-	; K BSDXRESTART
-	; Test for non-numeric patient
-	D APPADD(.ZZZ,APPTTIME,ENDTIME,"CAT,DOG",RESNAM,30,"Sam's Note",1)
-	I +$P(^BSDXTMP($J,1),U,2)'=-5 W "Error in -5",!
-	; Test for a non-existent patient
-	D APPADD(.ZZZ,APPTTIME,ENDTIME,8989898989,RESNAM,30,"Sam's Note",1)
-	I +$P(^BSDXTMP($J,1),U,2)'=-6 W "Error in -6",!
-	; Test for a non-existent resource name
-	D APPADD(.ZZZ,APPTTIME,ENDTIME,3,"lkajsflkjsadf",30,"Sam's Note",1)
-	I +$P(^BSDXTMP($J,1),U,2)'=-7 W "Error in -7",!
-	; Test for corrupted resource
-	; Can't test for -8 since it requires DB corruption
-	; Test for inability to add appointment to BSDX Appointment (-9)
-	; Also requires something wrong in the DB
-	; Test for inability to add appointment to 2,44
-	; Test by creating a duplicate appointment
-	; Get start and end times
-	N TIMES S TIMES=$$TIMES^BSDX35 ; appt time^end time
-	N APPTTIME S APPTTIME=$P(TIMES,U)
-	N ENDTIME S ENDTIME=$P(TIMES,U,2)
-	D APPADD(.ZZZ,APPTTIME,ENDTIME,3,RESNAM,30,"Sam's Note",1)
-	D APPADD(.ZZZ,APPTTIME,ENDTIME,3,RESNAM,30,"Sam's Note",1)
-	I +$P(^BSDXTMP($J,1),U,2)'=-10 W "Error in -10",!
-	;
-	; Test that rollback occurs properly in various places
-	N TIMES S TIMES=$$TIMES^BSDX35 ; appt time^end time
-	N APPTTIME S APPTTIME=$P(TIMES,U)
-	N ENDTIME S ENDTIME=$P(TIMES,U,2)
-	S DFN=4
-	N BSDXSIMERR1 S BSDXSIMERR1=1
-	D APPADD(.ZZZ,APPTTIME,ENDTIME,DFN,RESNAM,30,"Sam's Note",1)
-	N APPID S APPID=$O(^BSDXAPPT("B",APPTTIME,""))
-	I +APPID W "Error in deleting appointment-4",!
-	I $D(^DPT(DFN,"S",APPTTIME)) W "Error in deleting appointment-5",!
-	I $$SCIEN^BSDXAPI(DFN,HLIEN,APPTTIME) W "Error in deleting appointment-6",!
-	;
-	K BSDXSIMERR1
-	N BSDXSIMERR2 S BSDXSIMERR2=1
-	D APPADD(.ZZZ,APPTTIME,ENDTIME,DFN,RESNAM,30,"Sam's Note",1)
-	N APPID S APPID=$O(^BSDXAPPT("B",APPTTIME,""))
-	I +APPID W "Error in deleting appointment-7",!
-	I $D(^DPT(DFN,"S",APPTTIME)) W "Error in deleting appointment-8",!
-	I $$SCIEN^BSDXAPI(DFN,HLIEN,APPTTIME) W "Error in deleting appointment-9",!
-	;
-	K BSDXSIMERR2
-	N BSDXSIMERR4 S BSDXSIMERR4=1
-	D APPADD(.ZZZ,APPTTIME,ENDTIME,DFN,RESNAM,30,"Sam's Note",1)
-	N APPID S APPID=$O(^BSDXAPPT("B",APPTTIME,""))
-	I +APPID W "Error in deleting appointment-16",!
-	I $D(^DPT(DFN,"S",APPTTIME)) W "Error in deleting appointment-17",!
-	I $$SCIEN^BSDXAPI(DFN,HLIEN,APPTTIME) W "Error in deleting appointment-18",!
-	;
-	K BSDXSIMERR4
-	N BSDXSIMERR5 S BSDXSIMERR5=1
-	D APPADD(.ZZZ,APPTTIME,ENDTIME,DFN,RESNAM,30,"Sam's Note",1)
-	N APPID S APPID=$O(^BSDXAPPT("B",APPTTIME,""))
-	I +APPID W "Error in deleting appointment-19",!
-	I $D(^DPT(DFN,"S",APPTTIME)) W "Error in deleting appointment-20",!
-	I $$SCIEN^BSDXAPI(DFN,HLIEN,APPTTIME) W "Error in deleting appointment-21",!
-	QUIT
-	; 
 APPADD(BSDXY,BSDXSTART,BSDXEND,BSDXPATID,BSDXRES,BSDXLEN,BSDXNOTE,BSDXATID,BSDXRADEXAM)	;EP
 	;
 	;Called by RPC: BSDX ADD NEW APPOINTMENT
@@ -298,7 +133,7 @@ APPADD(BSDXY,BSDXSTART,BSDXEND,BSDXPATID,BSDXRES,BSDXLEN,BSDXNOTE,BSDXATID,BSDXR
 	N BSDXERR ; Variable to hold value of $$MAKE and $$MAKECK
 	N BSDXC ; Array to send to MAKE and MAKECK APIs
 	; Only if we have a valid Hosp Location
-	I +BSDXSCD,$D(^SC(BSDXSCD,0)) D
+	I +BSDXSCD,$D(^SC(BSDXSCD,0)) D  I +BSDXERR D ERR(BSDXI,"-10~BSDX07 Error: MAKECK^BSDXAPI returned error code: "_BSDXERR) Q  ; no need for roll back
 	. S BSDXC("PAT")=BSDXPATID
 	. S BSDXC("CLN")=BSDXSCD
 	. S BSDXC("TYP")=3 ;3 for scheduled appts, 4 for walkins
@@ -310,7 +145,6 @@ APPADD(BSDXY,BSDXSTART,BSDXEND,BSDXPATID,BSDXRES,BSDXLEN,BSDXNOTE,BSDXATID,BSDXR
 	. S BSDXC("OI")=$$STRIP(BSDXC("OI")) ;Strip control characters from note
 	. S BSDXC("USR")=DUZ
 	. S BSDXERR=$$MAKECK^BSDXAPI(.BSDXC)
-	I +BSDXERR D ERR(BSDXI,"-10~BSDX07 Error: MAKECK^BSDXAPI returned error code: "_BSDXERR) Q  ; no need for roll back
 	;
 	; Done with all checks, let's make appointment in BSDX APPOINTMENT
 	N BSDXAPPTID

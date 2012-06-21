@@ -1,4 +1,4 @@
-BSDX08	; VW/UJO/SMH - WINDOWS SCHEDULING RPCS ; 6/20/12 3:52pm
+BSDX08	; VW/UJO/SMH - WINDOWS SCHEDULING RPCS ; 6/21/12 4:49pm
 	;;1.6;BSDX;;Aug 31, 2011;Build 18
 	; 
 	; Original by HMW. New Written by Sam Habiel. Licensed under LGPL.
@@ -37,85 +37,6 @@ APPDELD(BSDXY,BSDXAPTID,BSDXTYP,BSDXCR,BSDXNOT)	;EP
 	;D DEBUG^%Serenji("APPDEL^BSDX08(.BSDXY,BSDXAPTID,BSDXTYP,BSDXCR,BSDXNOT)")
 	Q
 	;
-UT	; Unit Tests
-	N RESNAM S RESNAM="UTCLINIC"
-	N HLRESIENS ; holds output of UTCR^BSDX35 - HL IEN^Resource IEN
-	D
-	. N $ET S $ET="D ^%ZTER B"
-	. S HLRESIENS=$$UTCR^BSDX35(RESNAM)
-	. I HLRESIENS<0 S $EC=",U1," ; not supposed to happen - hard crash if so
-	;
-	N HLIEN,RESIEN
-	S HLIEN=$P(HLRESIENS,U)
-	S RESIEN=$P(HLRESIENS,U,2)
-	;
-	; Get start and end times
-	N TIMES S TIMES=$$TIMES^BSDX35 ; appt time^end time
-	N APPTTIME S APPTTIME=$P(TIMES,U)
-	N ENDTIME S ENDTIME=$P(TIMES,U,2)
-	;
-	; Test 1: Make normal appointment and cancel it. See if every thing works
-	N ZZZ,DFN
-	S DFN=3
-	D APPADD^BSDX07(.ZZZ,APPTTIME,ENDTIME,DFN,RESNAM,30,"Sam's Note",1)
-	S APPID=+$P(^BSDXTMP($J,1),U)
-	D APPDEL^BSDX08(.ZZZ,APPID,"PC",1,"Sam's Cancel Note")
-	I $P(^BSDXAPPT(APPID,0),U,12)'>0 W "Error in Cancellation-1"
-	I $O(^SC(2,"S",APPTTIME,1,0))]"" W "Error in Cancellation-2"
-	I $P(^DPT(4,"S",APPTTIME,0),U,2)'="PC" W "Error in Cancellation-3"
-	I ^DPT(4,"S",3110123.2,"R")'="Sam's Cancel Note" W "Error in Cancellation-4"
-	;
-	; Test 2: Check for -1
-	; Make appt
-	D APPADD^BSDX07(.ZZZ,3110125.2,3110125.3,4,"Dr Office",10,"Sam's Note",1)
-	; Lock the node in another job
-	S APPID=+$P(^BSDXTMP($J,1),U)
-	; W "Lock ^BSDXAPPT("_APPID_") in another session. You have 10 seconds." H 10
-	D APPDEL^BSDX08(.ZZZ,APPID,"PC",1,"Sam's Cancel Note")
-	;
-	; Test 3: Check for -100
-	S bsdxdie=1
-	D APPADD^BSDX07(.ZZZ,3110126.2,3110126.3,4,"Dr Office",10,"Sam's Note",1)
-	S APPID=+$P(^BSDXTMP($J,1),U)
-	D APPDEL^BSDX08(.ZZZ,APPID,"PC",1,"Reasons")
-	I $P(^BSDXTMP($J,1),"~")'=-100 W "Error in -100",!
-	K bsdxdie
-	;
-	; Test 4: Restartable transaction
-	S bsdxrestart=1
-	D APPADD^BSDX07(.ZZZ,3110128.2,3110128.3,4,"Dr Office",10,"Sam's Note",1)
-	S APPID=+$P(^BSDXTMP($J,1),U)
-	D APPDEL^BSDX08(.ZZZ,APPID,"PC",1,"Reasons")
-	I $P(^DPT(4,"S",3110128.2,0),U,2)'="PC" W "Error in Restartable Transaction",!
-	;
-	; Test 5: for invalid Appointment ID (-2 and -3)
-	D APPDEL^BSDX08(.ZZZ,0,"PC",1,"Reasons")
-	I $P(^BSDXTMP($J,1),"~")'=-2 W "Error in -2",!
-	D APPDEL^BSDX08(.ZZZ,999999,"PC",1,"Reasons")
-	I $P(^BSDXTMP($J,1),"~")'=-3 W "Error in -3",!
-UT2	; More unit Tests
-	;
-	; Test 6: for Cancelling walkin and checked-in appointments 
-	S BSDXSTART=$E($$NOW^XLFDT,1,12),BSDXEND=BSDXSTART+.0001
-	D APPADD^BSDX07(.ZZZ,BSDXSTART,BSDXEND,4,"Dr Office",10,"Sam's Note",1) ; Add appt
-	S APPID=+$P(^BSDXTMP($J,1),U)
-	I APPID=0 W "Error in test 6",!
-	D CHECKIN^BSDX25(.ZZZ,APPID,$$NOW^XLFDT) ; check-in
-	D APPDEL^BSDX08(.ZZZ,APPID,"PC",10,"Cancel Note") ; Delete appt
-	I $P(^BSDXTMP($J,1),$C(30))'="" W "Error in test 6",!
-	;
-	; Test 7: for cancelling walkin and checked-in appointments
-	S BSDXSTART=$E($$NOW^XLFDT,1,12)+.0001,BSDXEND=BSDXSTART+.0001
-	D APPADD^BSDX07(.ZZZ,BSDXSTART,BSDXEND,4,"Dr Office",10,"Sam's Note",1) ; Add appt
-	S APPID=+$P(^BSDXTMP($J,1),U)
-	I APPID=0 W "Error in test 6",!
-	D CHECKIN^BSDX25(.ZZZ,APPID,$$NOW^XLFDT) ; Checkin
-	S BSDXRES=$O(^BSDXRES("B","Dr Office",""))
-	S BSDXCLN=$P(^BSDXRES(BSDXRES,0),U,4)
-	S BSDXRESULT=$$RMCI^BSDXAPI(4,BSDXCLN,BSDXSTART) ; remove checkin
-	D APPDEL^BSDX08(.ZZZ,APPID,"PC",10,"Cancel Note") ; delete appt
-	I $P(^BSDXTMP($J,1),$C(30))'="" W "Error in test 6",!
-	QUIT
 APPDEL(BSDXY,BSDXAPTID,BSDXTYP,BSDXCR,BSDXNOT)	       ;EP
 	;Called by RPC: BSDX CANCEL APPOINTMENT
 	;Cancels existing appointment in BSDX APPOINTMENT and 44/2 subfiles
@@ -140,6 +61,7 @@ APPDEL(BSDXY,BSDXAPTID,BSDXTYP,BSDXCR,BSDXNOT)	       ;EP
 	;
 	; Counter
 	N BSDXI S BSDXI=0
+	;
 	; Header Node
 	S ^BSDXTMP($J,BSDXI)="T00100ERRORID"_$C(30)
 	;
@@ -157,10 +79,10 @@ APPDEL(BSDXY,BSDXAPTID,BSDXTYP,BSDXCR,BSDXNOT)	       ;EP
 	S BSDXNOEV=1 ;Don't execute BSDX CANCEL APPOINTMENT protocol
 	;
 	;;;test for error inside transaction. See if %ZTER works
-	I $G(bsdxdie) S X=1/0
+	I $G(BSDXDIE) S X=1/0
 	;;;test
 	;;;test for TRESTART
-	I $G(bsdxrestart) K bsdxrestart TRESTART
+	I $G(BSDXRESTART) K BSDXRESTART tRESTART
 	;;;test
 	;
 	; Check appointment ID and whether it exists
@@ -186,7 +108,7 @@ APPDEL(BSDXY,BSDXAPTID,BSDXTYP,BSDXCR,BSDXNOT)	       ;EP
 	; Error indicator for Hosp Location filing for getting out of routine
 	N BSDXERR S BSDXERR=0
 	; Only file in 2/44 if there is an associated hospital location
-	I BSDXLOC D  QUIT:BSDXERR  
+	I BSDXLOC D  QUIT:BSDXERR
 	. I '$D(^SC(BSDXLOC,0)) S BSDXERR=1 D ERR(BSDXI,"-6~BSDX08: Invalid Hosp Location stored in Database") QUIT
 	. ; Get the IEN of the appointment in the "S" node of ^SC
 	. N BSDXSCIEN
@@ -214,7 +136,7 @@ APPDEL(BSDXY,BSDXAPTID,BSDXTYP,BSDXCR,BSDXNOT)	       ;EP
 AVUPDT(BSDXSCD,BSDXSTART,BSDXLEN)	;Update Legacy PIMS Clinic availability
 	;See SDCNP0
 	N SD,S  ; Start Date
-	S (SD,S)=BSDXSTART 
+	S (SD,S)=BSDXSTART
 	N I ; Clinic IEN in 44
 	S I=BSDXSCD
 	; if day has no schedule in legacy PIMS, forget about this update.
@@ -243,16 +165,16 @@ AVUPDT(BSDXSCD,BSDXSTART,BSDXLEN)	;Update Legacy PIMS Clinic availability
 	N ST  ; ??
 	; Y#1 -> Minutes; *SI -> * Slots per hour; \.6 trunc min to hour
 	; Y\1 -> Hours since start of day; * SI: * slots
-	S ST=Y#1*SI\.6+(Y\1*SI) 
+	S ST=Y#1*SI\.6+(Y\1*SI)
 	N SS ; how many slots are supposed to be taken by appointment
 	S SS=SL*HSI/60 ; (nb: try SL: 30 min; HSI: 4 slots)
 	N I
 	I Y'<1 D  ; If Hours since start of Date is greater than 1
 	. ; loop through pattern. Tired of documenting.
 	. F I=ST+ST:SDDIF D  Q:Y=""  Q:SS'>0
-	. . S Y=$E(STR,$F(STR,$E(S,I+1))) Q:Y=""  
+	. . S Y=$E(STR,$F(STR,$E(S,I+1))) Q:Y=""
 	. . S S=$E(S,1,I)_Y_$E(S,I+2,999)
-	. . S SS=SS-1 
+	. . S SS=SS-1
 	. . Q:SS'>0
 	S ^SC(BSDXSCD,"ST",SD\1,1)=S  ; new pattern; global set
 	Q
