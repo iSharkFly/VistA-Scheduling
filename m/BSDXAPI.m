@@ -1,4 +1,4 @@
-BSDXAPI	; IHS/ANMC/LJF & VW/SMH - SCHEDULING APIs ; 6/20/12 12:40pm
+BSDXAPI	; IHS/ANMC/LJF & VW/SMH - SCHEDULING APIs ; 6/22/12 4:25pm
 	;;1.7T1;BSDX;;Aug 31, 2011;Build 18
 	; Licensed under LGPL  
 	;
@@ -291,33 +291,25 @@ CANCEL(BSDR)	;PEP; called to cancel appt
 	;   = 0 or null:  everything okay
 	;   = 1^message:  error and reason
 	;
-	I '$D(^DPT(+$G(BSDR("PAT")),0)) Q 1_U_"Patient not on file: "_$G(BSDR("PAT"))
-	I '$D(^SC(+$G(BSDR("CLN")),0)) Q 1_U_"Clinic not on file: "_$G(BSDR("CLN"))
-	I ($G(BSDR("TYP"))'="C"),($G(BSDR("TYP"))'="PC") Q 1_U_"Cancel Status error: "_$G(BSDR("TYP"))
-	I $G(BSDR("ADT")) S BSDR("ADT")=+$E(BSDR("ADT"),1,12)  ;remove seconds
-	I $G(BSDR("ADT"))'?7N.1".".4N Q 1_U_"Appt Date/Time error: "_$G(BSDR("ADT"))
-	I $G(BSDR("CDT")) S BSDR("CDT")=+$E(BSDR("CDT"),1,12)  ;remove seconds
-	I $G(BSDR("CDT"))'?7N.1".".4N Q 1_U_"Cancel Date/Time error: "_$G(BSDR("CDT"))
-	I '$D(^VA(200,+$G(BSDR("USR")),0)) Q 1_U_"User Who Canceled Appt Error: "_$G(BSDR("USR"))
-	I '$D(^SD(409.2,+$G(BSDR("CR")))) Q 1_U_"Cancel Reason error: "_$G(BSDR("CR"))
-	;
-	NEW IEN,DIE,DA,DR
-	S IEN=$$SCIEN(BSDR("PAT"),BSDR("CLN"),BSDR("ADT"))
-	I 'IEN Q 1_U_"Error trying to find appointment for cancel: Patient="_BSDR("PAT")_" Clinic="_BSDR("CLN")_" Appt="_BSDR("ADT")
+	N BSDXCANCK S BSDXCANCK=$$CANCELCK(.BSDR)
+	I BSDXCANCK Q BSDXCANCK
 	;
 	; BSDX 1.5 3110125
 	; UJO/SMH - Add ability to remove check-in if the patient is checked in
 	; I $$CI(BSDR("PAT"),BSDR("CLN"),BSDR("ADT"),IEN) Q 1_U_"Patient already checked in; cannot cancel until checkin deleted: Patient="_BSDR("PAT")_" Clinic="_BSDR("CLN")_" Appt="_BSDR("ADT")
 	; Remove check-in if the patient is checked in.
 	N BSDXRESULT S BSDXRESULT=0 ; Result; should be zero if success; -1 + message if failure
+	NEW IEN S IEN=$$SCIEN(BSDR("PAT"),BSDR("CLN"),BSDR("ADT"))
 	I $$CI(BSDR("PAT"),BSDR("CLN"),BSDR("ADT"),IEN) SET BSDXRESULT=$$RMCI(BSDR("PAT"),BSDR("CLN"),BSDR("ADT"))
 	I BSDXRESULT Q BSDXRESULT
+	; NB: Failure point 1: we fail here nothing has happened yet
 	;
 	; remember before status
 	NEW SDATA,DFN,SDT,SDCL,SDDA,SDCPHDL
 	S DFN=BSDR("PAT"),SDT=BSDR("ADT"),SDCL=BSDR("CLN"),SDMODE=2,SDDA=IEN
 	S SDCPHDL=$$HANDLE^SDAMEVT(1),SDATA=SDDA_U_DFN_U_SDT_U_SDCL
 	D BEFORE^SDAMEVT(.SDATA,DFN,SDT,SDCL,SDDA,SDCPHDL)
+	; NB: Here only globals are set. Nothing else.
 	;
 	; get user who made appt and date appt made from ^SC
 	;    because data in ^SC will be deleted
@@ -331,17 +323,41 @@ CANCEL(BSDR)	;PEP; called to cancel appt
 	S DR="3///"_BSDR("TYP")_";14///`"_BSDR("USR")_";15///"_BSDR("CDT")_";16///`"_BSDR("CR")_";19///`"_USER_";20///"_DATE
 	S:$G(BSDR("NOT"))]"" DR=DR_";17///"_$E(BSDR("NOT"),1,160)
 	D ^DIE
+	; Failure point 2: If we fail here, it means that the check-in was removed; 
+	; but the appointment wasn't cancelled.
+	; To roll back, we should restore the check-in. However, I would rather not
+	; do that. This code will only fail if there's something wrong in the DB.
+	; (deleted field for example). If I try to restore the check-in, I just
+	; may excercerbate the problem.
 	;
 	; delete data in ^SC
 	NEW DIK,DA
 	S DIK="^SC("_BSDR("CLN")_",""S"","_BSDR("ADT")_",1,"
 	S DA(2)=BSDR("CLN"),DA(1)=BSDR("ADT"),DA=IEN
 	D ^DIK
+	; Failure point 3: If we fail here, we need to restore the cancel date, 
+	; and possibly, the check-in.
 	;
 	; call event driver
 	D CANCEL^SDAMEVT(.SDATA,DFN,SDT,SDCL,SDDA,SDMODE,SDCPHDL)
 	Q 0
 	;
+CANCELCK(BSDR) ; $$ PEP; Okay to Cancel Appointment?
+	; Input: .BSDR array as documented in $$CANCEL
+	; Output: 0 or 1^Error message
+	I '$D(^DPT(+$G(BSDR("PAT")),0)) Q 1_U_"Patient not on file: "_$G(BSDR("PAT"))
+	I '$D(^SC(+$G(BSDR("CLN")),0)) Q 1_U_"Clinic not on file: "_$G(BSDR("CLN"))
+	I ($G(BSDR("TYP"))'="C"),($G(BSDR("TYP"))'="PC") Q 1_U_"Cancel Status error: "_$G(BSDR("TYP"))
+	I $G(BSDR("ADT")) S BSDR("ADT")=+$E(BSDR("ADT"),1,12)  ;remove seconds
+	I $G(BSDR("ADT"))'?7N.1".".4N Q 1_U_"Appt Date/Time error: "_$G(BSDR("ADT"))
+	I $G(BSDR("CDT")) S BSDR("CDT")=+$E(BSDR("CDT"),1,12)  ;remove seconds
+	I $G(BSDR("CDT"))'?7N.1".".4N Q 1_U_"Cancel Date/Time error: "_$G(BSDR("CDT"))
+	I '$D(^VA(200,+$G(BSDR("USR")),0)) Q 1_U_"User Who Canceled Appt Error: "_$G(BSDR("USR"))
+	I '$D(^SD(409.2,+$G(BSDR("CR")))) Q 1_U_"Cancel Reason error: "_$G(BSDR("CR"))
+	;
+	NEW IEN S IEN=$$SCIEN(BSDR("PAT"),BSDR("CLN"),BSDR("ADT"))
+	I 'IEN Q 1_U_"Error trying to find appointment for cancel: Patient="_BSDR("PAT")_" Clinic="_BSDR("CLN")_" Appt="_BSDR("ADT")
+	Q 0
 CI(PAT,CLINIC,DATE,SDIEN)	;PEP; -- returns 1 if appt already checked-in
 	NEW X
 	S X=$G(SDIEN)   ;ien sent in call
@@ -395,6 +411,12 @@ SCIEN(PAT,CLINIC,DATE)	;PEP; returns ien for appt in ^SC
 	 . I +$G(^SC(CLINIC,"S",DATE,1,X,0))=PAT S IEN=X
 	Q $G(IEN)
 	;
+APPLEN(PAT,CLINIC,DATE) ; $$ PEP; returns an appointment's length
+	; Get either the appointment length or zero
+	; TODO: Test
+	N SCIEN S SCIEN=$$SCIEN(PAT,CLINIC,DATE)
+	Q:SCIEN $P(^SC(CLINIC,"S",DATE,1,SCIEN,0),U,2)
+	Q 0
 APPTYP(PAT,DATE)	;PEP; -- returns type of appt (scheduled or walk-in)
 	NEW X S X=$P($G(^DPT(PAT,"S",DATE,0)),U,7)
 	Q $S(X=3:"SCHED",X=4:"WALK-IN",1:"??")
