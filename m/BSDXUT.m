@@ -1,4 +1,4 @@
-BSDXUT ; VEN/SMH - Unit Tests for Scheduling GUI ; 6/21/12 4:42pm
+BSDXUT ; VEN/SMH - Unit Tests for Scheduling GUI ; 6/22/12 4:27pm
 	;;1.7T1;BSDX;;Aug 31, 2011;Build 18
 	; Licensed under LGPL
 	;
@@ -261,10 +261,10 @@ UT08	; Unit Tests for BSDX08; Must have patients 1,2,3,4,5 defined in system
 	D APPADD^BSDX07(.ZZZ,APPTTIME,ENDTIME,DFN,RESNAM,30,"Sam's Note",1)
 	S APPID=+$P(^BSDXTMP($J,1),U)
 	D APPDEL^BSDX08(.ZZZ,APPID,"PC",1,"Sam's Cancel Note")
-	I $P(^BSDXAPPT(APPID,0),U,12)'>0 W "Error in Cancellation-1"
-	I $O(^SC(HLIEN,"S",APPTTIME,1,0))]"" W "Error in Cancellation-2"
-	I $P(^DPT(DFN,"S",APPTTIME,0),U,2)'="PC" W "Error in Cancellation-3"
-	I ^DPT(DFN,"S",APPTTIME,"R")'="Sam's Cancel Note" W "Error in Cancellation-4"
+	I $P(^BSDXAPPT(APPID,0),U,12)'>0 W "Error in Cancellation-1",!
+	I $O(^SC(HLIEN,"S",APPTTIME,1,0))]"" W "Error in Cancellation-2",!
+	I $P(^DPT(DFN,"S",APPTTIME,0),U,2)'="PC" W "Error in Cancellation-3",!
+	I ^DPT(DFN,"S",APPTTIME,"R")'="Sam's Cancel Note" W "Error in Cancellation-4",!
 	;
 	; Test 2: Check for -1 -- TODO: Fix later... Can't do right now automatically
 	; Make appt
@@ -311,7 +311,7 @@ UT08	; Unit Tests for BSDX08; Must have patients 1,2,3,4,5 defined in system
 	S APPID=+$P(^BSDXTMP($J,1),U)
 	I APPID=0 W "Error in test 6",!
 	D CHECKIN^BSDX25(.ZZZ,APPID,$$NOW^XLFDT) ; Checkin
-	S BSDXRESULT=$$RMCI^BSDXAPI(DFN,HLIEN,BSDXSTART) ; remove checkin
+	S BSDXRESULT=$$RMCI^BSDXAPI(DFN,HLIEN,APPTTIME) ; remove checkin
 	D APPDEL^BSDX08(.ZZZ,APPID,"PC",10,"Cancel Note") ; delete appt
 	I $P(^BSDXTMP($J,1),$C(30))'="" W "Error in test 6",!
 	;
@@ -357,7 +357,7 @@ UT08	; Unit Tests for BSDX08; Must have patients 1,2,3,4,5 defined in system
 	S APPID=+$P(^BSDXTMP($J,1),U)
 	I APPID=0 W "Error in test 6",!
 	D CHECKIN^BSDX25(.ZZZ,APPID,$$NOW^XLFDT) ; Checkin
-	S BSDXRESULT=$$RMCI^BSDXAPI(DFN,HLIEN,BSDXSTART) ; remove checkin
+	S BSDXRESULT=$$RMCI^BSDXAPI(DFN,HLIEN,APPTTIME) ; remove checkin
 	D APPDEL^BSDX08(.ZZZ,APPID,"PC",10,"Cancel Note") ; delete appt
 	I $P(^BSDXTMP($J,1),$C(30))'="" W "Error in test 6",!
 	QUIT
@@ -414,6 +414,7 @@ UTCRRES(NAME,HLIEN) ; $$ - Create Unit Test Resource in 9002018.1 (BSDX RESOURCE
  Q $S(RTN=0:-1_U_RTN,1:+RTN) ; 0 means an error has occurred; 1 means IEN returned
  ;
 TIMES() ; $$ - Create a next available appointment time^ending time; Private
+ ; Output: appttime^endtime
  N NOW S NOW=$$NOW^XLFDT() ; Now time
  N LAST S LAST=$O(^BSDXAPPT("B"," "),-1) ; highest time in file
  N TIME2USE S TIME2USE=$S(NOW>LAST:NOW,1:LAST) ; Which time to use?
@@ -421,3 +422,9 @@ TIMES() ; $$ - Create a next available appointment time^ending time; Private
  N APPTIME S APPTIME=$$FMADD^XLFDT(TIME2USE,0,0,15,0) ; Add 15 min
  N ENDTIME S ENDTIME=$$FMADD^XLFDT(APPTIME,0,0,15,0) ; Add 15 more min
  Q APPTIME_U_ENDTIME ; quit with apptime^endtime
+ ;
+TIMEHL(HLIEN) ; $$ - Create a next available appointment time^ending time by HL; Private
+ ; Input: HLIEN
+ ; Output: Next available appointment time for the HLIEN
+ N LAST S LAST=$O(^SC(HLIEN,"S",""),-1)
+ Q $$FMADD^XLFDT(LAST,1,0,15,0) ; Add 1 day and 15 minutes

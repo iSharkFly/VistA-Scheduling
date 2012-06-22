@@ -1,5 +1,5 @@
-BSDX08	; VW/UJO/SMH - WINDOWS SCHEDULING RPCS ; 6/21/12 4:49pm
-	;;1.6;BSDX;;Aug 31, 2011;Build 18
+BSDX08	; VW/UJO/SMH - WINDOWS SCHEDULING RPCS ; 6/22/12 4:19pm
+	;;1.7T1;BSDX;;Aug 31, 2011;Build 18
 	; 
 	; Original by HMW. New Written by Sam Habiel. Licensed under LGPL.
 	; 
@@ -70,62 +70,66 @@ APPDEL(BSDXY,BSDXAPTID,BSDXTYP,BSDXCR,BSDXNOT)	       ;EP
 	; is supposed to take 5 seconds.
 	L +^BSDXAPPT(BSDXAPTID):5 I '$T D ERR(BSDXI,"-1~BSDX08: Appt record is locked. Please contact technical support.") Q
 	;
-	;Restartable Transaction; restore paramters when starting.
-	; (Params restored are what's passed here + BSDXI)
-	TSTART (BSDXY,BSDXAPTID,BSDXTYP,BSDXCR,BSDXNOT,BSDXI):T="BSDX CANCEL APPOINTEMENT^BSDX08"
-	;
 	; Turn off SDAM APPT PROTOCOL BSDX Entries
 	N BSDXNOEV
 	S BSDXNOEV=1 ;Don't execute BSDX CANCEL APPOINTMENT protocol
 	;
 	;;;test for error inside transaction. See if %ZTER works
 	I $G(BSDXDIE) S X=1/0
-	;;;test
-	;;;test for TRESTART
-	I $G(BSDXRESTART) K BSDXRESTART tRESTART
-	;;;test
 	;
 	; Check appointment ID and whether it exists
 	I '+BSDXAPTID D ERR(BSDXI,"-2~BSDX08: Invalid Appointment ID") Q
 	I '$D(^BSDXAPPT(BSDXAPTID,0)) D ERR(BSDXI,"-3~BSDX08: Invalid Appointment ID") Q
-	;
+	; 
 	; Start Processing:
-	; First, add cancellation date to appt entry in BSDX APPOINTMENT
+	; First, get data
 	N BSDXNOD S BSDXNOD=^BSDXAPPT(BSDXAPTID,0) ; BSDX Appt Node
 	N BSDXPATID S BSDXPATID=$P(BSDXNOD,U,5) ; Patient ID
 	N BSDXSTART S BSDXSTART=$P(BSDXNOD,U) ; Start Time
-	D BSDXCAN(BSDXAPTID)  ; Add a cancellation date in BSDX APPOINTMENT
 	;
-	; Second, cancel appt in "S" nodes in file 2 and 44, then update Legacy PIMS Availability
+	; Check the resource ID and whether it exists
 	N BSDXSC1 S BSDXSC1=$P(BSDXNOD,U,7) ;RESOURCEID
 	; If the resouce id doesn't exist...
 	I BSDXSC1="" D ERR(BSDXI,"-4~BSDX08: Cancelled appointment does not have a Resouce ID") QUIT
 	I '$D(^BSDXRES(BSDXSC1,0)) D ERR(BSDXI,"-5~BSDX08: Resouce ID does not exist in BSDX RESOURCE") QUIT
+	;
+	; Process PIMS issues first: 
+	; cancel appt in "S" nodes in file 2 and 44, then update Legacy PIMS Availability
 	; Get zero node of resouce
-	S BSDXNOD=^BSDXRES(BSDXSC1,0)
+	N BSDXNOD S BSDXNOD=^BSDXRES(BSDXSC1,0)
 	; Get Hosp location
 	N BSDXLOC S BSDXLOC=$P(BSDXNOD,U,4)
 	; Error indicator for Hosp Location filing for getting out of routine
 	N BSDXERR S BSDXERR=0
+	; For BSDXC
+	N BSDXC
 	; Only file in 2/44 if there is an associated hospital location
 	I BSDXLOC D  QUIT:BSDXERR
-	. I '$D(^SC(BSDXLOC,0)) S BSDXERR=1 D ERR(BSDXI,"-6~BSDX08: Invalid Hosp Location stored in Database") QUIT
-	. ; Get the IEN of the appointment in the "S" node of ^SC
-	. N BSDXSCIEN
-	. S BSDXSCIEN=$$SCIEN^BSDXAPI(BSDXPATID,BSDXLOC,BSDXSTART)
-	. I BSDXSCIEN="" S BSDXERR=1 D ERR(BSDXI,"-7~BSDX08: Patient does not have an appointment in PIMS Clinic") QUIT
-	. ; Get the appointment node
-	. S BSDXNOD=$G(^SC(BSDXLOC,"S",BSDXSTART,1,BSDXSCIEN,0))
-	. I BSDXNOD="" S BSDXERR=1 D ERR(BSDXI,"-8^BSDX08: Unable to find associated PIMS appointment for this patient") QUIT
-	. N BSDXLEN S BSDXLEN=$P(BSDXNOD,U,2)
+	. S BSDXC("PAT")=BSDXPATID
+	. S BSDXC("CLN")=BSDXLOC
+	. S BSDXC("TYP")=BSDXTYP
+	. S BSDXC("ADT")=BSDXSTART
+	. S BSDXC("CDT")=$$NOW^XLFDT()
+	. S BSDXC("NOT")=BSDXNOT
+	. S:'+$G(BSDXCR) BSDXCR=11 ;Other
+	. S BSDXC("CR")=BSDXCR
+	. S BSDXC("USR")=DUZ
+	. ;
+	. S BSDXERR=$$CANCELCK^BSDXAPI(.BSDXC) ; 0 or 1^error message
+	. I BSDXERR D ERR(BSDXI,"-9^BSDX08: BSDXAPI returned an error: "_$P(BSDXERR,U,2)) QUIT
+	. ;
+	. N BSDXLEN S BSDXLEN=$$APPLEN^BSDXAPI(BSDXPATID,BSDXLOC,BSDXSTART)
+	. ; DEBUG
+	. I 'BSDXLEN S $EC=",U1,"
+	. ; DEBUG
 	. ; Cancel through BSDXAPI
-	. N BSDXZ
-	. D APCAN(.BSDXZ,BSDXLOC,BSDXPATID,BSDXSTART)
-	. I +BSDXZ>0 S BSDXERR=1 D ERR(BSDXI,"-9^BSDX08: BSDXAPI returned an error: "_$P(BSDXZ,U,2)) QUIT
+	. S BSDXERR=$$CANCEL^BSDXAPI(.BSDXC)
+	. I BSDXERR=1 D ERR(BSDXI,"-9^BSDX08: BSDXAPI returned an error: "_$P(BSDXZ,U,2)) QUIT
 	. ; Update Legacy PIMS clinic Availability
 	. D AVUPDT(BSDXLOC,BSDXSTART,BSDXLEN)
 	;
-	TCOMMIT
+	D BSDXCAN(BSDXAPTID)  ; Add a cancellation date in BSDX APPOINTMENT
+	;
 	L -^BSDXAPPT(BSDXAPTID)
 	S BSDXI=BSDXI+1
 	S ^BSDXTMP($J,BSDXI)=""_$C(30)
@@ -179,24 +183,6 @@ AVUPDT(BSDXSCD,BSDXSTART,BSDXLEN)	;Update Legacy PIMS Clinic availability
 	S ^SC(BSDXSCD,"ST",SD\1,1)=S  ; new pattern; global set
 	Q
 	;
-APCAN(BSDXZ,BSDXLOC,BSDXDFN,BSDXSD)	        ;
-	;Cancel appointment for patient BSDXDFN in clinic BSDXSC1
-	;at time BSDXSD
-	N BSDXC,%H
-	S BSDXC("PAT")=BSDXPATID
-	S BSDXC("CLN")=BSDXLOC
-	S BSDXC("TYP")=BSDXTYP
-	S BSDXC("ADT")=BSDXSD
-	S %H=$H D YMD^%DTC
-	S BSDXC("CDT")=X+%
-	S BSDXC("NOT")=BSDXNOT
-	S:'+$G(BSDXCR) BSDXCR=11 ;Other
-	S BSDXC("CR")=BSDXCR
-	S BSDXC("USR")=DUZ
-	;
-	S BSDXZ=$$CANCEL^BSDXAPI(.BSDXC)
-	Q
-	;
 BSDXCAN(BSDXAPTID)	;
 	;Cancel BSDX APPOINTMENT entry
 	N %DT,X,BSDXDATE,Y,BSDXIENS,BSDXFDA,BSDXMSG
@@ -230,6 +216,7 @@ CANEVT1(BSDXRES,BSDXSTART,BSDXPAT)	;
 	Q:'+BSDXRES BSDXFOUND
 	Q:'$D(^BSDXAPPT("ARSRC",BSDXRES,BSDXSTART)) BSDXFOUND
 	S BSDXAPPT=0 F  S BSDXAPPT=$O(^BSDXAPPT("ARSRC",BSDXRES,BSDXSTART,BSDXAPPT)) Q:'+BSDXAPPT  D  Q:BSDXFOUND
+	. N BSDXNOD
 	. S BSDXNOD=$G(^BSDXAPPT(BSDXAPPT,0)) Q:BSDXNOD=""
 	. I $P(BSDXNOD,U,5)=BSDXPAT,$P(BSDXNOD,U,12)="" S BSDXFOUND=1 Q
 	I BSDXFOUND,+$G(BSDXAPPT) D BSDXCAN(BSDXAPPT)
@@ -249,7 +236,6 @@ CANEVT3(BSDXRES)	;
 ERR(BSDXI,BSDXERR)	;Error processing
 	S BSDXI=BSDXI+1
 	S BSDXERR=$TR(BSDXERR,"^","~")
-	I $TL>0 TROLLBACK
 	S ^BSDXTMP($J,BSDXI)=BSDXERR_$C(30)
 	S BSDXI=BSDXI+1
 	S ^BSDXTMP($J,BSDXI)=$C(31)
@@ -258,8 +244,6 @@ ERR(BSDXI,BSDXERR)	;Error processing
 	;
 ETRAP	;EP Error trap entry
 	N $ET S $ET="D ^%ZTER HALT"  ; Emergency Error Trap
-	; Rollback, otherwise ^XTER will be empty from future rollback
-	I $TL>0 TROLLBACK 
 	D ^%ZTER
 	S $EC=""  ; Clear Error
 	; Log error message and send to client
