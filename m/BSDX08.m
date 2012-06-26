@@ -1,4 +1,4 @@
-BSDX08	; VW/UJO/SMH - WINDOWS SCHEDULING RPCS ; 6/22/12 4:19pm
+BSDX08	; VW/UJO/SMH - WINDOWS SCHEDULING RPCS ; 6/25/12 6:17pm
 	;;1.7T1;BSDX;;Aug 31, 2011;Build 18
 	; 
 	; Original by HMW. New Written by Sam Habiel. Licensed under LGPL.
@@ -93,7 +93,10 @@ APPDEL(BSDXY,BSDXAPTID,BSDXTYP,BSDXCR,BSDXNOT)	       ;EP
 	I BSDXSC1="" D ERR(BSDXI,"-4~BSDX08: Cancelled appointment does not have a Resouce ID") QUIT
 	I '$D(^BSDXRES(BSDXSC1,0)) D ERR(BSDXI,"-5~BSDX08: Resouce ID does not exist in BSDX RESOURCE") QUIT
 	;
-	; Process PIMS issues first: 
+	; BSDXAPPT First; todo: check for error
+	D BSDXCAN(BSDXAPTID)  ; Add a cancellation date in BSDX APPOINTMENT
+	;
+	; Process PIMS issues second: 
 	; cancel appt in "S" nodes in file 2 and 44, then update Legacy PIMS Availability
 	; Get zero node of resouce
 	N BSDXNOD S BSDXNOD=^BSDXRES(BSDXSC1,0)
@@ -119,16 +122,13 @@ APPDEL(BSDXY,BSDXAPTID,BSDXTYP,BSDXCR,BSDXNOT)	       ;EP
 	. I BSDXERR D ERR(BSDXI,"-9^BSDX08: BSDXAPI returned an error: "_$P(BSDXERR,U,2)) QUIT
 	. ;
 	. N BSDXLEN S BSDXLEN=$$APPLEN^BSDXAPI(BSDXPATID,BSDXLOC,BSDXSTART)
-	. ; DEBUG
-	. I 'BSDXLEN S $EC=",U1,"
-	. ; DEBUG
+	. ;
 	. ; Cancel through BSDXAPI
 	. S BSDXERR=$$CANCEL^BSDXAPI(.BSDXC)
 	. I BSDXERR=1 D ERR(BSDXI,"-9^BSDX08: BSDXAPI returned an error: "_$P(BSDXZ,U,2)) QUIT
 	. ; Update Legacy PIMS clinic Availability
 	. D AVUPDT(BSDXLOC,BSDXSTART,BSDXLEN)
 	;
-	D BSDXCAN(BSDXAPTID)  ; Add a cancellation date in BSDX APPOINTMENT
 	;
 	L -^BSDXAPPT(BSDXAPTID)
 	S BSDXI=BSDXI+1
@@ -137,6 +137,7 @@ APPDEL(BSDXY,BSDXAPTID,BSDXTYP,BSDXCR,BSDXNOT)	       ;EP
 	S ^BSDXTMP($J,BSDXI)=$C(31)
 	Q
 	;
+ROLLBACK(BSDXAPTID)
 AVUPDT(BSDXSCD,BSDXSTART,BSDXLEN)	;Update Legacy PIMS Clinic availability
 	;See SDCNP0
 	N SD,S  ; Start Date

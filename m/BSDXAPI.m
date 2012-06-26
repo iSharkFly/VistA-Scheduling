@@ -1,4 +1,4 @@
-BSDXAPI	; IHS/ANMC/LJF & VW/SMH - SCHEDULING APIs ; 6/22/12 4:25pm
+BSDXAPI	; IHS/ANMC/LJF & VW/SMH - SCHEDULING APIs ; 6/25/12 6:13pm
 	;;1.7T1;BSDX;;Aug 31, 2011;Build 18
 	; Licensed under LGPL  
 	;
@@ -43,6 +43,7 @@ MAKE1(DFN,CLIN,TYP,DATE,LEN,INFO)	; Simplified PEP w/ parameters for $$MAKE - ma
 	; have 3 (scheduled) or 4 (walkin) appt at Dec 20, 2009 @ 10:11:59 for 30 minutes appt
 	; for Baby foxes hallucinations.
 	; S RESULT=$$MAKE1^BSDXAPI(23435,33,(3 or 4),3091220.221159,30,"I see Baby foxes")
+	N BSDR
 	S BSDR("PAT")=DFN       ;DFN
 	S BSDR("CLN")=CLIN      ;Hosp Loc IEN
 	S BSDR("TYP")=TYP       ;3 sched or 4 walkin
@@ -107,7 +108,7 @@ MAKE(BSDR)	;PEP; call to store appt made
 	Q:$G(BSDXSIMERR3) 1_U_$NA(BSDXSIMERR3) ; Unit Test line
 	;
 	; add appt to file 44. This adds it to the FIRST subfile (Appointment)
-	N DIC,DA,Y,X,DD,DO,DLAYGO
+	N DIC,DA,Y,X,DD,DO,DLAYGO,DINUM
 	I '$D(^SC(BSDR("CLN"),"S",0)) S ^SC(BSDR("CLN"),"S",0)="^44.001DA^^"
 	I '$D(^SC(BSDR("CLN"),"S",BSDR("ADT"),0)) D  I Y<1 Q 1_U_"Error adding date to file 44: Clinic="_BSDR("CLN")_" Date="_BSDR("ADT")
 	. S DIC="^SC("_BSDR("CLN")_",""S"",",DA(1)=BSDR("CLN"),(X,DINUM)=BSDR("ADT")
@@ -201,6 +202,7 @@ CHECKIN1(DFN,CLIN,APDATE)	; Simplified PEP w/ parameters for $$CHECKIN - Checkin
 	; Call like this for DFN 23435 checking in now at Hospital Location 33
 	; for appt at Dec 20, 2009 @ 10:11:59 
 	; S RESULT=$$CHECKIN1^BSDXAPI(23435,33,3091220.221159)
+	N BSDR
 	S BSDR("PAT")=DFN          ;DFN
 	S BSDR("CLN")=CLIN         ;Hosp Loc IEN
 	S BSDR("ADT")=APDATE       ;Appt Date
@@ -237,7 +239,7 @@ CHECKIN(BSDR)	;EP; call to add checkin info to appt; IHS/ITSC/LJF 12/23/2004 PAT
 	I 'IEN Q 1_U_"Error trying to find appointment for checkin: Patient="_BSDR("PAT")_" Clinic="_BSDR("CLN")_" Appt="_BSDR("ADT")
 	;
 	; remember before status
-	NEW SDATA,DFN,SDT,SDCL,SDDA,SDCIHDL
+	NEW SDATA,DFN,SDT,SDCL,SDDA,SDCIHDL,SDMODE
 	S DFN=BSDR("PAT"),SDT=BSDR("ADT"),SDCL=BSDR("CLN"),SDMODE=2,SDDA=IEN
 	S SDCIHDL=$$HANDLE^SDAMEVT(1),SDATA=SDDA_U_DFN_U_SDT_U_SDCL
 	D BEFORE^SDAMEVT(.SDATA,DFN,SDT,SDCL,SDDA,SDCIHDL)
@@ -263,6 +265,7 @@ CANCEL1(DFN,CLIN,TYP,APDATE,REASON,INFO)	; PEP w/ parameters for $$CANCEL - canc
 	; cancelling appt at Dec 20, 2009 @ 10:11:59 because of reason 1 in file 409.2 IEN (weather)
 	; because foxes come out during bad weather.
 	; S RESULT=$$CANCEL1^BSDXAPI(23435,33,"PC",3091220.221159,1,"Afraid of foxes")
+	N BSDR
 	S BSDR("PAT")=DFN
 	S BSDR("CLN")=CLIN
 	S BSDR("TYP")=TYP
@@ -291,25 +294,22 @@ CANCEL(BSDR)	;PEP; called to cancel appt
 	;   = 0 or null:  everything okay
 	;   = 1^message:  error and reason
 	;
+	; Okay to Cancel? Call Cancel Check.
 	N BSDXCANCK S BSDXCANCK=$$CANCELCK(.BSDR)
 	I BSDXCANCK Q BSDXCANCK
 	;
 	; BSDX 1.5 3110125
 	; UJO/SMH - Add ability to remove check-in if the patient is checked in
-	; I $$CI(BSDR("PAT"),BSDR("CLN"),BSDR("ADT"),IEN) Q 1_U_"Patient already checked in; cannot cancel until checkin deleted: Patient="_BSDR("PAT")_" Clinic="_BSDR("CLN")_" Appt="_BSDR("ADT")
-	; Remove check-in if the patient is checked in.
-	N BSDXRESULT S BSDXRESULT=0 ; Result; should be zero if success; -1 + message if failure
-	NEW IEN S IEN=$$SCIEN(BSDR("PAT"),BSDR("CLN"),BSDR("ADT"))
-	I $$CI(BSDR("PAT"),BSDR("CLN"),BSDR("ADT"),IEN) SET BSDXRESULT=$$RMCI(BSDR("PAT"),BSDR("CLN"),BSDR("ADT"))
-	I BSDXRESULT Q BSDXRESULT
-	; NB: Failure point 1: we fail here nothing has happened yet
+	; VEN/SMH on 3120625/v1.7 - PIMS doesn't care if patient is already checked in
+	; Lets you remove appointment anyways! Not like RPMS.
+	; Plus... deleting checkin affects S node on 44, which is DELETED anyways!
 	;
 	; remember before status
-	NEW SDATA,DFN,SDT,SDCL,SDDA,SDCPHDL
+	NEW SDATA,DFN,SDT,SDCL,SDDA,SDCPHDL,SDMODE
 	S DFN=BSDR("PAT"),SDT=BSDR("ADT"),SDCL=BSDR("CLN"),SDMODE=2,SDDA=IEN
 	S SDCPHDL=$$HANDLE^SDAMEVT(1),SDATA=SDDA_U_DFN_U_SDT_U_SDCL
 	D BEFORE^SDAMEVT(.SDATA,DFN,SDT,SDCL,SDDA,SDCPHDL)
-	; NB: Here only globals are set. Nothing else.
+	; NB: Here only ^TMP globals are set with before values.
 	;
 	; get user who made appt and date appt made from ^SC
 	;    because data in ^SC will be deleted
@@ -317,28 +317,35 @@ CANCEL(BSDR)	;PEP; called to cancel appt
 	S USER=$P($G(^SC(SDCL,"S",SDT,1,IEN,0)),U,6)
 	S DATE=$P($G(^SC(SDCL,"S",SDT,1,IEN,0)),U,7)
 	;
-	; update file 2 info
-	NEW DIE,DA,DR
-	S DIE="^DPT("_DFN_",""S"",",DA(1)=DFN,DA=SDT
-	S DR="3///"_BSDR("TYP")_";14///`"_BSDR("USR")_";15///"_BSDR("CDT")_";16///`"_BSDR("CR")_";19///`"_USER_";20///"_DATE
-	S:$G(BSDR("NOT"))]"" DR=DR_";17///"_$E(BSDR("NOT"),1,160)
-	D ^DIE
-	; Failure point 2: If we fail here, it means that the check-in was removed; 
-	; but the appointment wasn't cancelled.
-	; To roll back, we should restore the check-in. However, I would rather not
-	; do that. This code will only fail if there's something wrong in the DB.
-	; (deleted field for example). If I try to restore the check-in, I just
-	; may excercerbate the problem.
+	; update file 2 info --old code
+	;NEW DIE,DA,DR
+	;S DIE="^DPT("_DFN_",""S"",",DA(1)=DFN,DA=SDT
+	;S DR="3///"_BSDR("TYP")_";14///`"_BSDR("USR")_";15///"_BSDR("CDT")_";16///`"_BSDR("CR")_";19///`"_USER_";20///"_DATE
+	;S:$G(BSDR("NOT"))]"" DR=DR_";17///"_$E(BSDR("NOT"),1,160)
+	;D ^DIE
+	N BSDXIENS S BSDXIENS=SDT_","_DFN_","
+	N BSDXFDA
+	S BSDXFDA(2.98,BSDXIENS,3)=BSDR("TYP")
+	S BSDXFDA(2.98,BSDXIENS,14)=BSDR("USR")
+	S BSDXFDA(2.98,BSDXIENS,15)=BSDR("CDT")
+	S BSDXFDA(2.98,BSDXIENS,16)=BSDR("CR")
+	S BSDXFDA(2.98,BSDXIENS,19)=USER
+	S BSDXFDA(2.98,BSDXIENS,20)=DATE
+	S:$G(BSDR("NOT"))]"" BSDXFDA(2.98,BSDXIENS,17)=$E(BSDR("NOT"),1,160)
+	N BSDXERR
+	D FILE^DIE("","BSDXFDA","BSDXERR")
+	I $D(BSDXERR) Q 1_U_"Cannot cancel appointment in File 2"
+	; Failure point 1: If we fail here, nothing has happened yet.
+	; No rollback needed in ^BSDXAPPT
 	;
-	; delete data in ^SC
+	; delete data in ^SC -- this does not (typically) fail. Fileman won't stop
 	NEW DIK,DA
 	S DIK="^SC("_BSDR("CLN")_",""S"","_BSDR("ADT")_",1,"
 	S DA(2)=BSDR("CLN"),DA(1)=BSDR("ADT"),DA=IEN
 	D ^DIK
-	; Failure point 3: If we fail here, we need to restore the cancel date, 
-	; and possibly, the check-in.
+	; Failure point 2: not expected to happen here
 	;
-	; call event driver
+	; call event driver -- point of no return
 	D CANCEL^SDAMEVT(.SDATA,DFN,SDT,SDCL,SDDA,SDMODE,SDCPHDL)
 	Q 0
 	;
@@ -377,7 +384,7 @@ RMCI(PAT,CLINIC,DATE)	 ;PEP; -- Remove Check-in; $$
 	; Call like this: $$RMCI(233,33,3110102.1130)
 	;
 	; Move my variables into the ones used by SDAPIs (just a convenience)
-	NEW SDATA,DFN,SDT,SDCL,SDDA,SDCIHDL
+	NEW SDATA,DFN,SDT,SDCL,SDDA,SDCIHDL,SDMODE
 	S DFN=PAT,SDT=DATE,SDCL=CLINIC,SDMODE=2,SDDA=$$SCIEN(DFN,SDCL,SDT)
 	;
 	I SDDA<1 QUIT 0    ; Appt cancelled; cancelled appts rm'ed from file 44
@@ -388,6 +395,7 @@ RMCI(PAT,CLINIC,DATE)	 ;PEP; -- Remove Check-in; $$
 	;
 	; remove check-in using filer.
 	N BSDXIENS S BSDXIENS=SDDA_","_DATE_","_CLINIC_","
+	N BSDXFDA
 	S BSDXFDA(44.003,BSDXIENS,309)="@" ; CHECKED-IN
 	S BSDXFDA(44.003,BSDXIENS,302)="@" ; CHECK IN USER
 	S BSDXFDA(44.003,BSDXIENS,305)="@" ; CHECK IN ENTERED
@@ -396,7 +404,7 @@ RMCI(PAT,CLINIC,DATE)	 ;PEP; -- Remove Check-in; $$
 	I $D(BSDXERR) QUIT "-1~Can't file for Pat "_PAT_" in Clinic "_CLINIC_" at "_DATE_". Fileman reported an error: "_BSDXERR("DIERR",1,"TEXT",1)
 	;
 	; set after status
-	S SDDA=$$SCIEN(DFN,SDCL,SDT)
+	; S SDDA=$$SCIEN(DFN,SDCL,SDT) ;smh -why is this here? SDDA won't change.
 	S SDCIHDL=$$HANDLE^SDAMEVT(1),SDATA=SDDA_U_DFN_U_SDT_U_SDCL
 	D AFTER^SDAMEVT(.SDATA,DFN,SDT,SDCL,SDDA,SDCIHDL)
 	;
@@ -436,10 +444,14 @@ UPDATENT(PAT,CLINIC,DATE,NOTE)	; PEP; Update Note in ^SC for patient's appointme
 	; Returns:
 	; 0 if okay
 	; -1 if failure
+	;
+	; ERROR SIMULATION
+	I $G(BSDXSIMERR1) QUIT "-1~Simulated Error"
+	;
 	N SCIEN S SCIEN=$$SCIEN(PAT,CLINIC,DATE) ; ien of appt in ^SC
 	I SCIEN<1 QUIT 0    ; Appt cancelled; cancelled appts rm'ed from file 44
 	N BSDXIENS S BSDXIENS=SCIEN_","_DATE_","_CLINIC_","
-	S BSDXFDA(44.003,BSDXIENS,3)=$E(NOTE,1,150)
+	N BSDXFDA S BSDXFDA(44.003,BSDXIENS,3)=$E(NOTE,1,150)
 	N BSDXERR
 	D FILE^DIE("","BSDXFDA","BSDXERR")
 	I $D(BSDXERR) QUIT "-1~Can't file for Pat "_PAT_" in Clinic "_CLINIC_" at "_DATE_". Fileman reported an error: "_BSDXERR("DIERR",1,"TEXT",1)
