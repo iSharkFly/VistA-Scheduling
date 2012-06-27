@@ -1,4 +1,4 @@
-BSDX31	 ; IHS/OIT/HMW - WINDOWS SCHEDULING RPCS ; 6/26/12 4:35pm
+BSDX31	 ; IHS/OIT/HMW - WINDOWS SCHEDULING RPCS ; 6/27/12 4:57pm
 	;;1.7T1;BSDX;;Aug 31, 2011;Build 18
 	; Licensed under LGPL
 	; Change Log:
@@ -9,6 +9,8 @@ BSDX31	 ; IHS/OIT/HMW - WINDOWS SCHEDULING RPCS ; 6/26/12 4:35pm
 	;                         as $$NOSHOW
 	;                       - Made BSDXNOS extrinsic.
 	;                       - Moved Unit Tests to BSDXUT1
+	;                       - BSDXNOS deletes no-show rather than file 0 for
+	;                         undoing a no show
 	; 
 	; Error Reference:
 	; -1: zero or null Appt ID
@@ -84,20 +86,34 @@ NOSHOW(BSDXY,BSDXAPTID,BSDXNS)	        ;EP - No show a patient
 	; Get the Hospital Location
 	N BSDXRESNOD S BSDXRESNOD=^BSDXRES(BSDXRES,0)
 	N BSDXLOC S BSDXLOC=$P(BSDXRESNOD,U,4) ;HOSPITAL LOCATION
-	I '$D(^SC(BSDXLOC,0)) S BSDXLOC="" ; Unlink it if it doesn't exist
-	; I can go and then delete it from BSDXLOC like Mailman code which tries
-	; to be too helpful... but I will postpone that until this is need it.
+	I BSDXLOC,'$D(^SC(BSDXLOC,0)) S BSDXLOC="" ; Unlink it if it doesn't exist
+	; I can go and then delete it from ^BSDXRES like Mailman code which tries
+	; to be too helpful... but I will postpone that until this is a need.
 	;
-	; Edit BSDX APPOINTMENT entry
-	N BSDXMSG S BSDXMSG=$$BSDXNOS(BSDXAPTID,BSDXNS)  ;Edit BSDX APPOINTMENT entry NOSHOW field 
+	; Check if it's okay to no-show patient.
+	N BSDXERR S BSDXERR=0 ; Error variable
+	I BSDXLOC S BSDXERR=$$NOSHOWCK^BSDXAPI1(BSDXPATID,BSDXLOC,BSDXSTART,BSDXNS)
+	I BSDXERR D ERR(-5,"BSDX31: "_$P(BSDXERR,U,2)) QUIT
+	;
+	; Simulated Error
+	I $G(BSDXSIMERR1) D ERR(-4,"BSDX31: Simulated Error") QUIT
+	; Edit BSDX APPOINTMENT entry No-show field
+	; Failure Analysis: If we fail here, no rollback needed, as this is the 1st
+	; call
+	N BSDXMSG S BSDXMSG=$$BSDXNOS(BSDXAPTID,BSDXNS)
 	I BSDXMSG D ERR(-4,"BSDX31: "_$P(BSDXMSG,U,2)) QUIT
 	;
 	; Edit File 2 "S" node entry
-	N BSDXERR ; Error variable
+	; Failure Analysis: If we fail here, we need to rollback the BSDX
+	; Apptointment Entry
+	N BSDXERR S BSDXERR=0 ; Error variable
 	; If HL exist, (resource is linked to PIMS), file no show in File 2
 	I BSDXLOC S BSDXERR=$$NOSHOW^BSDXAPI1(BSDXPATID,BSDXLOC,BSDXSTART,BSDXNS)
-	I BSDXERR D ERR(-5,"BSDX31: "_$P(BSDXERR,U,2)) QUIT
+	I BSDXERR D  QUIT
+	. D ERR(-5,"BSDX31: "_$P(BSDXERR,U,2))
+	. N % S %=$$BSDXNOS(BSDXAPTID,'BSDXNS) ; no error checking for filer
 	;
+	; Return data in ADO.net table
 	S BSDXI=BSDXI+1
 	S ^BSDXTMP($J,BSDXI)="1^"_$C(30) ; 1 means everything okay
 	S BSDXI=BSDXI+1
@@ -105,9 +121,13 @@ NOSHOW(BSDXY,BSDXAPTID,BSDXNS)	        ;EP - No show a patient
 	QUIT
 	;
 BSDXNOS(BSDXAPTID,BSDXNS) ; $$ Private; File/unfile noshow in ^BSDXAPPT
+	; in v1.7 I delete the no-show value rather than file zero
 	N BSDXFDA,BSDXIENS,BSDXMSG
+	N BSDXVALUE ; What to file: 1 or delete it.
+	I BSDXNS S BSDXVALUE=1
+	E  S BSDXVALUE="@"
 	S BSDXIENS=BSDXAPTID_","
-	S BSDXFDA(9002018.4,BSDXIENS,.1)=BSDXNS ;NOSHOW
+	S BSDXFDA(9002018.4,BSDXIENS,.1)=BSDXVALUE ;NOSHOW 1 or 0
 	D FILE^DIE("","BSDXFDA","BSDXMSG")
 	QUIT:$D(BSDXMSG) -1_U_BSDXMSG("DIERR",1,"TEXT",1)
 	QUIT 0
@@ -156,6 +176,8 @@ NOSEVT3(BSDXRES)	   ;
 	;
 	;
 ERR(BSDXERID,ERRTXT)	   ;Error processing
+	; If last line is $C(31), we are done. No more errors to send to client.
+	I ^BSDXTMP($J,$O(^BSDXTMP($J," "),-1))=$C(31) QUIT
 	S BSDXI=BSDXI+1
 	S ERRTXT=$TR(ERRTXT,"^","~")
 	S ^BSDXTMP($J,BSDXI)=BSDXERID_"^"_ERRTXT_$C(30)
@@ -165,13 +187,13 @@ ERR(BSDXERID,ERRTXT)	   ;Error processing
 	;
 ETRAP	  ;EP Error trap entry
 	N $ET S $ET="D ^%ZTER HALT"  ; Emergency Error Trap
-	I $G(BSDXAPTID),$D(BSDXNS) N % S %=$$BSDXNOS(BSDXAPTID,'BSDXNS) ; Reverse No-Show status (whatever it was)
 	D ^%ZTER
 	S $EC="" ; Clear Error
+	I $G(BSDXAPTID),$D(BSDXNS) N % S %=$$BSDXNOS(BSDXAPTID,'BSDXNS) ; Reverse No-Show status (whatever it was)
 	; Send to client
 	I '$D(BSDXI) N BSDXI S BSDXI=0
 	D ERR(-100,"BSDX31 Error: "_$G(%ZTERZE))
-	QUIT
+	Q:$Q 100_U_"Mumps Error" Q
 	;
 IMHERE(BSDXRES)	;EP
 	;Entry point for BSDX IM HERE remote procedure

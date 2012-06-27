@@ -1,4 +1,4 @@
-BSDXUT ; VEN/SMH - Unit Tests for Scheduling GUI ; 6/26/12 11:06am
+BSDXUT ; VEN/SMH - Unit Tests for Scheduling GUI ; 6/27/12 4:18pm
 	;;1.7T1;BSDX;;Aug 31, 2011;Build 18
 	; Licensed under LGPL
 	;
@@ -206,7 +206,7 @@ UT07	; Unit Tests for BSDX07 - Assumes you have Patients with DFNs 1,2,3,4,5
 	N ENDTIME S ENDTIME=$P(TIMES,U,2)
 	D APPADD^BSDX07(.ZZZ,APPTTIME,ENDTIME,3,RESNAM,30,"Sam's Note",1)
 	D APPADD^BSDX07(.ZZZ,APPTTIME,ENDTIME,3,RESNAM,30,"Sam's Note",1)
-	I +$P(^BSDXTMP($J,1),U,2)'=-10 W "Error in -10 in Unlinked Section",!
+	I +$P(^BSDXTMP($J,1),U,2)'=-10 W "Error in -10 in Unlinked Section (existing bug)",!
 	;
 	; Test that ROLLBACK^BSDX07 occurs properly in various places
 	N TIMES S TIMES=$$TIMES^BSDXUT ; appt time^end time
