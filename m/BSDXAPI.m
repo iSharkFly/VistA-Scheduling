@@ -1,4 +1,4 @@
-BSDXAPI	; IHS/ANMC/LJF & VW/SMH - SCHEDULING APIs ; 6/25/12 6:13pm
+BSDXAPI	; IHS/ANMC/LJF & VW/SMH - SCHEDULING APIs ; 6/26/12 4:55pm
 	;;1.7T1;BSDX;;Aug 31, 2011;Build 18
 	; Licensed under LGPL  
 	;
@@ -7,10 +7,13 @@ BSDXAPI	; IHS/ANMC/LJF & VW/SMH - SCHEDULING APIs ; 6/25/12 6:13pm
 	;Move to BSDX namespace as BSDXAPI from BSDAPI by WV/SMH
 	; Change History:
 	; 2010-11-5: (1.42)
-	; - Fixed errors having to do uncanceling patient appointments if it was a patient cancelled appointment.
-	; - Use new style Fileman API for storing appointments in file 44 in $$MAKE due to problems with legacy API.
+	; - Fixed errors having to do uncanceling patient appointments if it was 
+	;   a patient cancelled appointment.
+	; - Use new style Fileman API for storing appointments in file 44 in 
+	;   $$MAKE due to problems with legacy API.
 	; 2010-11-12: (1.42)
-	; - Changed ="C" to ["C" in SCIEN. Cancelled appointments can be "PC" as well. 
+	; - Changed ="C" to ["C" in SCIEN. Cancelled appointments can be "PC" as 
+	;   well. 
 	; 2010-12-5 (1.42)
 	; Added an entry point to update the patient note in file 44.
 	; 2010-12-6 (1.42)
@@ -36,7 +39,8 @@ BSDXAPI	; IHS/ANMC/LJF & VW/SMH - SCHEDULING APIs ; 6/25/12 6:13pm
 	;  out for making an appointment to MAKECK. We call this first to make sure
 	; that the appointment is okay to make before committing to make it. We
 	; still have the provision to delete the data though if we fail when we 
-	; actually make the appointment
+	; actually make the appointment.
+	; CANCELCK exists for the same purpose.
 	;
 MAKE1(DFN,CLIN,TYP,DATE,LEN,INFO)	; Simplified PEP w/ parameters for $$MAKE - making appointment
 	; Call like this for DFN 23435 having an appointment at Hospital Location 33
@@ -306,6 +310,7 @@ CANCEL(BSDR)	;PEP; called to cancel appt
 	;
 	; remember before status
 	NEW SDATA,DFN,SDT,SDCL,SDDA,SDCPHDL,SDMODE
+	NEW IEN S IEN=$$SCIEN(BSDR("PAT"),BSDR("CLN"),BSDR("ADT"))
 	S DFN=BSDR("PAT"),SDT=BSDR("ADT"),SDCL=BSDR("CLN"),SDMODE=2,SDDA=IEN
 	S SDCPHDL=$$HANDLE^SDAMEVT(1),SDATA=SDDA_U_DFN_U_SDT_U_SDCL
 	D BEFORE^SDAMEVT(.SDATA,DFN,SDT,SDCL,SDDA,SDCPHDL)
@@ -317,7 +322,7 @@ CANCEL(BSDR)	;PEP; called to cancel appt
 	S USER=$P($G(^SC(SDCL,"S",SDT,1,IEN,0)),U,6)
 	S DATE=$P($G(^SC(SDCL,"S",SDT,1,IEN,0)),U,7)
 	;
-	; update file 2 info --old code
+	; update file 2 info --old code; keep for reference
 	;NEW DIE,DA,DR
 	;S DIE="^DPT("_DFN_",""S"",",DA(1)=DFN,DA=SDT
 	;S DR="3///"_BSDR("TYP")_";14///`"_BSDR("USR")_";15///"_BSDR("CDT")_";16///`"_BSDR("CR")_";19///`"_USER_";20///"_DATE

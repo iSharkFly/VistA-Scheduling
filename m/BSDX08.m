@@ -1,24 +1,20 @@
-BSDX08	; VW/UJO/SMH - WINDOWS SCHEDULING RPCS ; 6/25/12 6:17pm
+BSDX08	; VW/UJO/SMH - WINDOWS SCHEDULING RPCS ; 6/26/12 10:49am
 	;;1.7T1;BSDX;;Aug 31, 2011;Build 18
 	; 
 	; Original by HMW. New Written by Sam Habiel. Licensed under LGPL.
 	; 
 	; Change History
 	; 3101022 UJO/SMH v1.42
-	;  - Transaction now restartable. Thanks to 
-	;   --> Zach Gonzalez and Rick Marshall for fix.
-	;  - Extra TROLLBACK in Lock Statement when lock fails.
-	;   --> Removed--Rollback is already in ERR tag.
-	;  - Added new statements to old SD code in AVUPDT to obviate
-	;   --> need to restore variables in transaction
-	;  - Refactored this chunk of code. Don't really know whether it 
-	;   --> worked in the first place. Waiting for bug report to know.
+	;  - Transaction work. As of v 1.7, all work here has been superceded
+	;  - Refactoring of AVUPDT - never tested though.
 	;  - Refactored all of APPDEL.
 	; 
 	; 3111125 UJO/SMH v1.5
 	;  - Added ability to remove checked in appointments. Added a couple
 	;    of units tests for that under UT2.
-	;  - Minor reformatting because of how KIDS adds tabs.
+	; 
+	; 3120625 VEN/SMH v1.7
+	;  - Transactions removed. Code refactored to work w/o txns.
 	; 
 	; Error Reference:
 	;  -1~BSDX08: Appt record is locked. Please contact technical support.
@@ -30,6 +26,7 @@ BSDX08	; VW/UJO/SMH - WINDOWS SCHEDULING RPCS ; 6/25/12 6:17pm
 	;  -7~BSDX08: Patient does not have an appointment in PIMS Clinic
 	;  -8^BSDX08: Unable to find associated PIMS appointment for this patient
 	;  -9^BSDX08: BSDXAPI returned an error: (error)
+	;  -10^BSDX08: $$BSDXCAN failed (Fileman filing error)
 	;  -100~BSDX08 Error: (Mumps Error)
 	;
 APPDELD(BSDXY,BSDXAPTID,BSDXTYP,BSDXCR,BSDXNOT)	;EP
@@ -75,7 +72,7 @@ APPDEL(BSDXY,BSDXAPTID,BSDXTYP,BSDXCR,BSDXNOT)	       ;EP
 	S BSDXNOEV=1 ;Don't execute BSDX CANCEL APPOINTMENT protocol
 	;
 	;;;test for error inside transaction. See if %ZTER works
-	I $G(BSDXDIE) S X=1/0
+	I $G(BSDXDIE1) N X S X=1/0
 	;
 	; Check appointment ID and whether it exists
 	I '+BSDXAPTID D ERR(BSDXI,"-2~BSDX08: Invalid Appointment ID") Q
@@ -89,25 +86,22 @@ APPDEL(BSDXY,BSDXAPTID,BSDXTYP,BSDXCR,BSDXNOT)	       ;EP
 	;
 	; Check the resource ID and whether it exists
 	N BSDXSC1 S BSDXSC1=$P(BSDXNOD,U,7) ;RESOURCEID
-	; If the resouce id doesn't exist...
+	; If the resource id doesn't exist...
 	I BSDXSC1="" D ERR(BSDXI,"-4~BSDX08: Cancelled appointment does not have a Resouce ID") QUIT
 	I '$D(^BSDXRES(BSDXSC1,0)) D ERR(BSDXI,"-5~BSDX08: Resouce ID does not exist in BSDX RESOURCE") QUIT
 	;
-	; BSDXAPPT First; todo: check for error
-	D BSDXCAN(BSDXAPTID)  ; Add a cancellation date in BSDX APPOINTMENT
 	;
-	; Process PIMS issues second: 
-	; cancel appt in "S" nodes in file 2 and 44, then update Legacy PIMS Availability
+	; Check if PIMS will let us cancel the appointment using $$CANCELCK^BSDXAPI
 	; Get zero node of resouce
 	N BSDXNOD S BSDXNOD=^BSDXRES(BSDXSC1,0)
 	; Get Hosp location
 	N BSDXLOC S BSDXLOC=$P(BSDXNOD,U,4)
-	; Error indicator for Hosp Location filing for getting out of routine
+	; Error indicator
 	N BSDXERR S BSDXERR=0
-	; For BSDXC
-	N BSDXC
-	; Only file in 2/44 if there is an associated hospital location
-	I BSDXLOC D  QUIT:BSDXERR
+	; 
+	N BSDXC ; Array to pass to BSDXAPI
+	;
+	I BSDXLOC D 
 	. S BSDXC("PAT")=BSDXPATID
 	. S BSDXC("CLN")=BSDXLOC
 	. S BSDXC("TYP")=BSDXTYP
@@ -119,14 +113,30 @@ APPDEL(BSDXY,BSDXAPTID,BSDXTYP,BSDXCR,BSDXNOT)	       ;EP
 	. S BSDXC("USR")=DUZ
 	. ;
 	. S BSDXERR=$$CANCELCK^BSDXAPI(.BSDXC) ; 0 or 1^error message
-	. I BSDXERR D ERR(BSDXI,"-9^BSDX08: BSDXAPI returned an error: "_$P(BSDXERR,U,2)) QUIT
+	; If error, quit. No need to rollback as no changes took place.
+	I BSDXERR D ERR(BSDXI,"-9~BSDX08: BSDXAPI reports that "_$P(BSDXERR,U,2)) QUIT
+	;
+	I $G(BSDXDIE2) N X S X=1/0
+	;
+	; Now cancel the appointment for real
+	; BSDXAPPT First; no need for rollback if error occured.
+	N BSDXERR S BSDXERR=$$BSDXCAN(BSDXAPTID)  ; Add a cancellation date in BSDX APPOINTMENT
+	I BSDXERR D ERR(BSDXI,"$$BSDXCAN failed (Fileman filing error): "_$P(BSDXERR,U,2)) QUIT
+	;
+	; Then PIMS: 
+	; cancel appt in "S" nodes in file 2 and 44, then update Legacy PIMS Availability
+	; If error happens, must rollback ^BSDXAPPT
+	I BSDXLOC D  QUIT:BSDXERR
+	. N BSDXLEN S BSDXLEN=$$APPLEN^BSDXAPI(BSDXPATID,BSDXLOC,BSDXSTART) ; appt length
+	. S BSDXERR=$$CANCEL^BSDXAPI(.BSDXC) ; Cancel through BSDXAPI
+	. ; Rollback BSDXAPPT if error occurs
+	. ; TODO: If an M error occurs in BSDXAPI, ETRAP gets called, ^BSDXTMP is
+	. ;       populated, then the output of $$CANCEL is the output of ETRAP.
+	. ;       Then, we see that BSDXERR is true, and we do another write,
+	. ;       which deletes the information we had in ^BSDXTMP. What to do???
+	. I BSDXERR D ERR(BSDXI,"-9^BSDX08: BSDXAPI returned an error: "_$P(BSDXERR,U,2)),ROLLBACK(BSDXAPTID)  QUIT
 	. ;
-	. N BSDXLEN S BSDXLEN=$$APPLEN^BSDXAPI(BSDXPATID,BSDXLOC,BSDXSTART)
-	. ;
-	. ; Cancel through BSDXAPI
-	. S BSDXERR=$$CANCEL^BSDXAPI(.BSDXC)
-	. I BSDXERR=1 D ERR(BSDXI,"-9^BSDX08: BSDXAPI returned an error: "_$P(BSDXZ,U,2)) QUIT
-	. ; Update Legacy PIMS clinic Availability
+	. ; Update Legacy PIMS clinic Availability ; no failure expected here.
 	. D AVUPDT(BSDXLOC,BSDXSTART,BSDXLEN)
 	;
 	;
@@ -137,7 +147,6 @@ APPDEL(BSDXY,BSDXAPTID,BSDXTYP,BSDXCR,BSDXNOT)	       ;EP
 	S ^BSDXTMP($J,BSDXI)=$C(31)
 	Q
 	;
-ROLLBACK(BSDXAPTID)
 AVUPDT(BSDXSCD,BSDXSTART,BSDXLEN)	;Update Legacy PIMS Clinic availability
 	;See SDCNP0
 	N SD,S  ; Start Date
@@ -184,16 +193,25 @@ AVUPDT(BSDXSCD,BSDXSTART,BSDXLEN)	;Update Legacy PIMS Clinic availability
 	S ^SC(BSDXSCD,"ST",SD\1,1)=S  ; new pattern; global set
 	Q
 	;
-BSDXCAN(BSDXAPTID)	;
-	;Cancel BSDX APPOINTMENT entry
-	N %DT,X,BSDXDATE,Y,BSDXIENS,BSDXFDA,BSDXMSG
-	S %DT="XT",X="NOW" D ^%DT ; X ^DD("DD")
-	S BSDXDATE=Y
+BSDXCAN(BSDXAPTID)	; $$; Private; Cancel BSDX APPOINTMENT entry
+	; Input: Appt IEN in ^BSDXAPPT
+	; Output: 0 for success and 1^Msg for failure
+	N BSDXDATE,BSDXIENS,BSDXFDA,BSDXMSG
+	S BSDXDATE=$$NOW^XLFDT()
 	S BSDXIENS=BSDXAPTID_","
 	S BSDXFDA(9002018.4,BSDXIENS,.12)=BSDXDATE
-	K BSDXMSG
 	D FILE^DIE("","BSDXFDA","BSDXMSG")
-	Q
+	I $D(BSDXMSG) Q 1_U_BSDXMSG("DIERR",1,"TEXT",1)
+	QUIT 0
+	;
+ROLLBACK(BSDXAPTID)  ; Proc; Private; Rollback cancellation
+	; Input same as $$BSDXCAN
+	N BSDXIENS S BSDXIENS=BSDXAPTID_","
+	N BSDXFDA S BSDXFDA(9002018.4,BSDXIENS,.12)="@"
+	N BSDXMSG
+	D FILE^DIE("","BSDXFDA","BSDXMSG")
+	;I $D(BSDXMSG)  ; Not sure what to do. We are already handling an error.
+	QUIT
 	;
 CANEVT(BSDXPAT,BSDXSTART,BSDXSC)	;EP Called by BSDX CANCEL APPOINTMENT event
 	;when appointments cancelled via PIMS interface.
@@ -247,10 +265,13 @@ ETRAP	;EP Error trap entry
 	N $ET S $ET="D ^%ZTER HALT"  ; Emergency Error Trap
 	D ^%ZTER
 	S $EC=""  ; Clear Error
+	; Roll back BSDXAPPT; 
+	; TODO: What if a Mumps error happens in fileman in BSDXAPI? The Scheduling files can potentially be out of sync
+	D:$G(BSDXAPTID) ROLLBACK(BSDXAPTID)
 	; Log error message and send to client
 	I '$D(BSDXI) N BSDXI S BSDXI=0
 	D ERR(BSDXI,"-100~BSDX08 Error: "_$G(%ZTERZE))
-	QUIT
+	Q:$Q 1_U_"-100~Mumps Error" Q
 	;
 	;;;NB: This is code that is unused in both original and port.
 	; ; If not appt in the "S" node is found in ^SC then check associated RPMS Clinic Multiple

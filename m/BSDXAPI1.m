@@ -1,0 +1,35 @@
+BSDXAPI1 ; VEN/SMH - SCHEDULING APIs - Continued!!! ; 6/26/12 4:32pm
+	;;1.7T1;BSDX;;Aug 31, 2011;Build 18
+	; Licensed under LGPL  
+	;
+NOSHOW(PAT,CLINIC,DATE,NSFLAG) ; $$ PEP; No-show Patient at appt date (new in v1.7)
+	; PAT = DFN
+	; CLINIC = SC IEN
+	; DATE = FM Date/Time of Appointment
+	; NSFLAG = truthy value to add no-show, or falsy to remove
+	; -1^error for failure, 0 for success
+	; Code follows EN1^SDN
+	N NOSHOWCK S NOSHOWCK=$$NOSHOWCK(PAT,CLINIC,DATE,NSFLAG)
+	I NOSHOWCK Q NOSHOWCK
+	;
+	N SDNSHDL,SDDA S SDNSHDL=$$HANDLE^SDAMEVT(1) S SDDA=$$SCIEN^BSDXAPI(PAT,CLINIC,DATE)
+	N SDATA
+	D BEFORE^SDAMEVT(.SDATA,PAT,DATE,CLINIC,SDDA,SDNSHDL)
+	N BSDXIENS S BSDXIENS=DATE_","_PAT_","
+	N BSDXFDA
+	I +NSFLAG D
+	. S BSDXFDA(2.98,BSDXIENS,3)="N"
+	. S BSDXFDA(2.98,BSDXIENS,14)=DUZ
+	. S BSDXFDA(2.98,BSDXIENS,15)=$$NOW^XLFDT()
+	E  D
+	. S BSDXFDA(2.98,BSDXIENS,3)="@"
+	. S BSDXFDA(2.98,BSDXIENS,14)="@"
+	. S BSDXFDA(2.98,BSDXIENS,15)="@"
+	N BSDXMSG
+	D FILE^DIE("","BSDXFDA","BSDXMSG")
+	Q:$D(BSDXMSG) 1_U_"Fileman edit to DPT error: Patient="_PAT_" Appt="_DATE_" Error="_BSDXMSG("DIERR",1,"TEXT",1)
+	D NOSHOW^SDAMEVT(.SDATA,PAT,DATE,CLINIC,SDDA,0,SDNSHDL)
+	Q 0
+NOSHOWCK(PAT,CLINIC,DATE,NSFLAG) ; $$ PEP; No-show Check
+	; pars are the same as above
+	QUIT 0

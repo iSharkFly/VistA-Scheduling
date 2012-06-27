@@ -1,4 +1,4 @@
-BSDXUT1 ; VEN/SMH - Unit Tests for Scheduling GUI - cont. ; 6/25/12 4:13pm
+BSDXUT1 ; VEN/SMH - Unit Tests for Scheduling GUI - cont. ; 6/26/12 4:36pm
 	;;1.7T1;BSDX;;Aug 31, 2011;Build 18
 	;
 	;
@@ -193,6 +193,57 @@ UT26	; Unit Tests - BSDX26
 	N NOTE S NOTE="New Note "_%H
 	D EDITAPT^BSDX26(.ZZZ,APPID,NOTE)
 	I +^BSDXTMP($J,1)'=-4 W "Simulated error not triggered",!
-	I ^BSDXAPPT(APPID,1,1,0)'=ORIGNOTE ZWRITE ^(*) W "ERROR 3",!
+	I ^BSDXAPPT(APPID,1,1,0)'=ORIGNOTE W "ERROR 3",!
 	I $P(^SC(HLIEN,"S",APPTTIME,1,1,0),U,4)'=ORIGNOTE W "ERROR 4",!
+	QUIT
+	;
+UT31 ; Unit Tests for BSDX31
+	; Set-up - Create Clinics
+	N RESNAM S RESNAM="UTCLINIC"
+	N HLRESIENS ; holds output of UTCR^BSDXUT - HL IEN^Resource IEN
+	D
+	. N $ET S $ET="D ^%ZTER B"
+	. S HLRESIENS=$$UTCR^BSDXUT(RESNAM)
+	. I HLRESIENS<0 S $EC=",U1," ; not supposed to happen - hard crash if so
+	;
+	N HLIEN,RESIEN
+	S HLIEN=$P(HLRESIENS,U)
+	S RESIEN=$P(HLRESIENS,U,2)
+	;
+	; Get start and end times
+	N TIMES S TIMES=$$TIMES^BSDXUT ; appt time^end time
+	N APPTTIME S APPTTIME=$P(TIMES,U)
+	N ENDTIME S ENDTIME=$P(TIMES,U,2)
+	;
+	; Make appt
+	N ZZZ,DFN
+	S DFN=3
+	D APPADD^BSDX07(.ZZZ,APPTTIME,ENDTIME,DFN,RESNAM,30,"Sam's Note",1)
+	N APPID S APPID=+$P(^BSDXTMP($J,1),U)
+	; Test 1: Sanity Check
+	D NOSHOW^BSDX31(.ZZZ,APPID,1)
+	I $P(^BSDXAPPT(APPID,0),U,10)'=1 W "ERROR T1",!
+	I $P(^DPT(DFN,"S",APPTTIME,0),U,2)'="N" W "ERROR T1",!
+	; Test 2: Undo NOSHOW
+	D NOSHOW^BSDX31(.ZZZ,APPID,0)
+	I $P(^BSDXAPPT(APPID,0),U,10)'="0" W "ERROR T2",!
+	I $P(^DPT(DFN,"S",APPTTIME,0),U,2)'="" W "ERROR T2",!
+	; Test 3: -1
+	D NOSHOW^BSDX31(.ZZZ,"",0)
+	I $P(^BSDXTMP($J,1),U)'=-1 W "ERROR T3",!
+	; Test 4: -2
+	D NOSHOW^BSDX31(.ZZZ,2938748233,0)
+	I $P(^BSDXTMP($J,1),U)'=-2 W "ERROR T4",!
+	; Test 5: -3
+	D NOSHOW^BSDX31(.ZZZ,APPID,3)
+	I $P(^BSDXTMP($J,1),U)'=-3 W "ERROR T5",!
+	; Test 6: Mumps error (-100)
+	N BSDXDIE S BSDXDIE=1
+	D NOSHOW^BSDX31(.ZZZ,APPID,1)
+	I $P(^BSDXTMP($J,1),U)'=-100 W "ERROR T6",!
+	K BSDXDIE
+	; Test 7: Restartable transaction
+	N BSDXRESTART S BSDXRESTART=1
+	D NOSHOW^BSDX31(.ZZZ,APPID,1)
+	I $P(^BSDXAPPT(APPID,0),U,10)'=1 W "ERROR T7",!
 	QUIT
