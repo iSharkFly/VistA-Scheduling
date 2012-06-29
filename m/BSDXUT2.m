@@ -1,5 +1,9 @@
-BSDXUT2 ; VEN/SMH - Unit Tests for Scheduling GUI - cont. ; 6/28/12 11:55am
+BSDXUT2 ; VEN/SMH - Unit Tests for Scheduling GUI - cont. ; 6/29/12 12:23pm
 	;;1.7T1;BSDX;;Aug 31, 2011;Build 18
+	;
+EN	; Run all unit tests in this routine
+	D UT25
+	QUIT
 	;
 UT25 ; Unit Tests for BSDX25
 	; Make appointment, checkin, then uncheckin
@@ -45,13 +49,10 @@ UT25 ; Unit Tests for BSDX25
 	IF +^BSDXTMP($J,1)'=-2 WRITE "ERROR IN Etest 2",!
 	; Tests for 3 to 5 difficult to produce
 	; Error tests follow: Mumps error test; Transaction restartability
-	N bsdxdie S bsdxdie=1
+	N BSDXDIE S BSDXDIE=1
 	D RMCI^BSDX25(.ZZZ,APPTID)
 	IF +^BSDXTMP($J,1)'=-100 WRITE "ERROR IN Etest 3",!
-	K bsdxdie
-	N bsdxrestart S bsdxrestart=1
-	D RMCI^BSDX25(.ZZZ,APPTID)
-	IF +^BSDXTMP($J,1)'=0 WRITE "Error in Etest 4",!
+	K BSDXDIE
 	;
 	; Unlinked Clinic Tests
 	N RESNAM S RESNAM="UTCLINICUL" ; Unlinked Clinic
@@ -90,13 +91,10 @@ UT25 ; Unit Tests for BSDX25
 	IF +^BSDXTMP($J,1)'=-2 WRITE "ERROR IN Etest 6",!
 	; Tests for 3 to 5 difficult to produce
 	; Error tests follow: Mumps error test; Transaction restartability
-	N bsdxdie S bsdxdie=1
+	N BSDXDIE S BSDXDIE=1
 	D RMCI^BSDX25(.ZZZ,APPTID)
 	IF +^BSDXTMP($J,1)'=-100 WRITE "ERROR IN Etest 7",!
-	K bsdxdie
-	N bsdxrestart S bsdxrestart=1
-	D RMCI^BSDX25(.ZZZ,APPTID)
-	IF +^BSDXTMP($J,1)'=0 WRITE "Error in Etest 8",!
+	K BSDXDIE
 	;
 	; Tests for running PIMS by itself.
 	N APPTTIME S APPTTIME=$$TIMEHL^BSDXUT(HLIEN) ; appt time
@@ -112,7 +110,7 @@ UT25 ; Unit Tests for BSDX25
 	I % W "Error in Checking in via BSDXAPI",!
 	IF '+$G(^SC(HLIEN,"S",APPTTIME,1,1,"C")) WRITE "ERROR IN CHECKIN 10",!
 	IF '$P(^BSDXAPPT(APPTID,0),U,3) WRITE "ERROR IN CHECKIN 11",!
-	N % S %=$$RMCI^BSDXAPI(DFN,HLIEN,APPTTIME)
+	N % S %=$$RMCI^BSDXAPI1(DFN,HLIEN,APPTTIME)
 	I % W "Error removing Check-in via PIMS",!
 	I +$G(^SC(HLIEN,"S",APPTTIME,1,1,"C")) WRITE "ERROR IN UNCHECKIN 12",!
 	IF $P(^BSDXAPPT(APPTID,0),U,3) WRITE "ERROR IN CHECKIN 13",!

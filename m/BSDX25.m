@@ -1,71 +1,88 @@
-BSDX25	; VW/UJO/SMH - WINDOWS SCHEDULING RPCS ; 6/28/12 11:45am
-	;;1.6;BSDX;;Aug 31, 2011;Build 18
+BSDX25	; VEN/SMH - WINDOWS SCHEDULING RPCS ; 6/29/12 12:04pm
+	;;1.7T1;BSDX;;Aug 31, 2011;Build 18
 	; Licensed under LGPL
 	;
 	; Change Log:
 	; 3110106: SMH -> Changed Check-in EP - Removed unused paramters. Will change C#
 	;
 	;
-CHECKIND(BSDXY,BSDXAPTID,BSDXCDT,BSDXCC,BSDXPRV,BSDXROU,BSDXVCL,BSDXVFM,BSDXOG)	;EP
+CHECKIND(BSDXY,BSDXAPPTID,BSDXCDT,BSDXCC,BSDXPRV,BSDXROU,BSDXVCL,BSDXVFM,BSDXOG)	;EP
 	;Entry point for debugging
 	;
-	;I +$G(^BSDXDBUG("BREAK","CHECKIN")),+$G(^BSDXDBUG("BREAK"))=DUZ D DEBUG^%Serenji("CHECKIN^BSDX25(.BSDXY,BSDXAPTID,BSDXCDT,BSDXCC,BSDXPRV,BSDXROU,BSDXVCL,BSDXVFM,BSDXOG)",$P(^BSDXDBUG("BREAK"),U,2))
+	;I +$G(^BSDXDBUG("BREAK","CHECKIN")),+$G(^BSDXDBUG("BREAK"))=DUZ D DEBUG^%Serenji("CHECKIN^BSDX25(.BSDXY,BSDXAPPTID,BSDXCDT,BSDXCC,BSDXPRV,BSDXROU,BSDXVCL,BSDXVFM,BSDXOG)",$P(^BSDXDBUG("BREAK"),U,2))
 	Q
 	;
-CHECKIN(BSDXY,BSDXAPTID,BSDXCDT) ;Private EP Check in appointment
+CHECKIN(BSDXY,BSDXAPPTID,BSDXCDT) ;Private EP Check in appointment
 	; Old additional vars: ,BSDXCC,BSDXPRV,BSDXROU,BSDXVCL,BSDXVFM,BSDXOG)
+	; Called by RPC: BSDX CHECKIN APPOINTMENT
+	;
 	; Private to GUI; use BSDXAPI for general API to checkin patients
 	; Parameters:
 	; BSDXY: Global Out
-	; BSDXAPTID: Appointment ID in ^BSDXAPPT
+	; BSDXAPPTID: Appointment ID in ^BSDXAPPT
 	; BSDXCDT: Checkin Date --> Changed
 	; BSDXCC: Clinic Stop IEN (not used)
 	; BSDXPRV: Provider IEN (not used)
 	; BSDXROU: Print Routing Slip? (not used)
 	; BSDXVCL: PCC+ Clinic IEN (not used)
 	; BSDXVFM: PCC+ Form IEN (not used)
-	; BSDXOG: PCC+ Outguide (true or false)
+	; BSDXOG: PCC+ Outguide (true or false) (not used)
 	;
 	; Output:
 	; ADO.net table with 1 column ErrorID, 1 row result
 	; - 0 if all okay
 	; - Another number or text if not
 	;
-	N BSDXNOD,BSDXPATID,BSDXSTART,DIK,DA,BSDXID,BSDXZ,BSDXIENS,BSDXVEN
-	;
 	; Turn off SDAM Appointment Events BSDX Protocol Processing
 	N BSDXNOEV
 	S BSDXNOEV=1 ;Don't execute protocol
 	;
 	; Set min DUZ vars
-	D ^XBKVAR 
+	D ^XBKVAR
 	;
 	; $ET
 	N $ET S $ET="G ERROR^BSDX25"
 	;
 	N BSDXI S BSDXI=0
-	K ^BSDXTMP($J)
-	S BSDXY="^BSDXTMP("_$J_")"
+	;
+	S BSDXY=$NAME(^BSDXTMP($J))
+	K @BSDXY
+	;
 	S ^BSDXTMP($J,0)="T00020ERRORID"_$C(30)
-	I '+BSDXAPTID D ERR("BSDX25: Invalid Appointment ID") Q
-	I '$D(^BSDXAPPT(BSDXAPTID,0)) D ERR("BSDX08: Invalid Appointment ID") Q
+	;
+	I '+BSDXAPPTID D ERR("Invalid Appointment ID") QUIT
+	I '$D(^BSDXAPPT(BSDXAPPTID,0)) D ERR("Invalid Appointment ID") QUIT
+	;
+	; Lock the node for synchronizing access to appointment
+	LOCK +^BSDXAPPT(BSDXAPPTID):1
+	ELSE  DO ERR("-7~Lock not acquired") QUIT
+	;
 	; Remove Date formatting v.1.5. Client will send date as FM Date.
 	;S:BSDXCDT["@0000" BSDXCDT=$P(BSDXCDT,"@")
 	;S %DT="T",X=BSDXCDT D ^%DT S BSDXCDT=Y
 	S BSDXCDT=+BSDXCDT  ; Strip off zeros if C# sends them
 	I BSDXCDT=-1 D ERR(70) Q
 	I BSDXCDT>$$NOW^XLFDT S BSDXCDT=$$NOW^XLFDT
-	;Checkin BSDX APPOINTMENT entry
-	D BSDXCHK(BSDXAPTID,BSDXCDT)
-	S BSDXNOD=^BSDXAPPT(BSDXAPTID,0)
-	S BSDXPATID=$P(BSDXNOD,U,5)
-	S BSDXSTART=$P(BSDXNOD,U)
 	;
-	S BSDXSC1=$P(BSDXNOD,U,7) ;RESOURCEID
-	I BSDXSC1]"",$D(^BSDXRES(BSDXSC1,0)) D  I +$G(BSDXZ) D ERR($P(BSDXZ,U,2)) Q
-	. S BSDXNOD=^BSDXRES(BSDXSC1,0)
-	. S BSDXSC1=$P(BSDXNOD,U,4) ;HOSPITAL LOCATION
-	. I BSDXSC1]"",$D(^SC(BSDXSC1,0)) D APCHK(.BSDXZ,BSDXSC1,BSDXPATID,BSDXCDT,BSDXSTART)
+	;Checkin BSDX APPOINTMENT entry
+	N BSDXERR S BSDXERR=$$BSDXCHK(BSDXAPPTID,BSDXCDT)
+	I BSDXERR D ERR("BSDX08: Fileman Filer failed to check-in appt") QUIT
+	;
+	N BSDXNOD S BSDXNOD=^BSDXAPPT(BSDXAPPTID,0)
+	N BSDXPATID S BSDXPATID=$P(BSDXNOD,U,5)
+	N BSDXSTART S BSDXSTART=$P(BSDXNOD,U)
+	;
+	; Get Hospital Location IEN from BSDXAPPT to BSDXRES (RESOUCE:HOSPITAL LOCATION)
+	N BSDXSC1 S BSDXSC1=$$GET1^DIQ(9002018.4,BSDXAPPTID_",",".07:.04","I")
+	I BSDXSC1,'$D(^SC(BSDXSC1,0)) S BSDXSC1="" ; Null it off if it doesn't exist
+	;
+	; File check-in using BSDXAPI
+	N BSDXERR S BSDXERR=0
+	I BSDXSC1 S BSDXERR=$$CHECKIN1^BSDXAPI(BSDXPATID,BSDXSC1,BSDXSTART)
+	I BSDXERR D ERR($P(BSDXZ,U,2)) QUIT
+	;
+	; Unlock
+	LOCK -^BSDXAPPT(BSDXAPPTID)
 	;
 	S BSDXI=BSDXI+1
 	S ^BSDXTMP($J,BSDXI)="0"_$C(30)
@@ -73,21 +90,23 @@ CHECKIN(BSDXY,BSDXAPTID,BSDXCDT) ;Private EP Check in appointment
 	S ^BSDXTMP($J,BSDXI)=$C(31)
 	Q
 	;
-BSDXCHK(BSDXAPTID,BSDXCDT)	;
+BSDXCHK(BSDXAPPTID,BSDXCDT)	; $$ Private Entry Point. File or delete check-in to
+	; BSDX Appointment
+	; Input: BSDXAPPTID -> Appointment ID
+	;        BSDXCDT -> Check-in date, or "@" to remove check-in.
 	;
-	S BSDXIENS=BSDXAPTID_","
+	; Output: 1^Error for error
+	;         0 for success
+	;
+	N BSDXIENS,BSDXMSG,BSDXFDA ; Filer variables
+	S BSDXIENS=BSDXAPPTID_","
 	S BSDXFDA(9002018.4,BSDXIENS,.03)=BSDXCDT
 	D FILE^DIE("","BSDXFDA","BSDXMSG")
-	Q
-	;
-APCHK(BSDXZ,BSDXSC1,BSDXDFN,BSDXCDT,BSDXSTART)	        ;
-	;Checkin appointment for patient BSDXDFN in clinic BSDXSC1
-	;at time BSDXSTART
-	S BSDXZ=$$CHECKIN1^BSDXAPI(BSDXDFN,BSDXSC1,BSDXSTART)
-	Q
+	Q:$D(BSDXMSG) 1_U_BSDXMSG("DIERR",1,"TEXT",1)
+	Q 0
 	;
 RMCI(BSDXY,BSDXAPPTID)	; EP - Remove Check-in from BSDX APPT and 2/44
-	; Called by RPC [Fill in later]
+	; Called by RPC BSDX REMOVE CHECK-IN
 	; 
 	; Parameters to pass:
 	; APPTID: IEN in file BSDX APPOINTMENT
@@ -102,6 +121,8 @@ RMCI(BSDXY,BSDXAPPTID)	; EP - Remove Check-in from BSDX APPT and 2/44
 	; -3~DB has corruption. Call Tech Support. (Resource ID doesn't exist in BSDXAPPT)
 	; -4~DB has corruption. Call Tech Support. (Resource ID in BSDXAPPT doesnt exist in BSDXRES)
 	; -5~BSDXAPI Error. Message depends on error.
+	; -6~Data Filing Error in BSDXCHK
+	; -7~Lock not acquired
 	; -100~Mumps Error
 	; 
 	N BSDXNOEV S BSDXNOEV=1 ;Don't execute protocol
@@ -116,20 +137,20 @@ RMCI(BSDXY,BSDXAPPTID)	; EP - Remove Check-in from BSDX APPT and 2/44
 	;
 	S ^BSDXTMP($J,BSDXI)="T00020ERRORID"_$C(30) ; Header of ADO recordset
 	;
-	TSTART (BSDXI):SERIAL ; Perform Autolocking
-	;
 	;;;test
-	I $g(bsdxdie) S X=8/0
-	;;;
-	I $g(bsdxrestart) k bsdxrestart TRESTART
-	;;;test
+	I $G(BSDXDIE) N X S X=8/0
 	;
 	; Check for Appointment ID (passed and exists in file)
 	I '+$G(BSDXAPPTID) D ERR("-1~Invalid Appointment ID") QUIT
 	I '$D(^BSDXAPPT(BSDXAPPTID,0)) D ERR("-2~Invalid Appointment ID") QUIT
 	;
+	; Lock the node for synchronizing access to appointment
+	LOCK +^BSDXAPPT(BSDXAPPTID):1
+	ELSE  DO ERR("-7~Lock not acquired") QUIT
+	;
 	; Remove checkin from BSDX APPOINTMENT entry
-	D BSDXCHK(BSDXAPPTID,"@")
+	N BSDXERR S BSDXERR=$$BSDXCHK(BSDXAPPTID,"@")
+	I BSDXERR D ERR("-6~Cannot file data in $$BSDXCHK") QUIT
 	;
 	; Now, remove checkin from PIMS files 2/44
 	N BSDXNOD S BSDXNOD=^BSDXAPPT(BSDXAPPTID,0)
@@ -148,7 +169,8 @@ RMCI(BSDXY,BSDXAPPTID)	; EP - Remove Check-in from BSDX APPT and 2/44
 	I BSDXSC1]"",$D(^SC(BSDXSC1,0)) S BSDXZ=$$RMCI^BSDXAPI(BSDXPATID,BSDXSC1,BSDXSTART)
 	I +$G(BSDXZ) D ERR("-5~"_$P(BSDXZ,U,2)) QUIT
 	; 
-	TCOMMIT  ; Save Data into Globals
+	; Unlock
+	LOCK -^BSDXAPPT(BSDXAPPTID)
 	;
 	; Return ADO recordset
 	S BSDXI=BSDXI+1
@@ -182,9 +204,11 @@ CHKEVT1(BSDXRES,BSDXSTART,BSDXPAT,BSDXSTAT)	;
 	Q:'+$G(BSDXRES) BSDXFOUND
 	Q:'$D(^BSDXAPPT("ARSRC",BSDXRES,BSDXSTART)) BSDXFOUND
 	S BSDXAPPT=0 F  S BSDXAPPT=$O(^BSDXAPPT("ARSRC",BSDXRES,BSDXSTART,BSDXAPPT)) Q:'+BSDXAPPT  D  Q:BSDXFOUND
-	. S BSDXNOD=$G(^BSDXAPPT(BSDXAPPT,0)) Q:BSDXNOD=""
+	. N BSDXNOD S BSDXNOD=$G(^BSDXAPPT(BSDXAPPT,0)) Q:BSDXNOD=""
 	. I $P(BSDXNOD,U,5)=BSDXPAT,$P(BSDXNOD,U,12)="" S BSDXFOUND=1 Q
-	I BSDXFOUND,+$G(BSDXAPPT) D BSDXCHK(BSDXAPPT,BSDXSTAT)
+	I BSDXFOUND,+$G(BSDXAPPT) D
+	. N BSDXERR S BSDXERR=$$BSDXCHK(BSDXAPPT,BSDXSTAT)
+	. I BSDXERR D ^%ZTER ; VEN/SMH - This is silent. This is a last resort
 	Q BSDXFOUND
 	;
 CHKEVT3(BSDXRES)	;
@@ -199,8 +223,6 @@ CHKEVT3(BSDXRES)	;
 	;
 ERROR	;
 	S $ETRAP="D ^%ZTER HALT"  ; Emergency Error Trap for the wise
-	; Rollback, otherwise ^XTER will be empty from future rollback
-	I $TL>0 TROLLBACK
 	D ^%ZTER
 	S $EC=""  ; Clear Error
 	; Log error message and send to client
@@ -208,7 +230,7 @@ ERROR	;
 	Q
 	;
 ERR(BSDXERR)	;Error processing
-	I $TLEVEL>0 TROLLBACK
+	I $G(BSDXAPPTID) LOCK -^BSDXAPPT(BSDXAPPTID)
 	S BSDXERR=$G(BSDXERR)
 	S BSDXERR=$P(BSDXERR,"~")_"~"_$TEXT(+0)_":"_$P(BSDXERR,"~",2) ; Append Routine Name
 	S BSDXI=$G(BSDXI)+1

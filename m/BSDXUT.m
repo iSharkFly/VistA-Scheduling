@@ -1,10 +1,13 @@
-BSDXUT ; VEN/SMH - Unit Tests for Scheduling GUI ; 6/28/12 10:14am
+BSDXUT ; VEN/SMH - Unit Tests for Scheduling GUI ; 6/29/12 12:20pm
 	;;1.7T1;BSDX;;Aug 31, 2011;Build 18
 	; Licensed under LGPL
 	;
 	; Change Log:
 	; June 21 2012: Initial Version
 	;
+EN	; Run all Unit Tests
+	D UT07
+	QUIT
 UT07	; Unit Tests for BSDX07 - Assumes you have Patients with DFNs 1,2,3,4,5
 	; HLs/Resources are created as part of the UT
 	; Set-up - Create Clinics

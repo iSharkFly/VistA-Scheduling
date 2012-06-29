@@ -1,6 +1,10 @@
-BSDXUT1 ; VEN/SMH - Unit Tests for Scheduling GUI - cont. ; 6/28/12 10:17am
+BSDXUT1 ; VEN/SMH - Unit Tests for Scheduling GUI - cont. ; 6/29/12 12:32pm
 	;;1.7T1;BSDX;;Aug 31, 2011;Build 18
 	;
+	;
+EN	; Run All Unit Tests in this routine
+	D UT08,UT29,UT26,UT31
+	QUIT
 	;
 UT08	; Unit Tests for BSDX08; Must have patients 1,2,3,4,5 defined in system
 	N RESNAM S RESNAM="UTCLINIC"
@@ -220,8 +224,7 @@ UT29 ; Unit Test for BSDX29
 	I +^BSDXTMP($J,1)=0 W "Error... task not created",! QUIT
 	;
 	W "Waiting for 5 seconds for it to finish",! HANG 5
-	W ^BSDXTMP("BSDXCOPY",+^BSDXTMP($J,1)),!
-	W "Last line should say 0",!
+	W:^BSDXTMP("BSDXCOPY",+^BSDXTMP($J,1))'["  0 records" "Copy failed",!
 	QUIT
 	;
 UT26	; Unit Tests - BSDX26
