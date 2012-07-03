@@ -1,4 +1,4 @@
-BSDXUT1 ; VEN/SMH - Unit Tests for Scheduling GUI - cont. ; 6/29/12 12:32pm
+BSDXUT1 ; VEN/SMH - Unit Tests for Scheduling GUI - cont. ; 7/3/12 12:28pm
 	;;1.7T1;BSDX;;Aug 31, 2011;Build 18
 	;
 	;
@@ -93,7 +93,7 @@ UT08	; Unit Tests for BSDX08; Must have patients 1,2,3,4,5 defined in system
 	S APPID=+$P(^BSDXTMP($J,1),U)
 	I APPID=0 W "Error in test 6",!
 	D CHECKIN^BSDX25(.ZZZ,APPID,$$NOW^XLFDT) ; Checkin
-	S BSDXRESULT=$$RMCI^BSDXAPI(DFN,HLIEN,APPTTIME) ; remove checkin
+	S BSDXRESULT=$$RMCI^BSDXAPI1(DFN,HLIEN,APPTTIME) ; remove checkin
 	D APPDEL^BSDX08(.ZZZ,APPID,"PC",10,"Cancel Note") ; delete appt
 	I $P(^BSDXTMP($J,1),$C(30))'="" W "Error in test 6",!
 	;
@@ -139,7 +139,7 @@ UT08	; Unit Tests for BSDX08; Must have patients 1,2,3,4,5 defined in system
 	S APPID=+$P(^BSDXTMP($J,1),U)
 	I APPID=0 W "Error in test 6",!
 	D CHECKIN^BSDX25(.ZZZ,APPID,$$NOW^XLFDT) ; Checkin
-	S BSDXRESULT=$$RMCI^BSDXAPI(DFN,HLIEN,APPTTIME) ; remove checkin
+	S BSDXRESULT=$$RMCI^BSDXAPI1(DFN,HLIEN,APPTTIME) ; remove checkin
 	D APPDEL^BSDX08(.ZZZ,APPID,"PC",10,"Cancel Note") ; delete appt
 	I $P(^BSDXTMP($J,1),$C(30))'="" W "Error in test 6",!
 	QUIT
@@ -190,7 +190,7 @@ UT29 ; Unit Test for BSDX29
 	D BSDXCP^BSDX29(.ZZZ,RESIEN,HLIEN,FIRSTDATE,LASTDATE)
 	I +^BSDXTMP($J,1)=0 W "Error... task not created",! QUIT
 	;
-	W "Waiting for 5 seconds for it to finish",! HANG 5
+	W "Waiting for 5 seconds for taskman to finish",! HANG 5
 	N DFN,APPTTIME S (DFN,APPTTIME)=""
 	F  S DFN=$O(BSDXAPPT(DFN)) Q:'DFN  D
 	. F  S APPTTIME=$O(BSDXAPPT(DFN,APPTTIME)) Q:'APPTTIME  D
@@ -223,7 +223,7 @@ UT29 ; Unit Test for BSDX29
 	D BSDXCP^BSDX29(.ZZZ,RESIEN,HLIEN,FIRSTDATE,LASTDATE)
 	I +^BSDXTMP($J,1)=0 W "Error... task not created",! QUIT
 	;
-	W "Waiting for 5 seconds for it to finish",! HANG 5
+	W "Waiting for 5 seconds for taskman to finish",! HANG 5
 	W:^BSDXTMP("BSDXCOPY",+^BSDXTMP($J,1))'["  0 records" "Copy failed",!
 	QUIT
 	;

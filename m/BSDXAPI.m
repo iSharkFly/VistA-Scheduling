@@ -1,46 +1,11 @@
-BSDXAPI	; IHS/ANMC/LJF & VW/SMH - SCHEDULING APIs ; 6/29/12 12:19pm
+BSDXAPI	; IHS/ANMC/LJF & VW/SMH - SCHEDULING APIs ; 7/3/12 12:30pm
 	;;1.7T1;BSDX;;Aug 31, 2011;Build 18
 	; Licensed under LGPL  
 	;
-	;Orignal routine is BSDAPI by IHS/LJF, HMW, and MAW
+	; Orignal routine is BSDAPI by IHS/LJF, HMW, and MAW
 	; mods (many) by WV/SMH
-	;Move to BSDX namespace as BSDXAPI from BSDAPI by WV/SMH
-	; Change History:
-	; 2010-11-5: (1.42)
-	; - Fixed errors having to do uncanceling patient appointments if it was 
-	;   a patient cancelled appointment.
-	; - Use new style Fileman API for storing appointments in file 44 in 
-	;   $$MAKE due to problems with legacy API.
-	; 2010-11-12: (1.42)
-	; - Changed ="C" to ["C" in SCIEN. Cancelled appointments can be "PC" as 
-	;   well. 
-	; 2010-12-5 (1.42)
-	; Added an entry point to update the patient note in file 44.
-	; 2010-12-6 (1.42)
-	; MAKE1 incorrectly put info field in BSDR("INFO") rather than BSDR("OI")
-	; 2010-12-8 (1.42)
-	; Removed restriction on max appt length. Even though this restriction
-	; exists in fileman (120 minutes), PIMS ignores it. Therefore, I 
-	; will ignore it here too.
-	; 2011-01-25 (v.1.5)
-	; Added entry point $$RMCI to remove checked in appointments.
-	; In $$CANCEL, if the appointment is checked in, delete check-in rather than
-	;  spitting an error message to the user saying 'Delete the check-in'
-	; Changed all lines that look like this:
-	;  I $G(BSDR("ADT"))'?7N1".".4N Q 1_U_"Appt Date/Time error: "_$G(BSDR("ADT"))
-	; to:
-	;  I $G(BSDR("ADT"))'?7N.1".".4N Q 1_U_"Appt Date/Time error: "_$G(BSDR("ADT"))
-	; to allow for date at midnight which does not have a dot at the end.
-	; 2011-01-26 (v.1.5)
-	; More user friendly message if patient already has appointment in $$MAKE:
-	;  Spits out pt name and user friendly date.
-	; 2012-06-18 (v 1.7)
-	; Removing transacions. Means that code SHOULD NOT fail. Took all checks
-	;  out for making an appointment to MAKECK. We call this first to make sure
-	; that the appointment is okay to make before committing to make it. We
-	; still have the provision to delete the data though if we fail when we 
-	; actually make the appointment.
-	; CANCELCK exists for the same purpose.
+	; Move to BSDX namespace as BSDXAPI from BSDAPI by WV/SMH
+	; Change history is located in BSDXAPI1 (to save space).
 	;
 MAKE1(DFN,CLIN,TYP,DATE,LEN,INFO)	; Simplified PEP w/ parameters for $$MAKE - making appointment
 	; Call like this for DFN 23435 having an appointment at Hospital Location 33
@@ -229,6 +194,70 @@ CHECKIN(BSDR)	;EP; call to add checkin info to appt; IHS/ITSC/LJF 12/23/2004 PAT
 	;              = 0 means everything worked
 	;              = 1^message means error with reason message
 	;
+	I $G(BSDXDIE2) N X S X=1/0
+	;
+	N BSDXERR S BSDXERR=$$CHECKICK(.BSDR)
+	I BSDXERR Q BSDXERR
+	;
+	; find ien for appt in file 44
+	NEW IEN,DIE,DA,DR
+	S IEN=$$SCIEN(BSDR("PAT"),BSDR("CLN"),BSDR("ADT"))
+	;
+	; remember before status
+	; Failure analysis: Only ^TMP global is set here.
+	NEW SDATA,DFN,SDT,SDCL,SDDA,SDCIHDL,SDMODE
+	S DFN=BSDR("PAT"),SDT=BSDR("ADT"),SDCL=BSDR("CLN"),SDMODE=2,SDDA=IEN
+	S SDCIHDL=$$HANDLE^SDAMEVT(1),SDATA=SDDA_U_DFN_U_SDT_U_SDCL
+	D BEFORE^SDAMEVT(.SDATA,DFN,SDT,SDCL,SDDA,SDCIHDL)
+	;
+	; set checkin; Old Code -- keep for ref VEN/SMH 3 Jul 2012
+	; S DIE="^SC("_BSDR("CLN")_",""S"","_BSDR("ADT")_",1,"
+	; S DA(2)=BSDR("CLN"),DA(1)=BSDR("ADT"),DA=IEN
+	; S DR="309///"_BSDR("CDT")_";302///`"_BSDR("USR")_";305///"_$$NOW^XLFDT
+	; D ^DIE
+	;
+	I $D(BSDXSIMERR3) Q 1_U_"Simulated Error"
+	;
+	; Failure analysis: If this fails, no other changes were made in this routine
+	N BSDXIENS S BSDXIENS=IEN_","_BSDR("ADT")_","_BSDR("CLN")_","
+	N BSDXFDA
+	S BSDXFDA(44.003,BSDXIENS,309)=BSDR("CDT")
+	S BSDXFDA(44.003,BSDXIENS,302)=BSDR("USR")
+	S BSDXFDA(44.003,BSDXIENS,305)=$$NOW^XLFDT()
+	N BSDXERR
+	D UPDATE^DIE("","BSDXFDA","BSDXERR")
+	;
+	I $D(BSDXERR) Q 1_U_"Error checking in appointment to file 44. Error: "_BSDXERR("DIERR",1,"TEXT",1)
+	;
+	; set after status
+	S SDDA=$$SCIEN(BSDR("PAT"),BSDR("CLN"),BSDR("ADT"))
+	S SDCIHDL=$$HANDLE^SDAMEVT(1),SDATA=SDDA_U_DFN_U_SDT_U_SDCL
+	D AFTER^SDAMEVT(.SDATA,DFN,SDT,SDCL,SDDA,SDCIHDL)
+	;
+	; Point of no Return
+	; call event driver
+	D EVT^SDAMEVT(.SDATA,4,SDMODE,SDCIHDL)
+	Q 0
+	;
+CHECKIC1(DFN,CLIN,APDATE)	; Simplified PEP w/ parameters for $$CHECKICK -
+	; Check-in Check
+	; Call like this for DFN 23435 checking in now at Hospital Location 33
+	; for appt at Dec 20, 2009 @ 10:11:59 
+	; S RESULT=$$CHECKIC1^BSDXAPI(23435,33,3091220.221159)
+	N BSDR
+	S BSDR("PAT")=DFN          ;DFN
+	S BSDR("CLN")=CLIN         ;Hosp Loc IEN
+	S BSDR("ADT")=APDATE       ;Appt Date
+	S BSDR("CDT")=$$NOW^XLFDT  ;Check-in date defaults to now
+	S BSDR("USR")=DUZ          ;Check-in user defaults to current
+	Q $$CHECKICK(.BSDR)
+	;
+CHECKICK(BSDR) ; $$ PEP; - Is it okay to check-in patient?
+	; Input: Same as $$CHECKIN
+	; Output: 0 if okay or 1^message if error
+	;
+	I $G(BSDXSIMERR2) Q 1_U_"Simulated Error"
+	;
 	I '$D(^DPT(+$G(BSDR("PAT")),0)) Q 1_U_"Patient not on file: "_$G(BSDR("PAT"))
 	I '$D(^SC(+$G(BSDR("CLN")),0)) Q 1_U_"Clinic not on file: "_$G(BSDR("CLN"))
 	I $G(BSDR("ADT")) S BSDR("ADT")=+$E(BSDR("ADT"),1,12)  ;remove seconds
@@ -238,29 +267,8 @@ CHECKIN(BSDR)	;EP; call to add checkin info to appt; IHS/ITSC/LJF 12/23/2004 PAT
 	I '$D(^VA(200,+$G(BSDR("USR")),0)) Q 1_U_"User Who Made Appt Error: "_$G(BSDR("USR"))
 	;
 	; find ien for appt in file 44
-	NEW IEN,DIE,DA,DR
-	S IEN=$$SCIEN(BSDR("PAT"),BSDR("CLN"),BSDR("ADT"))
+	N IEN S IEN=$$SCIEN(BSDR("PAT"),BSDR("CLN"),BSDR("ADT"))
 	I 'IEN Q 1_U_"Error trying to find appointment for checkin: Patient="_BSDR("PAT")_" Clinic="_BSDR("CLN")_" Appt="_BSDR("ADT")
-	;
-	; remember before status
-	NEW SDATA,DFN,SDT,SDCL,SDDA,SDCIHDL,SDMODE
-	S DFN=BSDR("PAT"),SDT=BSDR("ADT"),SDCL=BSDR("CLN"),SDMODE=2,SDDA=IEN
-	S SDCIHDL=$$HANDLE^SDAMEVT(1),SDATA=SDDA_U_DFN_U_SDT_U_SDCL
-	D BEFORE^SDAMEVT(.SDATA,DFN,SDT,SDCL,SDDA,SDCIHDL)
-	;
-	; set checkin
-	S DIE="^SC("_BSDR("CLN")_",""S"","_BSDR("ADT")_",1,"
-	S DA(2)=BSDR("CLN"),DA(1)=BSDR("ADT"),DA=IEN
-	S DR="309///"_BSDR("CDT")_";302///`"_BSDR("USR")_";305///"_$$NOW^XLFDT
-	D ^DIE
-	;
-	; set after status
-	S SDDA=$$SCIEN(BSDR("PAT"),BSDR("CLN"),BSDR("ADT"))
-	S SDCIHDL=$$HANDLE^SDAMEVT(1),SDATA=SDDA_U_DFN_U_SDT_U_SDCL
-	D AFTER^SDAMEVT(.SDATA,DFN,SDT,SDCL,SDDA,SDCIHDL)
-	;
-	; call event driver
-	D EVT^SDAMEVT(.SDATA,4,SDMODE,SDCIHDL)
 	Q 0
 	;
 CANCEL1(DFN,CLIN,TYP,APDATE,REASON,INFO)	; PEP w/ parameters for $$CANCEL - cancelling appointment
@@ -376,46 +384,6 @@ CI(PAT,CLINIC,DATE,SDIEN)	;PEP; -- returns 1 if appt already checked-in
 	I 'X S X=$$SCIEN(PAT,CLINIC,DATE) I 'X Q 0
 	S X=$P($G(^SC(CLINIC,"S",DATE,1,X,"C")),U)
 	Q $S(X:1,1:0)
-	;
-RMCI(PAT,CLINIC,DATE)	 ;PEP; -- Remove Check-in; $$
-	; PAT = DFN
-	; CLINIC = SC IEN
-	; DATE = FM Date/Time of Appointment
-	;
-	; Returns:
-	; 0 if okay
-	; -1 if failure
-	;
-	; Call like this: $$RMCI(233,33,3110102.1130)
-	;
-	; Move my variables into the ones used by SDAPIs (just a convenience)
-	NEW SDATA,DFN,SDT,SDCL,SDDA,SDCIHDL,SDMODE
-	S DFN=PAT,SDT=DATE,SDCL=CLINIC,SDMODE=2,SDDA=$$SCIEN(DFN,SDCL,SDT)
-	;
-	I SDDA<1 QUIT 0    ; Appt cancelled; cancelled appts rm'ed from file 44
-	;
-	; remember before status
-	S SDCIHDL=$$HANDLE^SDAMEVT(1),SDATA=SDDA_U_DFN_U_SDT_U_SDCL
-	D BEFORE^SDAMEVT(.SDATA,DFN,SDT,SDCL,SDDA,SDCIHDL)
-	;
-	; remove check-in using filer.
-	N BSDXIENS S BSDXIENS=SDDA_","_DATE_","_CLINIC_","
-	N BSDXFDA
-	S BSDXFDA(44.003,BSDXIENS,309)="@" ; CHECKED-IN
-	S BSDXFDA(44.003,BSDXIENS,302)="@" ; CHECK IN USER
-	S BSDXFDA(44.003,BSDXIENS,305)="@" ; CHECK IN ENTERED
-	N BSDXERR
-	D FILE^DIE("","BSDXFDA","BSDXERR")
-	I $D(BSDXERR) QUIT "-1~Can't file for Pat "_PAT_" in Clinic "_CLINIC_" at "_DATE_". Fileman reported an error: "_BSDXERR("DIERR",1,"TEXT",1)
-	;
-	; set after status
-	; S SDDA=$$SCIEN(DFN,SDCL,SDT) ;smh -why is this here? SDDA won't change.
-	S SDCIHDL=$$HANDLE^SDAMEVT(1),SDATA=SDDA_U_DFN_U_SDT_U_SDCL
-	D AFTER^SDAMEVT(.SDATA,DFN,SDT,SDCL,SDDA,SDCIHDL)
-	;
-	; call event driver
-	D EVT^SDAMEVT(.SDATA,4,SDMODE,SDCIHDL)
-	QUIT 0
 	;
 SCIEN(PAT,CLINIC,DATE)	;PEP; returns ien for appt in ^SC
 	NEW X,IEN
