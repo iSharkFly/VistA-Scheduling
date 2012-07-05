@@ -1,4 +1,4 @@
-BSDXAPI	; IHS/ANMC/LJF & VW/SMH - SCHEDULING APIs ; 7/3/12 12:30pm
+BSDXAPI	; IHS/LJF,HMW,MAW & VEN/SMH - SCHEDULING APIs ; 7/5/12 12:52pm
 	;;1.7T1;BSDX;;Aug 31, 2011;Build 18
 	; Licensed under LGPL  
 	;
@@ -109,6 +109,9 @@ MAKE(BSDR)	;PEP; call to store appt made
 	;
 	;Q:$G(BSDXSIMERR5) 1_U_$NA(BSDXSIMERR5) ; Unit Test line
 	S:$G(BSDXSIMERR5) X=1/0
+	;
+	; Update the Availablilities ; Doesn't fail. Global reads and sets.
+	D AVUPDTMK^BSDXAPI1(BSDR("CLN"),BSDR("ADT"),BSDR("LEN"))
 	;
 	; call event driver
 	NEW DFN,SDT,SDCL,SDDA,SDMODE
@@ -326,9 +329,11 @@ CANCEL(BSDR)	;PEP; called to cancel appt
 	;
 	; get user who made appt and date appt made from ^SC
 	;    because data in ^SC will be deleted
+	; Appointment Length: ditto
 	NEW USER,DATE
 	S USER=$P($G(^SC(SDCL,"S",SDT,1,IEN,0)),U,6)
 	S DATE=$P($G(^SC(SDCL,"S",SDT,1,IEN,0)),U,7)
+	N BSDXLEN S BSDXLEN=$$APPLEN(DFN,SDCL,SDT) ; appt length
 	;
 	; update file 2 info --old code; keep for reference
 	;NEW DIE,DA,DR
@@ -349,7 +354,6 @@ CANCEL(BSDR)	;PEP; called to cancel appt
 	D FILE^DIE("","BSDXFDA","BSDXERR")
 	I $D(BSDXERR) Q 1_U_"Cannot cancel appointment in File 2"
 	; Failure point 1: If we fail here, nothing has happened yet.
-	; No rollback needed in ^BSDXAPPT
 	;
 	; delete data in ^SC -- this does not (typically) fail. Fileman won't stop
 	NEW DIK,DA
@@ -358,8 +362,12 @@ CANCEL(BSDR)	;PEP; called to cancel appt
 	D ^DIK
 	; Failure point 2: not expected to happen here
 	;
+	; Update PIMS availability -- this doesn't fail. Global gets/sets only.
+	D AVUPDTCN^BSDXAPI1(SDCL,SDT,BSDXLEN)
+	;
 	; call event driver -- point of no return
 	D CANCEL^SDAMEVT(.SDATA,DFN,SDT,SDCL,SDDA,SDMODE,SDCPHDL)
+	;
 	Q 0
 	;
 CANCELCK(BSDR) ; $$ PEP; Okay to Cancel Appointment?

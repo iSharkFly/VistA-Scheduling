@@ -1,4 +1,4 @@
-BSDXUT2 ; VEN/SMH - Unit Tests for Scheduling GUI - cont. ; 7/3/12 12:03pm
+BSDXUT2 ; VEN/SMH - Unit Tests for Scheduling GUI - cont. ; 7/5/12 11:39am
 	;;1.7T1;BSDX;;Aug 31, 2011;Build 18
 	;
 EN	; Run all unit tests in this routine
@@ -64,6 +64,11 @@ UT25 ; Unit Tests for BSDX25
 	D CHECKIN^BSDX25(.ZZZ,APPTID,$$NOW^XLFDT())
 	IF +^BSDXTMP($J,1)'=-100 WRITE "ERROR IN Etest 9",!
 	K BSDXDIE2
+	; M Error in $$RMCI^BSDXAPI1
+	N BSDXDIE2 S BSDXDIE2=1
+	D RMCI^BSDX25(.ZZZ,APPTID)
+	IF +^BSDXTMP($J,1)'=-100 WRITE "ERROR IN Etest 13",!
+	K BSDXDIE2
 	;
 	; Get start and end times
 	N TIMES S TIMES=$$TIMES^BSDXUT ; appt time^end time
@@ -99,6 +104,35 @@ UT25 ; Unit Tests for BSDX25
 	IF +^BSDXTMP($J,1)'=-10 WRITE "ERROR in Etest 11",!
 	IF $P(^BSDXAPPT(APPTID,0),U,3) WRITE "ERROR IN CHECKIN 115",!
 	IF +$G(^SC(HL,"S",APPTTIME,1,1,"C")) WRITE "ERROR IN CHECKIN 116",!
+	K BSDXSIMERR3
+	;
+	; Check-in for real for the subsequent tests
+	D CHECKIN^BSDX25(.ZZZ,APPTID,$$NOW^XLFDT()) ; Check-in first!
+	IF '$P(^BSDXAPPT(APPTID,0),U,3) WRITE "ERROR IN CHECKIN 1110",!
+	IF '+$G(^SC(HL,"S",APPTTIME,1,1,"C")) WRITE "ERROR IN RMCI 1120",!
+	;
+	; Simulated Error in $$BSDXCHK^BSDX25; This time for remove check-in
+	N BSDXSIMERR1 S BSDXSIMERR1=1
+	D RMCI^BSDX25(.ZZZ,APPTID)
+	IF +^BSDXTMP($J,1)'=-6 WRITE "ERROR in Etest 14",!
+	IF '$P(^BSDXAPPT(APPTID,0),U,3) WRITE "ERROR IN RMCI 111",!
+	IF '+$G(^SC(HL,"S",APPTTIME,1,1,"C")) WRITE "ERROR IN RMCI 112",!
+	K BSDXSIMERR1
+	;
+	; Simulated Error in $$RMCICK^BSDXAPI1
+	N BSDXSIMERR2 S BSDXSIMERR2=1
+	D RMCI^BSDX25(.ZZZ,APPTID)
+	IF +^BSDXTMP($J,1)'=-5 WRITE "ERROR in Etest 15",!
+	IF '$P(^BSDXAPPT(APPTID,0),U,3) WRITE "ERROR IN RMCI 113",!
+	IF '+$G(^SC(HL,"S",APPTTIME,1,1,"C")) WRITE "ERROR IN RMCI 114",!
+	K BSDXSIMERR2
+	;
+	; Simulated Error in $$RMCI^BSDXAPI1
+	N BSDXSIMERR3 S BSDXSIMERR3=1
+	D RMCI^BSDX25(.ZZZ,APPTID)
+	IF +^BSDXTMP($J,1)'=-5 WRITE "ERROR in Etest 16",!
+	IF '$P(^BSDXAPPT(APPTID,0),U,3) WRITE "ERROR IN RMCI 115",!
+	IF '+$G(^SC(HL,"S",APPTTIME,1,1,"C")) WRITE "ERROR IN RMCI 116",!
 	K BSDXSIMERR3
 	;
 	; Unlinked Clinic Tests

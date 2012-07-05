@@ -1,9 +1,12 @@
-BSDX25	; VEN/SMH - WINDOWS SCHEDULING RPCS ; 7/3/12 12:27pm
+BSDX25	; VEN/SMH - WINDOWS SCHEDULING RPCS ; 7/5/12 11:55am
 	;;1.7T1;BSDX;;Aug 31, 2011;Build 18
 	; Licensed under LGPL
 	;
 	; Change Log:
 	; 3110106: SMH -> Changed Check-in EP - Removed unused paramters. Will change C#
+	; 3120630: VEN/SMH -> Extensive Refactoring to remove transactions.
+	;                  -> Functionality still the same.
+	;                  -> Unit Tests in UT25^BSDXUT2
 	;
 	;
 CHECKIND(BSDXY,BSDXAPPTID,BSDXCDT,BSDXCC,BSDXPRV,BSDXROU,BSDXVCL,BSDXVFM,BSDXOG)	;EP
@@ -159,26 +162,42 @@ RMCI(BSDXY,BSDXAPPTID)	; EP - Remove Check-in from BSDX APPT and 2/44
 	I '+$G(BSDXAPPTID) D ERR("-1~Invalid Appointment ID") QUIT
 	I '$D(^BSDXAPPT(BSDXAPPTID,0)) D ERR("-2~Invalid Appointment ID") QUIT
 	;
+	; Get appointment Data
+	N BSDXNOD S BSDXNOD=^BSDXAPPT(BSDXAPPTID,0)
+	N BSDXPATID S BSDXPATID=$P(BSDXNOD,U,5) ; DFN
+	N BSDXSTART S BSDXSTART=$P(BSDXNOD,U) ; Start Date
+	N BSDXRESID S BSDXRESID=$P(BSDXNOD,U,7) ; Resource ID
+	; 
+	; If the resource doesn't exist, error out. DB is corrupt.
+	I 'BSDXRESID D ERR("-3~DB has corruption. Call Tech Support.") QUIT
+	I '$D(^BSDXRES(BSDXRESID,0)) D ERR("-4~DB has corruption. Call Tech Support.") QUIT 
+	;
+	; Get HL Data
+	N BSDXNOD S BSDXNOD=^BSDXRES(BSDXRESID,0) ; Resource 0 node
+	N BSDXSC1 S BSDXSC1=$P(BSDXNOD,U,4) ;HOSPITAL LOCATION IEN
+	I BSDXSC1,'$D(^SC(BSDXSC1,0)) S BSDXSC1="" ; Zero out if HL doesn't exist
+	;
+	; Is it okay to remove check-in from PIMS?
+	N BSDXERR S BSDXERR=0 ; Scratch variable
+	; $$RMCICK = Remove Check-in Check
+	I BSDXSC1 S BSDXERR=$$RMCICK^BSDXAPI1(BSDXPATID,BSDXSC1,BSDXSTART)
+	I BSDXERR D ERR("-5~"_$P(BSDXERR,U,2)) QUIT
+	;
+	; For possible rollback, get old check-in date (internal value)
+	N BSDXCDT S BSDXCDT=$$GET1^DIQ(9002018.4,BSDXAPPTID_",",.03,"I")
+	;
 	; Remove checkin from BSDX APPOINTMENT entry
+	; No need to rollback here on failure.
 	N BSDXERR S BSDXERR=$$BSDXCHK(BSDXAPPTID,"@")
 	I BSDXERR D ERR("-6~Cannot file data in $$BSDXCHK") QUIT
 	;
 	; Now, remove checkin from PIMS files 2/44
-	N BSDXNOD S BSDXNOD=^BSDXAPPT(BSDXAPPTID,0)
-	N BSDXPATID S BSDXPATID=$P(BSDXNOD,U,5) ; DFN
-	N BSDXSTART S BSDXSTART=$P(BSDXNOD,U) ; Start Date
-	N BSDXSC1 S BSDXSC1=$P(BSDXNOD,U,7) ; Resource ID
-	; 
-	; If the resource doesn't exist, error out. DB is corrupt.
-	I 'BSDXSC1 D ERR("-3~DB has corruption. Call Tech Support.") QUIT
-	I '$D(^BSDXRES(BSDXSC1,0)) D ERR("-4~DB has corruption. Call Tech Support.") QUIT 
-	;
-	N BSDXNOD S BSDXNOD=^BSDXRES(BSDXSC1,0) ; Resource 0 node
-	S BSDXSC1=$P(BSDXNOD,U,4) ;HOSPITAL LOCATION
-	;
-	N BSDXZ ; Scratch variable to hold error message
-	I BSDXSC1]"",$D(^SC(BSDXSC1,0)) S BSDXZ=$$RMCI^BSDXAPI1(BSDXPATID,BSDXSC1,BSDXSTART)
-	I +$G(BSDXZ) D ERR("-5~"_$P(BSDXZ,U,2)) QUIT
+	; Restore BSDXCDT into ^BSDXAPPT if we fail.
+	N BSDXERR S BSDXERR=0 ; Scratch variable to hold error message
+	I BSDXSC1 S BSDXERR=$$RMCI^BSDXAPI1(BSDXPATID,BSDXSC1,BSDXSTART)
+	I BSDXERR D  QUIT
+	. N % S %=$$BSDXCHK(BSDXAPPTID,BSDXCDT) ; No error checking here.
+	. D ERR("-5~"_$P(BSDXERR,U,2)) ; Send error message to client
 	; 
 	; Return ADO recordset
 	S BSDXI=BSDXI+1
@@ -237,7 +256,7 @@ ERROR	;
 	; undo or redo the check-in.
 	; Individual portions of this routine may choose to do rolling back
 	; of their own (e.g. a failed call to BSDXAPI causes rollback to occur
-	; in CHECKIN)
+	; in CHECKIN and RMCI)
 	;
 	; Log error message and send to client
 	D ERR("-100~Mumps Error")

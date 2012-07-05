@@ -1,4 +1,4 @@
-BSDX07	; VW/UJO/SMH - WINDOWS SCHEDULING RPCS  ; 6/21/12 3:54pm
+BSDX07	; VW/UJO/SMH - WINDOWS SCHEDULING RPCS  ; 7/5/12 12:57pm
 	;;1.7T1;BSDX;;Aug 31, 2011;Build 18
 	; Licensed under LGPL
 	;
@@ -11,6 +11,7 @@ BSDX07	; VW/UJO/SMH - WINDOWS SCHEDULING RPCS  ; 6/21/12 3:54pm
 	;      It could be midnight of the next day
 	; v1.6 Apr 11 2011 - Support for Scheduling Radiology Exams...
 	; v1.7 Jun 20 2012 - Refactoring to remove transactions - many changes
+	;                  - AVUPDT moved to AVUPDTMK in BSDXAPI1
 	;
 	; Error Reference:
 	; -1: Patient Record is locked. This means something is wrong!!!!
@@ -57,7 +58,7 @@ APPADD(BSDXY,BSDXSTART,BSDXEND,BSDXPATID,BSDXRES,BSDXLEN,BSDXNOTE,BSDXATID,BSDXR
 	; AppointmentID and ErrorNumber
 	;
 	; NB: Specifying BSDXLEN and BSDXEND is redundant. For future programmers
-	; to sort out
+	; to sort out. Needs changes on client.
 	;
 	;Test lines:
 	;BSDX ADD NEW APPOINTMENT^3091122.0930^3091122.1000^370^Dr Office^30^EXAM^WALKIN
@@ -161,8 +162,6 @@ APPADD(BSDXY,BSDXSTART,BSDXEND,BSDXPATID,BSDXRES,BSDXLEN,BSDXNOTE,BSDXATID,BSDXR
 	; NB: $$MAKE itself calls $$MAKECK to check again for being okay.
 	I +BSDXSCD,$D(^SC(BSDXSCD,0)) D  I +BSDXERR D ERR(BSDXI,"-10~BSDX07 Error: MAKE^BSDXAPI returned error code: "_BSDXERR),ROLLBACK(BSDXAPPTID,.BSDXC) Q
 	. S BSDXERR=$$MAKE^BSDXAPI(.BSDXC)
-	. Q:BSDXERR
-	. D AVUPDT(BSDXSCD,BSDXSTART,BSDXLEN) ; Update RPMS Clinic availability
 	;
 	;Return Recordset
 	L -^BSDXAPPT(BSDXPATID)
@@ -243,7 +242,7 @@ ROLLBACK(BSDXAPPTID,BSDXC) ; Private EP; Roll back appointment set
 	; Input: 
 	; Appointment ID to remove from ^BSDXAPPT
 	; BSDXC array (see array format in $$MAKE^BSDXAPI)
-	; NB: I am not sure whether I want to do $G to protect??
+	; NB: I am not sure whether I want to do $G to protect against undefs?
 	; I send the variables to this EP from the Symbol Table in ETRAP
 	D BSDXDEL^BSDX07(BSDXAPPTID)
 	S:$D(BSDXC) %=$$UNMAKE^BSDXAPI(.BSDXC) ; rtn value always 0
@@ -275,58 +274,3 @@ ETRAP	  ;EP Error trap entry
 	D ERR(BSDXI,"-100~BSDX07 Error: "_$G(%ZTERZE))
 	Q:$Q 1_U_"Mumps Error" Q
 	;
-DAY	;;^SUN^MON^TUES^WEDNES^THURS^FRI^SATUR
-	;
-DOW	S %=$E(X,1,3),Y=$E(X,4,5),Y=Y>2&'(%#4)+$E("144025036146",Y)
-	F %=%:-1:281 S Y=%#4=1+1+Y
-	S Y=$E(X,6,7)+Y#7
-	Q
-	;
-AVUPDT(BSDXSCD,BSDXSTART,BSDXLEN)	  ;Update RPMS Clinic availability
-	;SEE SDM1
-	N Y,DFN
-	N SL,STARTDAY,X,SC,SB,HSI,SI,STR,SDDIF,SDMAX,SDDATE,SDDMAX,SDSDATE,CCXN,MXOK,COV,SDPROG
-	N X1,SDEDT,X2,SD,SM,SS,S,SDLOCK,ST,I
-	S Y=BSDXSCD,DFN=BSDXPATID
-	S SL=$G(^SC(+Y,"SL")),X=$P(SL,U,3),STARTDAY=$S($L(X):X,1:8),SC=Y,SB=STARTDAY-1/100,X=$P(SL,U,6),HSI=$S(X=1:X,X:X,1:4),SI=$S(X="":4,X<3:4,X:X,1:4),STR="#@!$* XXWVUTSRQPONMLKJIHGFEDCBA0123456789jklmnopqrstuvwxyz",SDDIF=$S(HSI<3:8/HSI,1:2) K Y
-	;Determine maximum days for scheduling
-	S SDMAX(1)=$P($G(^SC(+SC,"SDP")),U,2) S:'SDMAX(1) SDMAX(1)=365
-	S (SDMAX,SDDMAX)=$$FMADD^XLFDT(DT,SDMAX(1))
-	S SDDATE=BSDXSTART
-	S SDSDATE=SDDATE,SDDATE=SDDATE\1
-1 ;L  Q:$D(SDXXX)  S CCXN=0 K MXOK,COV,SDPROT Q:DFN<0  S SC=+SC
-	Q:$D(SDXXX)  S CCXN=0 K MXOK,COV,SDPROT Q:DFN<0  S SC=+SC
-	S X1=DT,SDEDT=365 S:$D(^SC(SC,"SDP")) SDEDT=$P(^SC(SC,"SDP"),"^",2)
-	S X2=SDEDT D C^%DTC S SDEDT=X
-	S Y=BSDXSTART
-EN1	S (X,SD)=Y,SM=0 D DOW
-S	I '$D(^SC(SC,"ST",$P(SD,"."),1)) S SS=+$O(^SC(+SC,"T"_Y,SD)) Q:SS'>0  Q:^(SS,1)=""  S ^SC(+SC,"ST",$P(SD,"."),1)=$E($P($T(DAY),U,Y+2),1,2)_" "_$E(SD,6,7)_$J("",SI+SI-6)_^(1),^(0)=$P(SD,".")
-	S S=BSDXLEN
-	;Check if BSDXLEN evenly divisible by appointment length
-	S RPMSL=$P(SL,U)
-	I BSDXLEN<RPMSL S BSDXLEN=RPMSL
-	I BSDXLEN#RPMSL'=0 D
-	. S BSDXINC=BSDXLEN\RPMSL
-	. S BSDXINC=BSDXINC+1
-	. S BSDXLEN=RPMSL*BSDXINC
-	S SL=S_U_$P(SL,U,2,99)
-SC	S SDLOCK=$S('$D(SDLOCK):1,1:SDLOCK+1) Q:SDLOCK>9
-	L +^SC(SC,"ST",$P(SD,"."),1):5 G:'$T SC
-	S SDLOCK=0,S=^SC(SC,"ST",$P(SD,"."),1)
-	S I=SD#1-SB*100,ST=I#1*SI\.6+($P(I,".")*SI),SS=SL*HSI/60*SDDIF+ST+ST
-	I (I<1!'$F(S,"["))&(S'["CAN") L -^SC(SC,"ST",$P(SD,"."),1) Q
-	I SM<7 S %=$F(S,"[",SS-1) S:'%!($P(SL,"^",6)<3) %=999 I $F(S,"]",SS)'<%!(SDDIF=2&$E(S,ST+ST+1,SS-1)["[") S SM=7
-	;
-SP	I ST+ST>$L(S),$L(S)<80 S S=S_" " G SP
-	S SDNOT=1
-	S ABORT=0
-	F I=ST+ST:SDDIF:SS-SDDIF D  Q:ABORT
-	. S ST=$E(S,I+1) S:ST="" ST=" "
-	. S Y=$E(STR,$F(STR,ST)-2)
-	. I S["CAN"!(ST="X"&($D(^SC(+SC,"ST",$P(SD,"."),"CAN")))) S ABORT=1 Q
-	. I Y="" S ABORT=1 Q
-	. S:Y'?1NL&(SM<6) SM=6 S ST=$E(S,I+2,999) S:ST="" ST=" " S S=$E(S,1,I)_Y_ST
-	. Q
-	S ^SC(SC,"ST",$P(SD,"."),1)=S
-	L -^SC(SC,"ST",$P(SD,"."),1)
-	Q
