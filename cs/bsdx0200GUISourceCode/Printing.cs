@@ -9,7 +9,7 @@ using System.Data;
 namespace IndianHealthService.ClinicalScheduling
 {
     public partial class Printing
-    { 
+    {
         /// <summary>
         /// Print Appointments
         /// </summary>
@@ -32,14 +32,14 @@ namespace IndianHealthService.ClinicalScheduling
             Font f8 = new Font(FontFamily.GenericSerif, 8);
             Font f10 = new Font(FontFamily.GenericSerif, 10);
             Font f14bold = new Font(FontFamily.GenericSerif, 14, FontStyle.Bold);
-            
+
             //Center Alignment for some stuff
             StringFormat sf = new StringFormat();
             sf.Alignment = StringAlignment.Center;
-            
+
             //Header
             g.DrawString("Confidential Patient Information", f8, Brushes.Black, e.PageBounds, sf);
-            
+
             //Footer
             sf.Alignment = StringAlignment.Center;
             sf.LineAlignment = StringAlignment.Far;
@@ -71,14 +71,14 @@ namespace IndianHealthService.ClinicalScheduling
 
             //resource we want to print
             dsPatientApptDisplay2.BSDXResourceRow r = ds.BSDXResource[resourceToPrint];
-            
+
             //header
             string toprint;
             if (beg.Date == end.Date) toprint = "Appointments for " + r.RESOURCE_NAME + " on " + beg.ToLongDateString();
             else toprint = "Appointments for " + r.RESOURCE_NAME + " from " + beg.ToShortDateString() + " to "
                 + end.ToShortDateString();
             g.DrawString(toprint, f14bold, Brushes.Black, printArea);
-            
+
             //Move print area down
             int titleHeight = (int)g.MeasureString(toprint, f14bold, printArea.Size).Height;
             printArea.Height -= titleHeight;
@@ -86,22 +86,22 @@ namespace IndianHealthService.ClinicalScheduling
 
             //Draw Line
             g.DrawLine(new Pen(Brushes.Black, 0), printArea.X, printArea.Y, printArea.X + printArea.Width, printArea.Y);
-            
+
             //Move print area down
-            printArea.Y += 5; 
+            printArea.Y += 5;
             printArea.Height -= 5;
-            
+
             System.Data.DataRow[] appts = r.GetChildRows(ds.Relations[0]); //ds has only one relation 
 
             StringFormat sf2 = new StringFormat();                 //sf to hold tab stops
-            sf2.SetTabStops(50, new float[] { 100, 250, 25 });     
+            sf2.SetTabStops(50, new float[] { 100, 250, 25 });
 
             //appt printed starts at zero
             while (apptPrinting < appts.Length)
             {
                 dsPatientApptDisplay2.PatientApptsRow a = (dsPatientApptDisplay2.PatientApptsRow)appts[apptPrinting];
-                
-                StringBuilder apptPrintStr = new StringBuilder(200); 
+
+                StringBuilder apptPrintStr = new StringBuilder(200);
                 apptPrintStr.AppendLine(a.ApptDate.ToString() + "\t" + a.Name + " (" + a.Sex + ")" + "\t" + "DOB: " + a.DOB.ToShortDateString() + "\t" + "ID: " + a.HRN);
                 apptPrintStr.AppendLine("P: " + a.HOMEPHONE + "\t" + "Address: " + a.STREET + ", " + a.CITY + ", " + a.STATE + " " + a.ZIP);
                 apptPrintStr.AppendLine("Note: " + a.NOTE);
@@ -109,16 +109,16 @@ namespace IndianHealthService.ClinicalScheduling
 
                 int printedApptHeight = (int)g.MeasureString(apptPrintStr.ToString(), f10, printArea.Width).Height;
                 if (printedApptHeight > printArea.Height) // too much to print -- move to next page
-                    // but don't increment the appointment to print since we haven't printed it yet.
-                    // i.e. apptPrinting stays the same.
+                // but don't increment the appointment to print since we haven't printed it yet.
+                // i.e. apptPrinting stays the same.
                 {
                     e.HasMorePages = true;
                     break;
                 }
-   
+
                 //otherwise print it
                 g.DrawString(apptPrintStr.ToString(), f10, Brushes.Black, printArea, sf2);
-                
+
                 //Move print area down
                 printArea.Y += printedApptHeight + 3;
                 printArea.Height -= printedApptHeight + 3;
@@ -147,150 +147,215 @@ namespace IndianHealthService.ClinicalScheduling
         /// <param name="e">PrintPageEventArgs from PrintDocument Print handler</param>
         public virtual void PrintAppointmentSlip(CGAppointment appt, PrintPageEventArgs e)
         {
-            // Prep
+            // setting the reference values for calculating the needed ratio of the coming page.
+            //referrenceHeight and referrenceWidth for A6 size.
+            double referrenceHeight = 383;
+            double referrenceWidth = 213;
+
+            //check if the paper is landscape or portrait. if it is landscape then new ratio need to be calculated.
+            if (e.MarginBounds.Width > e.MarginBounds.Height)
+            {
+                //landscape = true;
+                referrenceHeight = 213;
+                referrenceWidth = 383;
+                //fontRatio = ((e.MarginBounds.Height) / referrenceHeight);
+            }
+            
+            //setting the font,width and height ratios 
+            double fontRatio = (e.MarginBounds.Height / referrenceHeight);
+            if (fontRatio > 1.0)
+            {
+                fontRatio = fontRatio * 0.75;
+            }
+            double widthRatio = ((e.MarginBounds.Width) / referrenceWidth);
+            double heightRatio = ((e.MarginBounds.Height) / referrenceHeight);
+
             Graphics g = e.Graphics;
-            Rectangle printArea = e.MarginBounds;
-            Rectangle pageArea = e.PageBounds;
-            Rectangle headerArea = new Rectangle()
-            {
-                X = e.MarginBounds.X,
-                Y = e.PageBounds.Y,
-                Height = e.MarginBounds.Y - e.PageBounds.Y - 50,
-                Width = e.MarginBounds.Width
-            };
-            Rectangle footerArea = new Rectangle()
-            {
-                X = e.MarginBounds.X,
-                Y = e.MarginBounds.Height + headerArea.Height,
-                Width = e.MarginBounds.Width,
-                Height = pageArea.Height - (e.MarginBounds.Height + headerArea.Height)
-            };
+            //this is the string which is used to fill with the data and to be print on the screen. 
+            string stringData;
 
-            string s;
+            //in portrait we used fonts that fits with the A6 paper and changed depending on the page ratio,but in the land scape we used fonts fits with the A5 paper and counted the other pages depening on the ratios.
+            Font fontTitle = new Font(FontFamily.GenericSerif, (int)(13 * fontRatio), FontStyle.Bold); //for title
+            Font fontBody = new Font(FontFamily.GenericSerif, (int)(13 * fontRatio));
+            Font fontGroupTitle = new Font(FontFamily.GenericSansSerif, (int)(13 * fontRatio), FontStyle.Bold);
+            Font fFooter = new Font(FontFamily.GenericSerif, (int)(7 * fontRatio));
 
-            // A few fonts
-            Font fTitle = new Font(FontFamily.GenericSerif, 24, FontStyle.Bold); //for title
-            Font fBody = new Font(FontFamily.GenericSerif, 12);
-            Font fGroupTitle = new Font(FontFamily.GenericSansSerif, 10, FontStyle.Bold);
+            StringFormat sfCenterNear = new StringFormat()
+            {
+                Alignment = StringAlignment.Near,
+                LineAlignment = StringAlignment.Near
+            };
 
             StringFormat sfCenterCenter = new StringFormat()
             {
-                 Alignment = StringAlignment.Center,
-                 LineAlignment = StringAlignment.Center
+                Alignment = StringAlignment.Center,
+                LineAlignment = StringAlignment.Center
+            };
+
+            StringFormat sfCenterFar = new StringFormat()
+            {
+                Alignment = StringAlignment.Far,
+                LineAlignment = StringAlignment.Near
+            };
+
+            StringFormat sf3 = new StringFormat(System.Threading.Thread.CurrentThread.CurrentUICulture.TextInfo.IsRightToLeft ? StringFormatFlags.DirectionRightToLeft : 0);
+            sf3.SetDigitSubstitution(System.Threading.Thread.CurrentThread.CurrentUICulture.LCID, StringDigitSubstitute.Traditional);
+
+
+            //set the hard margin which different for each printer and multiplied with 2 
+            int HardMarginX = 0;
+            if ((int)(e.PageSettings.HardMarginX) > 0)
+            {
+                HardMarginX=((int)(e.PageSettings.HardMarginX) *2);
+            }
+            int HardMarginY = 0;
+            if ((int)(e.PageSettings.HardMarginY) > 0)
+            {
+                HardMarginY = ((int)(e.PageSettings.HardMarginY) * 2);
+            }
+
+            // Draw Header 
+
+            string division = CGDocumentManager.Current.ConnectInfo.DivisionName;
+            int divisionStringHeight = (int)g.MeasureString(division.ToString(), fontBody, e.PageBounds.Width - (int)(10 * widthRatio) - HardMarginX).Height;
+            
+            Rectangle headerArea = new Rectangle()
+            {
+                X = (int)(5 * widthRatio),
+                Y = (int)(5 * heightRatio),
+                Height = divisionStringHeight + (int)(5 * heightRatio),
+                Width = e.PageBounds.Width - (int)(10 * widthRatio) - HardMarginX
+            };
+            g.DrawString(division, fontBody, Brushes.Black, headerArea, sfCenterNear);
+
+            //use stringData to print the footer (center all the way)
+            stringData = strings.Printed + ": " + DateTime.Now.ToString();
+            int stringDataStringHeight = (int)g.MeasureString(stringData.ToString(), fFooter, e.MarginBounds.Width).Height;
+            Rectangle footerArea = new Rectangle()
+            {
+                X = headerArea.X,
+                Y = e.PageBounds.Height - stringDataStringHeight - HardMarginY - (int)(5 * heightRatio),
+                Width = headerArea.Width,
+                Height = stringDataStringHeight
+            };
+            g.DrawString(stringData, fFooter, Brushes.Black, footerArea, sfCenterCenter);
+            
+            //setting the printing area bigger than the margin bounds to use more printing space on the paper.
+            Rectangle printArea = new Rectangle()
+            {
+                X = headerArea.X,
+                Y = headerArea.Y+headerArea.Height,
+                Height = footerArea.Y-(headerArea.Y+headerArea.Height) - (int)(5 * heightRatio),
+                Width = headerArea.Width
             };
             
-            // Draw Header
-            string division = CGDocumentManager.Current.ConnectInfo.DivisionName;
-            g.DrawString(division, fBody, Brushes.Black, headerArea, sfCenterCenter);
-
-            const int watermarkLength = 75;
+            //  if there is a need for the watermark use the following code.
+            //const int watermarkLength = 75*heightratio;
 
             // Move down for optional form paper
-            printArea.Y += watermarkLength;
-            printArea.Height -= watermarkLength;
+            //printArea.Y += watermarkLength;
+            //printArea.Height -= watermarkLength;
 
-            // Draw Title
-            StringFormat sfCenter = new StringFormat();
-            sfCenter.Alignment = StringAlignment.Center; //for title & header
+            //// Draw Title
+            //StringFormat sfCenter = new StringFormat();
+            //sfCenter.Alignment = StringAlignment.Center; //for title & header
 
-            s = strings.ApptReminderSlip;
-            g.DrawString(s, fTitle, Brushes.Black, printArea, sfCenter); //title
-
-            // move down
-            int titleHeight = (int)g.MeasureString(s, fTitle, printArea.Width).Height;
+            //string data for the appointment slip title
+            stringData = strings.ApptReminderSlip;
+            g.DrawString(stringData, fontTitle, Brushes.Black, printArea, sfCenterFar); //title
+            
+            //// move down
+            int titleHeight = (int)g.MeasureString(stringData, fontTitle, printArea.Width).Height;
             printArea.Y += titleHeight;
             printArea.Height -= titleHeight;
 
             // draw underline
             g.DrawLine(Pens.Black, printArea.Location, new Point(printArea.Right, printArea.Y));
-            printArea.Y += 15;
-            printArea.Height -= 15;
+            printArea.Y += (int)(10 * heightRatio);
+            printArea.Height -= (int)(10 * heightRatio);
 
-            // draw curved rectangle.
-            Rectangle personalInfoRectangle = new Rectangle(e.MarginBounds.X, printArea.Y + 30, 280, 300);
-            using (GraphicsPath path = GetRoundedRectPath(personalInfoRectangle, 10))
+            // building the string of the person information to write
+            StringBuilder personInformationString = new StringBuilder(500);
+            personInformationString.AppendLine(strings.Name + ":" + "\t" + appt.Patient.Name);
+            //personInformationString.AppendLine();
+            stringData = appt.Patient.Sex == Sex.Male ? strings.Male : strings.Female;
+            personInformationString.AppendLine(strings.ID + ":" + "\t" + appt.Patient.ID + "\t" + "( " + stringData + " )");
+            //personInformationString.AppendLine();
+            stringData = appt.Patient.DOB.ToString("dd") + " " + appt.Patient.DOB.ToString("MMM") + ", " + appt.Patient.DOB.Year;
+            personInformationString.AppendLine(strings.DOB + ":" + "\t" + stringData);
+            //personInformationString.AppendLine();
+            //personInformationString.AppendLine(strings.Age + ":" + "\t" + appt.Patient.UserFriendlyAge);
+
+
+            // building the string of the appointment information to write
+            StringBuilder appointmentInformationString = new StringBuilder(500);
+            appointmentInformationString = new StringBuilder();
+            appointmentInformationString.AppendLine(strings.Clinic + ":" + "\t" + appt.Resource);
+            //appointmentInformationString.AppendLine();
+            stringData = appt.StartTime.ToString("dddd") + " " + appt.StartTime.ToString("dd") + " " + appt.StartTime.ToString("MMM") + ", " + appt.StartTime.Year;
+            appointmentInformationString.AppendLine(strings.Date + ":" + "\t" + stringData);
+            //sb.AppendLine();
+            //appointmentInformationString.AppendLine(strings.Day + ":" + "\t" + appt.StartTime.ToString("dddd"));
+            //sb.AppendLine();
+            appointmentInformationString.AppendLine(strings.Time + ":" + "\t" + appt.StartTime.ToShortTimeString());
+
+
+            //counting the width and hieght of the information inner aera for the person and appointment rectangels.
+            int InfoInnerRectangleWidth = (printArea.Width / 2 - printArea.X / 2) - (int)(10 * widthRatio);
+
+            //Counting the height of the two strings (PersontInformationStringappointment & InformationStringto)to be allocated to the InfoInnerRectangleHeight later.
+            int PersonInformationStringHeight = (int)g.MeasureString(personInformationString.ToString(), fontBody, InfoInnerRectangleWidth).Height;
+            int appointmentInformationStringHeight = (int)g.MeasureString(appointmentInformationString.ToString(), fontBody, InfoInnerRectangleWidth).Height;
+            
+            int InfoInnerRectangleHeight = PersonInformationStringHeight;
+            if (appointmentInformationStringHeight > PersonInformationStringHeight)
+            {
+                InfoInnerRectangleHeight = appointmentInformationStringHeight;
+            }
+
+            // draw curved rectangle for the person informations.
+            Rectangle personalInfoRectangle = new Rectangle(printArea.X, printArea.Y, InfoInnerRectangleWidth + (int)(10 * widthRatio), InfoInnerRectangleHeight + (int)(10 * heightRatio));
+            using (GraphicsPath path = GetRoundedRectPath(personalInfoRectangle, 5))
             {
                 g.DrawPath(Pens.Black, path);
             }
-
-            // group header
-            s = strings.PtInfo;
-            StringFormat sf3 = new StringFormat(System.Threading.Thread.CurrentThread.CurrentUICulture.TextInfo.IsRightToLeft ? StringFormatFlags.DirectionRightToLeft : 0);
-            g.DrawString(s, fGroupTitle, Brushes.Black, new Rectangle(personalInfoRectangle.X, personalInfoRectangle.Y - 20,personalInfoRectangle.Width, 20),sf3);
             
             // inner rectangle for drawing strings:
-            Rectangle personalInfoInnerRectangle = new Rectangle(personalInfoRectangle.X + 20, personalInfoRectangle.Y + 20, 280 - 40, 300 - 40);
+            Rectangle personalInfoInnerRectangle = new Rectangle(personalInfoRectangle.X + (int)(5 * widthRatio), personalInfoRectangle.Y + (int)(5 * heightRatio), InfoInnerRectangleWidth, InfoInnerRectangleHeight);
+
+            // Draw the preson informations.
+            //sf3.SetTabStops(0, new float[] {75} );
             
-            // Strings to write
-            StringBuilder sb = new StringBuilder(500);
-            sb.AppendLine(strings.Name + ":" + "\t" + appt.Patient.Name);
-            sb.AppendLine();
-            sb.AppendLine(strings.ID + ":" + "\t" + appt.Patient.ID);
-            sb.AppendLine();
-            s = appt.Patient.DOB.ToString("dd") + " " + appt.Patient.DOB.ToString("MMM") + ", " + appt.Patient.DOB.Year;
-            sb.AppendLine(strings.DOB + ":" + "\t" + s);
-            sb.AppendLine();
-            sb.AppendLine(strings.Age + ":" + "\t" + appt.Patient.UserFriendlyAge);
-            sb.AppendLine();
-            s = appt.Patient.Sex == Sex.Male ? strings.Male : strings.Female;
-            sb.AppendLine(strings.Sex + ":" + "\t" + s);
+            g.DrawString(personInformationString.ToString(), fontBody, Brushes.Black, personalInfoInnerRectangle, sf3);
 
-            // Draw them
-            sf3 = new StringFormat(System.Threading.Thread.CurrentThread.CurrentUICulture.TextInfo.IsRightToLeft ? StringFormatFlags.DirectionRightToLeft : 0);
-            sf3.SetTabStops(0, new float[] {75} );
-            sf3.SetDigitSubstitution(System.Threading.Thread.CurrentThread.CurrentUICulture.LCID, StringDigitSubstitute.Traditional);
-            g.DrawString(sb.ToString(), fBody, Brushes.Black, personalInfoInnerRectangle, sf3);
-
-            // draw curved rectangle
-            Rectangle apptInfoRectangle = new Rectangle(e.MarginBounds.X + e.MarginBounds.Width - 280, printArea.Y + 30, 280, 300);
-            using (GraphicsPath path = GetRoundedRectPath(apptInfoRectangle, 10))
+            // draw curved rectangle for the appointment informations.
+            Rectangle apptInfoRectangle = new Rectangle((int)(printArea.X + personalInfoRectangle.Width + printArea.X), personalInfoRectangle.Y, personalInfoRectangle.Width, personalInfoRectangle.Height);
+            using (GraphicsPath path = GetRoundedRectPath(apptInfoRectangle, 5))
             {
                 g.DrawPath(Pens.Black, path);
             }
 
-            s = strings.ApptInfo;
-            // group header
-            g.DrawString(s, fGroupTitle, Brushes.Black, new Rectangle(apptInfoRectangle.X, apptInfoRectangle.Y - 20,apptInfoRectangle.Width, 20), sf3);
 
-            // Strings to write
-            sb = new StringBuilder();
-            sb.AppendLine(strings.Clinic + ":" + "\t" + appt.Resource);
-            sb.AppendLine();
-            s = appt.StartTime.ToString("dd") + " " + appt.StartTime.ToString("MMM") + ", " + appt.StartTime.Year;
-            sb.AppendLine(strings.Date + ":" + "\t" + s);
-            sb.AppendLine();
-            sb.AppendLine(strings.Day + ":" + "\t" + appt.StartTime.ToString("dddd"));
-            sb.AppendLine();
-            sb.AppendLine(strings.Time + ":" + "\t" + appt.StartTime.ToShortTimeString());
-
-            // Draw them
-            Rectangle apptInfoInnerRectangle = new Rectangle(apptInfoRectangle.X + 20, apptInfoRectangle.Y + 20, 280 - 40, 300 - 40);
-
-            // Draw them
-            g.DrawString(sb.ToString(), fBody, Brushes.Black, apptInfoInnerRectangle, sf3);
+            // Draw appointment informations in the inner rectangle.
+            Rectangle apptInfoInnerRectangle = new Rectangle(apptInfoRectangle.X + (int)(5 * widthRatio), apptInfoRectangle.Y + (int)(5 * heightRatio), InfoInnerRectangleWidth, InfoInnerRectangleHeight);
+            g.DrawString(appointmentInformationString.ToString(), fontBody, Brushes.Black, apptInfoInnerRectangle, sf3);
 
             // Move Drawing Rectangle Down
-            printArea.Y += 300 + 30 + 20;
-            printArea.Height -= 300 + 30 + 20;
+            printArea.Y += personalInfoRectangle.Height  + (int)(5 * heightRatio);
+            printArea.Height -= personalInfoRectangle.Height +  (int)(5 * heightRatio);
 
             // Draw New Line
             g.DrawLine(Pens.Black, printArea.Location, new Point(printArea.Right, printArea.Y));
-            printArea.Y += 5;
-            printArea.Height -= 5;
+            printArea.Y += (int)(5 * heightRatio);
+            printArea.Height -= (int)(5 * heightRatio);
 
             // Draw new Title
-            s = strings.ClinicInstructions;
-            g.DrawString(s, fTitle, Brushes.Black, printArea, sfCenter); //title
-
+            stringData = strings.ClinicInstructions;
+            titleHeight = (int)g.MeasureString(stringData, fontTitle, printArea.Width).Height;
+            g.DrawString(stringData, fontTitle, Brushes.Black, printArea, sf3); //title
             // move down
-            titleHeight = (int)g.MeasureString(s, fTitle, printArea.Width).Height;
             printArea.Y += titleHeight;
             printArea.Height -= titleHeight;
-
-            // Draw New Line
-            g.DrawLine(Pens.Black, printArea.Location, new Point(printArea.Right, printArea.Y));
-            printArea.Y += 15;
-            printArea.Height -= 15;
 
             // Get Resource Clinic Appointment Letter Text
             DataTable resources = CGDocumentManager.Current.GlobalDataSet.Tables["Resources"];
@@ -300,42 +365,58 @@ namespace IndianHealthService.ClinicalScheduling
                              select resource.Field<string>("LETTER_TEXT")).SingleOrDefault<string>();
 
             if (String.IsNullOrWhiteSpace(ltrTxt)) ltrTxt = strings.NoInstructionsProvided;
-
-            g.DrawString(ltrTxt, fBody, Brushes.Black, printArea, sf3);
-
-            int ltrTxtHeight = (int)g.MeasureString(ltrTxt, fBody).Height;
-
-            printArea.Y += ltrTxtHeight + 15;
-            printArea.Height -= ltrTxtHeight + 15;
-
-            g.DrawLine(Pens.Black, printArea.Location, new Point(printArea.Right, printArea.Y));
-            printArea.Y += 5;
-            printArea.Height -= 5;
-
-            s = strings.Notes;
-            g.DrawString(s, fTitle, Brushes.Black, printArea, sfCenter); // Notes title
-            
-            // move down
-            titleHeight = (int)g.MeasureString(s, fTitle, printArea.Width).Height;
-            printArea.Y += titleHeight;
-            printArea.Height -= titleHeight;
-
-            // Draw New Line
-            g.DrawLine(Pens.Black, printArea.Location, new Point(printArea.Right, printArea.Y));
-            printArea.Y += 15;
-            printArea.Height -= 15;
-
-            // Draw Notes Area
-            using (GraphicsPath path = GetRoundedRectPath(printArea, 15))
+            int ltrTxtHeight = (int)g.MeasureString(ltrTxt, fontBody,printArea.Width).Height;
+            //setting the instructions area smaller than the printing area.
+            int instructionsAreaHeight = ltrTxtHeight;
+            //missingString true if there are no more printing area for the instructions and will use it to print a statement for it.
+            bool missingString = false;
+            string missingStringStatement = "";
+            int missingStringStatementHeight = 0;
+            if (ltrTxtHeight > printArea.Height)
             {
-                g.DrawPath(Pens.Black, path);
+                missingStringStatement = "etc...";
+                missingStringStatementHeight = (int)g.MeasureString(missingStringStatement, fFooter, printArea.Width).Height;
+                instructionsAreaHeight = printArea.Height -missingStringStatementHeight- (int)(5 * heightRatio);
+                missingString = true;
             }
+            Rectangle instructionsArea = new Rectangle()
+            {
+                X = printArea.X,
+                Y = printArea.Y,
+                Height = instructionsAreaHeight,
+                Width = printArea.Width
+            };
+            g.DrawString(ltrTxt, fontBody, Brushes.Black, instructionsArea, sf3);
+            
+            //moving down
+            printArea.Y += instructionsAreaHeight + (int)(5 * heightRatio);
+            printArea.Height -= instructionsAreaHeight + (int)(5 * heightRatio);
 
-            //use sf0 to print the footer (center all the way)
-            s = strings.Printed + ": " + DateTime.Now.ToString();
-            Font fFooter = new Font(FontFamily.GenericSerif, 7);
-            g.DrawString(s, fFooter, Brushes.Black, footerArea, sfCenterCenter);
+            if (missingString)
+            {
+                g.DrawString(missingStringStatement, fFooter, Brushes.Black, printArea, sf3); //title
+                printArea.Y += missingStringStatementHeight;
+                printArea.Height -= missingStringStatementHeight;
+            }
+            //Draing new line
+            if (printArea.Height > 0)
+            {
+                g.DrawLine(Pens.Black, printArea.Location, new Point(printArea.Right, printArea.Y));
+                printArea.Y += (int)(5 * heightRatio);
+                printArea.Height -= (int)(5 * heightRatio);
 
+                string noteStringData = strings.Notes;
+                int noteTitleHeight = (int)g.MeasureString(noteStringData, fontTitle, printArea.Width).Height;
+
+                //check if the remaining area height enugh for the notes 
+                if (printArea.Height > ((int)(noteTitleHeight)))
+                {
+                    //draw the note title.
+                    g.DrawString(noteStringData, fontTitle, Brushes.Black, printArea, sf3); // Notes title
+                }
+            
+
+            }
             g.Dispose();
         }
 
@@ -343,10 +424,10 @@ namespace IndianHealthService.ClinicalScheduling
         private GraphicsPath GetRoundedRectPath(Rectangle rect, int radius)
         {
             int diameter = 2 * radius;
-           
+
             Rectangle arcRect = new Rectangle(rect.Location, new Size(diameter, diameter));
             GraphicsPath path = new GraphicsPath();
-            
+
             path.AddArc(arcRect, 180, 90); //top left
             arcRect.X = rect.Right - diameter;
             path.AddArc(arcRect, 270, 90); // top right
@@ -382,7 +463,7 @@ namespace IndianHealthService.ClinicalScheduling
             int titleHeight = (int)g.MeasureString(title, fTitle, printArea.Width).Height;
             printArea.Y += titleHeight;
             printArea.Height -= titleHeight;
-            
+
             // draw underline
             g.DrawLine(Pens.Black, printArea.Location, new Point(printArea.Right, printArea.Y));
             printArea.Y += 15;
@@ -418,7 +499,7 @@ namespace IndianHealthService.ClinicalScheduling
 
             g.Dispose();
         }
-       
+
         /// <summary>
         /// Cancellation Letter to be given or mailed to the patient
         /// </summary>
@@ -459,7 +540,7 @@ namespace IndianHealthService.ClinicalScheduling
             StringFormat sf2 = new StringFormat();
             if (System.Threading.Thread.CurrentThread.CurrentCulture.TextInfo.IsRightToLeft)
                 sf2.FormatFlags = StringFormatFlags.DirectionRightToLeft;
-            
+
             // write missive
             g.DrawString(letter, fBody, Brushes.Black, printArea, sf2);
 
@@ -557,134 +638,202 @@ namespace IndianHealthService.ClinicalScheduling
         /// <param name="e">etc</param>
         public virtual void PrintRoutingSlip(CGAppointment appt, int apptOrder, PrintPageEventArgs e)
         {
-            // Prep
+            // setting the reference values for calculating the needed ratio of the coming page.
+            //referrenceHeight and referrenceWidth for A6 size.
+            double referrenceHeight = 383;
+            double referrenceWidth = 213;
+
+            //check if the paper is landscape or portrait. if it is landscape then new ratio need to be calculated.
+            if (e.MarginBounds.Width > e.MarginBounds.Height)
+            {
+                //landscape = true;
+                referrenceHeight = 213;
+                referrenceWidth = 383;
+                //fontRatio = ((e.MarginBounds.Height) / referrenceHeight);
+            }
+
+            //setting the font,width and height ratios 
+            double fontRatio = (e.MarginBounds.Height / referrenceHeight);
+            if (fontRatio > 1.0)
+            {
+                fontRatio = fontRatio * 0.75;
+            }
+            double widthRatio = ((e.MarginBounds.Width) / referrenceWidth);
+            double heightRatio = ((e.MarginBounds.Height) / referrenceHeight);
+
             Graphics g = e.Graphics;
-            Rectangle printArea = e.MarginBounds;
-            Rectangle pageArea = e.PageBounds;
-            Rectangle headerArea = new Rectangle()
-            {
-                X = e.MarginBounds.X, 
-                Y = e.PageBounds.Y,  //0
-                Height = e.MarginBounds.Y - e.PageBounds.Y - 50, //100px - 50px
-                Width = e.MarginBounds.Width
-            };
-            Rectangle footerArea = new Rectangle()
-            {
-                X = e.MarginBounds.X,
-                Y = e.MarginBounds.Height + headerArea.Height,
-                Width = e.MarginBounds.Width,
-                Height = pageArea.Height - (e.MarginBounds.Height + headerArea.Height)
-            };
+            //this is the string which is used to fill with the data and to be print on the screen. 
+            string stringData;
 
-            const int part1Height = 400;
-            string s;
+            //in portrait we used fonts that fits with the A6 paper and changed depending on the page ratio,but in the land scape we used fonts fits with the A5 paper and counted the other pages depening on the ratios.
+            Font fontTitle = new Font(FontFamily.GenericSerif, (int)(13 * fontRatio), FontStyle.Bold); //for title
+            Font fontBody = new Font(FontFamily.GenericSerif, (int)(13 * fontRatio));
+            Font fontGroupTitle = new Font(FontFamily.GenericSansSerif, (int)(13 * fontRatio), FontStyle.Bold);
+            Font fFooter = new Font(FontFamily.GenericSerif, (int)(7 * fontRatio));
 
-            // A few fonts
-            Font fTitle = new Font(FontFamily.GenericSerif, 24, FontStyle.Bold); //for title
-            Font fBody = new Font(FontFamily.GenericSerif, 12);
-            Font fGroupTitle = new Font(FontFamily.GenericSansSerif, 10, FontStyle.Bold);
-
-            StringFormat sf0 = new StringFormat()
+            StringFormat sfCenterCenter = new StringFormat()
             {
                 Alignment = StringAlignment.Center,
                 LineAlignment = StringAlignment.Center
             };
 
+            //set the hard margin which different for each printer and multiplied with 2 
+            int HardMarginX = 0;
+            if ((int)(e.PageSettings.HardMarginX) > 0)
+            {
+                HardMarginX = ((int)(e.PageSettings.HardMarginX) * 2);
+            }
+            int HardMarginY = 0;
+            if ((int)(e.PageSettings.HardMarginY) > 0)
+            {
+                HardMarginY = ((int)(e.PageSettings.HardMarginY) * 2);
+            }
+
             // Draw Header
             string division = CGDocumentManager.Current.ConnectInfo.DivisionName;
-            g.DrawString(division, fBody, Brushes.Black, headerArea, sf0);
+            int divisionStringHeight = (int)g.MeasureString(division.ToString(), fontBody, e.MarginBounds.Width).Height;
+            Rectangle headerArea = new Rectangle()
+            {
+                X = (int)(5 * widthRatio),
+                Y = (int)(5 * heightRatio),
+                Height = divisionStringHeight + (int)(5 * heightRatio),
+                Width = e.PageBounds.Width - (int)(10 * widthRatio) - HardMarginX
+            };
+            g.DrawString(division, fontBody, Brushes.Black, headerArea, sfCenterCenter);
 
-            const int watermarkLength = 75;
+
+            //use stringData to print the footer (center all the way)
+            stringData = strings.Printed + ": " + DateTime.Now.ToString();
+            int stringDataStringHeight = (int)g.MeasureString(stringData.ToString(), fFooter, e.MarginBounds.Width).Height;
+            Rectangle footerArea = new Rectangle()
+            {
+                X = headerArea.X,
+                Y = e.PageBounds.Height - stringDataStringHeight - HardMarginY - (int)(5 * heightRatio),
+                Width = headerArea.Width,
+                Height = stringDataStringHeight
+            };
+            g.DrawString(stringData, fFooter, Brushes.Black, footerArea, sfCenterCenter);
+
+
+
+            //setting the printing area bigger than the margin bounds to use more printing space on the paper.
+            Rectangle printArea = new Rectangle()
+            {
+                X = headerArea.X,
+                Y = headerArea.Y + headerArea.Height,
+                Height = footerArea.Y - (headerArea.Y + headerArea.Height) - (int)(5 * heightRatio),
+                Width = headerArea.Width
+            };
+
+
+            //  if there is a need for the watermark use the following code.
+            //const int watermarkLength = 75*heightratio;
 
             // Move down for optional form paper
-            printArea.Y += watermarkLength;
-            printArea.Height -= watermarkLength;
+            //printArea.Y += watermarkLength;
+            //printArea.Height -= watermarkLength;
 
             // Draw Title
-            StringFormat sf = new StringFormat();
-            sf.Alignment = StringAlignment.Center; //for title & header
+            StringFormat sfCenter = new StringFormat();
+            sfCenter.Alignment = StringAlignment.Center; //for title & header
             string title = strings.RoutingSlip;
-            g.DrawString(title, fTitle, Brushes.Black, printArea, sf); //title
+            g.DrawString(title, fontTitle, Brushes.Black, printArea, sfCenter); //title
 
             // move down
-            int titleHeight = (int)g.MeasureString(title, fTitle, printArea.Width).Height;
+            int titleHeight = (int)g.MeasureString(title, fontTitle, printArea.Width).Height;
             printArea.Y += titleHeight;
             printArea.Height -= titleHeight;
 
             // draw underline
             g.DrawLine(Pens.Black, printArea.Location, new Point(printArea.Right, printArea.Y));
-            printArea.Y += 15;
-            printArea.Height -= 15;
+            printArea.Y += (int)(5 * heightRatio);
+            printArea.Height -= (int)(5 * heightRatio);
 
-            // draw curved rectangle.
-            Rectangle personalInfoRectangle = new Rectangle(e.MarginBounds.X, printArea.Y + 30, 280, part1Height);
-            using (GraphicsPath path = GetRoundedRectPath(personalInfoRectangle, 10))
+            // Strings to write
+
+            StringBuilder personInformationString = new StringBuilder(500);
+            personInformationString.AppendLine(strings.Name + ":" + "\t" + appt.Patient.Name);
+            //personInformationString.AppendLine();
+            personInformationString.AppendLine(strings.ID + ":" + "\t" + appt.Patient.ID);
+            //personInformationString.AppendLine();
+            stringData = appt.Patient.DOB.ToString("dd") + " " + appt.Patient.DOB.ToString("MMM") + ", " + appt.Patient.DOB.Year;
+            personInformationString.AppendLine(strings.DOB + ":" + "\t" + stringData);
+            //personInformationString.AppendLine();
+            personInformationString.AppendLine(strings.Age + ":" + "\t" + appt.Patient.UserFriendlyAge);
+            //personInformationString.AppendLine();
+            //personInformationString.AppendLine("Sex:" + "\t" + appt.Patient.Sex.ToString());
+
+            // Strings to write
+            StringBuilder appointmentInformationString = new StringBuilder();
+            appointmentInformationString.AppendLine(strings.Clinic + ":");
+            appointmentInformationString.AppendLine(appt.Resource);
+            //appointmentInformationString.AppendLine();
+            appointmentInformationString.AppendLine(strings.AppointmentProvider + ":");
+            appointmentInformationString.AppendLine((appt.Provider == null) ? strings.none : appt.Provider.ToString());  //Appt Provider or (none) if null
+            //appointmentInformationString.AppendLine();
+            appointmentInformationString.AppendLine(strings.PatientOrder + ":" + "\t" + apptOrder);
+            appointmentInformationString.AppendLine(strings.Date + ":" + "\t" + appt.StartTime.ToShortDateString() + " " + appt.StartTime.ToShortTimeString());
+            //appointmentInformationString.AppendLine();
+            appointmentInformationString.AppendLine(strings.AppointmentNote + ":");
+            appointmentInformationString.AppendLine(String.IsNullOrWhiteSpace(appt.Note) ? strings.none : appt.Note);
+            
+            //counting the width and hieght of the information inner aera for the person and appointment rectangels.
+            int InfoInnerRectangleWidth = (printArea.Width / 2 - printArea.X / 2) - (int)(10 * widthRatio);
+
+            //Counting the height of the two strings (PersontInformationStringappointment & InformationStringto)to be allocated to the InfoInnerRectangleHeight later.
+            int PersonInformationStringHeight = (int)g.MeasureString(personInformationString.ToString(), fontBody, InfoInnerRectangleWidth).Height;
+            int appointmentInformationStringHeight = (int)g.MeasureString(appointmentInformationString.ToString(), fontBody, InfoInnerRectangleWidth).Height;
+
+            int InfoInnerRectangleHeight = PersonInformationStringHeight;
+            if (appointmentInformationStringHeight > PersonInformationStringHeight)
+            {
+                InfoInnerRectangleHeight = appointmentInformationStringHeight;
+            }
+
+            // group header for the person informations.
+            stringData = strings.PtInfo;
+            StringFormat sf3 = new StringFormat(System.Threading.Thread.CurrentThread.CurrentUICulture.TextInfo.IsRightToLeft ? StringFormatFlags.DirectionRightToLeft : 0);
+            stringDataStringHeight = (int)g.MeasureString(stringData.ToString(), fontGroupTitle, InfoInnerRectangleWidth).Height;
+            g.DrawString(stringData, fontGroupTitle, Brushes.Black, new Rectangle(printArea.X, printArea.Y, InfoInnerRectangleWidth, stringDataStringHeight), sf3);
+
+            // group header for the appointment information
+            stringData = strings.ApptInfo;
+            g.DrawString(stringData, fontGroupTitle, Brushes.Black, new Rectangle((int)(printArea.X + (InfoInnerRectangleWidth + (int)(10 * widthRatio)) + printArea.X), printArea.Y, InfoInnerRectangleWidth, stringDataStringHeight), sf3);
+
+            //moving down
+            printArea.Y += stringDataStringHeight + (int)(5 * heightRatio);
+            printArea.Height -= stringDataStringHeight + (int)(5 * heightRatio);
+
+            // draw curved rectangle for the person informations.
+            Rectangle personalInfoRectangle = new Rectangle(printArea.X, printArea.Y, InfoInnerRectangleWidth + (int)(10 * widthRatio), InfoInnerRectangleHeight + (int)(10 * heightRatio));
+            using (GraphicsPath path = GetRoundedRectPath(personalInfoRectangle, 5))
             {
                 g.DrawPath(Pens.Black, path);
             }
-
-            // group header
-            s = strings.PtInfo;
-            StringFormat sf3 = new StringFormat(System.Threading.Thread.CurrentThread.CurrentUICulture.TextInfo.IsRightToLeft ? StringFormatFlags.DirectionRightToLeft : 0);
-            g.DrawString(s, fGroupTitle, Brushes.Black, new Rectangle(personalInfoRectangle.X, personalInfoRectangle.Y - 20, personalInfoRectangle.Width, 20), sf3);
-
-            StringFormat sf4 = new StringFormat(System.Threading.Thread.CurrentThread.CurrentUICulture.TextInfo.IsRightToLeft ? StringFormatFlags.DirectionRightToLeft : 0);
-            sf4.SetTabStops(0, new float[] { 75 });
-            sf4.SetDigitSubstitution(System.Threading.Thread.CurrentThread.CurrentUICulture.LCID, StringDigitSubstitute.Traditional);
 
             // inner rectangle for drawing strings:
-            Rectangle personalInfoInnerRectangle = new Rectangle(personalInfoRectangle.X + 20, personalInfoRectangle.Y + 20, personalInfoRectangle.Width - 40, personalInfoRectangle.Height - 40);
+            Rectangle personalInfoInnerRectangle = new Rectangle(personalInfoRectangle.X + (int)(5 * widthRatio), personalInfoRectangle.Y + (int)(5 * heightRatio), InfoInnerRectangleWidth, InfoInnerRectangleHeight);
 
-            // Strings to write
-            StringBuilder sb = new StringBuilder(500);
-            sb.AppendLine(strings.Name + ":" + "\t" + appt.Patient.Name);
-            sb.AppendLine();
-            sb.AppendLine(strings.ID + ":" + "\t" + appt.Patient.ID);
-            sb.AppendLine();
-            s = appt.Patient.DOB.ToString("dd") + " " + appt.Patient.DOB.ToString("MMM") + ", " + appt.Patient.DOB.Year;
-            sb.AppendLine(strings.DOB + ":" + "\t" + s);
-            sb.AppendLine();
-            sb.AppendLine(strings.Age + ":" + "\t" + appt.Patient.UserFriendlyAge);
-            //sb.AppendLine();
-            //sb.AppendLine("Sex:" + "\t" + appt.Patient.Sex.ToString());
+            // Draw the preson informations.
+            sf3 = new StringFormat(System.Threading.Thread.CurrentThread.CurrentUICulture.TextInfo.IsRightToLeft ? StringFormatFlags.DirectionRightToLeft : 0);
+            //sf3.SetTabStops(0, new float[] {75} );
+            sf3.SetDigitSubstitution(System.Threading.Thread.CurrentThread.CurrentUICulture.LCID, StringDigitSubstitute.Traditional);
+            g.DrawString(personInformationString.ToString(), fontBody, Brushes.Black, personalInfoInnerRectangle, sf3);
 
-            // Draw them
-            g.DrawString(sb.ToString(), fBody, Brushes.Black, personalInfoInnerRectangle, sf4);
-
-            // draw curved rectangle
-            Rectangle apptInfoRectangle = new Rectangle(e.MarginBounds.X + e.MarginBounds.Width - 280, printArea.Y + 30, 280, part1Height);
-            using (GraphicsPath path = GetRoundedRectPath(apptInfoRectangle, 10))
+            // draw curved rectangle for the appointment informations.
+            Rectangle apptInfoRectangle = new Rectangle((int)(printArea.X + personalInfoRectangle.Width + printArea.X), personalInfoRectangle.Y, personalInfoRectangle.Width, personalInfoRectangle.Height);
+            using (GraphicsPath path = GetRoundedRectPath(apptInfoRectangle, 5))
             {
                 g.DrawPath(Pens.Black, path);
             }
 
-            // group header
-            s = strings.ApptInfo;
-            g.DrawString(s, fGroupTitle, Brushes.Black, new Rectangle(apptInfoRectangle.X, apptInfoRectangle.Y - 20, apptInfoRectangle.Width, 20), sf3);
-
-            // Strings to write
-            sb = new StringBuilder();
-            sb.AppendLine(strings.Clinic + ":");
-            sb.AppendLine(appt.Resource);
-            sb.AppendLine();
-            sb.AppendLine(strings.AppointmentProvider + ":"); 
-            sb.AppendLine((appt.Provider == null) ? strings.none : appt.Provider.ToString());  //Appt Provider or (none) if null
-            sb.AppendLine();
-            sb.AppendLine(strings.PatientOrder + ":" + "\t" + apptOrder);
-            sb.AppendLine(strings.Date + ":" + "\t" + appt.StartTime.ToShortDateString() + " " + appt.StartTime.ToShortTimeString());
-            sb.AppendLine();
-            sb.AppendLine(strings.AppointmentNote + ":");
-            sb.AppendLine(String.IsNullOrWhiteSpace(appt.Note)? strings.none : appt.Note);
-
-            // Draw them
-            Rectangle apptInfoInnerRectangle = new Rectangle(apptInfoRectangle.X + 20, apptInfoRectangle.Y + 20, apptInfoRectangle.Width - 40, apptInfoRectangle.Height - 40);
-
-            // Draw them
-            g.DrawString(sb.ToString(), fBody, Brushes.Black, apptInfoInnerRectangle, sf4);
-
+            // Draw appointment informations in the inner rectangle.
+            Rectangle apptInfoInnerRectangle = new Rectangle(apptInfoRectangle.X + (int)(5 * widthRatio), apptInfoRectangle.Y + (int)(5 * heightRatio), InfoInnerRectangleWidth, InfoInnerRectangleHeight);
+            g.DrawString(appointmentInformationString.ToString(), fontBody, Brushes.Black, apptInfoInnerRectangle, sf3);
+            
             // Move Drawing Rectangle Down
-            printArea.Y += apptInfoRectangle.Height + 30 + 20;
-            printArea.Height -= apptInfoRectangle.Height + 30 + 20;
+            printArea.Y += personalInfoRectangle.Height +  (int)(5 * heightRatio);
+            printArea.Height -= personalInfoRectangle.Height + (int)(5 * heightRatio);
 
             // Draw New Line
             using (Pen dashpen = new Pen(Color.Black))
@@ -693,12 +842,12 @@ namespace IndianHealthService.ClinicalScheduling
                 g.DrawLine(dashpen, printArea.Location, new Point(printArea.Right, printArea.Y));
             }
 
-            printArea.Y += 5;
-            printArea.Height -= 5;
+            printArea.Y += (int)(5 * heightRatio);
+            printArea.Height -= (int)(5 * heightRatio);
 
-            s = strings.ScratchArea;
-            g.DrawString(s, fGroupTitle, Brushes.Black, printArea, sf3); 
-            
+            stringData = strings.ScratchArea;
+            g.DrawString(stringData, fontGroupTitle, Brushes.Black, printArea, sf3);
+
             /* Per Al-Najjar, we don't want the next appointment instructions section
             // move down
             printArea.Y += 240;
@@ -713,15 +862,9 @@ namespace IndianHealthService.ClinicalScheduling
             printArea.Y += 5;
             printArea.Height -= 5;
 
-            s = strings.NextAppointmentInstructions;
-            g.DrawString(s, fGroupTitle, Brushes.Black, printArea, sf3);
+            stringData = strings.NextAppointmentInstructions;
+            g.DrawString(stringData, fontGroupTitle, Brushes.Black, printArea, sf3);
             */
-
-            // Draw Footer
-            //use sf0 to print the footer (center all the way)
-            s = strings.Printed + ": " + DateTime.Now.ToString();
-            Font fFooter = new Font(FontFamily.GenericSerif, 7);
-            g.DrawString(s, fFooter, Brushes.Black, footerArea, sf0);
 
             g.Dispose();
 
