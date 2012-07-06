@@ -139,9 +139,8 @@ namespace IndianHealthService.ClinicalScheduling
 			this.m_DocManager = docManager;
 			this.m_dsGlobal = m_DocManager.GlobalDataSet;
 
-			MgrEventDelegate = new BMXNetConnectInfo.BMXNetEventDelegate(MgrEventHandler);
-			m_DocManager.ConnectInfo.BMXNetEvent += MgrEventDelegate;
-			m_DocManager.ConnectInfo.SubscribeEvent("BSDX WORKSTATION REPORT");
+            m_DocManager.RemoteSession.EventServices.RpmsEvent += MgrEventHandler;
+			m_DocManager.RemoteSession.EventServices.Subscribe("BSDX WORKSTATION REPORT");
 			m_dtWSGrid = new DataTable("WSGrid");
 			m_dtWSGrid.Columns.Add("UserName", typeof(System.String));
 			m_dtWSGrid.Columns.Add("Handle", typeof(System.String));
@@ -1898,9 +1897,10 @@ namespace IndianHealthService.ClinicalScheduling
         {
             m_dsGlobal.Tables["AccessTypes"].Clear();
             m_dsGlobal.Tables["AccessGroupType"].Clear();
-            DataTable dt1 = m_DocManager.DAL.GetAccessTypes();
-            m_dsGlobal.Tables["AccessTypes"].Merge(dt1);
-            m_dsGlobal.Tables.Add(dt1);
+            //PORT TODO: This may fail.
+            DataTable dt1 = m_DocManager.DAL.GetAccessTypes(m_dsGlobal, "AccessTypes");
+            //m_dsGlobal.Tables["AccessTypes"].Merge(dt1); //smh -commented out for BMX4
+            //m_dsGlobal.Tables.Add(dt1);                  //smh -commented out for BMX4
             //Fix Groups
             //m_DocManager.LoadAccessTypesTable();
             m_DocManager.LoadAccessGroupTypesTable();
@@ -2328,27 +2328,26 @@ namespace IndianHealthService.ClinicalScheduling
         private void cmdWorkStationsRefresh_Click(object sender, System.EventArgs e)
 		{
 			this.m_dtWSGrid.Clear();
-			this.m_DocManager.ConnectInfo.RaiseEvent("BSDX CALL WORKSTATIONS", "A", true);
+			this.m_DocManager.RemoteSession.EventServices.TriggerEvent("BSDX CALL WORKSTATIONS", "A", true);
 		}
 
-		private BMXNetConnectInfo.BMXNetEventDelegate	MgrEventDelegate;
 		delegate void UpdateWorkstationGridDelegate(string sParam);
 
-		private void MgrEventHandler(Object obj, BMXNet.BMXNetEventArgs e)
+		private void MgrEventHandler(Object obj, RemoteEventArgs e)
 		{
 			try
 			{
-				if (e.BMXEvent == "BSDX WORKSTATION REPORT")
+				if (e.EventType == "BSDX WORKSTATION REPORT")
 				{
 					Debug.Write("DManagement Got Workstation Report\n");
 					UpdateWorkstationGridDelegate uWSGd = new UpdateWorkstationGridDelegate(UpdateWorkstationGrid);
                     if (this.InvokeRequired == true) //ensures that handle is created
                     {
-                        this.Invoke(uWSGd, new object[] { e.BMXParam });
+                        this.Invoke(uWSGd, new object[] { e.Details });
                     }
                     else
                     {
-                        UpdateWorkstationGrid(e.BMXParam);
+                        UpdateWorkstationGrid(e.Details);
                     }
 				}
 			}
@@ -2362,16 +2361,16 @@ namespace IndianHealthService.ClinicalScheduling
 		{
 			string sDelim = "~";
 			DataRow dr = this.m_dtWSGrid.NewRow();
-			dr["UserName"] = BMXNetLib.Piece(sParam,sDelim,1);
-			dr["Handle"] = BMXNetLib.Piece(sParam,sDelim,2);
-			dr["Version"] = BMXNetLib.Piece(sParam,sDelim,3);		
-			dr["Views"] = BMXNetLib.Piece(sParam,sDelim,4);
+			dr["UserName"] = M.Piece(sParam,sDelim,1);
+			dr["Handle"] = M.Piece(sParam,sDelim,2);
+			dr["Version"] = M.Piece(sParam,sDelim,3);		
+			dr["Views"] = M.Piece(sParam,sDelim,4);
 			m_dtWSGrid.Rows.Add(dr);
 		}
 
 		private void DManagement_Closing(object sender, System.ComponentModel.CancelEventArgs e)
 		{
-			m_DocManager.ConnectInfo.UnSubscribeEvent("BSDX WORKSTATION REPORT");
+			CGDocumentManager.Current.RemoteSession.EventServices.Unsubscribe("BSDX WORKSTATION REPORT");
 		}
 
 		private void cmdWorkStationsMessage_Click(object sender, System.EventArgs e)
@@ -2388,7 +2387,7 @@ namespace IndianHealthService.ClinicalScheduling
 			if (sMessage == "")
 				return;
 
-			this.m_DocManager.ConnectInfo.RaiseEvent("BSDX ADMIN MESSAGE", sMessage, false);
+            this.m_DocManager.RemoteSession.EventServices.TriggerEvent("BSDX ADMIN MESSAGE", sMessage, false);
 		}
 
 		private void cmdWorkStationsShutdown_Click(object sender, System.EventArgs e)
@@ -2397,7 +2396,7 @@ namespace IndianHealthService.ClinicalScheduling
 			{
 				return;
 			}
-			this.m_DocManager.ConnectInfo.RaiseEvent("BSDX ADMIN SHUTDOWN", txtSendMessage.Text, false);
+            this.m_DocManager.RemoteSession.EventServices.TriggerEvent("BSDX ADMIN SHUTDOWN", txtSendMessage.Text, false);
         }
         #endregion Workstations
 

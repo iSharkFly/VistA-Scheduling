@@ -653,7 +653,7 @@ namespace IndianHealthService.ClinicalScheduling
 //				string sSql;
 //				sSql = "BSDX RAISE EVENT^" + sEvent + "^" + sParams + "^^";
 //				DataTable dtAppt =m_DocManager.RPMSDataTable(sSql, "RaiseEvent");
-				this.m_DocManager.ConnectInfo.RaiseEvent(sEvent, sParams, true);
+				CGDocumentManager.Current.RemoteSession.EventServices.TriggerEvent(sEvent, sParams, true);
 			}
 			catch (Exception ex)
 			{
@@ -808,7 +808,7 @@ namespace IndianHealthService.ClinicalScheduling
 		private void AppointmentDelete() 
 		{
 			calendarGrid1.CGToolTip.Active = false;
-			string sMsg = " this access block?";
+			string sMsg;
 			if (calendarGrid1.SelectedAppointments.AppointmentTable.Count > 1)
 				sMsg = " these access blocks?";
 
@@ -858,7 +858,7 @@ namespace IndianHealthService.ClinicalScheduling
 		{
 			try
 			{
-				bool bLock = DocManager.ConnectInfo.bmxNetLib.Lock("^BSDXMGR", "+");
+				bool bLock = CGDocumentManager.Current.RemoteSession.Lock("^BSDXMGR", "+");
 				if (bLock == false)
 				{
 					throw new Exception("Another user is currently in Scheduling Management.  Try later.");
@@ -871,7 +871,7 @@ namespace IndianHealthService.ClinicalScheduling
 				{
 					return;
 				}
-				bLock = DocManager.ConnectInfo.bmxNetLib.Lock("^BSDXMGR", "-");
+                bLock = CGDocumentManager.Current.RemoteSession.Lock("^BSDXMGR", "-");
 			}
 			catch (Exception ex)
 			{
@@ -946,7 +946,7 @@ namespace IndianHealthService.ClinicalScheduling
 		private void CGAVView_Closing(object sender, System.ComponentModel.CancelEventArgs e)
 		{
 			this.calendarGrid1.CloseGrid();
-			DocManager.ConnectInfo.bmxNetLib.Lock("^BSDXRES(" + Document.ResourceID.ToString() + ")", "-");
+            CGDocumentManager.Current.RemoteSession.Lock("^BSDXRES(" + Document.ResourceID.ToString() + ")", "-");
 		}
 
 		private void calendarGrid1_CGSelectionChanged(object sender, IndianHealthService.ClinicalScheduling.CGSelectionChangedArgs e)

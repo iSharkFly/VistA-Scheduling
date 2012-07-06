@@ -109,6 +109,18 @@
     <UseVSHostingProcess>false</UseVSHostingProcess>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="BMXNET40, Version=4.0.0.1, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>bin\Release\BMXNET40.dll</HintPath>
+    </Reference>
+    <Reference Include="BMXWIN40, Version=4.0.0.1, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>bin\Release\BMXWIN40.dll</HintPath>
+    </Reference>
+    <Reference Include="PrintPreview, Version=1.0.4570.15574, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>bin\Release\PrintPreview.dll</HintPath>
+    </Reference>
     <Reference Include="System">
       <Name>System</Name>
     </Reference>
@@ -147,6 +159,13 @@
     </Compile>
     <Compile Include="Provider.cs" />
     <Compile Include="RadiologyExam.cs" />
+    <Compile Include="RPCLogger.cs" />
+    <Compile Include="RPCLoggerView.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="RPCLoggerView.Designer.cs">
+      <DependentUpon>RPCLoggerView.cs</DependentUpon>
+    </Compile>
     <Compile Include="strings.ar.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -431,6 +450,9 @@
     <EmbeddedResource Include="LoadingSplash.resx">
       <DependentUpon>LoadingSplash.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="RPCLoggerView.resx">
+      <DependentUpon>RPCLoggerView.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="strings.ar.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>strings.ar.Designer.cs</LastGenOutput>
@@ -476,16 +498,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\BMX2\BMXNet\BMXNet.csproj">
-      <Project>{DE8E4CC9-4F3A-4E32-8DFE-EE5692E8FC45}</Project>
-      <Name>BMXNet</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\EnhancedPrintPreview\PrintPreview\PrintPreview.csproj">
-      <Project>{9E8D433B-EFD1-4253-BD2C-C4E0DB0BFD0E}</Project>
-      <Name>PrintPreview</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

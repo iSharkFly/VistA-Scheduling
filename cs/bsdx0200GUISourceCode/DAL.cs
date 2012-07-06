@@ -15,7 +15,7 @@ namespace IndianHealthService.ClinicalScheduling
     /// </summary>
     public class DAL
     {
-        private BMXNetConnectInfo _thisConnection; // set in constructor
+        private RemoteSession _thisConnection; // set in constructor
         
         delegate DataTable RPMSDataTableDelegate(string CommandString, string TableName); // for use in calling (Sync and Async)
         delegate string TransmitRPCAsync(string RPCName, string Params); //same idea
@@ -24,7 +24,7 @@ namespace IndianHealthService.ClinicalScheduling
         /// Constructor
         /// </summary>
         /// <param name="conn">The current connection to use</param>
-        public DAL(BMXNetConnectInfo conn)
+        public DAL(RemoteSession conn)
         {
             this._thisConnection = conn;
         }
@@ -38,7 +38,7 @@ namespace IndianHealthService.ClinicalScheduling
         public DataTable GetVersion(string nmsp)
         {
             string cmd = String.Format("BMX VERSION INFO^{0}", nmsp);
-            return RPMSDataTable(cmd, "");
+            return _thisConnection.TableFromCommand(cmd);
         }
 
         /// <summary>
@@ -49,7 +49,7 @@ namespace IndianHealthService.ClinicalScheduling
         public DataTable GetUserInfo(string DUZ)
         {
             string cmd = String.Format("BSDX SCHEDULING USER INFO^{0}", DUZ);
-            return RPMSDataTable(cmd, "");
+            return _thisConnection.TableFromCommand(cmd);
         }
 
         /// <summary>
@@ -64,10 +64,10 @@ namespace IndianHealthService.ClinicalScheduling
         /// GREEN (NJ3,0), [0;6]
         /// BLUE (NJ3,0), [0;7]
         ///</returns>
-        public DataTable GetAccessTypes()
+        public DataTable GetAccessTypes(DataSet dataSetToTakeTable, string tablename)
         {
             string sCommandText = "SELECT * FROM BSDX_ACCESS_TYPE";
-            DataTable table = RPMSDataTable(sCommandText, "");
+            DataTable table = _thisConnection.TableFromSQL(sCommandText, dataSetToTakeTable, tablename);
             DataColumn dcKey = table.Columns["BMXIEN"];
             DataColumn[] dcKeys = new DataColumn[1];
             dcKeys[0] = dcKey;
@@ -92,7 +92,7 @@ namespace IndianHealthService.ClinicalScheduling
             string sBegin = FMDateTime.Create(BeginDate).DateOnly.FMDateString;
             string sEnd = FMDateTime.Create(EndDate).DateOnly.FMDateString;
             string cmd = String.Format("BSDX CLINIC LETTERS^{0}^{1}^{2}", sClinicList, sBegin, sEnd);
-            return RPMSDataTable(cmd, "");
+            return _thisConnection.TableFromCommand(cmd);
         }
 
         /// <summary>
@@ -106,7 +106,7 @@ namespace IndianHealthService.ClinicalScheduling
         public DataTable GetResourceLetters(string sClinicList)
         {
             string cmd = String.Format("BSDX RESOURCE LETTERS^{0}", sClinicList);
-            return RPMSDataTable(cmd, "");
+            return _thisConnection.TableFromCommand(cmd);
         }
 
         /// <summary>
@@ -125,7 +125,7 @@ namespace IndianHealthService.ClinicalScheduling
             string sBegin = FMDateTime.Create(BeginDate).DateOnly.FMDateString;
             string sEnd = FMDateTime.Create(EndDate).DateOnly.FMDateString;
             string cmd = String.Format("BSDX REBOOK CLINIC LIST^{0}^{1}^{2}", sClinicList, sBegin, sEnd);
-            return RPMSDataTable(cmd, "");
+            return _thisConnection.TableFromCommand(cmd);
         }
 
         /// <summary>
@@ -138,7 +138,7 @@ namespace IndianHealthService.ClinicalScheduling
         public DataTable GetRebookedAppointments(string sApptList)
         {
             string cmd = String.Format("BSDX REBOOK LIST^{0}", sApptList);
-            return RPMSDataTable(cmd, "");
+            return _thisConnection.TableFromCommand(cmd);
         }
 
         /// <summary>
@@ -156,7 +156,7 @@ namespace IndianHealthService.ClinicalScheduling
             string sBegin = FMDateTime.Create(BeginDate).DateOnly.FMDateString;
             string sEnd = FMDateTime.Create(EndDate).DateOnly.FMDateString;
             string cmd = String.Format("BSDX CANCEL CLINIC LIST^{0}^{1}^{2}", sClinicList, sBegin, sEnd);
-            return RPMSDataTable(cmd, "");
+            return _thisConnection.TableFromCommand(cmd);
         }
 
         /// <summary>
@@ -172,7 +172,7 @@ namespace IndianHealthService.ClinicalScheduling
             string sBegin = FMDateTime.Create(BeginDate).DateOnly.FMDateString;
             string sEnd = FMDateTime.Create(EndDate).DateOnly.FMDateString;
             string cmd = String.Format("BSDX CANCEL AV BY DATE^{0}^{1}^{2}", sResourceID, sBegin, sEnd);
-            return RPMSDataTable(cmd, "Cancelled");
+            return _thisConnection.TableFromCommand(cmd);
         }
 
         /// <summary>
@@ -184,7 +184,7 @@ namespace IndianHealthService.ClinicalScheduling
         public DataTable RemoveCheckIn(int ApptID)
         {
             string cmd = string.Format("BSDX REMOVE CHECK-IN^{0}", ApptID);
-            return RPMSDataTable(cmd, "");
+            return _thisConnection.TableFromCommand(cmd);
         }
 
         /// <summary>
@@ -196,7 +196,7 @@ namespace IndianHealthService.ClinicalScheduling
         public List<RadiologyExam> GetRadiologyExamsForPatientinHL(int DFN, int SCIEN)
         {
             string cmd = string.Format("BSDX GET RAD EXAM FOR PT^{0}^{1}", DFN, SCIEN);
-            DataTable tbl = RPMSDataTable(cmd, "");
+            DataTable tbl = _thisConnection.TableFromCommand(cmd);
             return (from row in tbl.AsEnumerable()
                     select new RadiologyExam
                     {
@@ -217,7 +217,7 @@ namespace IndianHealthService.ClinicalScheduling
         public bool ScheduleRadiologyExam(int DFN, int examIEN, DateTime dStart)
         {
             string fmStartDate = FMDateTime.Create(dStart).FMDateString;
-            string result = _thisConnection.bmxNetLib.TransmitRPC("BSDX SCHEDULE RAD EXAM", string.Format("{0}^{1}^{2}", DFN, examIEN, fmStartDate));
+            string result = _thisConnection.TransmitRPC("BSDX SCHEDULE RAD EXAM", string.Format("{0}^{1}^{2}", DFN, examIEN, fmStartDate));
             return result == "1" ? true : false;
         }
 
@@ -229,7 +229,7 @@ namespace IndianHealthService.ClinicalScheduling
         /// <returns>should always return true</returns>
         public bool CancelRadiologyExam(int DFN, int examIEN)
         {
-            string result = _thisConnection.bmxNetLib.TransmitRPC("BSDX HOLD RAD EXAM", string.Format("{0}^{1}", DFN, examIEN));
+            string result = _thisConnection.TransmitRPC("BSDX HOLD RAD EXAM", string.Format("{0}^{1}", DFN, examIEN));
             return result == "1" ? true : false;
         }
         
@@ -240,7 +240,7 @@ namespace IndianHealthService.ClinicalScheduling
         /// <returns>true or false</returns>
         public bool CanCancelRadExam(int examIEN)
         {
-            string result = _thisConnection.bmxNetLib.TransmitRPC("BSDX CAN HOLD RAD EXAM", examIEN.ToString());
+            string result = _thisConnection.TransmitRPC("BSDX CAN HOLD RAD EXAM", examIEN.ToString());
             return result == "1" ? true : false;
         }
 
@@ -255,12 +255,12 @@ namespace IndianHealthService.ClinicalScheduling
         {
             get
             {
-                string val = _thisConnection.bmxNetLib.TransmitRPC("BSDX GET PARAM", "BSDX AUTO PRINT RS");  //1 = true; 0 = false; "" = not set
+                string val = _thisConnection.TransmitRPC("BSDX GET PARAM", "BSDX AUTO PRINT RS");  //1 = true; 0 = false; "" = not set
                 return val == "1" ? true : false;
             }
             set
             {
-                TransmitRPCAsync _asyncTransmitter = new TransmitRPCAsync(_thisConnection.bmxNetLib.TransmitRPC);
+                TransmitRPCAsync _asyncTransmitter = new TransmitRPCAsync(_thisConnection.TransmitRPC);
                 // 0 = success; anything else is wrong. Not being tested here as its success is not critical to application use.
                 _asyncTransmitter.BeginInvoke("BSDX SET PARAM", String.Format("{0}^{1}", "BSDX AUTO PRINT RS", value ? "1" : "0"), null, null);
             }
@@ -277,12 +277,12 @@ namespace IndianHealthService.ClinicalScheduling
         {
             get
             {
-                string val = _thisConnection.bmxNetLib.TransmitRPC("BSDX GET PARAM", "BSDX AUTO PRINT AS");  //1 = true; 0 = false; "" = not set
+                string val = _thisConnection.TransmitRPC("BSDX GET PARAM", "BSDX AUTO PRINT AS");  //1 = true; 0 = false; "" = not set
                 return val == "1" ? true : false;
             }
             set
             {
-                TransmitRPCAsync _asyncTransmitter = new TransmitRPCAsync(_thisConnection.bmxNetLib.TransmitRPC);
+                TransmitRPCAsync _asyncTransmitter = new TransmitRPCAsync(_thisConnection.TransmitRPC);
                 // 0 = success; anything else is wrong. Not being tested here as its success is not critical to application use.
                 _asyncTransmitter.BeginInvoke("BSDX SET PARAM", String.Format("{0}^{1}", "BSDX AUTO PRINT AS", value ? "1" : "0"), null, null);
             }
@@ -302,12 +302,9 @@ namespace IndianHealthService.ClinicalScheduling
             string sErrorMessage = "";
             DataTable dtOut;
 
-#if TRACE
-            DateTime sendTime = DateTime.Now;
-#endif
             try
             {
-                RPMSDataTableDelegate rdtd = new RPMSDataTableDelegate(_thisConnection.RPMSDataTable);
+                RPMSDataTableDelegate rdtd = new RPMSDataTableDelegate(_thisConnection.TableFromSQL);
                 dtOut = (DataTable)rdtd.Invoke(sSQL, sTableName);
             }
 
@@ -316,12 +313,6 @@ namespace IndianHealthService.ClinicalScheduling
                 sErrorMessage = "DAL.RPMSDataTable error: " + ex.Message;
                 throw ex;
             }
-
-#if TRACE
-            DateTime receiveTime = DateTime.Now;
-            TimeSpan executionTime = receiveTime - sendTime;
-            Debug.Write("RPMSDataTable Execution Time: " + executionTime.Milliseconds + " ms.\n");
-#endif
 
             return dtOut;
 

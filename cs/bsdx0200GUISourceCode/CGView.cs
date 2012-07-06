@@ -113,6 +113,7 @@ namespace IndianHealthService.ClinicalScheduling
         private MenuItem mnuUndoCheckin;
         private MenuItem sepApptMenu3;
         private MenuItem mnuReprintApptSlip;
+        private MenuItem mnuViewBrokerLog;
         private IContainer components;
 
         #region Initialization
@@ -131,11 +132,11 @@ namespace IndianHealthService.ClinicalScheduling
 
 		public void InitializeDocView(string sText)
 		{
-			this.Text = this.DocManager.ConnectInfo.UserName;
+            this.Text = CGDocumentManager.Current.RemoteSession.User.Name;
 			if (sText != null)
 				this.Text += " - " + sText;
-			if (DocManager.ConnectInfo.DivisionName != null)
-				this.Text += " - " + DocManager.ConnectInfo.DivisionName;
+            if (CGDocumentManager.Current.RemoteSession.User.Division.Name != null)
+                this.Text += " - " + CGDocumentManager.Current.RemoteSession.User.Division.Name;
 		}
 
 		public void InitializeDocView(CGDocument doc, 
@@ -156,18 +157,14 @@ namespace IndianHealthService.ClinicalScheduling
             
 
             // Set username and division up top
-            this.Text = this.DocManager.ConnectInfo.UserName;
+            this.Text = CGDocumentManager.Current.RemoteSession.User.Name;
 			if (sText != null)
 				this.Text += " - " + sText;
-			if (DocManager.ConnectInfo.DivisionName != null)
-				this.Text += " - " + DocManager.ConnectInfo.DivisionName;
+			if (CGDocumentManager.Current.RemoteSession.User.Division.Name != null)
+                this.Text += " - " + CGDocumentManager.Current.RemoteSession.User.Division.Name;
 
-			this.m_ConnectInfo = m_DocManager.ConnectInfo;
-			m_bmxDelegate = new BMXNetConnectInfo.BMXNetEventDelegate(BMXNetEventHandler);
-			m_ConnectInfo.BMXNetEvent += m_bmxDelegate;
+            CGDocumentManager.Current.RemoteSession.EventServices.RpmsEvent += BMXNetEventHandler;
 		}
-
-		private BMXNetConnectInfo.BMXNetEventDelegate m_bmxDelegate;
 		
 
         #endregion initialization
@@ -234,6 +231,7 @@ namespace IndianHealthService.ClinicalScheduling
             this.mnuRefresh = new System.Windows.Forms.MenuItem();
             this.mnuHelp = new System.Windows.Forms.MenuItem();
             this.mnuHelpAbout = new System.Windows.Forms.MenuItem();
+            this.mnuViewBrokerLog = new System.Windows.Forms.MenuItem();
             this.mnuTest = new System.Windows.Forms.MenuItem();
             this.mnuTest1 = new System.Windows.Forms.MenuItem();
             this.tvSchedules = new System.Windows.Forms.TreeView();
@@ -679,7 +677,8 @@ namespace IndianHealthService.ClinicalScheduling
             // 
             this.mnuHelp.Index = 3;
             this.mnuHelp.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
-            this.mnuHelpAbout});
+            this.mnuHelpAbout,
+            this.mnuViewBrokerLog});
             this.mnuHelp.Text = "&Help";
             // 
             // mnuHelpAbout
@@ -687,6 +686,12 @@ namespace IndianHealthService.ClinicalScheduling
             this.mnuHelpAbout.Index = 0;
             this.mnuHelpAbout.Text = "&About";
             this.mnuHelpAbout.Click += new System.EventHandler(this.mnuHelpAbout_Click);
+            // 
+            // mnuViewBrokerLog
+            // 
+            this.mnuViewBrokerLog.Index = 1;
+            this.mnuViewBrokerLog.Text = "&View Broker Log";
+            this.mnuViewBrokerLog.Click += new System.EventHandler(this.mnuViewBrokerLog_Click);
             // 
             // mnuTest
             // 
@@ -701,7 +706,6 @@ namespace IndianHealthService.ClinicalScheduling
             // 
             this.mnuTest1.Index = 0;
             this.mnuTest1.Text = "Test1";
-            this.mnuTest1.Click += new System.EventHandler(this.mnuTest1_Click);
             // 
             // tvSchedules
             // 
@@ -711,7 +715,7 @@ namespace IndianHealthService.ClinicalScheduling
             this.tvSchedules.HotTracking = true;
             this.tvSchedules.Location = new System.Drawing.Point(0, 0);
             this.tvSchedules.Name = "tvSchedules";
-            this.tvSchedules.Size = new System.Drawing.Size(128, 392);
+            this.tvSchedules.Size = new System.Drawing.Size(128, 389);
             this.tvSchedules.Sorted = true;
             this.tvSchedules.TabIndex = 1;
             this.tvSchedules.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.tvSchedules_AfterSelect);
@@ -780,7 +784,7 @@ namespace IndianHealthService.ClinicalScheduling
             this.panelRight.Dock = System.Windows.Forms.DockStyle.Right;
             this.panelRight.Location = new System.Drawing.Point(996, 0);
             this.panelRight.Name = "panelRight";
-            this.panelRight.Size = new System.Drawing.Size(128, 392);
+            this.panelRight.Size = new System.Drawing.Size(128, 389);
             this.panelRight.TabIndex = 3;
             this.panelRight.Visible = false;
             // 
@@ -876,37 +880,8 @@ namespace IndianHealthService.ClinicalScheduling
             this.panelCenter.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panelCenter.Location = new System.Drawing.Point(136, 24);
             this.panelCenter.Name = "panelCenter";
-            this.panelCenter.Size = new System.Drawing.Size(857, 344);
+            this.panelCenter.Size = new System.Drawing.Size(857, 341);
             this.panelCenter.TabIndex = 7;
-            // 
-            // calendarGrid1
-            // 
-            this.calendarGrid1.AllowDrop = true;
-            this.calendarGrid1.Appointments = null;
-            this.calendarGrid1.ApptDragSource = null;
-            this.calendarGrid1.AutoScroll = true;
-            this.calendarGrid1.AutoScrollMinSize = new System.Drawing.Size(600, 1898);
-            this.calendarGrid1.AvailabilityArray = null;
-            this.calendarGrid1.BackColor = System.Drawing.SystemColors.Window;
-            this.calendarGrid1.Columns = 5;
-            this.calendarGrid1.ContextMenu = this.ctxCalendarGrid;
-            this.calendarGrid1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.calendarGrid1.DrawWalkIns = true;
-            this.calendarGrid1.GridBackColor = null;
-            this.calendarGrid1.GridEnter = false;
-            this.calendarGrid1.Location = new System.Drawing.Point(0, 0);
-            this.calendarGrid1.Name = "calendarGrid1";
-            this.calendarGrid1.Resources = ((System.Collections.ArrayList)(resources.GetObject("calendarGrid1.Resources")));
-            this.calendarGrid1.SelectedAppointment = 0;
-            this.calendarGrid1.Size = new System.Drawing.Size(857, 344);
-            this.calendarGrid1.StartDate = new System.DateTime(2003, 1, 27, 0, 0, 0, 0);
-            this.calendarGrid1.TabIndex = 0;
-            this.calendarGrid1.TimeScale = 20;
-            this.calendarGrid1.CGAppointmentChanged += new IndianHealthService.ClinicalScheduling.CalendarGrid.CGAppointmentChangedHandler(this.calendarGrid1_CGAppointmentChanged);
-            this.calendarGrid1.CGAppointmentAdded += new IndianHealthService.ClinicalScheduling.CalendarGrid.CGAppointmentChangedHandler(this.calendarGrid1_CGAppointmentAdded);
-            this.calendarGrid1.CGSelectionChanged += new IndianHealthService.ClinicalScheduling.CalendarGrid.CGSelectionChangedHandler(this.calendarGrid1_CGSelectionChanged);
-            this.calendarGrid1.DoubleClick += new System.EventHandler(this.calendarGrid1_DoubleClick);
-            this.calendarGrid1.MouseEnter += new System.EventHandler(this.calendarGrid1_MouseEnter);
             // 
             // ctxCalendarGrid
             // 
@@ -1012,7 +987,7 @@ namespace IndianHealthService.ClinicalScheduling
             // 
             this.panelBottom.Controls.Add(this.statusBar1);
             this.panelBottom.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panelBottom.Location = new System.Drawing.Point(136, 368);
+            this.panelBottom.Location = new System.Drawing.Point(136, 365);
             this.panelBottom.Name = "panelBottom";
             this.panelBottom.Size = new System.Drawing.Size(857, 24);
             this.panelBottom.TabIndex = 8;
@@ -1030,7 +1005,7 @@ namespace IndianHealthService.ClinicalScheduling
             // 
             this.splitter1.Location = new System.Drawing.Point(128, 24);
             this.splitter1.Name = "splitter1";
-            this.splitter1.Size = new System.Drawing.Size(8, 368);
+            this.splitter1.Size = new System.Drawing.Size(8, 365);
             this.splitter1.TabIndex = 9;
             this.splitter1.TabStop = false;
             // 
@@ -1039,14 +1014,43 @@ namespace IndianHealthService.ClinicalScheduling
             this.splitter2.Dock = System.Windows.Forms.DockStyle.Right;
             this.splitter2.Location = new System.Drawing.Point(993, 24);
             this.splitter2.Name = "splitter2";
-            this.splitter2.Size = new System.Drawing.Size(3, 368);
+            this.splitter2.Size = new System.Drawing.Size(3, 365);
             this.splitter2.TabIndex = 10;
             this.splitter2.TabStop = false;
+            // 
+            // calendarGrid1
+            // 
+            this.calendarGrid1.AllowDrop = true;
+            this.calendarGrid1.Appointments = null;
+            this.calendarGrid1.ApptDragSource = null;
+            this.calendarGrid1.AutoScroll = true;
+            this.calendarGrid1.AutoScrollMinSize = new System.Drawing.Size(600, 1898);
+            this.calendarGrid1.AvailabilityArray = null;
+            this.calendarGrid1.BackColor = System.Drawing.SystemColors.Window;
+            this.calendarGrid1.Columns = 5;
+            this.calendarGrid1.ContextMenu = this.ctxCalendarGrid;
+            this.calendarGrid1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.calendarGrid1.DrawWalkIns = true;
+            this.calendarGrid1.GridBackColor = null;
+            this.calendarGrid1.GridEnter = false;
+            this.calendarGrid1.Location = new System.Drawing.Point(0, 0);
+            this.calendarGrid1.Name = "calendarGrid1";
+            this.calendarGrid1.Resources = ((System.Collections.ArrayList)(resources.GetObject("calendarGrid1.Resources")));
+            this.calendarGrid1.SelectedAppointment = 0;
+            this.calendarGrid1.Size = new System.Drawing.Size(857, 341);
+            this.calendarGrid1.StartDate = new System.DateTime(2003, 1, 27, 0, 0, 0, 0);
+            this.calendarGrid1.TabIndex = 0;
+            this.calendarGrid1.TimeScale = 20;
+            this.calendarGrid1.CGAppointmentChanged += new IndianHealthService.ClinicalScheduling.CalendarGrid.CGAppointmentChangedHandler(this.calendarGrid1_CGAppointmentChanged);
+            this.calendarGrid1.CGAppointmentAdded += new IndianHealthService.ClinicalScheduling.CalendarGrid.CGAppointmentChangedHandler(this.calendarGrid1_CGAppointmentAdded);
+            this.calendarGrid1.CGSelectionChanged += new IndianHealthService.ClinicalScheduling.CalendarGrid.CGSelectionChangedHandler(this.calendarGrid1_CGSelectionChanged);
+            this.calendarGrid1.DoubleClick += new System.EventHandler(this.calendarGrid1_DoubleClick);
+            this.calendarGrid1.MouseEnter += new System.EventHandler(this.calendarGrid1_MouseEnter);
             // 
             // CGView
             // 
             this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
-            this.ClientSize = new System.Drawing.Size(1124, 392);
+            this.ClientSize = new System.Drawing.Size(1124, 389);
             this.Controls.Add(this.panelCenter);
             this.Controls.Add(this.panelBottom);
             this.Controls.Add(this.splitter2);
@@ -1085,8 +1089,6 @@ namespace IndianHealthService.ClinicalScheduling
 		private Hashtable			m_htOverbook;
 		private Hashtable			m_htModifySchedule;
 		private Hashtable			m_htChangeAppts;
-		private BMXNetConnectInfo	m_ConnectInfo = null;
-		public BMXNetConnectInfo.BMXNetEventDelegate	BMXNetEvent;
 
 		#endregion Fields
 
@@ -1307,7 +1309,7 @@ namespace IndianHealthService.ClinicalScheduling
 			string sResource = (string) m_alSelectedTreeResourceArray[0];
 			DataTable dt = this.DocManager.GlobalDataSet.Tables["ResourceUser"];
 			DataView dv = new DataView(dt, "", "RESOURCENAME ASC", DataViewRowState.OriginalRows);
-			string sDuz = this.DocManager.ConnectInfo.DUZ;
+            string sDuz = CGDocumentManager.Current.RemoteSession.User.Duz;
 			bool bModSchedule = false;
 			DataRowView[] drvA = dv.FindRows(sResource);
 			if (drvA.Length == 0)
@@ -1568,13 +1570,19 @@ namespace IndianHealthService.ClinicalScheduling
 
         private bool IsThisARadiologyResource(string sResource)
         {
+            //smh - change in v 1.7... if the resource is not linked to a PIMS clinic, this method fails.
+            //This happens if there is just one resource that is not linked, which makes it impossible to
+            //make any appointments, because this method gets called at any time a menu is opened.
+            //So we change res.Field<int> to res.Field<int?> 
+           
             // see if resource is mapped to a Radiology Hospital Location.
             return (   //select all Hospital Locations which are radiology locations
                        from hl in CGDocumentManager.Current.GlobalDataSet.Tables["HospitalLocation"].AsEnumerable()
                        where hl.Field<string>("IS_RADIOLOGY_LOCATION") == "1"
                        //join this to the resources table using the foreign ID (plain jane relational join)
                        join res in CGDocumentManager.Current.GlobalDataSet.Tables["Resources"].AsEnumerable()
-                       on hl.Field<int>("HOSPITAL_LOCATION_ID") equals res.Field<int>("HOSPITAL_LOCATION_ID")
+                       //on hl.Field<int>("HOSPITAL_LOCATION_ID") equals res.Field<int>("HOSPITAL_LOCATION_ID") //change in 1.7
+                       on hl.Field<int>("HOSPITAL_LOCATION_ID") equals res.Field<int?>("HOSPITAL_LOCATION_ID")
                        //then filter this down to the resource that we have
                        where res.Field<string>("RESOURCE_NAME") == sResource
                        //if we have any row left, then it is true.
@@ -1765,7 +1773,7 @@ namespace IndianHealthService.ClinicalScheduling
 					
 					doc.ResourceID = Convert.ToInt32(sResourceID);
 
-					bool bLock = DocManager.ConnectInfo.bmxNetLib.Lock("^BSDXRES(" + sResourceID + ")", "+");
+                    bool bLock = CGDocumentManager.Current.RemoteSession.Lock("^BSDXRES(" + sResourceID + ")", "+");
 					if (bLock == false)
 					{
 						throw new BMXNetException("Another user is currently editing availability for this resource.  Try later.");
@@ -1938,9 +1946,7 @@ namespace IndianHealthService.ClinicalScheduling
 			v.m_htChangeAppts = new Hashtable(sSelectedTreeResourceArray.Count);
 			dt = this.DocManager.GlobalDataSet.Tables["ResourceUser"];
 			dv = new DataView(dt, "", "RESOURCENAME ASC", DataViewRowState.OriginalRows);
-
-            //dv.RowFilter = "USERNAME = '" + filte_name + "'";
-            dv.RowFilter = String.Format("USERNAME = '{0}'", this.DocManager.ConnectInfo.UserName.Replace("'", "''"));
+            dv.RowFilter = String.Format("USERNAME = '{0}'", CGDocumentManager.Current.RemoteSession.User.Name.Replace("'", "''"));
 
 			for (int j=0; j < dv.Count; j++)
 			{
@@ -2528,8 +2534,8 @@ namespace IndianHealthService.ClinicalScheduling
 			catch (Exception ex)
 			{
                 string msg;
-                if (BMXNetLib.Piece(ex.Message, "~", 1) == "-10") // -10 means that BSDXAPI reported an error.
-                    msg = BMXNetLib.Piece(ex.Message, "~", 4);
+                if (M.Piece(ex.Message, "~", 1) == "-10") // -10 means that BSDXAPI reported an error.
+                    msg = M.Piece(ex.Message, "~", 4);
                 else
                     msg = ex.Message;
 
@@ -2639,8 +2645,8 @@ namespace IndianHealthService.ClinicalScheduling
 			catch (Exception ex)
 			{   
                 string msg;
-                if (BMXNetLib.Piece(ex.Message, "~", 1) == "-10") // -10 means that BSDXAPI reported an error.
-                    msg = BMXNetLib.Piece(ex.Message, "~", 4);
+                if (M.Piece(ex.Message, "~", 1) == "-10") // -10 means that BSDXAPI reported an error.
+                    msg = M.Piece(ex.Message, "~", 4);
                 else
                     msg = ex.Message;
 
@@ -2747,8 +2753,8 @@ namespace IndianHealthService.ClinicalScheduling
             catch (Exception ex)
             {
                 string msg;
-                if (BMXNetLib.Piece(ex.Message, "~", 1) == "-10") // -10 means that BSDXAPI reported an error.
-                    msg = BMXNetLib.Piece(ex.Message, "~", 4);
+                if (M.Piece(ex.Message, "~", 1) == "-10") // -10 means that BSDXAPI reported an error.
+                    msg = M.Piece(ex.Message, "~", 4);
                 else
                     msg = ex.Message;
 
@@ -2770,7 +2776,7 @@ namespace IndianHealthService.ClinicalScheduling
         /// <param name="obj">Not used</param>
         /// <param name="e">BMXEvent Args: 
         /// e.BMXEvent is free text for Event Type; e.BMXParam is free text for Event Arguments</param>
-        private void BMXNetEventHandler(Object obj, BMXNet.BMXNetEventArgs e)
+        private void BMXNetEventHandler(Object obj, RemoteEventArgs e)
         {
             try
             {
@@ -2778,7 +2784,7 @@ namespace IndianHealthService.ClinicalScheduling
                 if (this == null) return;
 
                 // if event is Autofire event
-                if (e.BMXEvent == "BMXNet AutoFire")
+                if (e.EventType == "BMXNet AutoFire")
                 {
                     Debug.Write("CGView caught AutoFire event.\n");
                    
@@ -2791,7 +2797,7 @@ namespace IndianHealthService.ClinicalScheduling
                 }
 
                 // if event is BSDX SCHEDULE
-                else if (e.BMXEvent == "BSDX SCHEDULE")
+                else if (e.EventType == "BSDX SCHEDULE")
                 {
                     //See if any of the resources in the event argument matches BSDX Schedule.
                     //If yes, fire off the delegate
@@ -2799,7 +2805,7 @@ namespace IndianHealthService.ClinicalScheduling
                     for (int j = 0; j < m_Document.m_sResourcesArray.Count; j++)
                     {
                         sResourceName = m_Document.m_sResourcesArray[j].ToString();
-                        if (e.BMXParam == sResourceName)
+                        if (e.Details == sResourceName)
                         {
                             Debug.Write("CGView caught BSDX SCHEDULE event.\n");
 
@@ -2867,7 +2873,7 @@ namespace IndianHealthService.ClinicalScheduling
             try
             {
                 //Signal RPMS to raise an event
-                m_ConnectInfo.RaiseEvent(sEvent, sParams, false);
+                CGDocumentManager.Current.RemoteSession.EventServices.TriggerEvent(sEvent, sParams, false);
             }
             catch (Exception ex)
             {
@@ -2913,7 +2919,7 @@ namespace IndianHealthService.ClinicalScheduling
         {
             try
             {
-                bool bLock = DocManager.ConnectInfo.Lock("^BSDXMGR", "+", "");
+                bool bLock = CGDocumentManager.Current.RemoteSession.Lock("^BSDXMGR", "+");
                 if (bLock == false)
                 {
                     throw new Exception("Another user is currently in Scheduling Management.  Try later.");
@@ -2928,7 +2934,7 @@ namespace IndianHealthService.ClinicalScheduling
 
                 m_DocManager.GlobalDataSet.Tables["ResourceUser"].Clear();
                 m_DocManager.LoadResourceUserTable(false);
-                bLock = DocManager.ConnectInfo.bmxNetLib.Lock("^BSDXMGR", "-");
+                bLock = CGDocumentManager.Current.RemoteSession.Lock("^BSDXMGR", "-");
             }
             catch (ApplicationException aex)
             {
@@ -3194,49 +3200,11 @@ namespace IndianHealthService.ClinicalScheduling
             e.Node.TreeView.SelectedNode = e.Node;
         }
 
-        /// <summary>
-        /// Useless code now... Good place to test something.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-		private void mnuTest1_Click(object sender, System.EventArgs e)
-		{
-			ReaderWriterLock m_rwl = this.DocManager.ConnectInfo.bmxNetLib.BMXRWL;
-			try
-			{
-				m_rwl.AcquireWriterLock(50);
-				Debug.Write("\nTest Button 1 Acquired first lock\n");
-				m_rwl.AcquireWriterLock(50);
-				Debug.Write("Test Button 1 Acquired second lock\n");
-				this.DocManager.ViewRefresh();
-				Thread.Sleep(5000);
-				try
-				{
-				}
-				catch
-				{
-				}
-				finally
-				{
-					m_rwl.ReleaseWriterLock();
-					Debug.Write ("Test Button 1 released first lock.\n");
-					m_rwl.ReleaseWriterLock();
-					Debug.Write ("Test Button 1 released second lock.\n");
-				}
-
-				return;
-			}
-			catch (Exception ex)
-			{
-				Debug.Write("Test Button 1 exception: " + ex.Message + "\n");
-			}
-		}
-
 		private void CGView_Closing(object sender, System.ComponentModel.CancelEventArgs e)
 		{
 			try
 			{
-				m_ConnectInfo.BMXNetEvent -= m_bmxDelegate;
+				CGDocumentManager.Current.RemoteSession.EventServices.RpmsEvent -= BMXNetEventHandler;
 				this.calendarGrid1.CloseGrid();
 			}
 			catch (Exception ex)
@@ -3963,6 +3931,12 @@ namespace IndianHealthService.ClinicalScheduling
             // + | is an oddity in the Mumps code which I haven't investigated yet.
             dpl.InitializeFormClinicSchedule(this.DocManager, string.Join("|", resourceIENs) + "|", dStart, dEnd);
             dpl.ShowDialog(this);
+        }
+
+        private void mnuViewBrokerLog_Click(object sender, EventArgs e)
+        {
+            var view = new RPCLoggerView();
+            view.Show();
         }
 
 

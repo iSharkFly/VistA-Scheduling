@@ -216,7 +216,7 @@ namespace IndianHealthService.ClinicalScheduling
 
             // Draw Header 
 
-            string division = CGDocumentManager.Current.ConnectInfo.DivisionName;
+            string division = CGDocumentManager.Current.RemoteSession.User.Division.Name;
             int divisionStringHeight = (int)g.MeasureString(division.ToString(), fontBody, e.PageBounds.Width - (int)(10 * widthRatio) - HardMarginX).Height;
             
             Rectangle headerArea = new Rectangle()
@@ -690,7 +690,7 @@ namespace IndianHealthService.ClinicalScheduling
             }
 
             // Draw Header
-            string division = CGDocumentManager.Current.ConnectInfo.DivisionName;
+            string division = CGDocumentManager.Current.RemoteSession.User.Division.Name;
             int divisionStringHeight = (int)g.MeasureString(division.ToString(), fontBody, e.MarginBounds.Width).Height;
             Rectangle headerArea = new Rectangle()
             {

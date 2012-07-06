@@ -1,3 +1,9 @@
+/* Main Class...:
+ * Original Author: Horace Whitt
+ * Current Author and Maintainer: Sam Habiel
+ * License: LGPL. http://www.gnu.org/licenses/lgpl-2.1.html
+*/
+
 using System;
 using System.Windows.Forms;
 using System.Collections;
@@ -5,6 +11,8 @@ using System.Data;
 using System.Diagnostics;
 using System.Threading;
 using IndianHealthService.BMXNet;
+using IndianHealthService.BMXNet.WinForm;
+using IndianHealthService.BMXNet.WinForm.Configuration; //grrrr... too many namespaces here...
 using Mono.Options;
 using System.Runtime.InteropServices;
 using System.Globalization;
@@ -41,8 +49,6 @@ namespace IndianHealthService.ClinicalScheduling
 
 		//M Connection member variables
 		private DataSet									m_dsGlobal = null;      // Holds all user data
-		private BMXNetConnectInfo						m_ConnectInfo = null;   // Connection to VISTA object
-        private BMXNetConnectInfo.BMXNetEventDelegate CDocMgrEventDelegate;     // Delegate to respond to messages from VISTA. Responds to event: BMXNetConnectInfo.BMXNetEvent
 
         //Custom Printing
         private Printing                          m_PrintingObject = null; 
@@ -50,16 +56,9 @@ namespace IndianHealthService.ClinicalScheduling
 
         #region Properties
 
-        /// <summary>
-        /// Returns the document manager's BMXNetConnectInfo member
-        /// </summary>
-        public BMXNetConnectInfo ConnectInfo
-        {
-            get
-            {
-                return m_ConnectInfo;
-            }
-        }
+        public WinFramework WinFramework { get; private set; }  // Login Manager
+        public RemoteSession RemoteSession { get; private set; } // Data Sesssion against the RPMS/VISTA server
+        public RPCLogger RPCLogger { get; private set; }         // Logger for RPCs
 
         /// <summary>
         /// True if the current user holds the BSDXZMGR or XUPROGMODE keys in RPMS
@@ -152,9 +151,9 @@ namespace IndianHealthService.ClinicalScheduling
         #endregion
 
         /// <summary>
-        /// Constructor. Does absolutely nothing at this point.
+        /// Private constructor for singleton instance.
         /// </summary>
-		public CGDocumentManager()
+		private CGDocumentManager()
 		{
         }
 
@@ -217,10 +216,21 @@ namespace IndianHealthService.ClinicalScheduling
 
             opset.Parse(args);
             
-            //Init app
-            bool isEverythingOkay = _current.InitializeApp();
+            //Init app. Catch Login Exceptions if they happen.
+            bool isEverythingOkay = false;
+            try
+            {
+                isEverythingOkay = _current.InitializeApp();
+            }
+            catch (Exception ex)
+            {
 
-            //if an error occurred, break out.
+                MessageBox.Show("Booboo: An Error Happened: " + ex.Message);
+                return; // exit application
+            }
+            
+
+            //if something yucky happened, break out.
             if (!isEverythingOkay) return;
 
             //Create the first empty document
@@ -234,7 +244,7 @@ namespace IndianHealthService.ClinicalScheduling
             CGView view = new CGView();
             view.InitializeDocView(doc, _current, doc.StartDate, _current.WindowText);
 
-            //Handle BMX Event
+            //Handle Message Queue
             Application.DoEvents();
 
             //test
@@ -294,30 +304,28 @@ namespace IndianHealthService.ClinicalScheduling
         }// here application terminates
 
         #region BMXNet Event Handler
-        private void CDocMgrEventHandler(Object obj, BMXNet.BMXNetEventArgs e)
+        private void CDocMgrEventHandler(Object obj, RemoteEventArgs e)
 		{
-			if (e.BMXEvent == "BSDX CALL WORKSTATIONS")
+			if (e.EventType == "BSDX CALL WORKSTATIONS")
 			{
 				string sParam = "";
 				string sDelim="~";
-				sParam += this.m_ConnectInfo.UserName + sDelim;
+				sParam += this.RemoteSession.User.Name + sDelim;
 				sParam += this.m_sHandle + sDelim;
 				sParam += Application.ProductVersion + sDelim;
 				sParam += this._views.Count.ToString();
-				_current.m_ConnectInfo.RaiseEvent("BSDX WORKSTATION REPORT", sParam, true);
+				_current.RemoteSession.EventServices.TriggerEvent("BSDX WORKSTATION REPORT", sParam, true);
 			}
-			if (e.BMXEvent == "BSDX ADMIN MESSAGE")
+			if (e.EventType == "BSDX ADMIN MESSAGE")
 			{
-				string sMsg = e.BMXParam;
+				string sMsg = e.EventType;
 				ShowAdminMsgDelegate samd = new ShowAdminMsgDelegate(ShowAdminMsg);
-				//this.Invoke(samd, new object [] {sMsg});
                 samd.Invoke(sMsg);
 			}
-			if (e.BMXEvent == "BSDX ADMIN SHUTDOWN")
+			if (e.EventType == "BSDX ADMIN SHUTDOWN")
 			{
-				string sMsg = e.BMXParam;
+				string sMsg = e.Details;
 				CloseAllDelegate cad = new CloseAllDelegate(CloseAll);
-				//this.Invoke(cad, new object [] {sMsg});
                 cad.Invoke(sMsg);
 			}
 		}
@@ -352,38 +360,132 @@ namespace IndianHealthService.ClinicalScheduling
         /// If so, display a dialog to collect access and verify codes.</param>
         private bool InitializeApp(bool bReLogin)
 		{
-            //Set M connection info
-            m_ConnectInfo = new BMXNetConnectInfo(m_Encoding); // Encoding is "" unless passed in command line
-            _dal = new DAL(m_ConnectInfo);   // Data access layer
-            //m_ConnectInfo.bmxNetLib.StartLog();    //This line turns on logging of messages
-            
-            //Create a delegate to process events raised by BMX.
-            CDocMgrEventDelegate = new BMXNetConnectInfo.BMXNetEventDelegate(CDocMgrEventHandler);
-            //Tie delegate to Events generated by BMX.
-            m_ConnectInfo.BMXNetEvent += CDocMgrEventDelegate;
-            //Disable polling (But does this really work???? I don't see how it gets disabled)
-            m_ConnectInfo.EventPollingEnabled = false;
+            //Note: There are 2 splashes -- one for being the parent of the log in forms
+            // the next is invoked async and updated async while the GUI is loading
+            // The reason is b/c an async form cannot be the parent of another that lies on the main thread
 
+            RPCLogger = new RPCLogger();
+
+            DSplash firstSplash = new DSplash();
+
+            firstSplash.Show();
+            
+            /* IMPORTANT NOTE
+             * LOGIN CODE IS COPIED ALMOST VERBATIM FROM THE SCHEMABUILDER APPLICAITON;
+             * THE ONLY ONE I CAN FIND WHICH RELIES ON BMX 4 NEW WAYS WHICH I CAN'T FIGURE OUT
+             */
+            LoginProcess login;
+            this.WinFramework = WinFramework.CreateWithNetworkBroker(true, RPCLogger);
+            
+            if (bReLogin) // if logging in again...
+            {
+                this.WinFramework.LoadConnectionSpecs(LocalPersistentStore.CreateDefaultStorage(true), "BSDX");
+                login = this.WinFramework.CreateLoginProcess();
+                login.AttemptUserInputLogin("Clincal Scheduling Log-in", 3, true, firstSplash);
+                goto DoneTrying;
+            }
+
+            // If server,port,ac,vc are supplied on command line, then try to connect...
+            else if (!String.IsNullOrEmpty(m_Server) && m_Port != 0 && !String.IsNullOrEmpty(m_AccessCode) && !String.IsNullOrEmpty(m_VerifyCode))
+            {
+                RpmsConnectionSpec spec = new RpmsConnectionSpec();
+                spec.IsDefault = true;
+                spec.Name = "Command Line Server";
+                spec.Port = m_Port;
+                spec.Server = m_Server;
+                spec.UseWindowsAuthentication = false; //for now
+                spec.UseDefaultNamespace = true; //for now
+                login = this.WinFramework.CreateLoginProcess();
+                login.AutoSetDivisionToLastLookup = false;
+                login.AttemptAccessVerifyLogin(spec, m_AccessCode, m_VerifyCode);
+                goto DoneTrying;
+            }
+            
+            // if only server, port is supplied, then use these instead
+            else if (!String.IsNullOrEmpty(m_Server) && m_Port != 0)
+            {
+                RpmsConnectionSpec spec = new RpmsConnectionSpec();
+                spec.IsDefault = true;
+                spec.Name = "Command Line Server";
+                spec.Port = m_Port;
+                spec.Server = m_Server;
+                spec.UseWindowsAuthentication = false; //for now
+                spec.UseDefaultNamespace = true; //for now
+
+                RpmsConnectionSettings cxnSettings = new RpmsConnectionSettings
+                {
+                    CommandLineConnectionSpec = spec
+                };
+
+                this.WinFramework.ConnectionSettings = cxnSettings;
+
+                login = this.WinFramework.CreateLoginProcess();
+                login.AutoSetDivisionToLastLookup = false;
+                //test
+                //spec.UseWindowsAuthentication = true;
+                login.AttemptUserInputLogin("Clinical Scheduling Log-in", 3, false, firstSplash);
+                //login.AttemptWindowsAuthLogin();
+                //test
+                goto DoneTrying;
+            }
+
+            // if nothing is supplied, fall back on the original dialog
+            else
+            {
+                this.WinFramework.LoadConnectionSpecs(LocalPersistentStore.CreateDefaultStorage(true), "BSDX");
+                login = this.WinFramework.CreateLoginProcess();
+                login.AutoSetDivisionToLastLookup = false;
+                login.AttemptUserInputLogin("Clincal Scheduling Log-in", 3, true, firstSplash);
+
+                goto DoneTrying;
+            }
+
+DoneTrying:
+            if (!login.WasSuccessful)
+            {
+                return false;
+            }
+
+            LocalSession local = this.WinFramework.LocalSession;
+
+            if ((this.WinFramework.Context.User.Division == null) && !this.WinFramework.AttemptUserInputSetDivision("Set Initial Division", firstSplash))
+            {
+                return false;
+            }
+
+            
+
+            this.RemoteSession = this.WinFramework.PrimaryRemoteSession;
+
+            //Tie delegate to Events generated by BMX.
+            this.RemoteSession.EventServices.RpmsEvent += this.CDocMgrEventHandler;
+            //Disable polling
+            this.RemoteSession.EventServices.IsEventPollingEnabled = false;
+
+            //Second splash screens
             //Show a splash screen while initializing; define delegates to remote thread
-            DSplash m_ds = new DSplash();
-            DSplash.dSetStatus setStatusDelegate = new DSplash.dSetStatus(m_ds.SetStatus);
-            DSplash.dAny closeSplashDelegate = new DSplash.dAny(m_ds.RemoteClose);
-            DSplash.dProgressBarSet setMaxProgressDelegate = new DSplash.dProgressBarSet(m_ds.RemoteProgressBarMaxSet);
-            DSplash.dProgressBarSet setProgressDelegate = new DSplash.dProgressBarSet(m_ds.RemoteProgressBarValueSet);
+            DSplash secondSplash = new DSplash();
+            DSplash.dSetStatus setStatusDelegate = new DSplash.dSetStatus(secondSplash.SetStatus);
+            DSplash.dAny closeSplashDelegate = new DSplash.dAny(secondSplash.RemoteClose);
+            DSplash.dProgressBarSet setMaxProgressDelegate = new DSplash.dProgressBarSet(secondSplash.RemoteProgressBarMaxSet);
+            DSplash.dProgressBarSet setProgressDelegate = new DSplash.dProgressBarSet(secondSplash.RemoteProgressBarValueSet);
 
             //Start new thread for the Splash screen.
             Thread threadSplash = new Thread(new ParameterizedThreadStart(frm => ((DSplash)frm).ShowDialog()));
             threadSplash.IsBackground = true; //expendable thread -- exit even if still running.
             threadSplash.Name = "Splash Thread";
-            threadSplash.Start(m_ds); // pass form as parameter.
+            threadSplash.Start(secondSplash);
+
+            firstSplash.Close(); // close temporary splash now that the new one is up and running
 
             //There are 21 steps to load the application. That's max for the progress bar.
             setMaxProgressDelegate(21);
-            
+
             // smh--not used: System.Configuration.ConfigurationManager.GetSection("appSettings");
-            
             setStatusDelegate("Connecting to VISTA");
+
             
+            /*
             //Try to connect using supplied values for Server and Port
             //Why am I doing this? The library BMX net uses prompts for access and verify code
             //whether you can connect or not. Not good. So I test first whether
@@ -461,9 +563,10 @@ namespace IndianHealthService.ClinicalScheduling
                     }
                 }
 			}while (bRetry == true);
-            
-            //Printing
+            */
 
+            //Printing Custom DLL. Perfect place for code injection!!!
+            //*************************************************
             string DllLocation = string.Empty;
             System.IO.DirectoryInfo di = new System.IO.DirectoryInfo(Application.StartupPath + @"\Printing\");
             if (di.Exists)
@@ -494,7 +597,7 @@ namespace IndianHealthService.ClinicalScheduling
                 }
                 this.m_PrintingObject = Creator.PrintFactory();
             }
-           
+           //************************************************
             
             //User Interface Culture (m_CultureName is set from the command line flag /culture)
             //
@@ -511,6 +614,8 @@ namespace IndianHealthService.ClinicalScheduling
                 Thread.CurrentThread.CurrentUICulture = Thread.CurrentThread.CurrentCulture;
             }
 
+            _dal = new DAL(RemoteSession);   // Data access layer
+            
             //Create global dataset
 			_current.m_dsGlobal = new DataSet("GlobalDataSet");
 
@@ -552,25 +657,27 @@ namespace IndianHealthService.ClinicalScheduling
             // Call #2
             setProgressDelegate(2);
             setStatusDelegate("Setting encoding...");
-
+            //PORT TODO: Set encoding
             if (m_Encoding == String.Empty)
             {
-                string utf8_server_support = m_ConnectInfo.bmxNetLib.TransmitRPC("BMX UTF-8", "");
+                string utf8_server_support = RemoteSession.TransmitRPC("BMX UTF-8", "");
+                
                 if (utf8_server_support == "1")
-                    m_ConnectInfo.bmxNetLib.Encoder = System.Text.UTF8Encoding.UTF8;
+                    RemoteSession.ConnectionEncoding = System.Text.UTF8Encoding.UTF8;
+                
             }
 			
             //Set application context
             // Call #3
             setProgressDelegate(3);
 			setStatusDelegate("Setting Application Context to BSDXRPC...");
-			m_ConnectInfo.AppContext = "BSDXRPC";
+			RemoteSession.AppContext = "BSDXRPC";
 
             //User Preferences Object
             setProgressDelegate(4); //next number is 6 b/c two calls
             setStatusDelegate("Getting User Preferences from the Server...");
 
-            _current.UserPreferences = new UserPreferences(); // Does the calling to do that...
+            _current.UserPreferences = new UserPreferences(); // Constructor Does the calling to do that...
             
             //Load global recordsets
             string statusConst = "Loading VistA data tables...";
@@ -582,7 +689,7 @@ namespace IndianHealthService.ClinicalScheduling
             // Table #4
             setProgressDelegate(6);
             setStatusDelegate(statusConst + " Schedule User");
-            DataTable dtUser = _dal.GetUserInfo(m_ConnectInfo.DUZ);
+            DataTable dtUser = _dal.GetUserInfo(RemoteSession.User.Duz);
             dtUser.TableName = "SchedulingUser";
             m_dsGlobal.Tables.Add(dtUser);
             Debug.Assert(dtUser.Rows.Count == 1);
@@ -597,9 +704,7 @@ namespace IndianHealthService.ClinicalScheduling
             // Table #5
             setProgressDelegate(7);
             setStatusDelegate(statusConst + " Access Types");
-            DataTable dtAccessTypes = _dal.GetAccessTypes();
-            dtAccessTypes.TableName = "AccessTypes";
-            m_dsGlobal.Tables.Add(dtAccessTypes);
+            DataTable dtAccessTypes = _dal.GetAccessTypes(m_dsGlobal, "AccessTypes");
 
             //Get Access Groups
             // Table #6
@@ -679,7 +784,7 @@ namespace IndianHealthService.ClinicalScheduling
             setStatusDelegate(statusConst + " Clinics");
             //cmd.CommandText = "SELECT BMXIEN 'HOSPITAL_LOCATION_ID', NAME 'HOSPITAL_LOCATION', DEFAULT_PROVIDER, STOP_CODE_NUMBER, INACTIVATE_DATE, REACTIVATE_DATE FROM HOSPITAL_LOCATION";
             sCommandText = "BSDX HOSPITAL LOCATION";
-            ConnectInfo.RPMSDataTable(sCommandText, "HospitalLocation", m_dsGlobal);
+            RemoteSession.TableFromCommand(sCommandText, m_dsGlobal, "HospitalLocation");
             Debug.Write("LoadGlobalRecordsets -- HospitalLocation loaded\n");
 
             //Build Primary Key for HospitalLocation table
@@ -731,7 +836,7 @@ namespace IndianHealthService.ClinicalScheduling
             setProgressDelegate(16);
             setStatusDelegate(statusConst + " Providers");
             sCommandText = "SELECT BMXIEN, NAME FROM NEW_PERSON WHERE INACTIVE_DATE = '' AND BMXIEN > 1";
-            ConnectInfo.RPMSDataTable(sCommandText, "Provider", m_dsGlobal);
+            RemoteSession.TableFromSQL(sCommandText, m_dsGlobal, "Provider");
             Debug.Write("LoadGlobalRecordsets -- Provider loaded\n");
 
             //Build the HOLIDAY table
@@ -739,7 +844,7 @@ namespace IndianHealthService.ClinicalScheduling
             setProgressDelegate(17);
             setStatusDelegate(statusConst + " Holiday");
             sCommandText = "SELECT NAME, DATE FROM HOLIDAY WHERE INTERNAL[DATE] > '" + FMDateTime.Create(DateTime.Today).DateOnly.FMDateString + "'";
-            ConnectInfo.RPMSDataTable(sCommandText, "HOLIDAY", m_dsGlobal);
+            RemoteSession.TableFromSQL(sCommandText, m_dsGlobal, "HOLIDAY");
             Debug.Write("LoadingGlobalRecordsets -- Holidays loaded\n");
 
 
@@ -748,29 +853,31 @@ namespace IndianHealthService.ClinicalScheduling
             //----------------------------------------------
 
             setStatusDelegate("Setting Receive Timeout");
-            _current.m_ConnectInfo.ReceiveTimeout = 30000; //30-second timeout
+            _current.RemoteSession.ReceiveTimeout = 30000; //30-second timeout
 
 #if DEBUG
-            _current.m_ConnectInfo.ReceiveTimeout = 600000; //longer timeout for debugging
+            _current.RemoteSession.ReceiveTimeout = 600000; //longer timeout for debugging
 #endif 
 			// Event Subsriptions
             setStatusDelegate("Subscribing to Server Events");
             //Table #16
             setProgressDelegate(18);
-            _current.m_ConnectInfo.SubscribeEvent("BSDX SCHEDULE");
+            _current.RemoteSession.EventServices.Subscribe("BSDX SCHEDULE");
 			//Table #17
             setProgressDelegate(19);
-            _current.m_ConnectInfo.SubscribeEvent("BSDX CALL WORKSTATIONS");
+            _current.RemoteSession.EventServices.Subscribe("BSDX CALL WORKSTATIONS");
 			//Table #18
             setProgressDelegate(20);
-            _current.m_ConnectInfo.SubscribeEvent("BSDX ADMIN MESSAGE");
+            _current.RemoteSession.EventServices.Subscribe("BSDX ADMIN MESSAGE");
 			//Table #19
             setProgressDelegate(21);
-            _current.m_ConnectInfo.SubscribeEvent("BSDX ADMIN SHUTDOWN");
+            _current.RemoteSession.EventServices.Subscribe("BSDX ADMIN SHUTDOWN");
 
-			_current.m_ConnectInfo.EventPollingInterval = 5000; //in milliseconds
-			_current.m_ConnectInfo.EventPollingEnabled = true;
-			_current.m_ConnectInfo.AutoFire = 12; //AutoFire every 12*5 seconds
+			_current.RemoteSession.EventServices.EventPollingInterval = 5000; //in milliseconds
+			_current.RemoteSession.EventServices.IsEventPollingEnabled = true;
+			
+            //PORT TODO: No Autofire in BMX 4.0
+            //_current.RemoteSession.EventServices. = 12; //AutoFire every 12*5 seconds
 
             //Close Splash Screen
             closeSplashDelegate();
@@ -784,21 +891,21 @@ namespace IndianHealthService.ClinicalScheduling
 		public void LoadAccessGroupsTable()
 		{
 			string sCommandText = "SELECT * FROM BSDX_ACCESS_GROUP";
-			ConnectInfo.RPMSDataTable(sCommandText, "AccessGroup", m_dsGlobal);
+			RemoteSession.TableFromSQL(sCommandText, m_dsGlobal, "AccessGroup");
 			Debug.Write("LoadGlobalRecordsets -- AccessGroups loaded\n");
 		}
 
 		public void LoadAccessGroupTypesTable()
 		{
 			string sCommandText = "BSDX GET ACCESS GROUP TYPES";
-			ConnectInfo.RPMSDataTable(sCommandText, "AccessGroupType", m_dsGlobal);
+            RemoteSession.TableFromCommand(sCommandText, m_dsGlobal, "AccessGroupType");
 			Debug.Write("LoadGlobalRecordsets -- AccessGroupTypes loaded\n");
 		}
 
 		public void LoadBSDXResourcesTable()
 		{
-			string sCommandText = "BSDX RESOURCES^" + m_ConnectInfo.DUZ;
-			ConnectInfo.RPMSDataTable(sCommandText, "Resources", m_dsGlobal);
+			string sCommandText = "BSDX RESOURCES^" + RemoteSession.User.Duz;
+            RemoteSession.TableFromCommand(sCommandText, m_dsGlobal, "Resources");
 			Debug.Write("LoadGlobalRecordsets -- Resources loaded\n");
 		}
 		
@@ -808,8 +915,8 @@ namespace IndianHealthService.ClinicalScheduling
 			//Table "ResourceGroup" contains all resource group names
 			//to which user has access
 			//Fields are: RESOURCE_GROUPID, RESOURCE_GROUP
-			string sCommandText = "BSDX RESOURCE GROUPS BY USER^" + m_ConnectInfo.DUZ;
-			ConnectInfo.RPMSDataTable(sCommandText, "ResourceGroup", m_dsGlobal);
+			string sCommandText = "BSDX RESOURCE GROUPS BY USER^" + RemoteSession.User.Duz;
+            RemoteSession.TableFromCommand(sCommandText, m_dsGlobal, "ResourceGroup");
 			Debug.Write("LoadGlobalRecordsets -- ResourceGroup loaded\n");
 		}
 
@@ -820,8 +927,8 @@ namespace IndianHealthService.ClinicalScheduling
 			//If user has BSDXZMGR or XUPROGMODE keys, then ALL Group/Resource combinstions
 			//are returned.
 			//Fields are: RESOURCE_GROUPID, RESOURCE_GROUP, RESOURCE_GROUP_ITEMID, RESOURCE_NAME, RESOURCE_ID
-			string sCommandText = "BSDX GROUP RESOURCE^" + m_ConnectInfo.DUZ;
-			ConnectInfo.RPMSDataTable(sCommandText, "GroupResources", m_dsGlobal);
+			string sCommandText = "BSDX GROUP RESOURCE^" + RemoteSession.User.Duz;
+            RemoteSession.TableFromCommand(sCommandText, m_dsGlobal, "GroupResources");
 			Debug.Write("LoadGlobalRecordsets -- GroupResources loaded\n");
 		}
 
@@ -830,7 +937,7 @@ namespace IndianHealthService.ClinicalScheduling
 			//Table "ScheduleUser" contains an entry for each user in File 200 (NEW PERSON)
 			//who possesses the BSDXZMENU security key.
 			string sCommandText = "BSDX SCHEDULE USER";
-			ConnectInfo.RPMSDataTable(sCommandText, "ScheduleUser", m_dsGlobal);
+            RemoteSession.TableFromCommand(sCommandText, m_dsGlobal, "ScheduleUser");
 			Debug.Write("LoadGlobalRecordsets -- ScheduleUser loaded\n");
 		}
 
@@ -849,10 +956,10 @@ namespace IndianHealthService.ClinicalScheduling
             
             if (!bAllUsers)
             {
-                sCommandText += String.Format(" WHERE INTERNAL[USERNAME] = {0}", m_ConnectInfo.DUZ);
+                sCommandText += String.Format(" WHERE INTERNAL[USERNAME] = {0}", RemoteSession.User.Duz);
             }
 
-			ConnectInfo.RPMSDataTable(sCommandText, "ResourceUser", m_dsGlobal);
+            RemoteSession.TableFromSQL(sCommandText, m_dsGlobal, "ResourceUser");
 			Debug.Write("LoadGlobalRecordsets -- ResourceUser loaded\n");
 		}
 
@@ -967,9 +1074,9 @@ namespace IndianHealthService.ClinicalScheduling
 			//If no documents left, then close RPMS connection & exit the application
 			if ((Views.Count == 0)&&(this.AvailabilityViews.Count == 0)&&(m_bExitOK == true))
 			{
-				m_ConnectInfo.EventPollingEnabled = false;
-				m_ConnectInfo.UnSubscribeEvent("BSDX SCHEDULE");
-				m_ConnectInfo.CloseConnection();
+				RemoteSession.EventServices.IsEventPollingEnabled = false;
+				RemoteSession.EventServices.Unsubscribe("BSDX SCHEDULE");
+                RemoteSession.Close();
 				Application.Exit();
 			}
 		}
@@ -982,7 +1089,7 @@ namespace IndianHealthService.ClinicalScheduling
 			//If no documents left, then close RPMS connection & exit the application
 			if ((Views.Count == 0)&&(this.AvailabilityViews.Count == 0)&&(m_bExitOK == true))
 			{
-				m_ConnectInfo.bmxNetLib.CloseConnection();
+                RemoteSession.Close();
 				Application.Exit();
 			}
 		}
@@ -1122,9 +1229,9 @@ namespace IndianHealthService.ClinicalScheduling
                 m_bExitOK = true;
                 
                 //Used in Do loop
-                bool bRetry = true;
+                //bool bRetry = true;
 				
-                // Do Loop to deal with changing the server and the vagaries of user choices.
+                /*// Do Loop to deal with changing the server and the vagaries of user choices.
 				do
 				{
 					try
@@ -1133,7 +1240,8 @@ namespace IndianHealthService.ClinicalScheduling
                         //It only changes the saved server information in the %APPDATA% folder
                         //so it can be re-used when BMX tries to log in again.
                         //Access and Verify code are prompted for in InitializeApp
-						m_ConnectInfo.ChangeServerInfo();
+                        LoginProcess login = this.WinFramework.CreateLoginProcess();
+                        login.AttemptUserInputLogin("ReLog-in", 3, true, null);
 						bRetry = false;
 					}
 					catch (Exception ex)
@@ -1156,7 +1264,8 @@ namespace IndianHealthService.ClinicalScheduling
 						}
 					}
 				} while (bRetry == true);
-
+                */
+                
                 //Parameter for initialize app tells it that this is a re-login and forces a new access and verify code.
                 bool isEverythingOkay = this.InitializeApp(true);
 
@@ -1193,7 +1302,10 @@ namespace IndianHealthService.ClinicalScheduling
         /// <param name="e">not used</param>
 		private void mnuRPMSLogin_Click(object sender, EventArgs e)
 		{
-			//Warn that changing login will close all schedules
+            mnuRPMSServer_Click(sender, e);
+            
+            /* v 1.7 to support BMX 4 -- commented out -- smh
+            //Warn that changing login will close all schedules
 			if (MessageBox.Show("Are you sure you want to close all schedules and login to VistA?", "Clinical Scheduling", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning) != DialogResult.OK)
 				return;
 
@@ -1205,6 +1317,24 @@ namespace IndianHealthService.ClinicalScheduling
 				m_bExitOK = false;
 				CloseAll();
 				m_bExitOK = true;
+
+                LoginProcess login = this.WinFramework.CreateLoginProcess();
+                login.AttemptUserInputLogin("Clincal Scheduling", 3, true, null);
+                //m_ConnectInfo.bmxNetLib.StartLog();    //This line turns on logging of messages
+
+                if (!login.WasSuccessful)
+                {
+                    return;
+                }
+
+                LocalSession local = this.WinFramework.LocalSession;
+
+                if ((this.WinFramework.Context.User.Division == null) && !this.WinFramework.AttemptUserInputSetDivision("Set Initial Division", null))
+                {
+                    return;
+                }
+
+                this.RemoteSession = this.WinFramework.PrimaryRemoteSession;
 
                 //Parameter for initialize app tells it that this is a re-login and forces a new access and verify code.
                 bool isEverythingOkay = this.InitializeApp(true);
@@ -1232,7 +1362,7 @@ namespace IndianHealthService.ClinicalScheduling
 			{
 				throw ex;
 			}
-	
+	        */
 		}
 
 		delegate void CloseAllDelegate(string sMsg);
@@ -1289,9 +1419,11 @@ namespace IndianHealthService.ClinicalScheduling
 			try
 			{
 				//System.IntPtr pHandle = this.Handle;
-				RPMSDataTableDelegate rdtd = new RPMSDataTableDelegate(ConnectInfo.RPMSDataTable);
+				RPMSDataTableDelegate rdtd = new RPMSDataTableDelegate(RemoteSession.TableFromCommand);
 				//dtOut = (DataTable) this.Invoke(rdtd, new object[] {sSQL, sTableName});
-                dtOut = rdtd.Invoke(sSQL, sTableName);
+                dtOut = RemoteSession.TableFromCommand(sSQL);
+                dtOut.TableName = sTableName;
+
 			}
 
 			catch (Exception ex)
@@ -1306,7 +1438,10 @@ namespace IndianHealthService.ClinicalScheduling
 
 		public void ChangeDivision(System.Windows.Forms.Form frmCaller)
 		{
-			this.ConnectInfo.ChangeDivision(frmCaller);
+            WinFramework.AttemptUserInputSetDivision("Change Division", frmCaller);
+
+            RemoteSession = WinFramework.PrimaryRemoteSession;
+
 			foreach (CGView v in _views.Keys)
 			{
 				v.InitializeDocView(v.Document.DocName);
