@@ -1,5 +1,5 @@
 BSDX08	; VW/UJO/SMH - WINDOWS SCHEDULING RPCS ; 7/5/12 12:39pm
-	;;1.7T1;BSDX;;Aug 31, 2011;Build 18
+	;;1.7T1;BSDX;;Jul 06, 2012;Build 18
 	; 
 	; Original by HMW. New Written by Sam Habiel. Licensed under LGPL.
 	; 
@@ -151,7 +151,7 @@ BSDXCAN(BSDXAPTID)	; $$; Private; Cancel BSDX APPOINTMENT entry
 	I $D(BSDXMSG) Q 1_U_BSDXMSG("DIERR",1,"TEXT",1)
 	QUIT 0
 	;
-ROLLBACK(BSDXAPTID)  ; Proc; Private; Rollback cancellation
+ROLLBACK(BSDXAPTID)	 ; Proc; Private; Rollback cancellation
 	; Input same as $$BSDXCAN
 	N BSDXIENS S BSDXIENS=BSDXAPTID_","
 	N BSDXFDA S BSDXFDA(9002018.4,BSDXIENS,.12)="@"

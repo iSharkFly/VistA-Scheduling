@@ -1,5 +1,5 @@
-BSDXAPI	; IHS/LJF,HMW,MAW & VEN/SMH - SCHEDULING APIs ; 7/5/12 12:52pm
-	;;1.7T1;BSDX;;Aug 31, 2011;Build 18
+BSDXAPI	; IHS/LJF,HMW,MAW & VEN/SMH - SCHEDULING APIs ; 7/6/12 10:24am
+	;;1.7T1;BSDX;;Jul 06, 2012;Build 18
 	; Licensed under LGPL  
 	;
 	; Orignal routine is BSDAPI by IHS/LJF, HMW, and MAW
@@ -111,7 +111,7 @@ MAKE(BSDR)	;PEP; call to store appt made
 	S:$G(BSDXSIMERR5) X=1/0
 	;
 	; Update the Availablilities ; Doesn't fail. Global reads and sets.
-	D AVUPDTMK^BSDXAPI1(BSDR("CLN"),BSDR("ADT"),BSDR("LEN"))
+	D AVUPDTMK^BSDXAPI1(BSDR("CLN"),BSDR("ADT"),BSDR("LEN"),BSDR("PAT"))
 	;
 	; call event driver
 	NEW DFN,SDT,SDCL,SDDA,SDMODE
@@ -120,7 +120,7 @@ MAKE(BSDR)	;PEP; call to store appt made
 	D MAKE^SDAMEVT(DFN,SDT,SDCL,SDDA,SDMODE)
 	Q 0
 	;
-MAKECK(BSDR) ; $$ - Is it okay to make an appointment? ; PEP
+MAKECK(BSDR)	; $$ - Is it okay to make an appointment? ; PEP
 	; Input: Same as $$MAKE
 	; Output: 1^error or 0 for success
 	; NB: This subroutine saves no data. Only checks whether it's okay.
@@ -150,7 +150,7 @@ MAKECK(BSDR) ; $$ - Is it okay to make an appointment? ; PEP
 	. . S BSDXERR=BSDXERR_$C(13,10)_"Scheduling GUI clinic: "_BSDXRESNAM ; tell the user of the BSDX clinic
 	Q 0
 	;
-UNMAKE(BSDR) ; Reverse Make - Private $$
+UNMAKE(BSDR)	; Reverse Make - Private $$
 	; Only used in Emergiencies where Fileman data filing fails.
 	; If previous data exists, which caused an error, it's destroyed.
 	; NB: ^DIK stops for nobody
@@ -255,7 +255,7 @@ CHECKIC1(DFN,CLIN,APDATE)	; Simplified PEP w/ parameters for $$CHECKICK -
 	S BSDR("USR")=DUZ          ;Check-in user defaults to current
 	Q $$CHECKICK(.BSDR)
 	;
-CHECKICK(BSDR) ; $$ PEP; - Is it okay to check-in patient?
+CHECKICK(BSDR)	; $$ PEP; - Is it okay to check-in patient?
 	; Input: Same as $$CHECKIN
 	; Output: 0 if okay or 1^message if error
 	;
@@ -370,7 +370,7 @@ CANCEL(BSDR)	;PEP; called to cancel appt
 	;
 	Q 0
 	;
-CANCELCK(BSDR) ; $$ PEP; Okay to Cancel Appointment?
+CANCELCK(BSDR)	; $$ PEP; Okay to Cancel Appointment?
 	; Input: .BSDR array as documented in $$CANCEL
 	; Output: 0 or 1^Error message
 	I '$D(^DPT(+$G(BSDR("PAT")),0)) Q 1_U_"Patient not on file: "_$G(BSDR("PAT"))
@@ -385,12 +385,23 @@ CANCELCK(BSDR) ; $$ PEP; Okay to Cancel Appointment?
 	;
 	NEW IEN S IEN=$$SCIEN(BSDR("PAT"),BSDR("CLN"),BSDR("ADT"))
 	I 'IEN Q 1_U_"Error trying to find appointment for cancel: Patient="_BSDR("PAT")_" Clinic="_BSDR("CLN")_" Appt="_BSDR("ADT")
+	;
+	; Check-out check. New in v1.7
+	I $$CO(BSDR("PAT"),BSDR("CLN"),BSDR("ADT"),IEN) Q 1_U_"Cannot delete. Appointment has already been checked-out!"
 	Q 0
+	;
 CI(PAT,CLINIC,DATE,SDIEN)	;PEP; -- returns 1 if appt already checked-in
 	NEW X
 	S X=$G(SDIEN)   ;ien sent in call
 	I 'X S X=$$SCIEN(PAT,CLINIC,DATE) I 'X Q 0
 	S X=$P($G(^SC(CLINIC,"S",DATE,1,X,"C")),U)
+	Q $S(X:1,1:0)
+	;
+CO(PAT,CLINIC,DATE,SDIEN)	;PEP; -- returns 1 if appt already checked-out
+	NEW X
+	S X=$G(SDIEN)   ;ien sent in call
+	I 'X S X=$$SCIEN(PAT,CLINIC,DATE) I 'X Q 0
+	S X=$P($G(^SC(CLINIC,"S",DATE,1,X,"C")),U,3)
 	Q $S(X:1,1:0)
 	;
 SCIEN(PAT,CLINIC,DATE)	;PEP; returns ien for appt in ^SC
@@ -400,7 +411,7 @@ SCIEN(PAT,CLINIC,DATE)	;PEP; returns ien for appt in ^SC
 	 . I +$G(^SC(CLINIC,"S",DATE,1,X,0))=PAT S IEN=X
 	Q $G(IEN)
 	;
-APPLEN(PAT,CLINIC,DATE) ; $$ PEP; returns an appointment's length
+APPLEN(PAT,CLINIC,DATE)	; $$ PEP; returns an appointment's length
 	; Get either the appointment length or zero
 	; TODO: Test
 	N SCIEN S SCIEN=$$SCIEN(PAT,CLINIC,DATE)
@@ -409,13 +420,6 @@ APPLEN(PAT,CLINIC,DATE) ; $$ PEP; returns an appointment's length
 APPTYP(PAT,DATE)	;PEP; -- returns type of appt (scheduled or walk-in)
 	NEW X S X=$P($G(^DPT(PAT,"S",DATE,0)),U,7)
 	Q $S(X=3:"SCHED",X=4:"WALK-IN",1:"??")
-	;
-CO(PAT,CLINIC,DATE,SDIEN)	;PEP; -- returns 1 if appt already checked-out
-	NEW X
-	S X=$G(SDIEN)   ;ien sent in call
-	I 'X S X=$$SCIEN(PAT,CLINIC,DATE) I 'X Q 0
-	S X=$P($G(^SC(CLINIC,"S",DATE,1,X,"C")),U,3)
-	Q $S(X:1,1:0)
 	;
 UPDATENT(PAT,CLINIC,DATE,NOTE)	; PEP; Update Note in ^SC for patient's appointment @ DATE
 	; PAT = DFN

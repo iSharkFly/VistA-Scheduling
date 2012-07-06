@@ -1,5 +1,5 @@
 BSDX26	 ; IHS/OIT/HMW - WINDOWS SCHEDULING RPCS ; 6/25/12 4:29pm
-	;;1.7T1;BSDX;;Aug 31, 2011;Build 18
+	;;1.7T1;BSDX;;Jul 06, 2012;Build 18
 	; Licensed under LGPL
 	; Change History:
 	; 3101023 - UJO/SMH - Addition of restartable transaction; relocation of tx.
@@ -86,7 +86,7 @@ EDITAPT(BSDXY,BSDXAPTID,BSDXNOTE)	  ;EP Edit appointment (only note text can be 
 	K ^TMP($J) ; Done; remove TMP data
 	QUIT
 	;
-ROLLBACK(BSDXAPTID) ; Rollback note to original in ^BSDXAPPT
+ROLLBACK(BSDXAPTID)	; Rollback note to original in ^BSDXAPPT
 	M ^BSDXAPPT(BSDXAPTID)=^TMP($J,"BEFORE","BSDXAPPT")
 	K ^TMP($J)
 	QUIT

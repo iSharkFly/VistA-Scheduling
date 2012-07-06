@@ -1,5 +1,5 @@
-BSDXGPRV	; WV/SMH - WINDOWS SCHEDULING RPCS ; 4/28/11 10:31am
-	;;1.6T2;BSDX;;May 16, 2011
+BSDXGPRV	; WV/SMH - WINDOWS SCHEDULING RPCS ; 7/6/12 11:07am
+	;;1.7T1;BSDX;;Jul 06, 2012;Build 18
 	; Licensed under LGPL  
 	;
 	;
@@ -17,7 +17,7 @@ ERR(BSDXERR)	;Error processing
 	;
 PD(BSDXY,HLIEN)	;EP Debugging entry point
 	;
-	D DEBUG^%Serenji("P^BSDXGPRV(.BSDXY,HLIEN)","192.168.254.130")
+	;D DEBUG^%Serenji("P^BSDXGPRV(.BSDXY,HLIEN)","192.168.254.130")
 	;
 	Q
 	;
@@ -32,7 +32,7 @@ P(BSDXY,HLIEN)	; Public Entry point; Get Providers for Hosp Location
 	;
 	S BSDXI=0
 	I '$D(^SC(HLIEN,0)) D ERR("HOSPITAL LOCATION NOT FOUND") QUIT
-	D ^XBKVAR 
+	D ^XBKVAR
 	N $ET S $ET="G ERROR^BSDXGPRV"
 	K ^BSDXTMP($J)
 	S BSDXY=$NA(^BSDXTMP($J))

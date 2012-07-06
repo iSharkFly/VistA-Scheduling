@@ -1,11 +1,11 @@
-BSDXUT2 ; VEN/SMH - Unit Tests for Scheduling GUI - cont. ; 7/5/12 11:39am
-	;;1.7T1;BSDX;;Aug 31, 2011;Build 18
+BSDXUT2	; VEN/SMH - Unit Tests for Scheduling GUI - cont. ; 7/5/12 11:39am
+	;;1.7T1;BSDX;;Jul 06, 2012;Build 18
 	;
 EN	; Run all unit tests in this routine
 	D UT25
 	QUIT
 	;
-UT25 ; Unit Tests for BSDX25
+UT25	; Unit Tests for BSDX25
 	; Make appointment, checkin, then uncheckin
 	N $ET S $ET="W ""An Error Occured. Breaking."",! BREAK"
 	N RESNAM S RESNAM="UTCLINIC"

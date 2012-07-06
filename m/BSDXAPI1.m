@@ -1,5 +1,5 @@
-BSDXAPI1 ; VEN/SMH - SCHEDULING APIs - Continued!!! ; 7/5/12 12:55pm
-	;;1.7T1;BSDX;;Aug 31, 2011;Build 18
+BSDXAPI1	; VEN/SMH - SCHEDULING APIs - Continued!!! ; 7/6/12 10:23am
+	;;1.7T1;BSDX;;Jul 06, 2012;Build 18
 	; Licensed under LGPL  
 	;
 	; Change History (BSDXAPI and BSDXAPI1)
@@ -49,7 +49,7 @@ BSDXAPI1 ; VEN/SMH - SCHEDULING APIs - Continued!!! ; 7/5/12 12:55pm
 	; belong to PIMS, not to the Scheduling GUI. $$MAKE and $$CANCEL now
 	; call the EPs here.
 	;
-NOSHOW(PAT,CLINIC,DATE,NSFLAG) ; $$ PEP; No-show Patient at appt date (new in v1.7)
+NOSHOW(PAT,CLINIC,DATE,NSFLAG)	; $$ PEP; No-show Patient at appt date (new in v1.7)
 	; PAT = DFN
 	; CLINIC = SC IEN
 	; DATE = FM Date/Time of Appointment
@@ -96,7 +96,7 @@ NOSHOW(PAT,CLINIC,DATE,NSFLAG) ; $$ PEP; No-show Patient at appt date (new in v1
 	D NOSHOW^SDAMEVT(.SDATA,PAT,DATE,CLINIC,SDDA,0,SDNSHDL)
 	Q 0
 	;
-NOSHOWCK(PAT,CLINIC,DATE,NSFLAG) ; $$ PEP; No-show Check
+NOSHOWCK(PAT,CLINIC,DATE,NSFLAG)	; $$ PEP; No-show Check
 	; TODO: Not all appointments can be no showed.
 	; Check the code in SDAMN 
 	; S SDSTB=$$STATUS^SDAM1(DFN,SDT,SDCL,$G(^DPT(DFN,"S",SDT,0))) ; before status  
@@ -242,7 +242,7 @@ AVUPDTCN(BSDXSCD,BSDXSTART,BSDXLEN)	;Update PIMS Clinic availability for cancel
 	S ^SC(BSDXSCD,"ST",SD\1,1)=S  ; new pattern; global set
 	Q
 	;
-AVUPDTMK(BSDXSCD,BSDXSTART,BSDXLEN) ; Update RPMS Clinic availability for Make
+AVUPDTMK(BSDXSCD,BSDXSTART,BSDXLEN,BSDXPATID)	; Update RPMS Clinic availability for Make
 	;SEE SDM1
 	N Y,DFN
 	N SL,STARTDAY,X,SC,SB,HSI,SI,STR,SDDIF,SDMAX,SDDATE,SDDMAX,SDSDATE,CCXN,MXOK,COV,SDPROG
@@ -254,7 +254,7 @@ AVUPDTMK(BSDXSCD,BSDXSTART,BSDXLEN) ; Update RPMS Clinic availability for Make
 	S (SDMAX,SDDMAX)=$$FMADD^XLFDT(DT,SDMAX(1))
 	S SDDATE=BSDXSTART
 	S SDSDATE=SDDATE,SDDATE=SDDATE\1
-1 ;L  Q:$D(SDXXX)  S CCXN=0 K MXOK,COV,SDPROT Q:DFN<0  S SC=+SC
+1	;L  Q:$D(SDXXX)  S CCXN=0 K MXOK,COV,SDPROT Q:DFN<0  S SC=+SC
 	Q:$D(SDXXX)  S CCXN=0 K MXOK,COV,SDPROT Q:DFN<0  S SC=+SC
 	S X1=DT,SDEDT=365 S:$D(^SC(SC,"SDP")) SDEDT=$P(^SC(SC,"SDP"),"^",2)
 	S X2=SDEDT D C^%DTC S SDEDT=X

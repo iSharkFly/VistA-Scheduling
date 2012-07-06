@@ -1,5 +1,5 @@
 BSDX07	; VW/UJO/SMH - WINDOWS SCHEDULING RPCS  ; 7/5/12 12:57pm
-	;;1.7T1;BSDX;;Aug 31, 2011;Build 18
+	;;1.7T1;BSDX;;Jul 06, 2012;Build 18
 	; Licensed under LGPL
 	;
 	; Change Log:
@@ -65,11 +65,11 @@ APPADD(BSDXY,BSDXSTART,BSDXEND,BSDXPATID,BSDXRES,BSDXLEN,BSDXNOTE,BSDXATID,BSDXR
 	;
 	; Deal with optional arguments
 	S BSDXRADEXAM=$G(BSDXRADEXAM)
-    ;
+	   ;
 	; Return Array; set Return and clear array
 	S BSDXY=$NA(^BSDXTMP($J))
 	K ^BSDXTMP($J)
-    ;
+	   ;
 	; $ET
 	N $ET S $ET="G ETRAP^BSDX07"
 	;
@@ -237,7 +237,7 @@ ADDEVT3(BSDXRES)	   ;
 	D EVENT^BMXMEVN("BSDX SCHEDULE",BSDXRESN)
 	Q
 	;
-ROLLBACK(BSDXAPPTID,BSDXC) ; Private EP; Roll back appointment set
+ROLLBACK(BSDXAPPTID,BSDXC)	; Private EP; Roll back appointment set
 	; DO NOT USE except as an emergency measure - only if unforseen error occurs
 	; Input: 
 	; Appointment ID to remove from ^BSDXAPPT

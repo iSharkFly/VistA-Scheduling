@@ -1,5 +1,5 @@
 BSDX31	 ; IHS/OIT/HMW - WINDOWS SCHEDULING RPCS ; 6/27/12 4:57pm
-	;;1.7T1;BSDX;;Aug 31, 2011;Build 18
+	;;1.7T1;BSDX;;Jul 06, 2012;Build 18
 	; Licensed under LGPL
 	; Change Log:
 	; v1.42 3101023 WV/SMH - Change transaction to restartable. 
@@ -120,7 +120,7 @@ NOSHOW(BSDXY,BSDXAPTID,BSDXNS)	        ;EP - No show a patient
 	S ^BSDXTMP($J,BSDXI)=$C(31)
 	QUIT
 	;
-BSDXNOS(BSDXAPTID,BSDXNS) ; $$ Private; File/unfile noshow in ^BSDXAPPT
+BSDXNOS(BSDXAPTID,BSDXNS)	; $$ Private; File/unfile noshow in ^BSDXAPPT
 	; in v1.7 I delete the no-show value rather than file zero
 	N BSDXFDA,BSDXIENS,BSDXMSG
 	N BSDXVALUE ; What to file: 1 or delete it.

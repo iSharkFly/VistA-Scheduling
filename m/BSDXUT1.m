@@ -1,5 +1,5 @@
-BSDXUT1 ; VEN/SMH - Unit Tests for Scheduling GUI - cont. ; 7/3/12 12:28pm
-	;;1.7T1;BSDX;;Aug 31, 2011;Build 18
+BSDXUT1	; VEN/SMH - Unit Tests for Scheduling GUI - cont. ; 7/3/12 12:28pm
+	;;1.7T1;BSDX;;Jul 06, 2012;Build 18
 	;
 	;
 EN	; Run All Unit Tests in this routine
@@ -144,7 +144,7 @@ UT08	; Unit Tests for BSDX08; Must have patients 1,2,3,4,5 defined in system
 	I $P(^BSDXTMP($J,1),$C(30))'="" W "Error in test 6",!
 	QUIT
 	;
-UT29 ; Unit Test for BSDX29
+UT29	; Unit Test for BSDX29
 	; HLs/Resources are created as part of the UT
 	; Patients 1,2,3,4,5 must exist
 	;
@@ -338,7 +338,7 @@ UT26	; Unit Tests - BSDX26
 	I $P(^SC(HLIEN,"S",APPTTIME,1,1,0),U,4)'=ORIGNOTE W "ERROR 4",!
 	QUIT
 	;
-UT31 ; Unit Tests for BSDX31
+UT31	; Unit Tests for BSDX31
 	; Set-up - Create Clinics
 	N RESNAM S RESNAM="UTCLINIC"
 	N HLRESIENS ; holds output of UTCR^BSDXUT - HL IEN^Resource IEN

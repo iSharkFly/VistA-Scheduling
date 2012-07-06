@@ -1,5 +1,5 @@
-BSDX01	; IHS/OIT/HMW - WINDOWS SCHEDULING RPCS ; 5/16/11 2:46pm
-	;;1.6T2;BSDX;;May 16, 2011
+BSDX01	; IHS/OIT/HMW - WINDOWS SCHEDULING RPCS ; 7/6/12 10:52am
+	;;1.7T1;BSDX;;Jul 06, 2012;Build 18
 	; Licensed under LGPL
 	;
 SUINFOD(BSDXY,BSDXDUZ)	;EP Debugging entry point
@@ -281,44 +281,43 @@ GP(BSDXY,PARAM)	; Get Param - EP
 	QUIT
 	;
 INDIV(BSDXSC)	; PEP - Is ^SC clinic in the same DUZ(2) as user?
-	   ; Input: BSDXSC - Hospital Location IEN
-	   ; Output: True or False
-	   I '+BSDXSC QUIT 1  ;If not tied to clinic, yes
-	   I '$D(^SC(BSDXSC,0)) QUIT 1 ; If Clinic does not exist, yes
-	   ; Jump to Division:Medical Center Division:Inst File Pointer for
-	   ; Institution IEN (and get its internal value)
-	   N DIV S DIV=$$GET1^DIQ(44,BSDXSC_",","3.5:.07","I")
-	   I DIV="" Q 1 ; If clinic has no division, consider it avial to user.
-	   I DIV=DUZ(2) Q 1 ; If same, then User is in same Div as Clinic
-	   E  Q 0 ; Otherwise, no
-	   QUIT
+	; Input: BSDXSC - Hospital Location IEN
+	; Output: True or False
+	I '+BSDXSC QUIT 1  ;If not tied to clinic, yes
+	I '$D(^SC(BSDXSC,0)) QUIT 1 ; If Clinic does not exist, yes
+	; Jump to Division:Medical Center Division:Inst File Pointer for
+	; Institution IEN (and get its internal value)
+	N DIV S DIV=$$GET1^DIQ(44,BSDXSC_",","3.5:.07","I")
+	I DIV="" Q 1 ; If clinic has no division, consider it avial to user.
+	I DIV=DUZ(2) Q 1 ; If same, then User is in same Div as Clinic
+	E  Q 0 ; Otherwise, no
 INDIV2(BSDXRES)	; PEP - Is Resource in the same DUZ(2) as user?
-	   ; Input BSDXRES - BSDX RESOURCE IEN
-	   ; Output: True of False
-	   Q $$INDIV($P($G(^BSDXRES(BSDXRES,0)),U,4)) ; Extract Hospital Location and send to $$INDIV
-UnitTestINDIV	
-	   W "Testing if they are the same",!
-	   S DUZ(2)=67
-	   I '$$INDIV(1) W "ERROR",!
-	   I '$$INDIV(2) W "ERROR",!
-	   W "Testing if Div not defined in 44, should be true",!
-	   I '$$INDIV(3) W "ERROR",!
-	   W "Testing empty string. Should be true",!
-	   I '$$INDIV("") W "ERROR",!
-	   W "Testing if they are different",!
-	   S DUZ(2)=899
-	   I $$INDIV(1) W "ERROR",!
-	   I $$INDIV(2) W "ERROR",!
-	   QUIT
-UnitTestINDIV2	
-	   W "Testing if they are the same",!
-	   S DUZ(2)=69
-	   I $$INDIV2(22)'=0 W "ERROR",!
-	   I $$INDIV2(25)'=1 W "ERROR",!
-	   I $$INDIV2(26)'=1 W "ERROR",!
-	   I $$INDIV2(27)'=1 W "ERROR",!
-	   QUIT
-	   ;
+	; Input BSDXRES - BSDX RESOURCE IEN
+	; Output: True of False
+	Q $$INDIV($P($G(^BSDXRES(BSDXRES,0)),U,4)) ; Extract Hospital Location and send to $$INDIV
+UTINDIV	; Unit Test $$INDIV
+	W "Testing if they are the same",!
+	S DUZ(2)=67
+	I '$$INDIV(1) W "ERROR",!
+	I '$$INDIV(2) W "ERROR",!
+	W "Testing if Div not defined in 44, should be true",!
+	I '$$INDIV(3) W "ERROR",!
+	W "Testing empty string. Should be true",!
+	I '$$INDIV("") W "ERROR",!
+	W "Testing if they are different",!
+	S DUZ(2)=899
+	I $$INDIV(1) W "ERROR",!
+	I $$INDIV(2) W "ERROR",!
+	QUIT
+UTINDIV2 ; Unit Test $$INDIV2
+	W "Testing if they are the same",!
+	S DUZ(2)=69
+	I $$INDIV2(22)'=0 W "ERROR",!
+	I $$INDIV2(25)'=1 W "ERROR",!
+	I $$INDIV2(26)'=1 W "ERROR",!
+	I $$INDIV2(27)'=1 W "ERROR",!
+	QUIT
+	;
 GETRADEX(BSDXY,DFN,SCIEN)	; Get All Pending and On Hold Radiology Exams for Patient; RPC EP; UJO/SMH new in v 1.6
 	; RPC: BSDX GET RAD EXAM FOR PT; Return: Global Array
 	;
