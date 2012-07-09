@@ -1,4 +1,4 @@
-BSDX31	 ; IHS/OIT/HMW - WINDOWS SCHEDULING RPCS ; 6/27/12 4:57pm
+BSDX31	 ; IHS/OIT/HMW - WINDOWS SCHEDULING RPCS ; 7/9/12 12:57pm
 	;;1.7T1;BSDX;;Jul 06, 2012;Build 18
 	; Licensed under LGPL
 	; Change Log:
@@ -19,6 +19,7 @@ BSDX31	 ; IHS/OIT/HMW - WINDOWS SCHEDULING RPCS ; 6/27/12 4:57pm
 	; -4: Filing of No-show in ^BSDXAPPT failed
 	; -5: Filing of No-show in ^DPT failed (BSDXAPI error)
 	; -6: Invalid Resource ID
+	; -7: Lock not acquired on ^BSDXAPPT(BSDXAPTID)
 	; -100: M Error
 	;
 	;
@@ -69,6 +70,11 @@ NOSHOW(BSDXY,BSDXAPTID,BSDXNS)	        ;EP - No show a patient
 	I '+BSDXAPTID D ERR(-1,"BSDX31: Invalid Appointment ID") Q
 	I '$D(^BSDXAPPT(BSDXAPTID,0)) D ERR(-2,"BSDX31: Invalid Appointment ID") Q
 	;
+	; Lock BSDX node, only to synchronize access to the globals.
+	; It's not expected that the error will ever happen as no filing
+	; is supposed to take 5 seconds.
+	L +^BSDXAPPT(BSDXAPTID):5 E  D ERR(-7,"BSDX31: Appt record is locked. Please contact technical support.") Q
+	;
 	; Noshow value check - Must be 1 or 0
 	S BSDXNS=+BSDXNS
 	I BSDXNS'=1&(BSDXNS'=0) D ERR(-3,"BSDX31: Invalid No Show value") Q
@@ -112,6 +118,9 @@ NOSHOW(BSDXY,BSDXAPTID,BSDXNS)	        ;EP - No show a patient
 	I BSDXERR D  QUIT
 	. D ERR(-5,"BSDX31: "_$P(BSDXERR,U,2))
 	. N % S %=$$BSDXNOS(BSDXAPTID,'BSDXNS) ; no error checking for filer
+	;
+	; Unlock
+	L -^BSDXAPPT(BSDXAPTID)
 	;
 	; Return data in ADO.net table
 	S BSDXI=BSDXI+1
@@ -176,6 +185,8 @@ NOSEVT3(BSDXRES)	   ;
 	;
 	;
 ERR(BSDXERID,ERRTXT)	   ;Error processing
+	; Unlock first
+	L:$D(BSDXAPTID) -^BSDXAPPT(BSDXAPTID)
 	; If last line is $C(31), we are done. No more errors to send to client.
 	I ^BSDXTMP($J,$O(^BSDXTMP($J," "),-1))=$C(31) QUIT
 	S BSDXI=BSDXI+1
@@ -188,7 +199,7 @@ ERR(BSDXERID,ERRTXT)	   ;Error processing
 ETRAP	  ;EP Error trap entry
 	N $ET S $ET="D ^%ZTER HALT"  ; Emergency Error Trap
 	D ^%ZTER
-	S $EC="" ; Clear Error
+	;
 	I $G(BSDXAPTID),$D(BSDXNS) N % S %=$$BSDXNOS(BSDXAPTID,'BSDXNS) ; Reverse No-Show status (whatever it was)
 	; Send to client
 	I '$D(BSDXI) N BSDXI S BSDXI=0

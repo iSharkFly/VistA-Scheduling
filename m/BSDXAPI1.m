@@ -1,4 +1,4 @@
-BSDXAPI1	; VEN/SMH - SCHEDULING APIs - Continued!!! ; 7/6/12 10:23am
+BSDXAPI1	; VEN/SMH - SCHEDULING APIs - Continued!!! ; 7/9/12 2:22pm
 	;;1.7T1;BSDX;;Jul 06, 2012;Build 18
 	; Licensed under LGPL  
 	;
@@ -48,6 +48,9 @@ BSDXAPI1	; VEN/SMH - SCHEDULING APIs - Continued!!! ; 7/6/12 10:23am
 	; Moved Availability update EPs in BSDX07 and BSDX08 b/c they really
 	; belong to PIMS, not to the Scheduling GUI. $$MAKE and $$CANCEL now
 	; call the EPs here.
+	; Cancel and Remove-Check-in now check to see if the patient is checked-out
+	; If the patient is checked out, then we fail to cancel/no-show.
+	; UPDATENOTE was renamed to UPDATENT and moved to BSDXAPI1.
 	;
 NOSHOW(PAT,CLINIC,DATE,NSFLAG)	; $$ PEP; No-show Patient at appt date (new in v1.7)
 	; PAT = DFN

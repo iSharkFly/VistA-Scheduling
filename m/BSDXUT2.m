@@ -1,8 +1,8 @@
-BSDXUT2	; VEN/SMH - Unit Tests for Scheduling GUI - cont. ; 7/5/12 11:39am
+BSDXUT2	; VEN/SMH - Unit Tests for Scheduling GUI - cont. ; 7/9/12 3:18pm
 	;;1.7T1;BSDX;;Jul 06, 2012;Build 18
 	;
 EN	; Run all unit tests in this routine
-	D UT25
+	D UT25,PIMS
 	QUIT
 	;
 UT25	; Unit Tests for BSDX25
@@ -176,17 +176,35 @@ UT25	; Unit Tests for BSDX25
 	D RMCI^BSDX25(.ZZZ,APPTID)
 	IF +^BSDXTMP($J,1)'=-100 WRITE "ERROR IN Etest 7",!
 	K BSDXDIE
+	QUIT
 	;
-	; Tests for running PIMS by itself.
+PIMS ; Tests for running PIMS by itself.
+	N $ET S $ET="W ""An Error Occured. Breaking."",! BREAK"
+	N RESNAM S RESNAM="UTCLINIC"
+	N HLRESIENS ; holds output of UTCR^BSDXUT - HL IEN^Resource IEN
+	D
+	. N $ET S $ET="D ^%ZTER B"
+	. S HLRESIENS=$$UTCR^BSDXUT(RESNAM)
+	. I HLRESIENS<0 S $EC=",U1," ; not supposed to happen - hard crash if so
+	;
+	N HLIEN,RESIEN
+	S HLIEN=$P(HLRESIENS,U)
+	S RESIEN=$P(HLRESIENS,U,2)
+	;
+	;
 	N APPTTIME S APPTTIME=$$TIMEHL^BSDXUT(HLIEN) ; appt time
 	N DFN S DFN=2
+	;
+	; TEST $$MAKE1^BSDXAPI
 	N % S %=$$MAKE1^BSDXAPI(DFN,HLIEN,3,APPTTIME,15,"Sam Test Appt"_DFN)
 	I % W "Error in $$MAKE1^BSDXAPI for TIME "_APPTTIME_" for DFN "_DFN,!,%,!
 	I '$D(^BSDXAPPT("APAT",DFN,APPTTIME)) W "No BSDX Appointment Created",!
-	;TODO: Index doesn't include resource.
-	N APPTID S APPTID=$O(^(APPTTIME,""))
+	N RESID S RESID=$O(^(APPTTIME,""))
+	N APPTID S APPTID=$O(^(RESID,""))
 	I 'APPTID W "Can't get appointment",!
 	IF $P(^BSDXAPPT(APPTID,0),U,3) WRITE "ERROR IN CHECKIN 3",!
+	;
+	; TEST CHECKIN1 AND RMCI ^BSDXAPI[1]
 	N % S %=$$CHECKIN1^BSDXAPI(DFN,HLIEN,APPTTIME) ; Checkin via PIMS
 	I % W "Error in Checking in via BSDXAPI",!
 	IF '+$G(^SC(HLIEN,"S",APPTTIME,1,1,"C")) WRITE "ERROR IN CHECKIN 10",!
@@ -199,4 +217,49 @@ UT25	; Unit Tests for BSDX25
 	I % W "Error in Checking in via BSDXAPI",!
 	IF '+$G(^SC(HLIEN,"S",APPTTIME,1,1,"C")) WRITE "ERROR IN CHECKIN 14",!
 	IF '$P(^BSDXAPPT(APPTID,0),U,3) WRITE "ERROR IN CHECKIN 15",!
+	;
+	; TEST CANCEL1^BSDXAPI
+	N APPTTIME S APPTTIME=$$TIMEHL^BSDXUT(HLIEN) ; appt time
+	N DFN S DFN=2
+	N % S %=$$MAKE1^BSDXAPI(DFN,HLIEN,3,APPTTIME,15,"Sam Test Appt"_DFN)
+	I % W "Error in $$MAKE1^BSDXAPI for TIME "_APPTTIME_" for DFN "_DFN,!,%,!
+	I '$D(^BSDXAPPT("APAT",DFN,APPTTIME)) W "No BSDX Appointment Created",!
+	N RESID S RESID=$O(^(APPTTIME,""))
+	N APPTID S APPTID=$O(^(RESID,""))
+	I 'APPTID W "Can't get appointment",!
+	N % S %=$$CANCEL1^BSDXAPI(DFN,HLIEN,"PC",APPTTIME,1,"Afraid of Baby Foxes")
+	I % W "Error cancelling via $$CANCEL1^BSDXAPI",!
+	I ^BSDXAPPT(APPTID,0) ; Change $R
+	I '$P(^(0),U,12) W "No cancel date found in BSDXAPPT",!
+	; Make same appointment again!
+	; NB: Index APAT will have two identical entries, one for the cancelled
+	; appointment, and one for the new one. I won't check it for that reason.
+	N % S %=$$MAKE1^BSDXAPI(DFN,HLIEN,3,APPTTIME,15,"Sam Test Appt"_DFN)
+	I % W "Error in $$MAKE1^BSDXAPI for TIME "_APPTTIME_" for DFN "_DFN,!,%,!
+	;
+	; TEST NOSHOW^BSDXAPI1
+	N APPTTIME S APPTTIME=$$TIMEHL^BSDXUT(HLIEN) ; appt time
+	N DFN S DFN=3
+	N % S %=$$MAKE1^BSDXAPI(DFN,HLIEN,3,APPTTIME,15,"Sam Test Appt"_DFN)
+	I % W "Error in $$MAKE1^BSDXAPI for TIME "_APPTTIME_" for DFN "_DFN,!,%,!
+	I '$D(^BSDXAPPT("APAT",DFN,APPTTIME)) W "No BSDX Appointment Created",!
+	N RESID S RESID=$O(^(APPTTIME,""))
+	N APPTID S APPTID=$O(^(RESID,""))
+	I 'APPTID W "Can't get appointment",!
+	; No show via PIMS
+	N % S %=$$NOSHOW^BSDXAPI1(DFN,HLIEN,APPTTIME,1)
+	I % W "Error no-showing via $$NOSHOW^BSDXAPI1",!
+	I ^BSDXAPPT(APPTID,0) ; Change $R
+	I '$P(^(0),U,10) W "No-show not present in ^BSDXAPPT",!
+	; un-noshow via PIMS
+	N % S %=$$NOSHOW^BSDXAPI1(DFN,HLIEN,APPTTIME,0)
+	I % W "Error no-showing via $$NOSHOW^BSDXAPI1",!
+	I ^BSDXAPPT(APPTID,0) ; Change $R
+	I $P(^(0),U,10) W "No-show present in ^BSDXAPPT when it shouldn't",!
+	;
+	; NB: UPDATENT^BSDXAPI is updates the note. Right now, we don't have any
+	; way to update the note from BSDXAPI back to ^BSDXAPPT as the protocol
+	; file is currently not involved. Right now I can't even find the code 
+	; that lets you change an appointment note in PIMS.
+	;
 	QUIT

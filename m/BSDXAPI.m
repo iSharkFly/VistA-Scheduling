@@ -1,4 +1,4 @@
-BSDXAPI	; IHS/LJF,HMW,MAW & VEN/SMH - SCHEDULING APIs ; 7/6/12 10:24am
+BSDXAPI	; IHS/LJF,HMW,MAW & VEN/SMH - SCHEDULING APIs ; 7/9/12 4:00pm
 	;;1.7T1;BSDX;;Jul 06, 2012;Build 18
 	; Licensed under LGPL  
 	;
@@ -154,6 +154,12 @@ UNMAKE(BSDR)	; Reverse Make - Private $$
 	; Only used in Emergiencies where Fileman data filing fails.
 	; If previous data exists, which caused an error, it's destroyed.
 	; NB: ^DIK stops for nobody
+	; TODO: If Patient Appointment previously existed as cancelled, it's removed.
+	; How can I tell if one previously existed when data is in an intermediate
+	; State? Can I restore it if the other file failed? Restoration can cause
+	; another error. If I restore the global, there will be cross-references
+	; missing (ASDCN specifically).
+	;
 	; Input: Same array as $$MAKE
 	; Output: Always 0
 	NEW DIK,DA
@@ -421,23 +427,3 @@ APPTYP(PAT,DATE)	;PEP; -- returns type of appt (scheduled or walk-in)
 	NEW X S X=$P($G(^DPT(PAT,"S",DATE,0)),U,7)
 	Q $S(X=3:"SCHED",X=4:"WALK-IN",1:"??")
 	;
-UPDATENT(PAT,CLINIC,DATE,NOTE)	; PEP; Update Note in ^SC for patient's appointment @ DATE
-	; PAT = DFN
-	; CLINIC = SC IEN
-	; DATE = FM Date/Time of Appointment
-	;
-	; Returns:
-	; 0 if okay
-	; -1 if failure
-	;
-	; ERROR SIMULATION
-	I $G(BSDXSIMERR1) QUIT "-1~Simulated Error"
-	;
-	N SCIEN S SCIEN=$$SCIEN(PAT,CLINIC,DATE) ; ien of appt in ^SC
-	I SCIEN<1 QUIT 0    ; Appt cancelled; cancelled appts rm'ed from file 44
-	N BSDXIENS S BSDXIENS=SCIEN_","_DATE_","_CLINIC_","
-	N BSDXFDA S BSDXFDA(44.003,BSDXIENS,3)=$E(NOTE,1,150)
-	N BSDXERR
-	D FILE^DIE("","BSDXFDA","BSDXERR")
-	I $D(BSDXERR) QUIT "-1~Can't file for Pat "_PAT_" in Clinic "_CLINIC_" at "_DATE_". Fileman reported an error: "_BSDXERR("DIERR",1,"TEXT",1)
-	QUIT 0

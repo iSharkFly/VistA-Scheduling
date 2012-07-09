@@ -1,4 +1,4 @@
-BSDX07	; VW/UJO/SMH - WINDOWS SCHEDULING RPCS  ; 7/5/12 12:57pm
+BSDX07	; VW/UJO/SMH - WINDOWS SCHEDULING RPCS  ; 7/9/12 4:02pm
 	;;1.7T1;BSDX;;Jul 06, 2012;Build 18
 	; Licensed under LGPL
 	;
@@ -31,7 +31,7 @@ APPADDD(BSDXY,BSDXSTART,BSDXEND,BSDXPATID,BSDXRES,BSDXLEN,BSDXNOTE,BSDXATID)	   
 	; D DEBUG^%Serenji("APPADD^BSDX07(.BSDXY,BSDXSTART,BSDXEND,BSDXPATID,BSDXRES,BSDXLEN,BSDXNOTE,BSDXATID)")
 	Q
 	;
-APPADD(BSDXY,BSDXSTART,BSDXEND,BSDXPATID,BSDXRES,BSDXLEN,BSDXNOTE,BSDXATID,BSDXRADEXAM)	;EP
+APPADD(BSDXY,BSDXSTART,BSDXEND,BSDXPATID,BSDXRES,BSDXLEN,BSDXNOTE,BSDXATID,BSDXRADEXAM)	;Private EP
 	;
 	;Called by RPC: BSDX ADD NEW APPOINTMENT
 	;
@@ -57,7 +57,7 @@ APPADD(BSDXY,BSDXSTART,BSDXEND,BSDXPATID,BSDXRES,BSDXLEN,BSDXNOTE,BSDXATID,BSDXR
 	; ADO.net Recordset having fields:
 	; AppointmentID and ErrorNumber
 	;
-	; NB: Specifying BSDXLEN and BSDXEND is redundant. For future programmers
+	; TODO: Specifying BSDXLEN and BSDXEND is redundant. For future programmers
 	; to sort out. Needs changes on client.
 	;
 	;Test lines:
@@ -65,11 +65,11 @@ APPADD(BSDXY,BSDXSTART,BSDXEND,BSDXPATID,BSDXRES,BSDXLEN,BSDXNOTE,BSDXATID,BSDXR
 	;
 	; Deal with optional arguments
 	S BSDXRADEXAM=$G(BSDXRADEXAM)
-	   ;
+	;
 	; Return Array; set Return and clear array
 	S BSDXY=$NA(^BSDXTMP($J))
 	K ^BSDXTMP($J)
-	   ;
+	;
 	; $ET
 	N $ET S $ET="G ETRAP^BSDX07"
 	;
@@ -79,7 +79,7 @@ APPADD(BSDXY,BSDXSTART,BSDXEND,BSDXPATID,BSDXRES,BSDXLEN,BSDXNOTE,BSDXATID,BSDXR
 	; Lock BSDX node, only to synchronize access to the globals.
 	; It's not expected that the error will ever happen as no filing
 	; is supposed to take 5 seconds.
-	L +^BSDXAPPT(BSDXPATID):5 I '$T D ERR(BSDXI,"-1~Patient record is locked. Please contact technical support.") Q
+	L +^BSDXPAT(BSDXPATID):5 I '$T D ERR(BSDXI,"-1~Patient record is locked. Please contact technical support.") Q
 	;
 	; Header Node
 	S ^BSDXTMP($J,BSDXI)="I00020APPOINTMENTID^T00100ERRORID"_$C(30)
@@ -91,8 +91,8 @@ APPADD(BSDXY,BSDXSTART,BSDXEND,BSDXPATID,BSDXRES,BSDXLEN,BSDXNOTE,BSDXATID,BSDXR
 	; Set Error Message to be empty
 	N BSDXERR S BSDXERR=0
 	;
-	;;;test for error inside transaction. See if %ZTER works
-	I $G(BSDXDIE) S X=1/0
+	;;;test for error. See if %ZTER works
+	I $G(BSDXDIE) N X S X=1/0
 	;;;test
 	;
 	; -- Start and End Date Processing --
@@ -131,10 +131,10 @@ APPADD(BSDXY,BSDXSTART,BSDXEND,BSDXPATID,BSDXRES,BSDXLEN,BSDXNOTE,BSDXATID,BSDXR
 	;
 	; Now, check if PIMS has any issues with us making the appt using MAKECK
 	N BSDXSCD S BSDXSCD=$P(BSDXRNOD,U,4)  ; Hosp Location IEN
-	N BSDXERR ; Variable to hold value of $$MAKE and $$MAKECK
+	N BSDXERR S BSDXERR=0 ; Variable to hold value of $$MAKE and $$MAKECK
 	N BSDXC ; Array to send to MAKE and MAKECK APIs
 	; Only if we have a valid Hosp Location
-	I +BSDXSCD,$D(^SC(BSDXSCD,0)) D  I +BSDXERR D ERR(BSDXI,"-10~BSDX07 Error: MAKECK^BSDXAPI returned error code: "_BSDXERR) Q  ; no need for roll back
+	I +BSDXSCD,$D(^SC(BSDXSCD,0)) D 
 	. S BSDXC("PAT")=BSDXPATID
 	. S BSDXC("CLN")=BSDXSCD
 	. S BSDXC("TYP")=3 ;3 for scheduled appts, 4 for walkins
@@ -146,6 +146,7 @@ APPADD(BSDXY,BSDXSTART,BSDXEND,BSDXPATID,BSDXRES,BSDXLEN,BSDXNOTE,BSDXATID,BSDXR
 	. S BSDXC("OI")=$$STRIP(BSDXC("OI")) ;Strip control characters from note
 	. S BSDXC("USR")=DUZ
 	. S BSDXERR=$$MAKECK^BSDXAPI(.BSDXC)
+	I BSDXERR D ERR(BSDXI,"-10~BSDX07 Error: MAKECK^BSDXAPI returned error code: "_BSDXERR) Q  ; no need for roll back
 	;
 	; Done with all checks, let's make appointment in BSDX APPOINTMENT
 	N BSDXAPPTID
@@ -159,12 +160,16 @@ APPADD(BSDXY,BSDXSTART,BSDXEND,BSDXPATID,BSDXRES,BSDXLEN,BSDXNOTE,BSDXATID,BSDXR
 	;
 	; Only if we have a valid Hosp Loc can we make an appointment in 2/44
 	; Use BSDXC array from before.
-	; NB: $$MAKE itself calls $$MAKECK to check again for being okay.
-	I +BSDXSCD,$D(^SC(BSDXSCD,0)) D  I +BSDXERR D ERR(BSDXI,"-10~BSDX07 Error: MAKE^BSDXAPI returned error code: "_BSDXERR),ROLLBACK(BSDXAPPTID,.BSDXC) Q
-	. S BSDXERR=$$MAKE^BSDXAPI(.BSDXC)
+	; FYI: $$MAKE itself calls $$MAKECK to check again for being okay.
+	; If an error happens here, we roll back both ^BSDXAPPT and 2/44 by deleting
+	N BSDXERR S BSDXERR=0 ; Variable to hold value of $$MAKE and $$MAKECK
+	I +BSDXSCD,$D(^SC(BSDXSCD,0)) S BSDXERR=$$MAKE^BSDXAPI(.BSDXC)
+	I BSDXERR D ERR(BSDXI,"-10~BSDX07 Error: MAKE^BSDXAPI returned error code: "_BSDXERR),ROLLBACK(BSDXAPPTID,.BSDXC) Q
+	;
+	; Unlock
+	L -^BSDXPAT(BSDXPATID)
 	;
 	;Return Recordset
-	L -^BSDXAPPT(BSDXPATID)
 	S BSDXI=BSDXI+1
 	S ^BSDXTMP($J,BSDXI)=BSDXAPPTID_"^"_$C(30)
 	S BSDXI=BSDXI+1
@@ -178,7 +183,7 @@ STRIP(BSDXZ)	   ;Replace control characters with spaces
 BSDXADD(BSDXSTART,BSDXEND,BSDXPATID,BSDXRESD,BSDXATID,BSDXRADEXAM)	 ;ADD BSDX APPOINTMENT ENTRY
 	;Returns ien in BSDXAPPT or 0 if failed
 	;Create entry in BSDX APPOINTMENT
-	N BSDXAPPTID
+	N BSDXAPPTID,BSDXFDA
 	S BSDXFDA(9002018.4,"+1,",.01)=BSDXSTART
 	S BSDXFDA(9002018.4,"+1,",.02)=BSDXEND
 	S BSDXFDA(9002018.4,"+1,",.05)=BSDXPATID
@@ -207,7 +212,7 @@ ADDEVT(BSDXPATID,BSDXSTART,BSDXSC,BSDXSCDA)	;EP
 	;BSDXSC=IEN of clinic in ^SC
 	;BSDXSCDA=IEN for ^SC(BSDXSC,"S",BSDXSTART,1,BSDXSCDA). Use to get Length & Note
 	;
-	N BSDXNOD,BSDXLEN,BSDXAPPTID,BSDXNODP,BSDXWKIN,BSDXRES
+	N BSDXNOD,BSDXLEN,BSDXAPPTID,BSDXNODP,BSDXWKIN,BSDXRES,BSDXNOTE,BSDXEND
 	Q:+$G(BSDXNOEV)
 	I $D(^BSDXRES("ALOC",BSDXSC)) S BSDXRES=$O(^BSDXRES("ALOC",BSDXSC,0))
 	E  I $D(^BSDXRES("ASSOC",BSDXSC)) S BSDXRES=$O(^BSDXRES("ASSOC",BSDXSC,0))
@@ -242,8 +247,7 @@ ROLLBACK(BSDXAPPTID,BSDXC)	; Private EP; Roll back appointment set
 	; Input: 
 	; Appointment ID to remove from ^BSDXAPPT
 	; BSDXC array (see array format in $$MAKE^BSDXAPI)
-	; NB: I am not sure whether I want to do $G to protect against undefs?
-	; I send the variables to this EP from the Symbol Table in ETRAP
+	N %
 	D BSDXDEL^BSDX07(BSDXAPPTID)
 	S:$D(BSDXC) %=$$UNMAKE^BSDXAPI(.BSDXC) ; rtn value always 0
 	QUIT
@@ -256,19 +260,23 @@ BSDXDEL(BSDXAPPTID)	;Private EP ; Deletes appointment BSDXAPPTID from ^BSDXAPPT
 	Q
 	;
 ERR(BSDXI,BSDXERR)	 ;Error processing - different from error trap.
+	; Unlock first
+	L -^BSDXPAT(BSDXPATID)
+	; If last line is $C(31), we are done. No more errors to send to client.
+	I ^BSDXTMP($J,$O(^BSDXTMP($J," "),-1))=$C(31) QUIT
 	S BSDXI=BSDXI+1
 	S BSDXERR=$TR(BSDXERR,"^","~")
 	S ^BSDXTMP($J,BSDXI)="0^"_BSDXERR_$C(30)
 	S BSDXI=BSDXI+1
 	S ^BSDXTMP($J,BSDXI)=$C(31)
-	L -^BSDXAPPT(BSDXPATID)
 	Q
 	;
 ETRAP	  ;EP Error trap entry
 	N $ET S $ET="D ^%ZTER HALT"  ; Emergency Error Trap
 	D ^%ZTER
-	S $EC=""  ; Clear Error
+	;
 	I +$G(BSDXAPPTID) D ROLLBACK(BSDXAPPTID,.BSDXC) ; Rollback if BSDXAPPTID exists
+	;
 	; Log error message and send to client
 	I '$D(BSDXI) N BSDXI S BSDXI=0
 	D ERR(BSDXI,"-100~BSDX07 Error: "_$G(%ZTERZE))

@@ -1,4 +1,4 @@
-BSDX26	 ; IHS/OIT/HMW - WINDOWS SCHEDULING RPCS ; 6/25/12 4:29pm
+BSDX26	 ; IHS/OIT/HMW - WINDOWS SCHEDULING RPCS ; 7/9/12 2:19pm
 	;;1.7T1;BSDX;;Jul 06, 2012;Build 18
 	; Licensed under LGPL
 	; Change History:
@@ -7,10 +7,15 @@ BSDX26	 ; IHS/OIT/HMW - WINDOWS SCHEDULING RPCS ; 6/25/12 4:29pm
 	; 3120625 - VEN/SMH - Removal of Transactions, reloation of UTs to BSDXUT1
 	;
 	; Error Reference:
-	; -1: Appt ID is not a number
-	; -2: Appt IEN is not in ^BSDXAPPT
-	; -3: FM Failure to file WP field in ^BSDXAPPT
-	; -4: BSDXAPI reports failure to change note field in ^SC
+	; 1: Appt ID is not a number
+	; 2: Appt IEN is not in ^BSDXAPPT
+	; 3: FM Failure to file WP field in ^BSDXAPPT
+	; 4: BSDXAPI reports failure to change note field in ^SC
+	; 5: Failure to acquire lock on ^BSDXAPPT(APPTID)
+	; 100: Mumps Error
+	; 
+	; NB: Normally I use negative numbers for errors; this routine returns
+	;     -1 as a successful result! So I needed to use +ve numbers.
 	;
 EDITAPTD(BSDXY,BSDXAPTID,BSDXNOTE)	 ;EP
 	;Entry point for debugging
@@ -47,8 +52,13 @@ EDITAPT(BSDXY,BSDXAPTID,BSDXNOTE)	  ;EP Edit appointment (only note text can be 
 	I $G(BSDXDIE) S X=1/0
 	;
 	; Validate Appointment ID
-	I '+BSDXAPTID D ERR(BSDXI,"-1~BSDX26: Invalid Appointment ID") QUIT
-	I '$D(^BSDXAPPT(BSDXAPTID,0)) D ERR(BSDXI,"-2~BSDX26: Invalid Appointment ID") QUIT
+	I '+BSDXAPTID D ERR(BSDXI,"1~BSDX26: Invalid Appointment ID") QUIT
+	I '$D(^BSDXAPPT(BSDXAPTID,0)) D ERR(BSDXI,"2~BSDX26: Invalid Appointment ID") QUIT
+	;
+	; Lock BSDX node, only to synchronize access to the globals.
+	; It's not expected that the error will ever happen as no filing
+	; is supposed to take 5 seconds.
+	L +^BSDXAPPT(BSDXAPTID):5 E  D ERR(BSDXI,"5~BSDX08: Appt record is locked. Please contact technical support.") QUIT
 	;
 	; Put the WP in decendant fields from the root to file as a WP field
 	S BSDXNOTE(.5)=BSDXNOTE,BSDXNOTE=""
@@ -64,7 +74,7 @@ EDITAPT(BSDXY,BSDXAPTID,BSDXNOTE)	  ;EP Edit appointment (only note text can be 
 	. D WP^DIE(9002018.4,BSDXAPTID_",",1,"","BSDXNOTE","BSDXMSG")
 	;
 	; Error handling. No need for rollback since nothing else changed.
-	I $D(BSDXMSG) D ERR(BSDXI,"-3~BSDX26: Fileman failure to file data into 9002018.4") QUIT
+	I $D(BSDXMSG) D ERR(BSDXI,"3~BSDX26: Fileman failure to file data into 9002018.4") QUIT
 	;
 	; Now file in file 44:
 	N PTIEN S PTIEN=$$GET1^DIQ(9002018.4,BSDXAPTID,".05","I") ; Patient IEN
@@ -72,12 +82,13 @@ EDITAPT(BSDXY,BSDXAPTID,BSDXNOTE)	  ;EP Edit appointment (only note text can be 
 	N DATE S DATE=+^BSDXAPPT(BSDXAPTID,0) ; Date of APPT
 	N BSDXRES S BSDXRES=0 ; Result
 	; Update Note only if we have a linked hospital location.
-	I HLIEN S BSDXRES=$$UPDATENT^BSDXAPI(PTIEN,HLIEN,DATE,BSDXNOTE(.5))
+	I HLIEN S BSDXRES=$$UPDATENT^BSDXAPI1(PTIEN,HLIEN,DATE,BSDXNOTE(.5))
 	; If we get an error (denoted by -1 in BSDXRES), return error to client
 	; AND restore the original note
-	I BSDXRES<0 D ERR(BSDXI,"-4~BSDX26: BSDXAPI reports an error: "_BSDXRES),ROLLBACK(BSDXAPTID) QUIT
+	I BSDXRES<0 D ERR(BSDXI,"4~BSDX26: BSDXAPI reports an error: "_BSDXRES),ROLLBACK(BSDXAPTID) QUIT
 	;
 	;Return Recordset indicating success
+	L -^BSDXAPPT(BSDXAPTID)
 	S BSDXI=BSDXI+1
 	S ^BSDXTMP($J,BSDXI)="-1"_$C(30)
 	S BSDXI=BSDXI+1
@@ -92,6 +103,10 @@ ROLLBACK(BSDXAPTID)	; Rollback note to original in ^BSDXAPPT
 	QUIT
 	;
 ERR(BSDXI,BSDXERR)	 ;Error processing
+	; Unlock first
+	L:$D(BSDXAPTID) -^BSDXAPPT(BSDXAPTID)
+	; If last line is $C(31), we are done. No more errors to send to client.
+	I ^BSDXTMP($J,$O(^BSDXTMP($J," "),-1))=$C(31) QUIT
 	S BSDXI=BSDXI+1
 	S BSDXERR=$TR(BSDXERR,"^","~")
 	S ^BSDXTMP($J,BSDXI)=BSDXERR_$C(30)
@@ -102,7 +117,7 @@ ERR(BSDXI,BSDXERR)	 ;Error processing
 ETRAP	  ;EP Error trap entry
 	N $ET S $ET="D ^%ZTER HALT" ; Emergency Error Trap
 	D ^%ZTER
-	S $EC=""
+	;
 	I '$D(BSDXI) N BSDXI S BSDXI=0
-	D ERR(BSDXI,"-100~BSDX26 Error: "_$G(%ZTERZE))
+	D ERR(BSDXI,"100~BSDX26 Error: "_$G(%ZTERZE))
 	QUIT

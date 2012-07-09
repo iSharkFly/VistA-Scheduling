@@ -1,4 +1,4 @@
-BSDX25	; VEN/SMH - WINDOWS SCHEDULING RPCS ; 7/5/12 11:55am
+BSDX25	; VEN/SMH - WINDOWS SCHEDULING RPCS ; 7/9/12 5:00pm
 	;;1.7T1;BSDX;;Jul 06, 2012;Build 18
 	; Licensed under LGPL
 	;
@@ -40,6 +40,7 @@ CHECKIN(BSDXY,BSDXAPPTID,BSDXCDT)	;Private EP Check in appointment
 	; -1 -> Invalid Appointment ID
 	; -2 -> Invalid Check-in Date
 	; -3 -> Cannot check-in due to Fileman Filer failure
+	; -4 -> Cannot lock ^BSDXAPPT(APPTID)
 	; -10 -> BSDXAPI error
 	; -100 -> Mumps Error
 	;
@@ -65,6 +66,11 @@ CHECKIN(BSDXY,BSDXAPPTID,BSDXCDT)	;Private EP Check in appointment
 	;
 	I '+BSDXAPPTID D ERR("-1~Invalid Appointment ID") QUIT
 	I '$D(^BSDXAPPT(BSDXAPPTID,0)) D ERR("-1~Invalid Appointment ID") QUIT
+	;
+	; Lock BSDX node, only to synchronize access to the globals.
+	; It's not expected that the error will ever happen as no filing
+	; is supposed to take 5 seconds.
+	L +^BSDXAPPT(BSDXAPPTID):5 E  D ERR("-4~Appt record is locked. Please contact technical support.") QUIT
 	;
 	; Remove Date formatting v.1.5. Client will send date as FM Date.
 	;S:BSDXCDT["@0000" BSDXCDT=$P(BSDXCDT,"@")
@@ -100,6 +106,7 @@ CHECKIN(BSDXY,BSDXAPPTID,BSDXCDT)	;Private EP Check in appointment
 	. N % S %=$$BSDXCHK(BSDXAPPTID,"@") ; No Error checking to prevent loop.
 	. D ERR(-10_"~"_$P(BSDXERR,U,2)) ; Send error message to client
 	;
+	L -^BSDXAPPT(BSDXAPPTID)
 	S BSDXI=BSDXI+1
 	S ^BSDXTMP($J,BSDXI)="0"_$C(30)
 	S BSDXI=BSDXI+1
@@ -123,7 +130,7 @@ BSDXCHK(BSDXAPPTID,BSDXCDT)	; $$ Private Entry Point. File or delete check-in to
 	Q:$D(BSDXMSG) 1_U_BSDXMSG("DIERR",1,"TEXT",1)
 	Q 0
 	;
-RMCI(BSDXY,BSDXAPPTID)	; EP - Remove Check-in from BSDX APPT and 2/44
+RMCI(BSDXY,BSDXAPPTID)	; Private EP - Remove Check-in from BSDX APPT and 2/44
 	; Called by RPC BSDX REMOVE CHECK-IN
 	; 
 	; Parameters to pass:
@@ -162,6 +169,10 @@ RMCI(BSDXY,BSDXAPPTID)	; EP - Remove Check-in from BSDX APPT and 2/44
 	I '+$G(BSDXAPPTID) D ERR("-1~Invalid Appointment ID") QUIT
 	I '$D(^BSDXAPPT(BSDXAPPTID,0)) D ERR("-2~Invalid Appointment ID") QUIT
 	;
+	; Lock
+	; Timeout not expected to happen except in error conditions.
+	L +^BSDXAPPT(BSDXAPPTID):5 E  D ERR("-7~Appt record is locked. Please contact technical support.") QUIT
+	;
 	; Get appointment Data
 	N BSDXNOD S BSDXNOD=^BSDXAPPT(BSDXAPPTID,0)
 	N BSDXPATID S BSDXPATID=$P(BSDXNOD,U,5) ; DFN
@@ -198,7 +209,10 @@ RMCI(BSDXY,BSDXAPPTID)	; EP - Remove Check-in from BSDX APPT and 2/44
 	I BSDXERR D  QUIT
 	. N % S %=$$BSDXCHK(BSDXAPPTID,BSDXCDT) ; No error checking here.
 	. D ERR("-5~"_$P(BSDXERR,U,2)) ; Send error message to client
-	; 
+	;
+	; Unlock
+	L -^BSDXAPPT(BSDXAPPTID)
+	;
 	; Return ADO recordset
 	S BSDXI=BSDXI+1
 	S ^BSDXTMP($J,BSDXI)="0"_$C(30)
@@ -263,6 +277,8 @@ ERROR	;
 	Q:$Q "-100^Mumps Error" Q
 	;
 ERR(BSDXERR)	;Error processing
+	; Unlock first
+	L:$D(BSDXAPPTID) -^BSDXAPPT(BSDXAPPTID)
 	; If last line is $C(31), we are done. No more errors to send to client.
 	I ^BSDXTMP($J,$O(^BSDXTMP($J," "),-1))=$C(31) QUIT
 	S BSDXERR=$G(BSDXERR)

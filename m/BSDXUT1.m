@@ -1,4 +1,4 @@
-BSDXUT1	; VEN/SMH - Unit Tests for Scheduling GUI - cont. ; 7/3/12 12:28pm
+BSDXUT1	; VEN/SMH - Unit Tests for Scheduling GUI - cont. ; 7/9/12 12:31pm
 	;;1.7T1;BSDX;;Jul 06, 2012;Build 18
 	;
 	;
@@ -265,17 +265,17 @@ UT26	; Unit Tests - BSDX26
 	N ZZZ
 	N NOTE S NOTE="Nothing important"
 	D EDITAPT^BSDX26(.ZZZ,"BLAHBLAH",NOTE)
-	I +^BSDXTMP($J,1)'=-1 W "ERROR IN -1",!
+	I +^BSDXTMP($J,1)'=1 W "ERROR IN -1",!
 	;
 	; Test 3: Test Error -2
 	; -2 --> ApptID not in ^BSDXAPPT
 	D EDITAPT^BSDX26(.ZZZ,298734322,NOTE)
-	I +^BSDXTMP($J,1)'=-2 W "ERROR IN -2",!
+	I +^BSDXTMP($J,1)'=2 W "ERROR IN -2",!
 	;
 	; Test 4: M Error
 	N BSDXDIE S BSDXDIE=1
 	D EDITAPT^BSDX26(.ZZZ,188,NOTE)
-	I +^BSDXTMP($J,1)'=-100 W "ERROR IN -100",!
+	I +^BSDXTMP($J,1)'=100 W "ERROR IN -100",!
 	K BSDXDIE
 	; Test 5: Trestart -- retired in v1.7
 	;
@@ -333,7 +333,7 @@ UT26	; Unit Tests - BSDX26
 	N %H S %H=$H
 	N NOTE S NOTE="New Note "_%H
 	D EDITAPT^BSDX26(.ZZZ,APPID,NOTE)
-	I +^BSDXTMP($J,1)'=-4 W "Simulated error not triggered",!
+	I +^BSDXTMP($J,1)'=4 W "Simulated error not triggered",!
 	I ^BSDXAPPT(APPID,1,1,0)'=ORIGNOTE W "ERROR 3",!
 	I $P(^SC(HLIEN,"S",APPTTIME,1,1,0),U,4)'=ORIGNOTE W "ERROR 4",!
 	QUIT

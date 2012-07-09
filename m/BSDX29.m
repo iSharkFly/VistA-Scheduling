@@ -1,4 +1,4 @@
-BSDX29	; IHS/OIT/HMW - WINDOWS SCHEDULING RPCS ; 6/22/12 1:46pm
+BSDX29	; IHS/OIT/HMW - WINDOWS SCHEDULING RPCS ; 7/9/12 11:50am
 	;;1.7T1;BSDX;;Jul 06, 2012;Build 18
 	; Licensed under LGPL
 	; 
@@ -101,7 +101,6 @@ ZTM	;EP - Taskman entry point
 ZTMERR	; For now, error from TM is only in trap; not returned to client.
 	N $ET S $ET="D ^%ZTER HALT" ; Emergency Error Trap
 	D ^%ZTER
-	S $EC="" ; Clear Error
 	QUIT
 	;
 XFER(BSDXRES,BSDXBEG,BSDXPAT,BSDXLEN,BSDXCLRK,BSDXMADE,BSDXNOTE)	;EP
@@ -152,6 +151,8 @@ XFER(BSDXRES,BSDXBEG,BSDXPAT,BSDXLEN,BSDXCLRK,BSDXMADE,BSDXNOTE)	;EP
 	Q 1
 	;
 ERR(BSDXI,BSDXCNT,BSDXERR)	;Error processing
+	; If last line is $C(31), we are done. No more errors to send to client.
+	I ^BSDXTMP($J,$O(^BSDXTMP($J," "),-1))=$C(31) QUIT
 	S BSDXI=BSDXI+1
 	S BSDXERR=$TR(BSDXERR,"^","~")
 	S ^BSDXTMP($J,BSDXI)=BSDXCNT_"^"_BSDXERR_$C(30)
