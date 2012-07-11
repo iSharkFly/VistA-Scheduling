@@ -1,5 +1,5 @@
 BSDXUT2	; VEN/SMH - Unit Tests for Scheduling GUI - cont. ; 7/9/12 3:18pm
-	;;1.7T1;BSDX;;Jul 06, 2012;Build 18
+	;;1.7T2;BSDX;;Jul 11, 2012;Build 18
 	;
 EN	; Run all unit tests in this routine
 	D UT25,PIMS
@@ -178,7 +178,7 @@ UT25	; Unit Tests for BSDX25
 	K BSDXDIE
 	QUIT
 	;
-PIMS ; Tests for running PIMS by itself.
+PIMS	; Tests for running PIMS by itself.
 	N $ET S $ET="W ""An Error Occured. Breaking."",! BREAK"
 	N RESNAM S RESNAM="UTCLINIC"
 	N HLRESIENS ; holds output of UTCR^BSDXUT - HL IEN^Resource IEN

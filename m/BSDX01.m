@@ -1,5 +1,5 @@
 BSDX01	; IHS/OIT/HMW - WINDOWS SCHEDULING RPCS ; 7/6/12 10:52am
-	;;1.7T1;BSDX;;Jul 06, 2012;Build 18
+	;;1.7T2;BSDX;;Jul 11, 2012;Build 18
 	; Licensed under LGPL
 	;
 SUINFOD(BSDXY,BSDXDUZ)	;EP Debugging entry point
@@ -309,7 +309,7 @@ UTINDIV	; Unit Test $$INDIV
 	I $$INDIV(1) W "ERROR",!
 	I $$INDIV(2) W "ERROR",!
 	QUIT
-UTINDIV2 ; Unit Test $$INDIV2
+UTINDIV2	; Unit Test $$INDIV2
 	W "Testing if they are the same",!
 	S DUZ(2)=69
 	I $$INDIV2(22)'=0 W "ERROR",!

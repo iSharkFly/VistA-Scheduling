@@ -1,5 +1,5 @@
 BSDX08	; VW/UJO/SMH - WINDOWS SCHEDULING RPCS ; 7/9/12 4:22pm
-	;;1.7T1;BSDX;;Jul 06, 2012;Build 18
+	;;1.7T2;BSDX;;Jul 11, 2012;Build 18
 	; 
 	; Original by HMW. New Written by Sam Habiel. Licensed under LGPL.
 	; 

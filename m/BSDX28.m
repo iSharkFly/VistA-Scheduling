@@ -1,5 +1,5 @@
 BSDX28	; IHS/OIT/HMW - WINDOWS SCHEDULING RPCS ; 7/6/12 10:57am
-	;;1.7T1;BSDX;;Jul 06, 2012;Build 18
+	;;1.7T2;BSDX;;Jul 11, 2012;Build 18
 	; Licensed under LGPL
 	; Change Log:
 	; HMW 3050721 Added test for inactivated record
@@ -75,7 +75,7 @@ DOB	;DOB Lookup
 	. . Q
 	. Q
 	;
-CHART ;Chart# Lookup
+CHART	;Chart# Lookup
 	I +DUZ(2),BSDXP]"",$D(^AUPNPAT("D",BSDXP)) D  S BSDXY=BSDXRET_$C(31) Q
 	. S BSDXIEN=0 F  S BSDXIEN=$O(^AUPNPAT("D",BSDXP,BSDXIEN)) Q:'+BSDXIEN  I $D(^AUPNPAT("D",BSDXP,BSDXIEN,DUZ(2))) D  Q
 	. . Q:'$D(^DPT(BSDXIEN,0))

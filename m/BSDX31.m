@@ -1,5 +1,5 @@
 BSDX31	 ; IHS/OIT/HMW - WINDOWS SCHEDULING RPCS ; 7/10/12 10:39am
-	;;1.7T1;BSDX;;Jul 06, 2012;Build 18
+	;;1.7T2;BSDX;;Jul 11, 2012;Build 18
 	; Licensed under LGPL
 	; Change Log:
 	; v1.42 3101023 WV/SMH - Change transaction to restartable. 
