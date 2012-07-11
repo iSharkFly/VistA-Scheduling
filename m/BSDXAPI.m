@@ -1,4 +1,4 @@
-BSDXAPI	; IHS/LJF,HMW,MAW & VEN/SMH - SCHEDULING APIs ; 7/9/12 4:00pm
+BSDXAPI	; IHS/LJF,HMW,MAW & VEN/SMH - SCHEDULING APIs ; 7/10/12 5:58pm
 	;;1.7T1;BSDX;;Jul 06, 2012;Build 18
 	; Licensed under LGPL  
 	;
@@ -154,7 +154,7 @@ UNMAKE(BSDR)	; Reverse Make - Private $$
 	; Only used in Emergiencies where Fileman data filing fails.
 	; If previous data exists, which caused an error, it's destroyed.
 	; NB: ^DIK stops for nobody
-	; TODO: If Patient Appointment previously existed as cancelled, it's removed.
+	; NB: If Patient Appointment previously existed as cancelled, it's removed.
 	; How can I tell if one previously existed when data is in an intermediate
 	; State? Can I restore it if the other file failed? Restoration can cause
 	; another error. If I restore the global, there will be cross-references
@@ -419,7 +419,6 @@ SCIEN(PAT,CLINIC,DATE)	;PEP; returns ien for appt in ^SC
 	;
 APPLEN(PAT,CLINIC,DATE)	; $$ PEP; returns an appointment's length
 	; Get either the appointment length or zero
-	; TODO: Test
 	N SCIEN S SCIEN=$$SCIEN(PAT,CLINIC,DATE)
 	Q:SCIEN $P(^SC(CLINIC,"S",DATE,1,SCIEN,0),U,2)
 	Q 0

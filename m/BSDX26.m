@@ -1,4 +1,4 @@
-BSDX26	 ; IHS/OIT/HMW - WINDOWS SCHEDULING RPCS ; 7/9/12 2:19pm
+BSDX26	 ; IHS/OIT/HMW - WINDOWS SCHEDULING RPCS ; 7/10/12 10:27am
 	;;1.7T1;BSDX;;Jul 06, 2012;Build 18
 	; Licensed under LGPL
 	; Change History:
@@ -70,6 +70,7 @@ EDITAPT(BSDXY,BSDXAPTID,BSDXNOTE)	  ;EP Edit appointment (only note text can be 
 	K ^TMP($J)
 	M ^TMP($J,"BEFORE","BSDXAPPT")=^BSDXAPPT(BSDXAPTID)
 	;
+	; Update note in BSDX APPOINTMENT
 	I $D(BSDXNOTE(.5)) D
 	. D WP^DIE(9002018.4,BSDXAPTID_",",1,"","BSDXNOTE","BSDXMSG")
 	;
@@ -85,7 +86,7 @@ EDITAPT(BSDXY,BSDXAPTID,BSDXNOTE)	  ;EP Edit appointment (only note text can be 
 	I HLIEN S BSDXRES=$$UPDATENT^BSDXAPI1(PTIEN,HLIEN,DATE,BSDXNOTE(.5))
 	; If we get an error (denoted by -1 in BSDXRES), return error to client
 	; AND restore the original note
-	I BSDXRES<0 D ERR(BSDXI,"4~BSDX26: BSDXAPI reports an error: "_BSDXRES),ROLLBACK(BSDXAPTID) QUIT
+	I BSDXRES D ERR(BSDXI,"4~BSDX26: BSDXAPI reports an error: "_BSDXRES),ROLLBACK(BSDXAPTID) QUIT
 	;
 	;Return Recordset indicating success
 	L -^BSDXAPPT(BSDXAPTID)

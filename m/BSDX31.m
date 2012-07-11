@@ -1,4 +1,4 @@
-BSDX31	 ; IHS/OIT/HMW - WINDOWS SCHEDULING RPCS ; 7/9/12 12:57pm
+BSDX31	 ; IHS/OIT/HMW - WINDOWS SCHEDULING RPCS ; 7/10/12 10:39am
 	;;1.7T1;BSDX;;Jul 06, 2012;Build 18
 	; Licensed under LGPL
 	; Change Log:
@@ -200,7 +200,6 @@ ETRAP	  ;EP Error trap entry
 	N $ET S $ET="D ^%ZTER HALT"  ; Emergency Error Trap
 	D ^%ZTER
 	;
-	I $G(BSDXAPTID),$D(BSDXNS) N % S %=$$BSDXNOS(BSDXAPTID,'BSDXNS) ; Reverse No-Show status (whatever it was)
 	; Send to client
 	I '$D(BSDXI) N BSDXI S BSDXI=0
 	D ERR(-100,"BSDX31 Error: "_$G(%ZTERZE))
