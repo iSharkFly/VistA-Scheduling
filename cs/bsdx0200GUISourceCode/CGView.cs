@@ -1626,14 +1626,22 @@ namespace IndianHealthService.ClinicalScheduling
 
         private bool AddAppointmentEnabled()
         {
+            //new in 1.7: If there are no resources in the resource group, just say false.
+            //otherwise, we end up with being able to add appointments to empty resource groups.
+            if (this.Document.Resources.Count == 0)
+                return false;
+
+            //No cells selected for appointment. False.
             if (this.calendarGrid1.SelectedRange.Cells.CellCount < 1)
                 return false;
 
+            //If manager, can always make appointment
             bool bManager = this.DocManager.ScheduleManager;
             if (bManager == true)
             {
                 return (true);
             }
+            // otherwise, check permissions, then check slots.
             else
             {
                 DateTime dStart = DateTime.Today;
