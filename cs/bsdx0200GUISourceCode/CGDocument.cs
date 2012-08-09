@@ -960,7 +960,7 @@ namespace IndianHealthService.ClinicalScheduling
             TimeSpan sp = rApptInfo.EndTime - rApptInfo.StartTime;
             string sLen = sp.TotalMinutes.ToString();
             string sPatID = rApptInfo.PatientID.ToString();
-            string sNote = rApptInfo.Note;
+            string sNote = stripC30C31(rApptInfo.Note);
             string sResource = rApptInfo.Resource;
 
             string sApptID;
@@ -1003,12 +1003,32 @@ namespace IndianHealthService.ClinicalScheduling
             return nApptID;
         }
 
+        /// <summary>
+        /// Replaces ascii 30 and 31 as they are used as delimiters. Funny users can crash the program.
+        /// </summary>
+        /// <param name="s">Input String</param>
+        /// <returns>Output Stripped String</returns>
+        public string stripC30C31(string s)
+        {
+            if (s != null && s.Length > 0)
+            {
+                System.Text.StringBuilder sb = new System.Text.StringBuilder(s.Length);
+                foreach (char c in s)
+                {
+                    sb.Append(((c==30)||(c==31)) ? ' ' : c);
+                }
+                s = sb.ToString();
+            }
+
+            return s;
+        }
+
         public void EditAppointment(CGAppointment pAppt, string sNote)
         {
             try
             {
                 int nApptID = pAppt.AppointmentKey;
-                string sSql = "BSDX EDIT APPOINTMENT^" + nApptID.ToString() + "^" + sNote;
+                string sSql = "BSDX EDIT APPOINTMENT^" + nApptID.ToString() + "^" + stripC30C31(sNote);
 
                 System.Data.DataTable dtAppt = m_DocManager.RPMSDataTable(sSql, "EditAppointment");
 
