@@ -1819,8 +1819,9 @@ namespace IndianHealthService.ClinicalScheduling
 				}
 
 				m_sResourceGroupName = sResGroupName;
+                m_dsGlobal.Tables["GroupResources"].Clear(); //must be cleared first as it has a relationship to ResourceGroup
+                m_dsGlobal.Tables["ResourceGroup"].Clear();
 				m_DocManager.LoadResourceGroupTable();
-				m_dsGlobal.Tables["GroupResources"].Clear();
 				m_DocManager.LoadGroupResourcesTable();
 
 
