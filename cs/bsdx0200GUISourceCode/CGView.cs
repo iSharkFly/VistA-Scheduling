@@ -254,7 +254,6 @@ namespace IndianHealthService.ClinicalScheduling
             this.dateTimePicker1 = new System.Windows.Forms.DateTimePicker();
             this.lblResource = new System.Windows.Forms.Label();
             this.panelCenter = new System.Windows.Forms.Panel();
-            this.calendarGrid1 = new IndianHealthService.ClinicalScheduling.CalendarGrid();
             this.ctxCalendarGrid = new System.Windows.Forms.ContextMenu();
             this.ctxCalGridAdd = new System.Windows.Forms.MenuItem();
             this.ctxCalGridMkRadAppt = new System.Windows.Forms.MenuItem();
@@ -274,6 +273,7 @@ namespace IndianHealthService.ClinicalScheduling
             this.statusBar1 = new System.Windows.Forms.StatusBar();
             this.splitter1 = new System.Windows.Forms.Splitter();
             this.splitter2 = new System.Windows.Forms.Splitter();
+            this.calendarGrid1 = new IndianHealthService.ClinicalScheduling.CalendarGrid();
             this.panelRight.SuspendLayout();
             this.panelClip.SuspendLayout();
             this.panelTop.SuspendLayout();
@@ -715,7 +715,7 @@ namespace IndianHealthService.ClinicalScheduling
             this.tvSchedules.HotTracking = true;
             this.tvSchedules.Location = new System.Drawing.Point(0, 0);
             this.tvSchedules.Name = "tvSchedules";
-            this.tvSchedules.Size = new System.Drawing.Size(128, 389);
+            this.tvSchedules.Size = new System.Drawing.Size(128, 347);
             this.tvSchedules.Sorted = true;
             this.tvSchedules.TabIndex = 1;
             this.tvSchedules.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.tvSchedules_AfterSelect);
@@ -784,7 +784,7 @@ namespace IndianHealthService.ClinicalScheduling
             this.panelRight.Dock = System.Windows.Forms.DockStyle.Right;
             this.panelRight.Location = new System.Drawing.Point(996, 0);
             this.panelRight.Name = "panelRight";
-            this.panelRight.Size = new System.Drawing.Size(128, 389);
+            this.panelRight.Size = new System.Drawing.Size(128, 347);
             this.panelRight.TabIndex = 3;
             this.panelRight.Visible = false;
             // 
@@ -880,7 +880,7 @@ namespace IndianHealthService.ClinicalScheduling
             this.panelCenter.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panelCenter.Location = new System.Drawing.Point(136, 24);
             this.panelCenter.Name = "panelCenter";
-            this.panelCenter.Size = new System.Drawing.Size(857, 341);
+            this.panelCenter.Size = new System.Drawing.Size(857, 299);
             this.panelCenter.TabIndex = 7;
             // 
             // ctxCalendarGrid
@@ -987,7 +987,7 @@ namespace IndianHealthService.ClinicalScheduling
             // 
             this.panelBottom.Controls.Add(this.statusBar1);
             this.panelBottom.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panelBottom.Location = new System.Drawing.Point(136, 365);
+            this.panelBottom.Location = new System.Drawing.Point(136, 323);
             this.panelBottom.Name = "panelBottom";
             this.panelBottom.Size = new System.Drawing.Size(857, 24);
             this.panelBottom.TabIndex = 8;
@@ -1005,7 +1005,7 @@ namespace IndianHealthService.ClinicalScheduling
             // 
             this.splitter1.Location = new System.Drawing.Point(128, 24);
             this.splitter1.Name = "splitter1";
-            this.splitter1.Size = new System.Drawing.Size(8, 365);
+            this.splitter1.Size = new System.Drawing.Size(8, 323);
             this.splitter1.TabIndex = 9;
             this.splitter1.TabStop = false;
             // 
@@ -1014,7 +1014,7 @@ namespace IndianHealthService.ClinicalScheduling
             this.splitter2.Dock = System.Windows.Forms.DockStyle.Right;
             this.splitter2.Location = new System.Drawing.Point(993, 24);
             this.splitter2.Name = "splitter2";
-            this.splitter2.Size = new System.Drawing.Size(3, 365);
+            this.splitter2.Size = new System.Drawing.Size(3, 323);
             this.splitter2.TabIndex = 10;
             this.splitter2.TabStop = false;
             // 
@@ -1037,7 +1037,7 @@ namespace IndianHealthService.ClinicalScheduling
             this.calendarGrid1.Name = "calendarGrid1";
             this.calendarGrid1.Resources = ((System.Collections.ArrayList)(resources.GetObject("calendarGrid1.Resources")));
             this.calendarGrid1.SelectedAppointment = 0;
-            this.calendarGrid1.Size = new System.Drawing.Size(857, 341);
+            this.calendarGrid1.Size = new System.Drawing.Size(857, 299);
             this.calendarGrid1.StartDate = new System.DateTime(2003, 1, 27, 0, 0, 0, 0);
             this.calendarGrid1.TabIndex = 0;
             this.calendarGrid1.TimeScale = 20;
@@ -1050,7 +1050,7 @@ namespace IndianHealthService.ClinicalScheduling
             // CGView
             // 
             this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
-            this.ClientSize = new System.Drawing.Size(1124, 389);
+            this.ClientSize = new System.Drawing.Size(1124, 347);
             this.Controls.Add(this.panelCenter);
             this.Controls.Add(this.panelBottom);
             this.Controls.Add(this.splitter2);
@@ -3454,10 +3454,6 @@ namespace IndianHealthService.ClinicalScheduling
 			try
 			{
 				CGAppointment a = (CGAppointment) e.Data.GetData(typeof(CGAppointment));
-				if (m_ClipList.AppointmentTable.Contains((int) a.AppointmentKey))
-				{
-					return;
-				}
 
                 if (a.RadiologyExamIEN.HasValue)
                 {
@@ -3465,8 +3461,30 @@ namespace IndianHealthService.ClinicalScheduling
                     return;
                 }
 
-				m_ClipList.AddAppointment(a);
-				lstClip.Items.Add(a);
+                // SMH: We copy the appointment so that when we change it later we don't inadvertently
+                // change the original appointment which may be shared by the grid.
+                //TODO: This is very messy. We need a true constructor.
+                CGAppointment apptcopy = new CGAppointment();
+                apptcopy.Patient = a.Patient;
+                apptcopy.PatientID = a.PatientID;
+                apptcopy.PatientName = a.PatientName;
+                apptcopy.StartTime = a.StartTime;
+                apptcopy.EndTime = a.EndTime;
+                apptcopy.Resource = String.Empty;
+                apptcopy.HealthRecordNumber = a.HealthRecordNumber;
+                // Using a different key to prevent addition of the same patient twice rather than the ApptID.
+                apptcopy.AppointmentKey = a.PatientID; // this is the key of the array list m_ClipList
+
+                //If patient is already here, bye! No need to add him/her/it again.
+                if (m_ClipList.AppointmentTable.Contains((int)apptcopy.AppointmentKey))
+                {
+                    return;
+                }
+
+                //SMH: Why are there two lists? Should have one. Oh well.
+                //m_ClipList is used elsewhere. And it seems that they get out of sync sometimes. Agh!
+				m_ClipList.AddAppointment(apptcopy);
+				lstClip.Items.Add(apptcopy);
 			}
 			catch(Exception ex)
 			{
