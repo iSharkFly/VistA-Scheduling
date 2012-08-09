@@ -2,13 +2,12 @@ Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual C# Express 2010
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClinicalScheduling", "ClinicalScheduling.csproj", "{8C05C4F7-FE81-479F-87A0-44E04C7F6E0F}"
 	ProjectSection(ProjectDependencies) = postProject
-		{9E8D433B-EFD1-4253-BD2C-C4E0DB0BFD0E} = {9E8D433B-EFD1-4253-BD2C-C4E0DB0BFD0E}
 		{DE8E4CC9-4F3A-4E32-8DFE-EE5692E8FC45} = {DE8E4CC9-4F3A-4E32-8DFE-EE5692E8FC45}
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IndianHealthService.BMXNet", "..\BMX4\IndianHealthService.BMXNet\IndianHealthService.BMXNet.csproj", "{DE8E4CC9-4F3A-4E32-8DFE-EE5692E8FC45}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IndianHealthService.BMXNet", "..\..\BMX4\IndianHealthService.BMXNet\IndianHealthService.BMXNet.csproj", "{DE8E4CC9-4F3A-4E32-8DFE-EE5692E8FC45}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IndianHealthService.BMXNet.WinForm", "..\BMX4\IndianHealthService.BMXNet.WinForm\IndianHealthService.BMXNet.WinForm.csproj", "{3B9011B5-59F4-4F6B-ADC7-54ADC6948F4D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IndianHealthService.BMXNet.WinForm", "..\..\BMX4\IndianHealthService.BMXNet.WinForm\IndianHealthService.BMXNet.WinForm.csproj", "{3B9011B5-59F4-4F6B-ADC7-54ADC6948F4D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -20,10 +19,6 @@ Global
 		{8C05C4F7-FE81-479F-87A0-44E04C7F6E0F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8C05C4F7-FE81-479F-87A0-44E04C7F6E0F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8C05C4F7-FE81-479F-87A0-44E04C7F6E0F}.Release|Any CPU.Build.0 = Release|Any CPU
-		{9E8D433B-EFD1-4253-BD2C-C4E0DB0BFD0E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{9E8D433B-EFD1-4253-BD2C-C4E0DB0BFD0E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{9E8D433B-EFD1-4253-BD2C-C4E0DB0BFD0E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{9E8D433B-EFD1-4253-BD2C-C4E0DB0BFD0E}.Release|Any CPU.Build.0 = Release|Any CPU
 		{DE8E4CC9-4F3A-4E32-8DFE-EE5692E8FC45}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{DE8E4CC9-4F3A-4E32-8DFE-EE5692E8FC45}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DE8E4CC9-4F3A-4E32-8DFE-EE5692E8FC45}.Release|Any CPU.ActiveCfg = Release|Any CPU

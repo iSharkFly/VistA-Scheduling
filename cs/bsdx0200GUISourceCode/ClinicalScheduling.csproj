@@ -109,14 +109,6 @@
     <UseVSHostingProcess>false</UseVSHostingProcess>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="BMXNET40, Version=4.0.0.1, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>bin\Release\BMXNET40.dll</HintPath>
-    </Reference>
-    <Reference Include="BMXWIN40, Version=4.0.0.1, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>bin\Release\BMXWIN40.dll</HintPath>
-    </Reference>
     <Reference Include="PrintPreview, Version=1.0.4570.15574, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>bin\Release\PrintPreview.dll</HintPath>
@@ -498,6 +490,16 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\BMX4\IndianHealthService.BMXNet.WinForm\IndianHealthService.BMXNet.WinForm.csproj">
+      <Project>{3B9011B5-59F4-4F6B-ADC7-54ADC6948F4D}</Project>
+      <Name>IndianHealthService.BMXNet.WinForm</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\BMX4\IndianHealthService.BMXNet\IndianHealthService.BMXNet.csproj">
+      <Project>{DE8E4CC9-4F3A-4E32-8DFE-EE5692E8FC45}</Project>
+      <Name>IndianHealthService.BMXNet</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
