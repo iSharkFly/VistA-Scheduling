@@ -1,5 +1,5 @@
-BSDX01	; IHS/OIT/HMW - WINDOWS SCHEDULING RPCS ; 7/6/12 10:52am
-	;;1.7T2;BSDX;;Jul 11, 2012;Build 18
+BSDX01	; IHS/OIT/HMW - WINDOWS SCHEDULING RPCS ; 5/16/11 2:46pm
+	;;1.6;BSDX;;Aug 31, 2011;Build 25
 	; Licensed under LGPL
 	;
 SUINFOD(BSDXY,BSDXDUZ)	;EP Debugging entry point
@@ -281,43 +281,44 @@ GP(BSDXY,PARAM)	; Get Param - EP
 	QUIT
 	;
 INDIV(BSDXSC)	; PEP - Is ^SC clinic in the same DUZ(2) as user?
-	; Input: BSDXSC - Hospital Location IEN
-	; Output: True or False
-	I '+BSDXSC QUIT 1  ;If not tied to clinic, yes
-	I '$D(^SC(BSDXSC,0)) QUIT 1 ; If Clinic does not exist, yes
-	; Jump to Division:Medical Center Division:Inst File Pointer for
-	; Institution IEN (and get its internal value)
-	N DIV S DIV=$$GET1^DIQ(44,BSDXSC_",","3.5:.07","I")
-	I DIV="" Q 1 ; If clinic has no division, consider it avial to user.
-	I DIV=DUZ(2) Q 1 ; If same, then User is in same Div as Clinic
-	E  Q 0 ; Otherwise, no
+	   ; Input: BSDXSC - Hospital Location IEN
+	   ; Output: True or False
+	   I '+BSDXSC QUIT 1  ;If not tied to clinic, yes
+	   I '$D(^SC(BSDXSC,0)) QUIT 1 ; If Clinic does not exist, yes
+	   ; Jump to Division:Medical Center Division:Inst File Pointer for
+	   ; Institution IEN (and get its internal value)
+	   N DIV S DIV=$$GET1^DIQ(44,BSDXSC_",","3.5:.07","I")
+	   I DIV="" Q 1 ; If clinic has no division, consider it avial to user.
+	   I DIV=DUZ(2) Q 1 ; If same, then User is in same Div as Clinic
+	   E  Q 0 ; Otherwise, no
+	   QUIT
 INDIV2(BSDXRES)	; PEP - Is Resource in the same DUZ(2) as user?
-	; Input BSDXRES - BSDX RESOURCE IEN
-	; Output: True of False
-	Q $$INDIV($P($G(^BSDXRES(BSDXRES,0)),U,4)) ; Extract Hospital Location and send to $$INDIV
-UTINDIV	; Unit Test $$INDIV
-	W "Testing if they are the same",!
-	S DUZ(2)=67
-	I '$$INDIV(1) W "ERROR",!
-	I '$$INDIV(2) W "ERROR",!
-	W "Testing if Div not defined in 44, should be true",!
-	I '$$INDIV(3) W "ERROR",!
-	W "Testing empty string. Should be true",!
-	I '$$INDIV("") W "ERROR",!
-	W "Testing if they are different",!
-	S DUZ(2)=899
-	I $$INDIV(1) W "ERROR",!
-	I $$INDIV(2) W "ERROR",!
-	QUIT
-UTINDIV2	; Unit Test $$INDIV2
-	W "Testing if they are the same",!
-	S DUZ(2)=69
-	I $$INDIV2(22)'=0 W "ERROR",!
-	I $$INDIV2(25)'=1 W "ERROR",!
-	I $$INDIV2(26)'=1 W "ERROR",!
-	I $$INDIV2(27)'=1 W "ERROR",!
-	QUIT
-	;
+	   ; Input BSDXRES - BSDX RESOURCE IEN
+	   ; Output: True of False
+	   Q $$INDIV($P($G(^BSDXRES(BSDXRES,0)),U,4)) ; Extract Hospital Location and send to $$INDIV
+UnitTestINDIV	
+	   W "Testing if they are the same",!
+	   S DUZ(2)=67
+	   I '$$INDIV(1) W "ERROR",!
+	   I '$$INDIV(2) W "ERROR",!
+	   W "Testing if Div not defined in 44, should be true",!
+	   I '$$INDIV(3) W "ERROR",!
+	   W "Testing empty string. Should be true",!
+	   I '$$INDIV("") W "ERROR",!
+	   W "Testing if they are different",!
+	   S DUZ(2)=899
+	   I $$INDIV(1) W "ERROR",!
+	   I $$INDIV(2) W "ERROR",!
+	   QUIT
+UnitTestINDIV2	
+	   W "Testing if they are the same",!
+	   S DUZ(2)=69
+	   I $$INDIV2(22)'=0 W "ERROR",!
+	   I $$INDIV2(25)'=1 W "ERROR",!
+	   I $$INDIV2(26)'=1 W "ERROR",!
+	   I $$INDIV2(27)'=1 W "ERROR",!
+	   QUIT
+	   ;
 GETRADEX(BSDXY,DFN,SCIEN)	; Get All Pending and On Hold Radiology Exams for Patient; RPC EP; UJO/SMH new in v 1.6
 	; RPC: BSDX GET RAD EXAM FOR PT; Return: Global Array
 	;
@@ -344,7 +345,13 @@ GETRADEX(BSDXY,DFN,SCIEN)	; Get All Pending and On Hold Radiology Exams for Pati
 	; File 75.1 = RAD/NUC MED ORDERS
 	; Fields 5 = Request Status; 2 = Procedure; 16 = Requested Entered Date Time
 	; Filter Field: First piece is DFN, 5th piece is 3 or 5 (Status of Pending Or Hold); 20th piece is Radiology Location requested
-	D LIST^DIC(75.1,"","@;5;2;16","P","","","","B","I $P(^(0),U)=DFN&(35[$P(^(0),U,5))&($P(^(0),U,20)=BSDXRLIEN)","","BSDXOUT","BSDXERR")
+	;
+	       ;;EHS/MKH,BAH;;UJO*1.0*143;;30/09/2012;; Update [Fix the performance issue in SchedGUI]
+	       ; START OF CODE CHANGES FOR [UJO*1.0*143]
+	       ; Commented old Line
+	       ;D LIST^DIC(75.1,"","@;5;2;16","P","","","","B","I $P(^(0),U)=DFN&(35[$P(^(0),U,5))&($P(^(0),U,20)=BSDXRLIEN)","","BSDXOUT","BSDXERR")
+	       DO FIND^DIC(75.1,"","@;5;2;16","QP",DFN,"","B","IF 35[$PIECE(^(0),U,5)&($PIECE(^(0),U,20)=BSDXRLIEN)","","BSDXOUT","BSDXERR")
+	       ; END OF CODE CHANGES FOR [UJO*1.0*143]
 	;
 	IF $DATA(BSDXERR) GOTO END
 	;

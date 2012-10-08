@@ -1,5 +1,5 @@
-BSDX2E	;IHS/OIT/MJL - ENVIRONMENT CHECK FOR WINDOWS SCHEDULING [7/11/12 9:37am]
-	;;1.7T2;BSDX;;Jul 11, 2012;Build 18
+BSDX2E	;IHS/OIT/MJL - ENVIRONMENT CHECK FOR WINDOWS SCHEDULING [4/28/11 10:28am]
+	;;1.6;BSDX;;Aug 31, 2011;Build 25
 	; Licensed under LGPL
 	;
 	S LINE="",$P(LINE,"*",81)=""
@@ -23,7 +23,7 @@ VERSION	;
 	;Is the PIMS requirement present?
 	Q:'$$VERCHK("SD",5.3)
 	; Q:'$$PATCHCK("PIMS*5.3*1003") D
-	Q:'$$VERCHK("BMX",4)
+	Q:'$$VERCHK("BMX",2)
 	;
 OTHER	;
 	;Other checks
@@ -90,7 +90,7 @@ V0200	;EP Version 1.5 PostInit
 	. S BSDXFDA(101.01,"+1,"_BSDXDA_",","3")=BSDXSEQ
 	. D UPDATE^DIE("","BSDXFDA","BSDXIEN","BSDXMSG")
 	. ; Error message
-	. I $D(BSDXMSG) D MES^XPDUTL("Error: ",BSDXMSG("DIERR",1,"TEXT",1))
+	. I $D(BSDXMSG) W $C(7),"Error: ",BSDXMSG("DIERR",1,"TEXT",1)
 	;
 	; Remove nassssty protocols ORU PATIENT MOVMT and DVBA C&P SCHD EVENT
 	; SDAM APPOINTMENT EVENTS IENS for use in FIND1^DIC
@@ -105,7 +105,7 @@ V0200	;EP Version 1.5 PostInit
 	S:DVBAIEN>0 BSDXFDA(101.01,DVBAIEN_SDEVTIENS,.01)="@"
 	D:$D(BSDXFDA) FILE^DIE("","BSDXFDA","BSDXMSG")
 	; If error
-	I $D(BSDXMSG) D MES^XPDUTL("Error: ",BSDXMSG("DIERR",1,"TEXT",1))
+	I $D(BSDXMSG) W $C(7),"Error: ",BSDXMSG("DIERR",1,"TEXT",1)
 	;
 	;
 	; Now put in the default values for parameters
@@ -116,7 +116,7 @@ V0200	;EP Version 1.5 PostInit
 	D PUT^XPAR("PKG","BSDX AUTO PRINT RS",1,0,.BSDXERR)
 	I $G(BSDXERR) W $C(7),"Error: ",BSDXERR
 	D PUT^XPAR("PKG","BSDX AUTO PRINT AS",1,0,.BSDXERR)
-	I $G(BSDXERR) D MES^XPDUTL("Error: ",BSDXERR)
+	I $G(BSDXERR) W $C(7),"Error: ",BSDXERR
 	QUIT
 	;
 SORRY(XPX)	;

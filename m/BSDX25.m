@@ -1,137 +1,118 @@
-BSDX25	; VEN/SMH - WINDOWS SCHEDULING RPCS ; 7/9/12 5:00pm
-	;;1.7T2;BSDX;;Jul 11, 2012;Build 18
+BSDX25	; VW/UJO/SMH - WINDOWS SCHEDULING RPCS ; 4/28/11 10:24am
+	;;1.6;BSDX;;Aug 31, 2011;Build 25
 	; Licensed under LGPL
 	;
 	; Change Log:
 	; 3110106: SMH -> Changed Check-in EP - Removed unused paramters. Will change C#
-	; 3120630: VEN/SMH -> Extensive Refactoring to remove transactions.
-	;                  -> Functionality still the same.
-	;                  -> Unit Tests in UT25^BSDXUT2
 	;
 	;
-CHECKIND(BSDXY,BSDXAPPTID,BSDXCDT,BSDXCC,BSDXPRV,BSDXROU,BSDXVCL,BSDXVFM,BSDXOG)	;EP
+UT	; Unit Tests
+	; Make appointment, checkin, then uncheckin
+	N ZZZ
+	N APPTTIME S APPTTIME=$E($$NOW^XLFDT(),1,12)
+	D APPADD^BSDX07(.ZZZ,APPTTIME,APPTTIME+.0001,3,"Dr Office",30,"Sam's Note",1)
+	N APPTID S APPTID=+^BSDXTMP($J,1)
+	N HL S HL=$$GET1^DIQ(9002018.4,APPTID,".07:.04","I")
+	D CHECKIN^BSDX25(.ZZZ,APPTID,$$NOW^XLFDT())
+	IF '$P(^BSDXAPPT(APPTID,0),U,3) WRITE "ERROR IN CHECKIN 1",!
+	IF '+$G(^SC(HL,"S",APPTTIME,1,1,"C")) WRITE "ERROR IN CHECKIN 2",!
+	D RMCI^BSDX25(.ZZZ,APPTID)
+	IF $P(^BSDXAPPT(APPTID,0),U,3) WRITE "ERROR IN UNCHECKIN 1",!
+	IF $G(^SC(HL,"S",APPTTIME,1,1,"C")) WRITE "ERROR IN UNCHECKIN 2",!
+	D RMCI^BSDX25(.ZZZ,APPTID)  ; again, test sanity in repeat
+	IF $P(^BSDXAPPT(APPTID,0),U,3) WRITE "ERROR IN UNCHECKIN 1",!
+	IF $G(^SC(HL,"S",APPTTIME,1,1,"C")) WRITE "ERROR IN UNCHECKIN 2",!
+	; now test various error conditions
+	; Test Error 1
+	D RMCI^BSDX25(.ZZZ,)
+	IF +^BSDXTMP($J,1)'=-1 WRITE "ERROR IN ETest 1",!
+	; Test Error 2
+	D RMCI^BSDX25(.ZZZ,234987234398)
+	IF +^BSDXTMP($J,1)'=-2 WRITE "ERROR IN Etest 2",!
+	; Tests for 3 to 5 difficult to produce
+	; Error tests follow: Mumps error test; Transaction restartability
+	N bsdxdie S bsdxdie=1
+	D RMCI^BSDX25(.ZZZ,APPTID)
+	IF +^BSDXTMP($J,1)'=-20 WRITE "ERROR IN Etest 3",!
+	K bsdxdie
+	N bsdxrestart S bsdxrestart=1
+	D RMCI^BSDX25(.ZZZ,APPTID)
+	IF +^BSDXTMP($J,1)'=0 WRITE "Error in Etest 4",!
+	QUIT
+CHECKIND(BSDXY,BSDXAPTID,BSDXCDT,BSDXCC,BSDXPRV,BSDXROU,BSDXVCL,BSDXVFM,BSDXOG)	;EP
 	;Entry point for debugging
 	;
-	;I +$G(^BSDXDBUG("BREAK","CHECKIN")),+$G(^BSDXDBUG("BREAK"))=DUZ D DEBUG^%Serenji("CHECKIN^BSDX25(.BSDXY,BSDXAPPTID,BSDXCDT,BSDXCC,BSDXPRV,BSDXROU,BSDXVCL,BSDXVFM,BSDXOG)",$P(^BSDXDBUG("BREAK"),U,2))
+	;I +$G(^BSDXDBUG("BREAK","CHECKIN")),+$G(^BSDXDBUG("BREAK"))=DUZ D DEBUG^%Serenji("CHECKIN^BSDX25(.BSDXY,BSDXAPTID,BSDXCDT,BSDXCC,BSDXPRV,BSDXROU,BSDXVCL,BSDXVFM,BSDXOG)",$P(^BSDXDBUG("BREAK"),U,2))
 	Q
 	;
-CHECKIN(BSDXY,BSDXAPPTID,BSDXCDT)	;Private EP Check in appointment
-	; Old additional vars: ,BSDXCC,BSDXPRV,BSDXROU,BSDXVCL,BSDXVFM,BSDXOG)
-	; Called by RPC: BSDX CHECKIN APPOINTMENT
-	;
+CHECKIN(BSDXY,BSDXAPTID,BSDXCDT)	; ,BSDXCC,BSDXPRV,BSDXROU,BSDXVCL,BSDXVFM,BSDXOG)	;EP Check in appointment
 	; Private to GUI; use BSDXAPI for general API to checkin patients
 	; Parameters:
 	; BSDXY: Global Out
-	; BSDXAPPTID: Appointment ID in ^BSDXAPPT
+	; BSDXAPTID: Appointment ID in ^BSDXAPPT
 	; BSDXCDT: Checkin Date --> Changed
 	; BSDXCC: Clinic Stop IEN (not used)
 	; BSDXPRV: Provider IEN (not used)
 	; BSDXROU: Print Routing Slip? (not used)
 	; BSDXVCL: PCC+ Clinic IEN (not used)
 	; BSDXVFM: PCC+ Form IEN (not used)
-	; BSDXOG: PCC+ Outguide (true or false) (not used)
+	; BSDXOG: PCC+ Outguide (true or false)
 	;
 	; Output:
 	; ADO.net table with 1 column ErrorID, 1 row result
 	; - 0 if all okay
 	; - Another number or text if not
-	;
-	; Error reference:
-	; -1 -> Invalid Appointment ID
-	; -2 -> Invalid Check-in Date
-	; -3 -> Cannot check-in due to Fileman Filer failure
-	; -4 -> Cannot lock ^BSDXAPPT(APPTID)
-	; -10 -> BSDXAPI error
-	; -100 -> Mumps Error
-	;
-	; Turn off SDAM Appointment Events BSDX Protocol Processing
+	
+	N BSDXNOD,BSDXPATID,BSDXSTART,DIK,DA,BSDXID,BSDXI,BSDXZ,BSDXIENS,BSDXVEN
 	N BSDXNOEV
 	S BSDXNOEV=1 ;Don't execute protocol
 	;
-	; Set min DUZ vars
-	D ^XBKVAR
-	;
-	; $ET
-	N $ET S $ET="G ERROR^BSDX25"
-	;
-	; Test for error trap for Unit Tests
-	I $G(BSDXDIE) N X S X=1/0
-	;
-	N BSDXI S BSDXI=0
-	;
-	S BSDXY=$NAME(^BSDXTMP($J))
-	K @BSDXY
-	;
+	D ^XBKVAR S X="ERROR^BSDX25",@^%ZOSF("TRAP")
+	S BSDXI=0
+	K ^BSDXTMP($J)
+	S BSDXY="^BSDXTMP("_$J_")"
 	S ^BSDXTMP($J,0)="T00020ERRORID"_$C(30)
-	;
-	I '+BSDXAPPTID D ERR("-1~Invalid Appointment ID") QUIT
-	I '$D(^BSDXAPPT(BSDXAPPTID,0)) D ERR("-1~Invalid Appointment ID") QUIT
-	;
-	; Lock BSDX node, only to synchronize access to the globals.
-	; It's not expected that the error will ever happen as no filing
-	; is supposed to take 5 seconds.
-	L +^BSDXAPPT(BSDXAPPTID):5 E  D ERR("-4~Appt record is locked. Please contact technical support.") QUIT
-	;
+	I '+BSDXAPTID D ERR("BSDX25: Invalid Appointment ID") Q
+	I '$D(^BSDXAPPT(BSDXAPTID,0)) D ERR("BSDX08: Invalid Appointment ID") Q
 	; Remove Date formatting v.1.5. Client will send date as FM Date.
 	;S:BSDXCDT["@0000" BSDXCDT=$P(BSDXCDT,"@")
 	;S %DT="T",X=BSDXCDT D ^%DT S BSDXCDT=Y
-	S BSDXCDT=+BSDXCDT  ; Strip off zeros if C# sends them
-	I BSDXCDT'>2000000 D ERR("-2~Invalid Check-in Date") QUIT
+	   S BSDXCDT=+BSDXCDT  ; Strip off zeros if C# sends them
+	I BSDXCDT=-1 D ERR(70) Q
 	I BSDXCDT>$$NOW^XLFDT S BSDXCDT=$$NOW^XLFDT
+	;Checkin BSDX APPOINTMENT entry
+	D BSDXCHK(BSDXAPTID,BSDXCDT)
+	S BSDXNOD=^BSDXAPPT(BSDXAPTID,0)
+	S BSDXPATID=$P(BSDXNOD,U,5)
+	S BSDXSTART=$P(BSDXNOD,U)
 	;
-	; Some data
-	N BSDXNOD S BSDXNOD=^BSDXAPPT(BSDXAPPTID,0) ; Appointment Node
-	N BSDXPATID S BSDXPATID=$P(BSDXNOD,U,5) ; DFN
-	N BSDXSTART S BSDXSTART=$P(BSDXNOD,U) ; Appointment Start Time
+	S BSDXSC1=$P(BSDXNOD,U,7) ;RESOURCEID
+	I BSDXSC1]"",$D(^BSDXRES(BSDXSC1,0)) D  I +$G(BSDXZ) D ERR($P(BSDXZ,U,2)) Q
+	. S BSDXNOD=^BSDXRES(BSDXSC1,0)
+	. S BSDXSC1=$P(BSDXNOD,U,4) ;HOSPITAL LOCATION
+	. I BSDXSC1]"",$D(^SC(BSDXSC1,0)) D APCHK(.BSDXZ,BSDXSC1,BSDXPATID,BSDXCDT,BSDXSTART)
 	;
-	; Get Hospital Location IEN from BSDXAPPT to BSDXRES (RESOUCE:HOSPITAL LOCATION)
-	N BSDXSC1 S BSDXSC1=$$GET1^DIQ(9002018.4,BSDXAPPTID_",",".07:.04","I")
-	I BSDXSC1,'$D(^SC(BSDXSC1,0)) S BSDXSC1="" ; Null it off if it doesn't exist
-	;
-	; Check if we can check-in using BSDXAPI
-	N BSDXERR S BSDXERR=0
-	I BSDXSC1 S BSDXERR=$$CHECKIC1^BSDXAPI(BSDXPATID,BSDXSC1,BSDXSTART)
-	I BSDXERR D ERR(-10_"~"_$P(BSDXERR,U,2)) QUIT
-	;
-	; Checkin BSDX APPOINTMENT entry
-	; Failure Analysis: If we fail here, no changes were made.
-	N BSDXERR S BSDXERR=$$BSDXCHK(BSDXAPPTID,BSDXCDT)
-	I BSDXERR D ERR("-3~Fileman Filer failed to check-in appt") QUIT
-	;
-	; File check-in using BSDXAPI
-	; Failure Analysis: If we fail here, we need to roll back first check-in.
-	N BSDXERR S BSDXERR=0
-	I BSDXSC1 S BSDXERR=$$CHECKIN1^BSDXAPI(BSDXPATID,BSDXSC1,BSDXSTART)
-	I BSDXERR D  QUIT
-	. N % S %=$$BSDXCHK(BSDXAPPTID,"@") ; No Error checking to prevent loop.
-	. D ERR(-10_"~"_$P(BSDXERR,U,2)) ; Send error message to client
-	;
-	L -^BSDXAPPT(BSDXAPPTID)
 	S BSDXI=BSDXI+1
 	S ^BSDXTMP($J,BSDXI)="0"_$C(30)
 	S BSDXI=BSDXI+1
 	S ^BSDXTMP($J,BSDXI)=$C(31)
 	Q
 	;
-BSDXCHK(BSDXAPPTID,BSDXCDT)	; $$ Private Entry Point. File or delete check-in to
-	; BSDX Appointment
-	; Input: BSDXAPPTID -> Appointment ID
-	;        BSDXCDT -> Check-in date, or "@" to remove check-in.
+BSDXCHK(BSDXAPTID,BSDXCDT)	;
 	;
-	; Output: 1^Error for error
-	;         0 for success
-	;
-	Q:$G(BSDXSIMERR1) 1_U_"Simulated Error 1"
-	;
-	N BSDXIENS,BSDXMSG,BSDXFDA ; Filer variables
-	S BSDXIENS=BSDXAPPTID_","
+	S BSDXIENS=BSDXAPTID_","
 	S BSDXFDA(9002018.4,BSDXIENS,.03)=BSDXCDT
 	D FILE^DIE("","BSDXFDA","BSDXMSG")
-	Q:$D(BSDXMSG) 1_U_BSDXMSG("DIERR",1,"TEXT",1)
-	Q 0
+	Q
 	;
-RMCI(BSDXY,BSDXAPPTID)	; Private EP - Remove Check-in from BSDX APPT and 2/44
-	; Called by RPC BSDX REMOVE CHECK-IN
+APCHK(BSDXZ,BSDXSC1,BSDXDFN,BSDXCDT,BSDXSTART)	        ;
+	;Checkin appointment for patient BSDXDFN in clinic BSDXSC1
+	;at time BSDXSTART
+	S BSDXZ=$$CHECKIN1^BSDXAPI(BSDXDFN,BSDXSC1,BSDXSTART)
+	Q
+	;
+RMCI(BSDXY,BSDXAPPTID)	; EP - Remove Check-in from BSDX APPT and 2/44
+	; Called by RPC [Fill in later]
 	; 
 	; Parameters to pass:
 	; APPTID: IEN in file BSDX APPOINTMENT
@@ -146,9 +127,7 @@ RMCI(BSDXY,BSDXAPPTID)	; Private EP - Remove Check-in from BSDX APPT and 2/44
 	; -3~DB has corruption. Call Tech Support. (Resource ID doesn't exist in BSDXAPPT)
 	; -4~DB has corruption. Call Tech Support. (Resource ID in BSDXAPPT doesnt exist in BSDXRES)
 	; -5~BSDXAPI Error. Message depends on error.
-	; -6~Data Filing Error in BSDXCHK
-	; -7~Lock not acquired
-	; -100~Mumps Error
+	; -20~Mumps Error
 	; 
 	N BSDXNOEV S BSDXNOEV=1 ;Don't execute protocol
 	;
@@ -162,56 +141,39 @@ RMCI(BSDXY,BSDXAPPTID)	; Private EP - Remove Check-in from BSDX APPT and 2/44
 	;
 	S ^BSDXTMP($J,BSDXI)="T00020ERRORID"_$C(30) ; Header of ADO recordset
 	;
+	TSTART (BSDXI):SERIAL ; Perform Autolocking
+	;
 	;;;test
-	I $G(BSDXDIE) N X S X=8/0
+	I $g(bsdxdie) S X=8/0
+	;;;
+	I $g(bsdxrestart) k bsdxrestart TRESTART
+	;;;test
 	;
 	; Check for Appointment ID (passed and exists in file)
 	I '+$G(BSDXAPPTID) D ERR("-1~Invalid Appointment ID") QUIT
 	I '$D(^BSDXAPPT(BSDXAPPTID,0)) D ERR("-2~Invalid Appointment ID") QUIT
 	;
-	; Lock
-	; Timeout not expected to happen except in error conditions.
-	L +^BSDXAPPT(BSDXAPPTID):5 E  D ERR("-7~Appt record is locked. Please contact technical support.") QUIT
-	;
-	; Get appointment Data
-	N BSDXNOD S BSDXNOD=^BSDXAPPT(BSDXAPPTID,0)
-	N BSDXPATID S BSDXPATID=$P(BSDXNOD,U,5) ; DFN
-	N BSDXSTART S BSDXSTART=$P(BSDXNOD,U) ; Start Date
-	N BSDXRESID S BSDXRESID=$P(BSDXNOD,U,7) ; Resource ID
-	; 
-	; If the resource doesn't exist, error out. DB is corrupt.
-	I 'BSDXRESID D ERR("-3~DB has corruption. Call Tech Support.") QUIT
-	I '$D(^BSDXRES(BSDXRESID,0)) D ERR("-4~DB has corruption. Call Tech Support.") QUIT 
-	;
-	; Get HL Data
-	N BSDXNOD S BSDXNOD=^BSDXRES(BSDXRESID,0) ; Resource 0 node
-	N BSDXSC1 S BSDXSC1=$P(BSDXNOD,U,4) ;HOSPITAL LOCATION IEN
-	I BSDXSC1,'$D(^SC(BSDXSC1,0)) S BSDXSC1="" ; Zero out if HL doesn't exist
-	;
-	; Is it okay to remove check-in from PIMS?
-	N BSDXERR S BSDXERR=0 ; Scratch variable
-	; $$RMCICK = Remove Check-in Check
-	I BSDXSC1 S BSDXERR=$$RMCICK^BSDXAPI1(BSDXPATID,BSDXSC1,BSDXSTART)
-	I BSDXERR D ERR("-5~"_$P(BSDXERR,U,2)) QUIT
-	;
-	; For possible rollback, get old check-in date (internal value)
-	N BSDXCDT S BSDXCDT=$$GET1^DIQ(9002018.4,BSDXAPPTID_",",.03,"I")
-	;
 	; Remove checkin from BSDX APPOINTMENT entry
-	; No need to rollback here on failure.
-	N BSDXERR S BSDXERR=$$BSDXCHK(BSDXAPPTID,"@")
-	I BSDXERR D ERR("-6~Cannot file data in $$BSDXCHK") QUIT
+	D BSDXCHK(BSDXAPPTID,"@")
 	;
 	; Now, remove checkin from PIMS files 2/44
-	; Restore BSDXCDT into ^BSDXAPPT if we fail.
-	N BSDXERR S BSDXERR=0 ; Scratch variable to hold error message
-	I BSDXSC1 S BSDXERR=$$RMCI^BSDXAPI1(BSDXPATID,BSDXSC1,BSDXSTART)
-	I BSDXERR D  QUIT
-	. N % S %=$$BSDXCHK(BSDXAPPTID,BSDXCDT) ; No error checking here.
-	. D ERR("-5~"_$P(BSDXERR,U,2)) ; Send error message to client
+	N BSDXNOD S BSDXNOD=^BSDXAPPT(BSDXAPPTID,0)
+	N BSDXPATID S BSDXPATID=$P(BSDXNOD,U,5)	; DFN
+	N BSDXSTART S BSDXSTART=$P(BSDXNOD,U)	; Start Date
+	N BSDXSC1 S BSDXSC1=$P(BSDXNOD,U,7) ; Resource ID
+	; 
+	; If the resource doesn't exist, error out. DB is corrupt.
+	I 'BSDXSC1 D ERR("-3~DB has corruption. Call Tech Support.") QUIT
+	I '$D(^BSDXRES(BSDXSC1,0)) D ERR("-4~DB has corruption. Call Tech Support.") QUIT 
 	;
-	; Unlock
-	L -^BSDXAPPT(BSDXAPPTID)
+	N BSDXNOD S BSDXNOD=^BSDXRES(BSDXSC1,0) ; Resource 0 node
+	S BSDXSC1=$P(BSDXNOD,U,4) ;HOSPITAL LOCATION
+	;
+	N BSDXZ ; Scratch variable to hold error message
+	I BSDXSC1]"",$D(^SC(BSDXSC1,0)) S BSDXZ=$$RMCI^BSDXAPI(BSDXPATID,BSDXSC1,BSDXSTART)
+	I +$G(BSDXZ) D ERR("-5~"_$P(BSDXZ,U,2)) QUIT
+	; 
+	TCOMMIT  ; Save Data into Globals
 	;
 	; Return ADO recordset
 	S BSDXI=BSDXI+1
@@ -245,11 +207,9 @@ CHKEVT1(BSDXRES,BSDXSTART,BSDXPAT,BSDXSTAT)	;
 	Q:'+$G(BSDXRES) BSDXFOUND
 	Q:'$D(^BSDXAPPT("ARSRC",BSDXRES,BSDXSTART)) BSDXFOUND
 	S BSDXAPPT=0 F  S BSDXAPPT=$O(^BSDXAPPT("ARSRC",BSDXRES,BSDXSTART,BSDXAPPT)) Q:'+BSDXAPPT  D  Q:BSDXFOUND
-	. N BSDXNOD S BSDXNOD=$G(^BSDXAPPT(BSDXAPPT,0)) Q:BSDXNOD=""
+	. S BSDXNOD=$G(^BSDXAPPT(BSDXAPPT,0)) Q:BSDXNOD=""
 	. I $P(BSDXNOD,U,5)=BSDXPAT,$P(BSDXNOD,U,12)="" S BSDXFOUND=1 Q
-	I BSDXFOUND,+$G(BSDXAPPT) D
-	. N BSDXERR S BSDXERR=$$BSDXCHK(BSDXAPPT,BSDXSTAT)
-	. I BSDXERR D ^%ZTER ; VEN/SMH - This is silent. This is a last resort
+	I BSDXFOUND,+$G(BSDXAPPT) D BSDXCHK(BSDXAPPT,BSDXSTAT)
 	Q BSDXFOUND
 	;
 CHKEVT3(BSDXRES)	;
@@ -264,23 +224,16 @@ CHKEVT3(BSDXRES)	;
 	;
 ERROR	;
 	S $ETRAP="D ^%ZTER HALT"  ; Emergency Error Trap for the wise
-	D ^%ZTER
-	; VEN/SMH: NB: I make a conscious decision not to roll back anything
-	; here in the error trap. Once the error is fixed, users can 
-	; undo or redo the check-in.
-	; Individual portions of this routine may choose to do rolling back
-	; of their own (e.g. a failed call to BSDXAPI causes rollback to occur
-	; in CHECKIN and RMCI)
-	;
-	; Log error message and send to client
-	D ERR("-100~Mumps Error")
-	Q:$Q "-100^Mumps Error" Q
+	   ; Rollback, otherwise ^XTER will be empty from future rollback
+	   I $TL>0 TROLLBACK
+	   D ^%ZTER
+	   S $EC=""  ; Clear Error
+	   ; Log error message and send to client
+	D ERR("-20~Mumps Error")
+	Q
 	;
 ERR(BSDXERR)	;Error processing
-	; Unlock first
-	L:$D(BSDXAPPTID) -^BSDXAPPT(BSDXAPPTID)
-	; If last line is $C(31), we are done. No more errors to send to client.
-	I ^BSDXTMP($J,$O(^BSDXTMP($J," "),-1))=$C(31) QUIT
+	I $TLEVEL>0 TROLLBACK
 	S BSDXERR=$G(BSDXERR)
 	S BSDXERR=$P(BSDXERR,"~")_"~"_$TEXT(+0)_":"_$P(BSDXERR,"~",2) ; Append Routine Name
 	S BSDXI=$G(BSDXI)+1

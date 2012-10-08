@@ -1,5 +1,5 @@
-BSDX28	; IHS/OIT/HMW - WINDOWS SCHEDULING RPCS ; 7/6/12 10:57am
-	;;1.7T2;BSDX;;Jul 11, 2012;Build 18
+BSDX28	; IHS/OIT/HMW - WINDOWS SCHEDULING RPCS ; 4/28/11 10:25am
+	;;1.6;BSDX;;Aug 31, 2011;Build 25
 	; Licensed under LGPL
 	; Change Log:
 	; HMW 3050721 Added test for inactivated record
@@ -37,23 +37,23 @@ DFN	;If DFN is passed as `nnnn, just return that patient
 	. N DOB S DOB=$$FMTE^XLFDT($P(^DPT(BSDXIEN,0),U,3))
 	. S BSDXRET=BSDXRET_NAME_U_HRN_U_PID_U_DOB_U_BSDXIEN_$C(30)
 PID	;PID Lookup
-	; If this ID exists, go get it. If "UJOPID" index doesn't exist,
-	; won't work anyways.
-	I $D(^DPT("UJOPID",BSDXP)) DO  SET BSDXY=BSDXRET_$C(31) QUIT
-	. S BSDXIEN=$O(^DPT("UJOPID",BSDXP,""))
-	. Q:'$D(^DPT(BSDXIEN,0))
-	. S BSDXDPT=$G(^DPT(BSDXIEN,0))
-	. S BSDXZ=$P(BSDXDPT,U) ;NAME
-	. S BSDXHRN=$P($G(^AUPNPAT(BSDXIEN,41,DUZ(2),0)),U,2) ;CHART
-	. I BSDXHRN="" Q  ;NO CHART AT THIS DUZ2
-	. ; Inactivated Chart get an *
-	. I $P($G(^AUPNPAT(BSDXIEN,41,DUZ(2),0)),U,3) S BSDXHRN=BSDXHRN_"(*)" Q
-	. S $P(BSDXZ,BSDXDLIM,2)=BSDXHRN
-	. S $P(BSDXZ,BSDXDLIM,3)=$P(^DPT(BSDXIEN,.36),U,3) ;PID
-	. S Y=$P(BSDXDPT,U,3) X ^DD("DD")
-	. S $P(BSDXZ,BSDXDLIM,4)=Y ;DOB
-	. S $P(BSDXZ,BSDXDLIM,5)=BSDXIEN
-	. S BSDXRET=BSDXRET_BSDXZ_$C(30)
+	   ; If this ID exists, go get it. If "UJOPID" index doesn't exist,
+	   ; won't work anyways.
+	   I $D(^DPT("UJOPID",BSDXP)) DO  SET BSDXY=BSDXRET_$C(31) QUIT
+	   . S BSDXIEN=$O(^DPT("UJOPID",BSDXP,""))
+	   . Q:'$D(^DPT(BSDXIEN,0))
+	   . S BSDXDPT=$G(^DPT(BSDXIEN,0))
+	   . S BSDXZ=$P(BSDXDPT,U) ;NAME
+	   . S BSDXHRN=$P($G(^AUPNPAT(BSDXIEN,41,DUZ(2),0)),U,2) ;CHART
+	   . I BSDXHRN="" Q  ;NO CHART AT THIS DUZ2
+	   . ; Inactivated Chart get an *
+	   . I $P($G(^AUPNPAT(BSDXIEN,41,DUZ(2),0)),U,3) S BSDXHRN=BSDXHRN_"(*)" Q
+	   . S $P(BSDXZ,BSDXDLIM,2)=BSDXHRN
+	   . S $P(BSDXZ,BSDXDLIM,3)=$P(^DPT(BSDXIEN,.36),U,3) ;PID
+	   . S Y=$P(BSDXDPT,U,3) X ^DD("DD")
+	   . S $P(BSDXZ,BSDXDLIM,4)=Y ;DOB
+	   . S $P(BSDXZ,BSDXDLIM,5)=BSDXIEN
+	   . S BSDXRET=BSDXRET_BSDXZ_$C(30)
 	;
 DOB	;DOB Lookup
 	I +DUZ(2),((BSDXP?1.2N1"/"1.2N1"/"1.4N)!(BSDXP?1.2N1" "1.2N1" "1.4N)!(BSDXP?1.2N1"-"1.2N1"-"1.4N)) D  S BSDXY=BSDXRET_$C(31) Q
@@ -75,7 +75,8 @@ DOB	;DOB Lookup
 	. . Q
 	. Q
 	;
-CHART	;Chart# Lookup
+CHART	
+	   ;Chart# Lookup
 	I +DUZ(2),BSDXP]"",$D(^AUPNPAT("D",BSDXP)) D  S BSDXY=BSDXRET_$C(31) Q
 	. S BSDXIEN=0 F  S BSDXIEN=$O(^AUPNPAT("D",BSDXP,BSDXIEN)) Q:'+BSDXIEN  I $D(^AUPNPAT("D",BSDXP,BSDXIEN,DUZ(2))) D  Q
 	. . Q:'$D(^DPT(BSDXIEN,0))
