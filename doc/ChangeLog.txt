@@ -1,156 +1,303 @@
-Nov 2009: First commit into svn of Alpha Version of Scheduling GUI (v2.2)
+Nov 2009: 
+First commit into svn of Alpha Version of Scheduling GUI (v2.2)
 
 V2.2
 Version downgraded to 1.0 to reflect state of software.
 
+
 v1.1 (released June 7 2010)
+	
 - Removed references to "View EHR" from ctxCalendarGrid and DAppointPage.
-- Remove references to IHS; typically "IHS Clinical Scheduling" becomes "Clinical Scheduling"
-- Remove the non-functioning CalendarGrid.dll and associated project files.
+
+	- Remove references to IHS; typically "IHS Clinical Scheduling" becomes "Clinical Scheduling"
+
+	- Remove the non-functioning CalendarGrid.dll and associated project files.
+	
 - Add the code from CalendarGrid.dll generated using reflector.exe to ClinicalScheduling.csproj
-- Removed user-interface references to RPMS.
-- Fixes in BSDX27 referring to a routine that doesn't exist in VISTA. References changed to BSDXAPI.
-- Reworked DAppointPage. 
+
+	- Removed user-interface references to RPMS.
+
+	- Fixes in BSDX27 referring to a routine that doesn't exist in VISTA. References changed to BSDXAPI.
+
+	- Reworked DAppointPage. 
+	
 - Removed dependence of DPatientApptDisplay on Crystal Reports. 
-- Added UserControl UCPatientAppts to encapsulate functionality of DPatientApptDisplay; right now it does not include printing. 
+
+	- Added UserControl UCPatientAppts to encapsulate functionality of DPatientApptDisplay; right now it does not include printing. 
+	
 - DAppointPage now uses UCPatientAppts to provide functionality of seeing patient's previous appointments. DPatientApptDisplay does not yet, but will soon.
-- Better printing in UCPatientAppts.
-- Removal of Crystal Reports
+
+	- Better printing in UCPatientAppts.
+
+	- Removal of Crystal Reports
+	
 - Partial Rework of Clinic Patient List report
+	
 - Other reports that used Crystal don't work yet.
+	
 - Fixes for Strongly typed DataTables (change the RESOURCEID from uint to int) to support table merge from untyped table.
-- Support for command line arguments: /s= for server /p= for port /a= for access code /v= for verify code. Only the following combinations work: none; /s and /p; /s, /p, /a, /v (/e added later for encoding in v1.4).
+	
+- Support for command line arguments: /s= for server /p= for port /a= for access code /v= for verify code. Only the following combinations work: none; /s and /p; /s, /p, /a, /v (/e added later for encoding in v1.4)
+	.
 - Tiny bug fixes to fix compile errors
 - Some debugging code to attach the program to the console to print messages.
+	
 - Letters:
 -- Cancellation letters now work.
 -- Initial work on Rebook Letters.
+	
 - Provided framework for Rebook letters; but they don't work.
-- Added the appointment dates to the printed letters.
+	
+- Added the appointment dates to the printed letters
+	
 - Made more keyboard shortcuts on the main menu.
+	
 - New kids build for all above
 
+
 v1.2 (released June 19 2010):
+	
 - CGView: Added various shortcuts keys for menus; removed extra overbook prompt after booking if doing an overbook. You already get one before booking.
+	
 - CGDocumentManager: Mickey mouse connection check to prevent prompting for access and verify if there's no connection to VISTA.
+	
 - CGDocumentManager: Test SQL statement to retrieve Hospital Locations and default providers associated with them. (doesn't work, moved to new routine later).
+	
 - Remove garbage file {85FE etc}.rpt
 - DCheckIn.cs: Handling of providers for hospital locations (HL). If provider(s) assigned to HL linked to resource, they are brought over and if a default one is in VISTA, it's picked as the default in the combobox. If no default, combobox defaults to <None>. If resource not linked to HL, then all providers in system brought over, and combobox default is <None>.
+	
 - CGDocumentManager.cs: Remove loading of ClinicSetupParameters file. File doesn't exist in VISTA.
+	
 - DResource.cs: Remove handling of same file.
 - New Routine BSDXGPRV to get providers associated with hospital location
-- Support for Routing Slip printing.
+
+	- Support for Routing Slip printing.
+	
 - Version change from 1.1 to 1.2 in preparation for release.
+	
 - Printing.cs: Addition of PrintRoutingSlip method.
-- CGView.cs: Handling of printing of routing slip if chosen in DCheckIn.cs
+
+	- CGView.cs: Handling of printing of routing slip if chosen in DCheckIn.cs
+	
 - CGView.cs: New context option to re-print routing slip
+	
 - DCheckIn.cs: toolTip1 to explain that routing slip will print on the default printer.
+	
 - New kids build
+
 
 v1.3 (released August 18th 2010):
+	
 - Support for multiple encodings.
+	
 - Some refactoring of code into DAL.cs for Data Access.
+	
 - Addition of Fileman date code (not used yet).
+	
 - Removal of .config and .xml file from bin/Release/
+	
 - Removal of BMXNet20.dll to replace with BMXNet21.dll for multiple encoding support
-- Updated mulitple routines and C# files - Send FM dates from VISTA rather than regular dates to support i18n (platform independent dates)
+	
+- Updated mulitple routines and C# files 
+	- Send FM dates from VISTA rather than regular dates to support i18n (platform independent dates)
+	
 - Fix pre-existing bug in rebooking. Now it works.
+	
 - Printing from the print preview window just printed empty lists. Now fixed. (also in branch 1.2.1).
+	
 - Updated Appointment Page and routine:
+		
 - Adds the following fields in Contact Info tab:
+			
 -- 1. Cell Phone
+			
 -- 2. Email address
+			
 -- 3. Country
+	
 - Search by Primary ID now works.
-- Start of week now machine culture sensitive (default always 1 day after start of week per culture). Change in CGDocument.cs
+
+	- Start of week now machine culture sensitive (default always 1 day after start of week per culture). Change in CGDocument.cs
+	
 - Removal of SSN references in DPatientLookup.cs
-- Updated kids post-init to remove harmful entries to GUI scheduling in protocol file from SDAM APPOINTMENT EVENTS
+
+	- Updated kids post-init to remove harmful entries to GUI scheduling in protocol file from SDAM APPOINTMENT EVENTS
+	
 - New KIDS build
 
+
 v1.4 (released September 17 2010):
+	
 - Make combo boxes in DManagement searchable (in MS Lingo AutoComplete).
-- Make sure that all DManagement lists and combo boxes are sorted.
+
+	- Make sure that all DManagement lists and combo boxes are sorted.
+	
 - Fix bug of not showing appointments in 7 day view if arabic locale on machine.
+	
 - Fix printing of routing slip (add clinic and fix appointment time and HRN)
-- Add RTL support for letters printed in Arabic Locale.
+
+	- Add RTL support for letters printed in Arabic Locale.
+	
 - StartDate for CGAVView, 1st try.
+	
 - CGDocument uses StartDate from Current thread locale rather than current culture. Enables controlling the behavior of the Scheduling GUI via thread locale.
+	
 - CGAVDocument contains changes for start day of grid based on weekday locale and colummns
+	
 - CGAVView: Shortcut keys; correct updating when number of columns is changed in grid
-- CGDocument: changes for start day of grid. Modified algorithm.
+
+	- CGDocument: changes for start day of grid. Modified algorithm.
+	
 - DAccessTemplate: Takes any weekday now for applying a template, not just Monday. Then calculation of start day is done in CGAVView based on locale in the same algorithm that the rest of the GUI uses.
+	
 - DAppointPage: Now says Mobile/Cell instead of Cell Phone.
-- Added a note in the DAccessTemplate to say that you have to select the right 5 or 7 day view based on what you originally saved.
+
+	- Added a note in the DAccessTemplate to say that you have to select the right 5 or 7 day view based on what you originally saved.
+	
 - Support for checking encoding on the server (if supports UTF-8 and encoding not specified, uses UTF-8; otherwise uses what locale says).
-- /e encoding start-up flag now supported.
+
+	- /e encoding start-up flag now supported.
+
 
 v1.4.1 (released September 29th 2010)
-- Drag and drop is fixed. It reference a non-existent cancellation reason, so it failed.
-- If a patient has a Patient Cancelled appointment, scheduling the patient at the same time doesn't work anymore.
-- MAKE^BSDXAPI occasionally failed. Use of Old Fileman API not successful. New Fileman API seems to work better in MAKE for filing data into patient subfile of appointment subfile of Hosp Location file.
-- Logging into the right division didn't work properly. Now it does. Required changes in BMX.
+
+	- Drag and drop is fixed. It reference a non-existent cancellation reason, so it failed.
+
+	- If a patient has a Patient Cancelled appointment, scheduling the patient at the same time doesn't work anymore.
+	
+- MAKE^BSDXAPI occasionally failed. Use of Old ileman API not successful. New Fileman API seems to work better in MAKE for filing data into patient subfile of ppointment subfile of Hosp Location file.
+
+	- Logging into the right division didn't work properly. Now it does. Required changes in BMX.
+	
 - Appointments in Past now trigger a warning.
+	
 - Change Project file format to VS 2010.
-- More extensive notes files.
+
+	- More extensive notes files.
+	
 - New Kids build.
 
-v1.4.2 (released December 12th 2010)
-- Finally, the transaction bugs that happens on high volume GT.M systems are fixed.
-- Fixes 1 day view drawing bug, causing yesterday's appointments to show as if they were today.
-- Updating the Note in the Edit appointment context menu now updates both BSDX APPOINTMENT file and HOSPITAL LOCATION.
-- Walk-in appointments now count towards slots left calcuations.
-- Default open location for apply template dialog is now the last folder navigated to.
-- Drag and drop and Delete Message Boxes (prompts) for users when manipulating Access Blocks have been removed (no need for them).
-- Printing from the View Apppointment user control (visible in the Make Appointment dialog) no longer causes an error if there are no appointments for patients.
-- Saving access slots is not async, but that causes other bugs because of multiple threads accessing data concurrently. It's an intermediate fix until a better saving program can be devised using BMX Updatable DataTables.
-- Access block grid now refreshes itself after access blocks are added from a template. No need to change dates to see the effect.
-- New option in Access block grid to mass delete access blocks on File menu (tied to Ctrl-D).
-- Can make appointments longer than 240 minutes when using a linked Resource (PIMS issue).
-- Patient Appointment List now does not show cancelled appointments.
-- Patient Appointment List now shows the names of the clinics as what you called them in the Scheduling GUI, not what they are called in VISTA.
-- New kids build
 
+v1.4.2 (released December 12th 2010)
+	
+- Finally, the transaction bugs that happens on high volume GT.M systems are fixed.
+
+	- Fixes 1 day view drawing bug, causing yesterday's appointments to show as if they were today.
+	
+- Updating the Note in the Edit appointment context menu now updates both BSDX APPOINTMENT file and HOSPITAL LOCATION.
+	
+- Walk-in appointments now count towards slots left calcuations.
+	
+- Default open location for apply template dialog is now the last folder navigated to.
+
+	- Drag and drop and Delete Message Boxes (prompts) for users when manipulating Access Blocks have been removed (no need for them).
+	
+- Printing from the View Apppointment user control (visible in the Make Appointment dialog) no longer causes an error if there are no appointments for patients.
+	
+- Saving access slots is not async, but that causes other bugs because of multiple threads accessing data concurrently. It's an intermediate fix until a better saving program can be devised using BMX Updatable DataTables.
+	- Access block grid now refreshes itself after access blocks are added from a template. No need to change dates to see the effect.
+	
+- New option in Access block grid to mass delete access blocks on File menu (tied to Ctrl-D).
+	
+- Can make appointments longer than 240 minutes when using a linked Resource (PIMS issue).
+
+	- Patient Appointment List now does not show cancelled appointments.
+	
+- Patient Appointment List now shows the names of the clinics as what you called them in the Scheduling GUI, not what they are called in VISTA.
+	
+- New kids build
 v1.5 (Final released on May 03 2011)
-- Speed issues very much mitigated.
-- Ability to Cancel checked-in appointments (including walk-ins) added.
+
+	- Speed issues very much mitigated.
+
+	- Ability to Cancel checked-in appointments (including walk-ins) added.
+	
 - Grid now responds to mouse wheel movements
+	
 - Clearer error messages for end users.
+	
 - Splash screen Upon Start-up with progress bar
 - Check-in Dialog cleaned up from extraneous elements; new algorithm for parsing out providers.
-- Application wide error handlers to handle application errors.
+
+	- Application wide error handlers to handle application errors.
+	
 - DateTime Picker format and behavior change. Schedule is no longer updated based on a value change but only when leaving the box or pressing the enter key.
+	
 - Polling for events and responding to them is now done asynchornously.
+	
 - A lot of refactoring to avoid calling the server when it's not needed. This involved not asking the server for updates after each operation as that's very expensive.
+	
 - Main form will be responsible for redrawing itself; not by the data manager.
-- Algorithms to calculate remaining slots and for finding empty slots are now much improved. Slots are now time scale sensitive; contiguous slots are joined toether.
+
+	- Algorithms to calculate remaining slots and for finding empty slots are now much improved. Slots are now time scale sensitive; contiguous slots are joined toether.
+	
 - More comprehensive message to user on Status Bar on what original slot has as well as what the current selection from the grid comes up.
-- Custom printing framework (not used though) incorporated into main code base. Thanks Tariq.
+
+	- Custom printing framework (not used though) incorporated into main code base. 
+	Thanks Tariq.
 - Holiday lookup is now better and won't fail when you use a different culture.
-- New print slip when an appointment is made.
-- Find Appointment Dialog now works very reliably.
+
+	- New print slip when an appointment is made.
+
+	- Find Appointment Dialog now works very reliably.
+	
 - Sex of patient now pulled in the appointment objects; however, support for that is not universal yet (e.g. Walk-in's don't have a Sex yet!)
+	
 - DOB of patient now pulled; more universal; also there is an object that calculates the patient age.
+	
 - User choices for printing appointment and routing slip are now saved to VISTA in parameters.
-- New command line flag, /culture, to set the main thread's CurrentUICulture.
+	- New command line flag, /culture, to set the main thread's CurrentUICulture.
+	
 - Routing Slip now prints patient order.
-- Bug when redrawing appointments while saving Slots on the Edit Resource Availability window fixed.
+	- Bug when redrawing appointments while saving Slots on the Edit Resource Availability window fixed.
+	
 - New context menu option on Grid to uncheck-in a patient
+	
 - New context menu option on Schedule Tree to Print Clinic Schedules for Today, Tomorrow, and 3 days from today.
-- New logic to prevent checked-in appointments from being deleted.
+
+	- New logic to prevent checked-in appointments from being deleted.
+	
 - Context menus for Noshow and Undo noshow have changed logic for when they become enabled.
-- Events are not going to be raised back to the originating Calendar Grid anymore.
+
+	- Events are not going to be raised back to the originating Calendar Grid anymore.
+	
 - Appointment Reminder Slip has been Arabized, and an extra resource is shipped in order to accomplish that.
+	
 - Version check added in the load logic.
-- Upon Demand refresh by pressing F5 added to CalendarGrid.
+
+	- Upon Demand refresh by pressing F5 added to CalendarGrid.
+	
 - Time scales are now sensitive to the original time scale of the clinic. You can increase them, but you can't decrease them.
+	
 - Click-right click issue resolved.
+	
 - Drag shows destination now when dragging over grid.
-- Drag scrolls grid up or down if needed.
+
+	- Drag scrolls grid up or down if needed.
+
 
 v 1.6 (released Sep 9 2011)
-- Added support for Scheduling and Cancelling appointments for Radiology Exams in VISTA. Works with the Radiology Package.
+
+	- Added support for Scheduling and Cancelling appointments for Radiology Exams in VISTA. Works with the Radiology Package.
+	
 - Can search for patient using DFN by using accent grave mark before the DFN of the patient in the pt search box.
-- Fixed a couple of bugs introduced in 1.5
-  -> ability to add appointment depends on new algo introduced in 1.5.
-  -> Fixed the bug preventing the saving of new access templates (new classes in 1.5 were not serializable)
+
+	- Fixed a couple of bugs introduced in 1.5
+  
+		-> ability to add appointment depends on new algo introduced in 1.5.
+  
+		-> Fixed the bug preventing the saving of new access templates (new classes in 1.5 were not serializable)
+	
 - If a provider's name contained a quote (like O'HARA), it caused the GUI to crash. Now fixed. 
+
+v 1.7 (released OCT 9 2012)
+	-
+	- Remove all Mumps Transactions from the Scheduling GUI code, because long running transactions present a problem to VISTA because unfiled transaction data can overwrite data not done via a transaction which is filed immediately, and the interaction between transactions and locking causes a freeze in GT.M which lead to stop the entire system.
+	- Supporting for BMX 4, which has a bunch of new capabilities and is much much faster.
+	- Appointment and Routing slips were changed to include EHS's changes, wich was support printing them dinamically on different page's sizes and protrait and land scape.
+	- Fixing the long time of geting all pending and on hold radiology exams when creating a new radiology appointment(30 seconds and more), and now it take lees than a second or two. 
+	- Fix in the Scheduling GUI C# code in v1.7 to prevent crashing if an unlinked clinic (unlinked to PIMS that is) exists.
+	- Cancel and Remove check-in check for check-out data on the PIMS appointment
+	- No-show now calls the PIMS event driver.
+	- KIDS build doesn't include BMX remote procedures in the BSDXRPC context anymore as BMX 4 handles context switching internally in the M layer between different contexts. Note that this doesn't mean that the user can forgo having access to BMXRPC. He/She? still needs access to that option.
+	
