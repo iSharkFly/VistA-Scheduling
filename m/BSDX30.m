@@ -1,12 +1,12 @@
-BSDX30	; IHS/OIT/HMW - WINDOWS SCHEDULING RPCS ; [4/28/11 10:28am]
-	;;1.6;BSDX;;Aug 31, 2011;Build 25
+BSDX30	; IHS/OIT/HMW - WINDOWS SCHEDULING RPCS ; [7/6/12 11:03am]
+	;;1.7;BSDX;;Jun 01, 2013;Build 24
 	; Licensed under LGPL
 	;
 	;
 SPACED(BSDXY,BSDXDIC,BSDXVAL)	;EP
 	;Entry point for debugging
 	;
-	D DEBUG^%Serenji("SPACE^BSDX30(.BSDXY,BSDXDIC,BSDXVAL)")
+	; D DEBUG^%Serenji("SPACE^BSDX30(.BSDXY,BSDXDIC,BSDXVAL)")
 	Q
 	;
 SPACE(BSDXY,BSDXDIC,BSDXVAL)	;EP
@@ -48,7 +48,7 @@ ETRAP	;EP Error trap entry
 	;
 EHRPTD(BSDXY,BSDXWID,BSDXDFN)	;
 	;
-	D DEBUG^%Serenji("EHRPT^BSDX30(.BSDXY,BSDXWID,BSDXDFN)")
+	; D DEBUG^%Serenji("EHRPT^BSDX30(.BSDXY,BSDXWID,BSDXDFN)")
 	Q
 	;
 EHRPT(BSDXY,BSDXWID,BSDXDFN)	;
@@ -69,6 +69,9 @@ EHRPT(BSDXY,BSDXWID,BSDXDFN)	;
 	Q
 	;
 PEVENT(BSDXWID,DFN)	;EP - Raise patient selection event to EHR
+	; VEN/SMH v1.7 3120706 - Not used in VISTA.
+	; No way right now to synchronize with CPRS.
+	; Code commented out for now.
 	;
 	;Change patient context to patient DFN
 	;on all EHR client sessions associated with user DUZ
@@ -77,14 +80,14 @@ PEVENT(BSDXWID,DFN)	;EP - Raise patient selection event to EHR
 	;If BSDXWID is "", the context change is sent to
 	;all EHR client sessions belonging to user DUZ.
 	;
-	Q:'$G(DUZ)
+	;Q:'$G(DUZ)
 	;N X
 	;S X="CIANBUTL" X ^%ZOSF("TEST") Q:'$T
 	;S X="CIANBEVT" X ^%ZOSF("TEST") Q:'$T
-	N UID,BRET
-	S BRET=0,UID=0
-	F  S BRET=$$NXTUID^CIANBUTL(.UID,1) Q:'UID  D
-	. Q:DUZ'=$$GETVAR^CIANBUTL("DUZ",,,UID)
-	. I BSDXWID'="" Q:BSDXWID'=$TR($$GETVAR^CIANBUTL("WID",,,UID),"abcdefghijklmnopqrstuvwxyz","ABCDEFGHIJKLMNOPQRSTUVWXYZ")
-	. D QUEUE^CIANBEVT("CONTEXT.PATIENT",+DFN,UID)
-	Q
+	;N UID,BRET
+	;S BRET=0,UID=0
+	;F  S BRET=$$NXTUID^CIANBUTL(.UID,1) Q:'UID  D
+	;. Q:DUZ'=$$GETVAR^CIANBUTL("DUZ",,,UID)
+	;. I BSDXWID'="" Q:BSDXWID'=$TR($$GETVAR^CIANBUTL("WID",,,UID),"abcdefghijklmnopqrstuvwxyz","ABCDEFGHIJKLMNOPQRSTUVWXYZ")
+	;. D QUEUE^CIANBEVT("CONTEXT.PATIENT",+DFN,UID)
+	;Q

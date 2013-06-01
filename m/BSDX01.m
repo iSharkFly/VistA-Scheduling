@@ -1,13 +1,15 @@
-BSDX01	; IHS/OIT/HMW - WINDOWS SCHEDULING RPCS ; 5/16/11 2:46pm
-	;;1.6;BSDX;;Aug 31, 2011;Build 25
+BSDX01	; IHS/OIT/HMW - WINDOWS SCHEDULING RPCS ; 1/29/13 12:53pm
+	;;1.7;BSDX;;Jun 01, 2013;Build 2
 	; Licensed under LGPL
 	;
 SUINFOD(BSDXY,BSDXDUZ)	;EP Debugging entry point
 	;D DEBUG^%Serenji("SUINFO^BSDX01(.BSDXY,BSDXDUZ)")
 	;
 	Q
-	;
-SUINFO(BSDXY,BSDXDUZ)	 ;EP
+	;EHS/WAT;UJOK*1.0*4 ;JAN 24,2013;Update [Updating the SUINFO function by adding a new parameter "USERKEY" that holds the name of the user key].
+	   ;EHS/WAT;UJO*2.0*31 ;JAN 24,2013;Update [Updating the SUINFO function by adding a new parameter "USERKEY" that holds the name of the user key].
+	   ;SUINFO(BSDXY,BSDXDUZ)    ;EP
+SUINFO(BSDXY,BSDXDUZ,USERKEY)	 ;EP
 	;Called by BSDX SCHEDULING USER INFO
 	;Returns ADO Recordset having column MANAGER
 	;MANAGER = YES if user has keys BSDXZMGR or XUPROGMODE
@@ -20,11 +22,14 @@ SUINFO(BSDXY,BSDXDUZ)	 ;EP
 	S ^BSDXTMP($J,BSDXI)="T00010MANAGER"_$C(30)
 	;Check SECURITY KEY file for BSDXZMGR or XUPROGMODE keys
 	I '+BSDXDUZ S BSDXDUZ=DUZ
-	S BSDXMGR=$$APSEC("BSDXZMGR",BSDXDUZ)
+	;EHS/WAT;UJOK*1.0*4 ;JAN 24,2013; Update [Updating the argument sent to $$APSEC function from hard coded string "BSDXZMGR" to "USERKEY" variable].
+	   ;EHS/WAT;UJO*2.0*31 ;JAN 24,2013; Update [Updating the argument sent to $$APSEC function from hard coded string "BSDXZMGR" to "USERKEY" variable].
+	   ;S BSDXMGR=$$APSEC("BSDXZMGR",BSDXDUZ);
+	   S BSDXMGR=$$APSEC(USERKEY,BSDXDUZ)
 	S BSDXMGR=$S(BSDXMGR=1:"YES",1:"NO")
 	S BSDXI=BSDXI+1
 	S ^BSDXTMP($J,BSDXI)=BSDXMGR_$C(30)
-	S ^BSDXTMP($J,BSDXI+1)=$C(31)_BSDXERR
+	S ^BSDXTMP($J,BSDXI+1)=$C(31)_BSDXERR    
 	Q
 DEPUSRD(BSDXY,BSDXDUZ)	;EP Debugging entry point
 	;
@@ -281,44 +286,43 @@ GP(BSDXY,PARAM)	; Get Param - EP
 	QUIT
 	;
 INDIV(BSDXSC)	; PEP - Is ^SC clinic in the same DUZ(2) as user?
-	   ; Input: BSDXSC - Hospital Location IEN
-	   ; Output: True or False
-	   I '+BSDXSC QUIT 1  ;If not tied to clinic, yes
-	   I '$D(^SC(BSDXSC,0)) QUIT 1 ; If Clinic does not exist, yes
-	   ; Jump to Division:Medical Center Division:Inst File Pointer for
-	   ; Institution IEN (and get its internal value)
-	   N DIV S DIV=$$GET1^DIQ(44,BSDXSC_",","3.5:.07","I")
-	   I DIV="" Q 1 ; If clinic has no division, consider it avial to user.
-	   I DIV=DUZ(2) Q 1 ; If same, then User is in same Div as Clinic
-	   E  Q 0 ; Otherwise, no
-	   QUIT
+	; Input: BSDXSC - Hospital Location IEN
+	; Output: True or False
+	I '+BSDXSC QUIT 1  ;If not tied to clinic, yes
+	I '$D(^SC(BSDXSC,0)) QUIT 1 ; If Clinic does not exist, yes
+	; Jump to Division:Medical Center Division:Inst File Pointer for
+	; Institution IEN (and get its internal value)
+	N DIV S DIV=$$GET1^DIQ(44,BSDXSC_",","3.5:.07","I")
+	I DIV="" Q 1 ; If clinic has no division, consider it avial to user.
+	I DIV=DUZ(2) Q 1 ; If same, then User is in same Div as Clinic
+	E  Q 0 ; Otherwise, no
 INDIV2(BSDXRES)	; PEP - Is Resource in the same DUZ(2) as user?
-	   ; Input BSDXRES - BSDX RESOURCE IEN
-	   ; Output: True of False
-	   Q $$INDIV($P($G(^BSDXRES(BSDXRES,0)),U,4)) ; Extract Hospital Location and send to $$INDIV
-UnitTestINDIV	
-	   W "Testing if they are the same",!
-	   S DUZ(2)=67
-	   I '$$INDIV(1) W "ERROR",!
-	   I '$$INDIV(2) W "ERROR",!
-	   W "Testing if Div not defined in 44, should be true",!
-	   I '$$INDIV(3) W "ERROR",!
-	   W "Testing empty string. Should be true",!
-	   I '$$INDIV("") W "ERROR",!
-	   W "Testing if they are different",!
-	   S DUZ(2)=899
-	   I $$INDIV(1) W "ERROR",!
-	   I $$INDIV(2) W "ERROR",!
-	   QUIT
-UnitTestINDIV2	
-	   W "Testing if they are the same",!
-	   S DUZ(2)=69
-	   I $$INDIV2(22)'=0 W "ERROR",!
-	   I $$INDIV2(25)'=1 W "ERROR",!
-	   I $$INDIV2(26)'=1 W "ERROR",!
-	   I $$INDIV2(27)'=1 W "ERROR",!
-	   QUIT
-	   ;
+	; Input BSDXRES - BSDX RESOURCE IEN
+	; Output: True of False
+	Q $$INDIV($P($G(^BSDXRES(BSDXRES,0)),U,4)) ; Extract Hospital Location and send to $$INDIV
+UTINDIV	; Unit Test $$INDIV
+	W "Testing if they are the same",!
+	S DUZ(2)=67
+	I '$$INDIV(1) W "ERROR",!
+	I '$$INDIV(2) W "ERROR",!
+	W "Testing if Div not defined in 44, should be true",!
+	I '$$INDIV(3) W "ERROR",!
+	W "Testing empty string. Should be true",!
+	I '$$INDIV("") W "ERROR",!
+	W "Testing if they are different",!
+	S DUZ(2)=899
+	I $$INDIV(1) W "ERROR",!
+	I $$INDIV(2) W "ERROR",!
+	QUIT
+UTINDIV2	; Unit Test $$INDIV2
+	W "Testing if they are the same",!
+	S DUZ(2)=69
+	I $$INDIV2(22)'=0 W "ERROR",!
+	I $$INDIV2(25)'=1 W "ERROR",!
+	I $$INDIV2(26)'=1 W "ERROR",!
+	I $$INDIV2(27)'=1 W "ERROR",!
+	QUIT
+	;
 GETRADEX(BSDXY,DFN,SCIEN)	; Get All Pending and On Hold Radiology Exams for Patient; RPC EP; UJO/SMH new in v 1.6
 	; RPC: BSDX GET RAD EXAM FOR PT; Return: Global Array
 	;
@@ -345,13 +349,12 @@ GETRADEX(BSDXY,DFN,SCIEN)	; Get All Pending and On Hold Radiology Exams for Pati
 	; File 75.1 = RAD/NUC MED ORDERS
 	; Fields 5 = Request Status; 2 = Procedure; 16 = Requested Entered Date Time
 	; Filter Field: First piece is DFN, 5th piece is 3 or 5 (Status of Pending Or Hold); 20th piece is Radiology Location requested
-	;
-	       ;;EHS/MKH,BAH;;UJO*1.0*143;;30/09/2012;; Update [Fix the performance issue in SchedGUI]
-	       ; START OF CODE CHANGES FOR [UJO*1.0*143]
+	       ;;EHS/MKH,BAH;;BSDX 1.7;;30/09/2012;; Update [Fix the performance issue in SchedGUI]
+	       ; START OF CODE CHANGES FOR [BSDX 1.7]
 	       ; Commented old Line
-	       ;D LIST^DIC(75.1,"","@;5;2;16","P","","","","B","I $P(^(0),U)=DFN&(35[$P(^(0),U,5))&($P(^(0),U,20)=BSDXRLIEN)","","BSDXOUT","BSDXERR")
+	       ;D LIST^DIC(75.1,"","@;5;2;16","P","","","","B","I $P(^(0),U)=DFN&(35[$P(^(0),U,5))&($P(^(0),U,20)=BSDXRLIEN)","","BSDXOUT","BSDXE>>RR")
 	       DO FIND^DIC(75.1,"","@;5;2;16","QP",DFN,"","B","IF 35[$PIECE(^(0),U,5)&($PIECE(^(0),U,20)=BSDXRLIEN)","","BSDXOUT","BSDXERR")
-	       ; END OF CODE CHANGES FOR [UJO*1.0*143]
+	       ; END OF CODE CHANGES FOR [BSDX 1.7]
 	;
 	IF $DATA(BSDXERR) GOTO END
 	;

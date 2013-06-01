@@ -1,5 +1,5 @@
 BSDXUT1	; VEN/SMH - Unit Tests for Scheduling GUI - cont. ; 7/9/12 12:31pm
-	;;1.7;BSDX;;Oct 04, 2012;Build 25
+	;;1.7;BSDX;;Jun 01, 2013;Build 24
 	;
 	;
 EN	; Run All Unit Tests in this routine
