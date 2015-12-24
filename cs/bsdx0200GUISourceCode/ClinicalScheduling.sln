@@ -1,13 +1,13 @@
-Microsoft Visual Studio Solution File, Format Version 11.00
-# Visual C# Express 2010
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Express 2012 for Windows Desktop
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClinicalScheduling", "ClinicalScheduling.csproj", "{8C05C4F7-FE81-479F-87A0-44E04C7F6E0F}"
 	ProjectSection(ProjectDependencies) = postProject
 		{DE8E4CC9-4F3A-4E32-8DFE-EE5692E8FC45} = {DE8E4CC9-4F3A-4E32-8DFE-EE5692E8FC45}
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IndianHealthService.BMXNet", "..\..\BMX4\IndianHealthService.BMXNet\IndianHealthService.BMXNet.csproj", "{DE8E4CC9-4F3A-4E32-8DFE-EE5692E8FC45}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IndianHealthService.BMXNet", "..\..\..\..\BMXNET_RPMS_dotNET_UTILITIES-BMX\branch\BMX41000\IHS BMX Framework\IndianHealthService.BMXNet\IndianHealthService.BMXNet.csproj", "{DE8E4CC9-4F3A-4E32-8DFE-EE5692E8FC45}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IndianHealthService.BMXNet.WinForm", "..\..\BMX4\IndianHealthService.BMXNet.WinForm\IndianHealthService.BMXNet.WinForm.csproj", "{3B9011B5-59F4-4F6B-ADC7-54ADC6948F4D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IndianHealthService.BMXNet.WinForm", "..\..\..\..\BMXNET_RPMS_dotNET_UTILITIES-BMX\branch\BMX41000\IHS BMX Framework\IndianHealthService.BMXNet.WinForm\IndianHealthService.BMXNet.WinForm.csproj", "{3B9011B5-59F4-4F6B-ADC7-54ADC6948F4D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

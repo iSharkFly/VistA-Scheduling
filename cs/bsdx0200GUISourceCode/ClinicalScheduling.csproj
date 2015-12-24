@@ -38,10 +38,10 @@
     <IsWebBootstrapper>false</IsWebBootstrapper>
     <ManifestCertificateThumbprint>3202DD11CA9F64F7E52CF7BBED5F17D6E8A1B395</ManifestCertificateThumbprint>
     <ManifestKeyFile>ClinicalScheduling_TemporaryKey.pfx</ManifestKeyFile>
-    <GenerateManifests>false</GenerateManifests>
+    <GenerateManifests>true</GenerateManifests>
     <SignManifests>false</SignManifests>
     <TargetZone>LocalIntranet</TargetZone>
-    <NoWin32Manifest>true</NoWin32Manifest>
+    <TargetFrameworkProfile />
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -53,11 +53,10 @@
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
     <ApplicationRevision>1</ApplicationRevision>
-    <ApplicationVersion>2.1.0.%2a</ApplicationVersion>
+    <ApplicationVersion>2.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
     <BootstrapperEnabled>true</BootstrapperEnabled>
-    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <OutputPath>bin\Release\</OutputPath>
@@ -107,6 +106,9 @@
     <DebugType>none</DebugType>
     <ErrorReport>prompt</ErrorReport>
     <UseVSHostingProcess>false</UseVSHostingProcess>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationManifest>Properties\app.manifest</ApplicationManifest>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="PrintPreview, Version=1.0.4570.15574, Culture=neutral, processorArchitecture=MSIL">
@@ -169,6 +171,9 @@
       <DependentUpon>strings.resx</DependentUpon>
     </Compile>
     <Compile Include="UserPreferences.cs" />
+    <None Include="App.config">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="dsPatientApptDisplay2.xsc">
       <DependentUpon>dsPatientApptDisplay2.xsd</DependentUpon>
     </None>
@@ -307,7 +312,6 @@
     </Compile>
     <Compile Include="dsRebookAppts.cs">
       <DependentUpon>dsRebookAppts.xsd</DependentUpon>
-      <SubType>Component</SubType>
     </Compile>
     <Compile Include="dsRebookAppts.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -456,6 +460,7 @@
     <EmbeddedResource Include="UCPatientAppts.resx">
       <DependentUpon>UCPatientAppts.cs</DependentUpon>
     </EmbeddedResource>
+    <None Include="Properties\app.manifest" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{967B4E0D-AD0C-4609-AB67-0FA40C0206D8}" />
@@ -488,16 +493,14 @@
       <Install>false</Install>
     </BootstrapperPackage>
   </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
-    <Folder Include="Properties\" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\BMX4\IndianHealthService.BMXNet.WinForm\IndianHealthService.BMXNet.WinForm.csproj">
-      <Project>{3B9011B5-59F4-4F6B-ADC7-54ADC6948F4D}</Project>
+    <ProjectReference Include="..\..\..\..\BMXNET_RPMS_dotNET_UTILITIES-BMX\branch\BMX41000\IHS BMX Framework\IndianHealthService.BMXNet.WinForm\IndianHealthService.BMXNet.WinForm.csproj">
+      <Project>{3b9011b5-59f4-4f6b-adc7-54adc6948f4d}</Project>
       <Name>IndianHealthService.BMXNet.WinForm</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\BMX4\IndianHealthService.BMXNet\IndianHealthService.BMXNet.csproj">
-      <Project>{DE8E4CC9-4F3A-4E32-8DFE-EE5692E8FC45}</Project>
+    <ProjectReference Include="..\..\..\..\BMXNET_RPMS_dotNET_UTILITIES-BMX\branch\BMX41000\IHS BMX Framework\IndianHealthService.BMXNet\IndianHealthService.BMXNet.csproj">
+      <Project>{de8e4cc9-4f3a-4e32-8dfe-ee5692e8fc45}</Project>
       <Name>IndianHealthService.BMXNet</Name>
     </ProjectReference>
   </ItemGroup>

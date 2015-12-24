@@ -48,7 +48,7 @@ namespace IndianHealthService.ClinicalScheduling
         /// <returns>Datatable with one column: "MANAGER": One Row that's "YES" or "NO"</returns>
         public DataTable GetUserInfo(string DUZ)
         {
-            string cmd = String.Format("BSDX SCHEDULING USER INFO^{0}", DUZ);
+            string cmd = String.Format("BSDX SCHEDULING USER INFO^{0}^{1}", DUZ, "BSDXZMGR");
             return _thisConnection.TableFromCommand(cmd);
         }
 

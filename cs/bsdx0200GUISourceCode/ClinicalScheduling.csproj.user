@@ -36,7 +36,8 @@
     <RemoteDebugMachine>
     </RemoteDebugMachine>
     <StartAction>Project</StartAction>
-    <StartArguments>/s=10.0.1.13 /p=9431 /a=shabiel12 /v=catdog.33</StartArguments>
+    <StartArguments>
+    </StartArguments>
     <StartPage>
     </StartPage>
     <StartProgram>C:\WINDOWS\Microsoft.NET\Framework\v1.1.4322\IEExec.exe</StartProgram>
@@ -66,5 +67,8 @@
     <StartWorkingDirectory>
     </StartWorkingDirectory>
     <StartWithIE>false</StartWithIE>
+  </PropertyGroup>
+  <PropertyGroup>
+    <EnableSecurityDebugging>false</EnableSecurityDebugging>
   </PropertyGroup>
 </Project>

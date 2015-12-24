@@ -10,6 +10,11 @@ using IndianHealthService.BMXNet;
 using System.Runtime.InteropServices;
 using System.Drawing.Printing;
 using System.Linq;
+using System.Text;
+using System.Net.Mail;
+using System.Configuration;
+using System.Net;
+using System.IO;
 
 namespace IndianHealthService.ClinicalScheduling
 {
@@ -93,7 +98,6 @@ namespace IndianHealthService.ClinicalScheduling
 		private System.Windows.Forms.MenuItem sepApptMenu1;
 		private System.Windows.Forms.MenuItem sepApptMenu2;
 		private System.Windows.Forms.MenuItem ctxCalGridWalkin;
-		private System.Windows.Forms.MenuItem ctxCalGridSep1;
 		private System.Windows.Forms.MenuItem ctxCalGridSep2;
 		private System.Windows.Forms.MenuItem mnuOpenMultipleSchedules;
 		private System.Windows.Forms.MenuItem mnuDisplayWalkIns;
@@ -114,6 +118,10 @@ namespace IndianHealthService.ClinicalScheduling
         private MenuItem sepApptMenu3;
         private MenuItem mnuReprintApptSlip;
         private MenuItem mnuViewBrokerLog;
+        private MenuItem ctxCalGridSep1;
+        private MenuItem ctxCalGridCloneForward;
+        private MenuItem ctxCalGridExportInvite;
+        private MenuItem ctxCopyAppointment;
         private IContainer components;
 
         #region Initialization
@@ -254,17 +262,21 @@ namespace IndianHealthService.ClinicalScheduling
             this.dateTimePicker1 = new System.Windows.Forms.DateTimePicker();
             this.lblResource = new System.Windows.Forms.Label();
             this.panelCenter = new System.Windows.Forms.Panel();
+            this.calendarGrid1 = new IndianHealthService.ClinicalScheduling.CalendarGrid();
             this.ctxCalendarGrid = new System.Windows.Forms.ContextMenu();
             this.ctxCalGridAdd = new System.Windows.Forms.MenuItem();
             this.ctxCalGridMkRadAppt = new System.Windows.Forms.MenuItem();
             this.ctxCalGridEdit = new System.Windows.Forms.MenuItem();
             this.ctxCalGridDelete = new System.Windows.Forms.MenuItem();
             this.ctxCalGridCancelRadAppt = new System.Windows.Forms.MenuItem();
+            this.ctxCalGridCloneForward = new System.Windows.Forms.MenuItem();
+            this.ctxCopyAppointment = new System.Windows.Forms.MenuItem();
             this.ctxCalGridCheckIn = new System.Windows.Forms.MenuItem();
             this.ctxCalGridUndoCheckin = new System.Windows.Forms.MenuItem();
-            this.ctxCalGridSep1 = new System.Windows.Forms.MenuItem();
             this.ctxCalGridNoShow = new System.Windows.Forms.MenuItem();
             this.ctxCalGridNoShowUndo = new System.Windows.Forms.MenuItem();
+            this.ctxCalGridSep1 = new System.Windows.Forms.MenuItem();
+            this.ctxCalGridExportInvite = new System.Windows.Forms.MenuItem();
             this.ctxCalGridSep2 = new System.Windows.Forms.MenuItem();
             this.ctxCalGridWalkin = new System.Windows.Forms.MenuItem();
             this.ctxCalGridSep3 = new System.Windows.Forms.MenuItem();
@@ -273,7 +285,6 @@ namespace IndianHealthService.ClinicalScheduling
             this.statusBar1 = new System.Windows.Forms.StatusBar();
             this.splitter1 = new System.Windows.Forms.Splitter();
             this.splitter2 = new System.Windows.Forms.Splitter();
-            this.calendarGrid1 = new IndianHealthService.ClinicalScheduling.CalendarGrid();
             this.panelRight.SuspendLayout();
             this.panelClip.SuspendLayout();
             this.panelTop.SuspendLayout();
@@ -715,7 +726,7 @@ namespace IndianHealthService.ClinicalScheduling
             this.tvSchedules.HotTracking = true;
             this.tvSchedules.Location = new System.Drawing.Point(0, 0);
             this.tvSchedules.Name = "tvSchedules";
-            this.tvSchedules.Size = new System.Drawing.Size(128, 347);
+            this.tvSchedules.Size = new System.Drawing.Size(128, 305);
             this.tvSchedules.Sorted = true;
             this.tvSchedules.TabIndex = 1;
             this.tvSchedules.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.tvSchedules_AfterSelect);
@@ -784,7 +795,7 @@ namespace IndianHealthService.ClinicalScheduling
             this.panelRight.Dock = System.Windows.Forms.DockStyle.Right;
             this.panelRight.Location = new System.Drawing.Point(996, 0);
             this.panelRight.Name = "panelRight";
-            this.panelRight.Size = new System.Drawing.Size(128, 347);
+            this.panelRight.Size = new System.Drawing.Size(128, 305);
             this.panelRight.TabIndex = 3;
             this.panelRight.Visible = false;
             // 
@@ -880,8 +891,37 @@ namespace IndianHealthService.ClinicalScheduling
             this.panelCenter.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panelCenter.Location = new System.Drawing.Point(136, 24);
             this.panelCenter.Name = "panelCenter";
-            this.panelCenter.Size = new System.Drawing.Size(857, 299);
+            this.panelCenter.Size = new System.Drawing.Size(857, 257);
             this.panelCenter.TabIndex = 7;
+            // 
+            // calendarGrid1
+            // 
+            this.calendarGrid1.AllowDrop = true;
+            this.calendarGrid1.Appointments = null;
+            this.calendarGrid1.ApptDragSource = null;
+            this.calendarGrid1.AutoScroll = true;
+            this.calendarGrid1.AutoScrollMinSize = new System.Drawing.Size(600, 1898);
+            this.calendarGrid1.AvailabilityArray = null;
+            this.calendarGrid1.BackColor = System.Drawing.SystemColors.Window;
+            this.calendarGrid1.Columns = 5;
+            this.calendarGrid1.ContextMenu = this.ctxCalendarGrid;
+            this.calendarGrid1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.calendarGrid1.DrawWalkIns = true;
+            this.calendarGrid1.GridBackColor = null;
+            this.calendarGrid1.GridEnter = false;
+            this.calendarGrid1.Location = new System.Drawing.Point(0, 0);
+            this.calendarGrid1.Name = "calendarGrid1";
+            this.calendarGrid1.Resources = ((System.Collections.ArrayList)(resources.GetObject("calendarGrid1.Resources")));
+            this.calendarGrid1.SelectedAppointment = 0;
+            this.calendarGrid1.Size = new System.Drawing.Size(857, 257);
+            this.calendarGrid1.StartDate = new System.DateTime(2003, 1, 27, 0, 0, 0, 0);
+            this.calendarGrid1.TabIndex = 0;
+            this.calendarGrid1.TimeScale = 20;
+            this.calendarGrid1.CGAppointmentChanged += new IndianHealthService.ClinicalScheduling.CalendarGrid.CGAppointmentChangedHandler(this.calendarGrid1_CGAppointmentChanged);
+            this.calendarGrid1.CGAppointmentAdded += new IndianHealthService.ClinicalScheduling.CalendarGrid.CGAppointmentChangedHandler(this.calendarGrid1_CGAppointmentAdded);
+            this.calendarGrid1.CGSelectionChanged += new IndianHealthService.ClinicalScheduling.CalendarGrid.CGSelectionChangedHandler(this.calendarGrid1_CGSelectionChanged);
+            this.calendarGrid1.DoubleClick += new System.EventHandler(this.calendarGrid1_DoubleClick);
+            this.calendarGrid1.MouseEnter += new System.EventHandler(this.calendarGrid1_MouseEnter);
             // 
             // ctxCalendarGrid
             // 
@@ -891,11 +931,14 @@ namespace IndianHealthService.ClinicalScheduling
             this.ctxCalGridEdit,
             this.ctxCalGridDelete,
             this.ctxCalGridCancelRadAppt,
+            this.ctxCalGridCloneForward,
+            this.ctxCopyAppointment,
             this.ctxCalGridCheckIn,
             this.ctxCalGridUndoCheckin,
-            this.ctxCalGridSep1,
             this.ctxCalGridNoShow,
             this.ctxCalGridNoShowUndo,
+            this.ctxCalGridSep1,
+            this.ctxCalGridExportInvite,
             this.ctxCalGridSep2,
             this.ctxCalGridWalkin,
             this.ctxCalGridSep3,
@@ -932,54 +975,72 @@ namespace IndianHealthService.ClinicalScheduling
             this.ctxCalGridCancelRadAppt.Text = "Cancel Radiology Appointment";
             this.ctxCalGridCancelRadAppt.Click += new System.EventHandler(this.ctxCalGridCancelRadAppt_Click);
             // 
+            // ctxCalGridCloneForward
+            // 
+            this.ctxCalGridCloneForward.Index = 5;
+            this.ctxCalGridCloneForward.Text = "Copy/Forward Appointment";
+            this.ctxCalGridCloneForward.Click += new System.EventHandler(this.ctxCalGridCloneForward_Click);
+            // 
+            // ctxCopyAppointment
+            // 
+            this.ctxCopyAppointment.Index = 6;
+            this.ctxCopyAppointment.Text = "Copy to Clipboard";
+            this.ctxCopyAppointment.Click += new System.EventHandler(this.ctxCopyAppointment_Click);
+            // 
             // ctxCalGridCheckIn
             // 
-            this.ctxCalGridCheckIn.Index = 5;
+            this.ctxCalGridCheckIn.Index = 7;
             this.ctxCalGridCheckIn.Text = "Check In Patient";
             this.ctxCalGridCheckIn.Click += new System.EventHandler(this.ctxCalGridCheckIn_Click);
             // 
             // ctxCalGridUndoCheckin
             // 
-            this.ctxCalGridUndoCheckin.Index = 6;
+            this.ctxCalGridUndoCheckin.Index = 8;
             this.ctxCalGridUndoCheckin.Text = "&Undo Check In";
             this.ctxCalGridUndoCheckin.Click += new System.EventHandler(this.ctxCalGridUndoCheckin_Click);
             // 
-            // ctxCalGridSep1
-            // 
-            this.ctxCalGridSep1.Index = 7;
-            this.ctxCalGridSep1.Text = "-";
-            // 
             // ctxCalGridNoShow
             // 
-            this.ctxCalGridNoShow.Index = 8;
+            this.ctxCalGridNoShow.Index = 9;
             this.ctxCalGridNoShow.Text = "Mark as No Show";
             this.ctxCalGridNoShow.Click += new System.EventHandler(this.ctxCalGridNoShow_Click);
             // 
             // ctxCalGridNoShowUndo
             // 
-            this.ctxCalGridNoShowUndo.Index = 9;
+            this.ctxCalGridNoShowUndo.Index = 10;
             this.ctxCalGridNoShowUndo.Text = "Undo NoShow";
             this.ctxCalGridNoShowUndo.Click += new System.EventHandler(this.ctxCalGridNoShowUndo_Click);
             // 
+            // ctxCalGridSep1
+            // 
+            this.ctxCalGridSep1.Index = 11;
+            this.ctxCalGridSep1.Text = "-";
+            // 
+            // ctxCalGridExportInvite
+            // 
+            this.ctxCalGridExportInvite.Index = 12;
+            this.ctxCalGridExportInvite.Text = "Export Canendar Invite";
+            this.ctxCalGridExportInvite.Click += new System.EventHandler(this.ctxExportInvite_Click);
+            // 
             // ctxCalGridSep2
             // 
-            this.ctxCalGridSep2.Index = 10;
+            this.ctxCalGridSep2.Index = 13;
             this.ctxCalGridSep2.Text = "-";
             // 
             // ctxCalGridWalkin
             // 
-            this.ctxCalGridWalkin.Index = 11;
+            this.ctxCalGridWalkin.Index = 14;
             this.ctxCalGridWalkin.Text = "Create Wal&k-In Appointment";
             this.ctxCalGridWalkin.Click += new System.EventHandler(this.ctxCalGridWalkin_Click);
             // 
             // ctxCalGridSep3
             // 
-            this.ctxCalGridSep3.Index = 12;
+            this.ctxCalGridSep3.Index = 15;
             this.ctxCalGridSep3.Text = "-";
             // 
             // ctxCalGridReprintApptSlip
             // 
-            this.ctxCalGridReprintApptSlip.Index = 13;
+            this.ctxCalGridReprintApptSlip.Index = 16;
             this.ctxCalGridReprintApptSlip.Text = "&Reprint Appointment Slip";
             this.ctxCalGridReprintApptSlip.Click += new System.EventHandler(this.ctxCalGridReprintApptSlip_Click);
             // 
@@ -987,7 +1048,7 @@ namespace IndianHealthService.ClinicalScheduling
             // 
             this.panelBottom.Controls.Add(this.statusBar1);
             this.panelBottom.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panelBottom.Location = new System.Drawing.Point(136, 323);
+            this.panelBottom.Location = new System.Drawing.Point(136, 281);
             this.panelBottom.Name = "panelBottom";
             this.panelBottom.Size = new System.Drawing.Size(857, 24);
             this.panelBottom.TabIndex = 8;
@@ -1005,7 +1066,7 @@ namespace IndianHealthService.ClinicalScheduling
             // 
             this.splitter1.Location = new System.Drawing.Point(128, 24);
             this.splitter1.Name = "splitter1";
-            this.splitter1.Size = new System.Drawing.Size(8, 323);
+            this.splitter1.Size = new System.Drawing.Size(8, 281);
             this.splitter1.TabIndex = 9;
             this.splitter1.TabStop = false;
             // 
@@ -1014,43 +1075,14 @@ namespace IndianHealthService.ClinicalScheduling
             this.splitter2.Dock = System.Windows.Forms.DockStyle.Right;
             this.splitter2.Location = new System.Drawing.Point(993, 24);
             this.splitter2.Name = "splitter2";
-            this.splitter2.Size = new System.Drawing.Size(3, 323);
+            this.splitter2.Size = new System.Drawing.Size(3, 281);
             this.splitter2.TabIndex = 10;
             this.splitter2.TabStop = false;
-            // 
-            // calendarGrid1
-            // 
-            this.calendarGrid1.AllowDrop = true;
-            this.calendarGrid1.Appointments = null;
-            this.calendarGrid1.ApptDragSource = null;
-            this.calendarGrid1.AutoScroll = true;
-            this.calendarGrid1.AutoScrollMinSize = new System.Drawing.Size(600, 1898);
-            this.calendarGrid1.AvailabilityArray = null;
-            this.calendarGrid1.BackColor = System.Drawing.SystemColors.Window;
-            this.calendarGrid1.Columns = 5;
-            this.calendarGrid1.ContextMenu = this.ctxCalendarGrid;
-            this.calendarGrid1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.calendarGrid1.DrawWalkIns = true;
-            this.calendarGrid1.GridBackColor = null;
-            this.calendarGrid1.GridEnter = false;
-            this.calendarGrid1.Location = new System.Drawing.Point(0, 0);
-            this.calendarGrid1.Name = "calendarGrid1";
-            this.calendarGrid1.Resources = ((System.Collections.ArrayList)(resources.GetObject("calendarGrid1.Resources")));
-            this.calendarGrid1.SelectedAppointment = 0;
-            this.calendarGrid1.Size = new System.Drawing.Size(857, 299);
-            this.calendarGrid1.StartDate = new System.DateTime(2003, 1, 27, 0, 0, 0, 0);
-            this.calendarGrid1.TabIndex = 0;
-            this.calendarGrid1.TimeScale = 20;
-            this.calendarGrid1.CGAppointmentChanged += new IndianHealthService.ClinicalScheduling.CalendarGrid.CGAppointmentChangedHandler(this.calendarGrid1_CGAppointmentChanged);
-            this.calendarGrid1.CGAppointmentAdded += new IndianHealthService.ClinicalScheduling.CalendarGrid.CGAppointmentChangedHandler(this.calendarGrid1_CGAppointmentAdded);
-            this.calendarGrid1.CGSelectionChanged += new IndianHealthService.ClinicalScheduling.CalendarGrid.CGSelectionChangedHandler(this.calendarGrid1_CGSelectionChanged);
-            this.calendarGrid1.DoubleClick += new System.EventHandler(this.calendarGrid1_DoubleClick);
-            this.calendarGrid1.MouseEnter += new System.EventHandler(this.calendarGrid1_MouseEnter);
             // 
             // CGView
             // 
             this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
-            this.ClientSize = new System.Drawing.Size(1124, 347);
+            this.ClientSize = new System.Drawing.Size(1124, 305);
             this.Controls.Add(this.panelCenter);
             this.Controls.Add(this.panelBottom);
             this.Controls.Add(this.splitter2);
@@ -1211,6 +1243,7 @@ namespace IndianHealthService.ClinicalScheduling
 					m_ClipList.AddAppointment(a);
                     lstClip.Items.Add(a);
 				}
+                copyAppointmentToClipBoard();
 			}
 			catch (Exception ex)
 			{
@@ -1397,9 +1430,37 @@ namespace IndianHealthService.ClinicalScheduling
 			mnuRemoveClipItem.Enabled = (lstClip.SelectedIndex > -1);
 		}
 
-		#endregion ctxApptClipMenu Handlers
+        #endregion ctxApptClipMenu Handlers
 
-		#region ctxCalGridMenu Handlers
+        #region ctxCalGridMenu Handlers
+
+        private Configuration GetConfiguration() {
+            Configuration conf = null;
+            var fileName = Path.Combine(Environment.GetFolderPath(
+    Environment.SpecialFolder.ApplicationData), "ClinicalScheduling.exe.config");
+            if (!File.Exists(fileName))
+            {
+                try
+                {
+                    Configuration temp = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
+                    File.Copy(temp.FilePath, fileName);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message);
+                    return conf;
+                }
+            }
+            if (!File.Exists(fileName))
+            {
+                MessageBox.Show("Unable to locate the app.config file.");
+                return conf;
+            }
+            ExeConfigurationFileMap mapping = new ExeConfigurationFileMap();
+            mapping.ExeConfigFilename = fileName;
+            conf = ConfigurationManager.OpenMappedExeConfiguration(mapping, ConfigurationUserLevel.None);
+            return conf;
+        }
 
 		private void ctxCalendarGrid_Popup(object sender, System.EventArgs e)
 		{
@@ -1410,6 +1471,9 @@ namespace IndianHealthService.ClinicalScheduling
             bool _isRadAppt = IsThisARadiologyResource();
             bool _noShowEnabled = NoShowEnabled();
             bool _undoCheckinEnabled = UndoCheckinEnabled();
+            bool _cloneForwardEnabled = CloneForwardEnabled();
+            bool _exportCalendarInviteEnabled = ExportCalendarInviteEnabled();
+            bool _copyAppointmentEnabled = CopyAppointmentEnabled();
             //end flags
 
             if (_isRadAppt)//this is a radiology resource
@@ -1422,8 +1486,11 @@ namespace IndianHealthService.ClinicalScheduling
                 ctxCalGridNoShowUndo.Visible = false;
                 ctxCalGridWalkin.Visible = false;
                 ctxCalGridUndoCheckin.Visible = false;
-                ctxCalGridSep1.Visible = false;
                 ctxCalGridSep2.Visible = false;
+                ctxCalGridCloneForward.Visible = false;
+                ctxCalGridExportInvite.Visible = false;
+                ctxCalGridSep1.Visible = false;
+                ctxCopyAppointment.Visible = false;
 
                 ctxCalGridMkRadAppt.Visible = true;
                 ctxCalGridCancelRadAppt.Visible = true;
@@ -1441,8 +1508,11 @@ namespace IndianHealthService.ClinicalScheduling
                 ctxCalGridNoShowUndo.Visible = true;
                 ctxCalGridWalkin.Visible = true;
                 ctxCalGridUndoCheckin.Visible = true;
-                ctxCalGridSep1.Visible = true;
                 ctxCalGridSep2.Visible = true;
+                ctxCalGridCloneForward.Visible = true;
+                ctxCalGridExportInvite.Visible = true;
+                ctxCalGridSep1.Visible = true;
+                ctxCopyAppointment.Visible = true;
 
                 ctxCalGridMkRadAppt.Visible = false;
                 ctxCalGridCancelRadAppt.Visible = false;
@@ -1464,6 +1534,17 @@ namespace IndianHealthService.ClinicalScheduling
             //if the rad ones are visible, then these apply
             ctxCalGridMkRadAppt.Enabled = _isRadAppt && _addApptsEnabled;
             ctxCalGridCancelRadAppt.Enabled = _isRadAppt && _editApptsEnabled;
+
+            ctxCalGridCloneForward.Enabled = !_isRadAppt && _cloneForwardEnabled;
+            ctxCalGridExportInvite.Enabled = !_isRadAppt && _exportCalendarInviteEnabled;
+            ctxCopyAppointment.Enabled = !_isRadAppt && _copyAppointmentEnabled;
+            //Configuration conf = GetConfiguration();            
+            //MessageBox.Show(conf.ConnectionStrings["useEmail"]);
+            Configuration conf = GetConfiguration();
+            if (conf.AppSettings.Settings["useEmail"].Value == "true")
+            {
+                ctxCalGridExportInvite.Text = "Email Canlendar Invite";
+            }
         }
 
 		private void ctxCalGridAdd_Click(object sender, System.EventArgs e)
@@ -1676,6 +1757,51 @@ namespace IndianHealthService.ClinicalScheduling
                 return false;
             CGAppointment appt = (CGAppointment)this.Appointments.AppointmentTable[calendarGrid1.SelectedAppointment];
             return !appt.NoShow;
+        }
+
+        private bool CloneForwardEnabled() {
+            if (calendarGrid1.SelectedAppointment < 1)
+                return false;
+            return true;
+        }
+
+        private bool CopyAppointmentEnabled()
+        {
+            return EditAppointmentEnabled();
+        }
+
+        private bool ExportCalendarInviteEnabled()
+        {
+            if (calendarGrid1.SelectedAppointment < 1)
+                return false;
+            CGAppointment appt = (CGAppointment)this.Appointments.AppointmentTable[calendarGrid1.SelectedAppointment];
+            if (appt.StartTime < DateTime.Now)
+            {
+                return false;
+            }
+            if (appt.Patient.Email == null)
+            {
+                try
+                {
+                    string sSql;
+                    sSql = "BSDX GET BASIC REG INFO^" + appt.PatientID.ToString();
+
+                    DataTable tb = m_DocManager.RPMSDataTable(sSql, "PatientRegInfo");
+
+                    Debug.Assert(tb.Rows.Count == 1);
+                    DataRow r = tb.Rows[0];
+                    appt.Patient.Email = r["EMAIL ADDRESS"].ToString();
+                }
+                catch (Exception e)
+                {                    
+                    MessageBox.Show("DAppointPage::InitializePage -- Unable to retrieve patient information from VistA.  " + e.Message);
+                }
+                if (appt.Patient.Email == "")
+                {
+                    return false;
+                }
+            }
+            return true;
         }
 
         private bool UndoCheckinEnabled()
@@ -2046,6 +2172,7 @@ namespace IndianHealthService.ClinicalScheduling
 				DAppointPage dAppt = new DAppointPage();			
 				dAppt.DocManager = this.m_DocManager;
 				dAppt.InitializePage(a);
+                dAppt.HideCloneForwardTab();
 
 				calendarGrid1.CGToolTip.Active = false;
 
@@ -2077,6 +2204,62 @@ namespace IndianHealthService.ClinicalScheduling
 				Debug.Write("CGView.AppointmentEdit Failed:  " + ex.Message);
 			}
 		}
+
+        private void AppointmentCloneForward(ArrayList alResources)
+        {
+            try
+            {
+                int nApptID = this.calendarGrid1.SelectedAppointment;
+                Debug.Assert(nApptID != 0);
+
+                CGAppointment a = (CGAppointment)this.Appointments.AppointmentTable[nApptID];
+
+                DAppointPage dAppt = new DAppointPage();
+                dAppt.DocManager = this.m_DocManager;
+                dAppt.InitializePage(a);
+
+                calendarGrid1.CGToolTip.Active = false;
+
+                dAppt.SetCloneForwardable(alResources, a);
+                
+
+                if (dAppt.ShowDialog(this) == DialogResult.Cancel)
+                {
+                    calendarGrid1.CGToolTip.Active = true;
+                    return;
+                }
+                calendarGrid1.CGToolTip.Active = true;
+
+                string sNote = dAppt.Note;
+
+                CGAppointment appt = dAppt.Appointment;
+
+                //Call Document to add a new appointment. Document adds appointment to CGAppointments array.
+                this.Document.CreateAppointment(appt);
+
+
+                if (dAppt.PrintAppointmentSlip)
+                {
+                    PrintAppointmentSlip(appt);
+                }
+
+                //Show the new set of appointments by calling UpdateArrays. Fetches Document's CGAppointments
+                this.UpdateArrays();
+
+                RaiseRPMSEvent("BSDX SCHEDULE", appt.Resource);
+            }
+            catch (Exception ex)
+            {
+                string msg;
+                if (M.Piece(ex.Message, "~", 1) == "-10") // -10 means that BSDXAPI reported an error.
+                    msg = M.Piece(ex.Message, "~", 4);
+                else
+                    msg = ex.Message;
+
+                MessageBox.Show("VISTA says: \r\n" + msg, "Unable to Make Appointment");
+                return;
+            }
+        }
 
 		/// <summary>
         /// Marks all selected appointments as No Show from this.calendarGrid1.SelectedAppointments
@@ -2589,14 +2772,15 @@ namespace IndianHealthService.ClinicalScheduling
                 CGAvailability resultantAvail;
                 m_nSlots = m_Document.SlotsAvailable(dStart, dEnd, sResource, this.calendarGrid1.TimeScale, out resultantAvail);
 
-				if (m_nSlots < 1)
+				/* Faisal Don't show overbood popup
+                if (m_nSlots < 1)
 				{
 					DialogResult dr = MessageBox.Show(this, "There are no slots available at the selected time.  Do you want to overbook this appointment?", "Clinical Scheduling",MessageBoxButtons.YesNo);
 					if (dr != DialogResult.Yes)
 					{
 						return;
 					}
-				}
+				}*/
 
 				//Display a dialog to collect Patient Name
 				DPatientLookup dPat = new DPatientLookup();
@@ -2616,6 +2800,7 @@ namespace IndianHealthService.ClinicalScheduling
 				dAppt.DocManager = this.m_DocManager;
 				string sNote = "";
                 dAppt.InitializePage(dPat.PatientIEN, dStart, dEnd, sResource, sNote, nAccessTypeID);
+                dAppt.HideCloneForwardTab();
 
 				if (dAppt.ShowDialog(this) == DialogResult.Cancel)
 				{
@@ -3214,7 +3399,14 @@ namespace IndianHealthService.ClinicalScheduling
 			{
 				CGDocumentManager.Current.RemoteSession.EventServices.RpmsEvent -= BMXNetEventHandler;
 				this.calendarGrid1.CloseGrid();
-			}
+                if (this.DocManager.m_SsshProcess != null)
+                {
+                    if (!this.DocManager.m_SsshProcess.HasExited)
+                    {
+                        this.DocManager.m_SsshProcess.Kill();
+                    }                    
+                }
+            }
 			catch (Exception ex)
 			{
 				Debug.Write("CGView_Closing exception: " + ex.Message + "\n");
@@ -3965,6 +4157,131 @@ namespace IndianHealthService.ClinicalScheduling
             view.Show();
         }
 
+        private void ctxCalGridCloneForward_Click(object sender, EventArgs e)
+        {
+            AppointmentCloneForward(m_alSelectedTreeResourceArray);
+        }
 
+        private void menuItem8_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private StringBuilder GetCalendarInvite(CGAppointment appt, String emailSubject, String emailBody)
+        {
+            StringBuilder sb = new StringBuilder();
+            Configuration conf = GetConfiguration();
+            sb.AppendLine("BEGIN:VCALENDAR");
+            sb.AppendLine(string.Format("PRODID:-//{0}//BSDX Scheduling 1.7//EN", conf.AppSettings.Settings["organization"].Value));
+            sb.AppendLine("VERSION:2.0");
+            sb.AppendLine("CALSCALE:GREGORIAN");
+            sb.AppendLine("METHOD:REQUEST");
+            sb.AppendLine("X-WR-CALDESC:");
+            sb.AppendLine("BEGIN:VEVENT");
+            sb.AppendLine(string.Format("DTSTART;VALUE=DATE-TIME:{0:yyyyMMddTHHmmssZ}", appt.StartTime.ToUniversalTime().ToString("yyyyMMdd\\THHmmss\\Z")));
+            sb.AppendLine(string.Format("DTEND;VALUE=DATE-TIME:{0:yyyyMMddTHHmmssZ}", appt.EndTime.ToUniversalTime().ToString("yyyyMMdd\\THHmmss\\Z")));
+            sb.AppendLine(string.Format("DTSTAMP:{0:yyyyMMddTHHmmssZ}", DateTime.Now.ToUniversalTime().ToString("yyyyMMdd\\THHmmss\\Z")));
+            sb.AppendLine(string.Format("UID:{0}", Guid.NewGuid()));
+            sb.AppendLine(string.Format("DESCRIPTION:{0}", emailBody));
+            sb.AppendLine(string.Format("X-ALT-DESC;FMTTYPE=text/html:{0}", emailBody));
+            sb.AppendLine(string.Format("SUMMARY:{0}", emailSubject));
+            sb.AppendLine(string.Format("ORGANIZER:MAILTO:{0}", conf.AppSettings.Settings["userEmail"].Value)); //
+            sb.AppendLine(string.Format("ATTENDEE;CN=\"{0}\";RSVP=TRUE:mailto:{1}", appt.Patient.Name, appt.Patient.Email));
+            sb.AppendLine("LOCATION:" + appt.Resource + ", " + conf.AppSettings.Settings["address"].Value); //appt.Resource);
+            sb.AppendLine("SEQUENCE:0");
+            sb.AppendLine("STATUS:CONFIRMED");
+            sb.AppendLine("TRANSP:TRANSPARENT");
+            sb.AppendLine("END:VEVENT");
+            sb.AppendLine("END:VCALENDAR");
+            return sb;
+        }
+
+        private void ExportCalendarInvite(CGAppointment appt, string emailSubject, string emailBody)
+        {
+            SaveFileDialog saveFileDialog1 = new SaveFileDialog();
+            saveFileDialog1.Filter = "iCalendar File|*.ics";
+            saveFileDialog1.Title = "Save Calendar Invite";
+            saveFileDialog1.ShowDialog();
+            if (saveFileDialog1.FileName != "")
+            {
+                StringBuilder str = GetCalendarInvite(appt, emailSubject, emailBody);
+                FileStream fs = new FileStream(saveFileDialog1.FileName, FileMode.Create);
+                StreamWriter sw = new StreamWriter(fs);
+                sw.Write(str.ToString());
+                sw.Close();
+                fs.Close();
+            }
+        }
+
+        private void EmailCalendarInvite(CGAppointment appt, String emailSubject, String emailBody)
+        {
+            Configuration conf = GetConfiguration();
+            SmtpClient sc = new SmtpClient(conf.AppSettings.Settings["smtpHost"].Value);
+
+            System.Net.Mail.MailMessage msg = new System.Net.Mail.MailMessage();
+
+            msg.From = new MailAddress(conf.AppSettings.Settings["userEmail"].Value);
+            msg.To.Add(new MailAddress(appt.Patient.Email, appt.Patient.Name));
+            msg.Bcc.Add(new MailAddress(conf.AppSettings.Settings["userEmail"].Value));
+            msg.Subject = emailSubject;
+            msg.IsBodyHtml = true;
+            msg.Body = emailBody;
+            StringBuilder str = GetCalendarInvite(appt, emailSubject, emailBody);
+            System.Net.Mime.ContentType ct = new System.Net.Mime.ContentType("text/calendar");
+            ct.Parameters.Add("method", "REQUEST");
+            //ct.Parameters.Add("name", "meeting.ics");
+            AlternateView avCal = AlternateView.CreateAlternateViewFromString(str.ToString(), ct);
+            msg.AlternateViews.Add(avCal);
+            NetworkCredential nc = new NetworkCredential(conf.AppSettings.Settings["userEmail"].Value, conf.AppSettings.Settings["userPassword"].Value);
+            sc.Port = Convert.ToInt32(conf.AppSettings.Settings["smtpPort"].Value);
+            sc.EnableSsl = Convert.ToBoolean(conf.AppSettings.Settings["enableSSL"].Value);
+            sc.Credentials = nc;
+            try
+            {
+                sc.Send(msg);
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show("Unable to send email.  " + e.Message);
+            }
+        }
+
+        private void copyAppointmentToClipBoard() {            
+            int apptID = this.CGrid.SelectedAppointment;
+            Configuration conf = GetConfiguration();
+            if (apptID <= 0) return;
+            CGAppointment a = (CGAppointment)this.Appointments.AppointmentTable[apptID];
+
+            string str = "Clinic Title: " + a.Resource + "\n" +
+                            "Date/Time: " + a.StartTime.ToString() + "\n" +
+                            "Location: " + conf.AppSettings.Settings["address"].Value + "\n" +
+                            "Phone: " + conf.AppSettings.Settings["phone"].Value;
+            Clipboard.SetText(str);
+        }
+
+        private void ctxExportInvite_Click(object sender, EventArgs e)
+        {
+            Configuration conf = GetConfiguration();
+            String emailBody = "Your Appointment is Scheduled.";
+            String emailSubject = conf.AppSettings.Settings["inviteSubject"].Value;
+            int apptID = this.CGrid.SelectedAppointment;
+            if (apptID <= 0) return;
+
+            CGAppointment a = (CGAppointment)this.Appointments.AppointmentTable[apptID];
+
+            if (conf.AppSettings.Settings["useEmail"].Value == "true")
+            {
+                EmailCalendarInvite(a, emailSubject, emailBody);
+            }
+            else
+            {
+                ExportCalendarInvite(a, emailSubject, emailBody);
+            }
+        }
+
+        private void ctxCopyAppointment_Click(object sender, EventArgs e)
+        {
+            copyAppointmentToClipBoard();
+        }
     }//End class
 }

@@ -35,11 +35,15 @@ namespace IndianHealthService.ClinicalScheduling
         public string                       m_sHandle = "0";            // Not Used
         
         //Connection variables (tied to command line parameters /a /v /s /p /e)
+        //New variables for ssh
         private string                      m_AccessCode="";
         private string                      m_VerifyCode="";
         private string                      m_Server="";
+        private string                      m_SshUser = "";
+        private string                      m_SshPassword = "";
         private int                         m_Port=0;
         private string                      m_Encoding="";  //Encoding is "" by default;
+        public Process                     m_SsshProcess;
 
         //Globalization Object (tied to command line parameter /culture)
         private string                      m_CultureName = "";
@@ -211,6 +215,8 @@ namespace IndianHealthService.ClinicalScheduling
                 { "a=", a => _current.m_AccessCode = a },
                 { "v=", v => _current.m_VerifyCode = v },
                 { "e=", e => _current.m_Encoding = e},
+                { "su=",su => _current.m_SshUser = su },
+                { "sp=",sp => _current.m_SshPassword = sp },
                 { "culture=", culture => _current.m_CultureName = culture }
             };
 
@@ -376,6 +382,22 @@ namespace IndianHealthService.ClinicalScheduling
              */
             LoginProcess login;
             this.WinFramework = WinFramework.CreateWithNetworkBroker(true, RPCLogger);
+
+            if (m_SshUser != "")
+            {
+                string path = System.IO.Directory.GetCurrentDirectory();
+                path = path.Substring(0, path.LastIndexOf('\\'));
+                //path = path.Substring(0, path.LastIndexOf('\\'));
+                path = path + '\\' + "Putty\\putty.exe";
+                if (System.IO.File.Exists(path))
+                {
+                    string prms = "-ssh -l " + m_SshUser + " -pw " + m_SshPassword + " -L " + m_Port + ":127.0.0.1:" + m_Port + " " + m_Server;
+                    //m_SsshProcess = System.Diagnostics.Process.Start(path, prms);
+                    ProcessStartInfo si = new ProcessStartInfo(path, prms);
+                    si.WindowStyle = ProcessWindowStyle.Minimized;
+                    m_SsshProcess = Process.Start(si);
+                }                
+            }
             
             if (bReLogin) // if logging in again...
             {
@@ -409,6 +431,10 @@ namespace IndianHealthService.ClinicalScheduling
                 spec.Name = "Command Line Server";
                 spec.Port = m_Port;
                 spec.Server = m_Server;
+                if (m_SsshProcess != null)
+                {
+                    spec.Server = "127.0.0.1";
+                }
                 spec.UseWindowsAuthentication = false; //for now
                 spec.UseDefaultNamespace = true; //for now
 
@@ -443,6 +469,13 @@ namespace IndianHealthService.ClinicalScheduling
 DoneTrying:
             if (!login.WasSuccessful)
             {
+                if (m_SsshProcess != null)
+                {
+                    if (!m_SsshProcess.HasExited)
+                    {
+                        m_SsshProcess.Kill();
+                    }                    
+                }
                 return false;
             }
 
@@ -450,6 +483,13 @@ DoneTrying:
 
             if ((this.WinFramework.Context.User.Division == null) && !this.WinFramework.AttemptUserInputSetDivision("Set Initial Division", firstSplash))
             {
+                if (m_SsshProcess != null)
+                {
+                    if (!m_SsshProcess.HasExited)
+                    {
+                        m_SsshProcess.Kill();
+                    }
+                }
                 return false;
             }
 
@@ -649,6 +689,13 @@ DoneTrying:
                     "Major, Minor and Build versions must match",
                     "Version Mismatch");
                 closeSplashDelegate();
+                if (m_SsshProcess != null)
+                {
+                    if (!m_SsshProcess.HasExited)
+                    {
+                        m_SsshProcess.Kill();
+                    }
+                }
                 return false;
             }
  

@@ -4,6 +4,7 @@ using System.Collections;
 using System.ComponentModel;
 using System.Windows.Forms;
 using System.Data;
+using System.Collections.Generic;
 //using System.Data.OleDb;
 using System.Diagnostics;
 using IndianHealthService.BMXNet;
@@ -65,6 +66,25 @@ namespace IndianHealthService.ClinicalScheduling
         private CheckBox chkPrint;
         private Label label18;
         private TextBox txtSex;
+        private TabPage tabCloneForward;
+        private GroupBox grpCloneForward;
+        private Button button1;
+        private ComboBox cboDuration;
+        private TextBox txtFUOther;
+        private Label label21;
+        private RadioButton rdbFU90;
+        private RadioButton rdbFU60;
+        private RadioButton rdbFU30;
+        private Label label19;
+        private DateTimePicker dtCloneAppointment;
+        private ComboBox cboSlots;
+        private Label label25;
+        private Label label24;
+        private Label txtClinic;
+        private TextBox textBox1;
+        private Label label20;
+        private Label label22;
+        private Label label23;
         private IContainer components;
 
 		public DAppointPage()
@@ -103,6 +123,25 @@ namespace IndianHealthService.ClinicalScheduling
             this.txtDOB = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
             this.txtPatientName = new System.Windows.Forms.TextBox();
+            this.tabCloneForward = new System.Windows.Forms.TabPage();
+            this.grpCloneForward = new System.Windows.Forms.GroupBox();
+            this.button1 = new System.Windows.Forms.Button();
+            this.cboDuration = new System.Windows.Forms.ComboBox();
+            this.txtFUOther = new System.Windows.Forms.TextBox();
+            this.label21 = new System.Windows.Forms.Label();
+            this.rdbFU90 = new System.Windows.Forms.RadioButton();
+            this.rdbFU60 = new System.Windows.Forms.RadioButton();
+            this.rdbFU30 = new System.Windows.Forms.RadioButton();
+            this.label19 = new System.Windows.Forms.Label();
+            this.dtCloneAppointment = new System.Windows.Forms.DateTimePicker();
+            this.cboSlots = new System.Windows.Forms.ComboBox();
+            this.label25 = new System.Windows.Forms.Label();
+            this.label24 = new System.Windows.Forms.Label();
+            this.txtClinic = new System.Windows.Forms.Label();
+            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.label20 = new System.Windows.Forms.Label();
+            this.label22 = new System.Windows.Forms.Label();
+            this.label23 = new System.Windows.Forms.Label();
             this.tabPatientInfo = new System.Windows.Forms.TabPage();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.label17 = new System.Windows.Forms.Label();
@@ -134,6 +173,8 @@ namespace IndianHealthService.ClinicalScheduling
             this.tabAppointment.SuspendLayout();
             this.groupBox3.SuspendLayout();
             this.groupBox1.SuspendLayout();
+            this.tabCloneForward.SuspendLayout();
+            this.grpCloneForward.SuspendLayout();
             this.tabPatientInfo.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -145,12 +186,13 @@ namespace IndianHealthService.ClinicalScheduling
             // tabControl1
             // 
             this.tabControl1.Controls.Add(this.tabAppointment);
+            this.tabControl1.Controls.Add(this.tabCloneForward);
             this.tabControl1.Controls.Add(this.tabPatientInfo);
             this.tabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tabControl1.Location = new System.Drawing.Point(0, 0);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(471, 526);
+            this.tabControl1.Size = new System.Drawing.Size(475, 524);
             this.tabControl1.TabIndex = 0;
             // 
             // tabAppointment
@@ -160,7 +202,7 @@ namespace IndianHealthService.ClinicalScheduling
             this.tabAppointment.Controls.Add(this.groupBox1);
             this.tabAppointment.Location = new System.Drawing.Point(4, 22);
             this.tabAppointment.Name = "tabAppointment";
-            this.tabAppointment.Size = new System.Drawing.Size(463, 500);
+            this.tabAppointment.Size = new System.Drawing.Size(467, 498);
             this.tabAppointment.TabIndex = 1;
             this.tabAppointment.Text = "Appointment";
             // 
@@ -175,8 +217,6 @@ namespace IndianHealthService.ClinicalScheduling
             // 
             // groupBox3
             // 
-            this.groupBox3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox3.Controls.Add(this.lblClinic);
             this.groupBox3.Controls.Add(this.label15);
             this.groupBox3.Controls.Add(this.txtNote);
@@ -294,7 +334,7 @@ namespace IndianHealthService.ClinicalScheduling
             this.label18.AutoSize = true;
             this.label18.Location = new System.Drawing.Point(238, 44);
             this.label18.Name = "label18";
-            this.label18.Size = new System.Drawing.Size(29, 13);
+            this.label18.Size = new System.Drawing.Size(28, 13);
             this.label18.TabIndex = 14;
             this.label18.Text = "Sex:";
             // 
@@ -366,12 +406,207 @@ namespace IndianHealthService.ClinicalScheduling
             this.txtPatientName.Size = new System.Drawing.Size(337, 20);
             this.txtPatientName.TabIndex = 0;
             // 
+            // tabCloneForward
+            // 
+            this.tabCloneForward.BackColor = System.Drawing.SystemColors.Control;
+            this.tabCloneForward.Controls.Add(this.grpCloneForward);
+            this.tabCloneForward.Location = new System.Drawing.Point(4, 22);
+            this.tabCloneForward.Name = "tabCloneForward";
+            this.tabCloneForward.Size = new System.Drawing.Size(467, 498);
+            this.tabCloneForward.TabIndex = 2;
+            this.tabCloneForward.Text = "Clone/Forward";
+            // 
+            // grpCloneForward
+            // 
+            this.grpCloneForward.Controls.Add(this.button1);
+            this.grpCloneForward.Controls.Add(this.cboDuration);
+            this.grpCloneForward.Controls.Add(this.txtFUOther);
+            this.grpCloneForward.Controls.Add(this.label21);
+            this.grpCloneForward.Controls.Add(this.rdbFU90);
+            this.grpCloneForward.Controls.Add(this.rdbFU60);
+            this.grpCloneForward.Controls.Add(this.rdbFU30);
+            this.grpCloneForward.Controls.Add(this.label19);
+            this.grpCloneForward.Controls.Add(this.dtCloneAppointment);
+            this.grpCloneForward.Controls.Add(this.cboSlots);
+            this.grpCloneForward.Controls.Add(this.label25);
+            this.grpCloneForward.Controls.Add(this.label24);
+            this.grpCloneForward.Controls.Add(this.txtClinic);
+            this.grpCloneForward.Controls.Add(this.textBox1);
+            this.grpCloneForward.Controls.Add(this.label20);
+            this.grpCloneForward.Controls.Add(this.label22);
+            this.grpCloneForward.Controls.Add(this.label23);
+            this.grpCloneForward.Location = new System.Drawing.Point(8, 13);
+            this.grpCloneForward.Name = "grpCloneForward";
+            this.grpCloneForward.Size = new System.Drawing.Size(439, 206);
+            this.grpCloneForward.TabIndex = 16;
+            this.grpCloneForward.TabStop = false;
+            this.grpCloneForward.Text = "Clone/Forward Appointment";
+            // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(357, 82);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(51, 24);
+            this.button1.TabIndex = 37;
+            this.button1.Text = "Update";
+            this.button1.Click += new System.EventHandler(this.button1_Click);
+            // 
+            // cboDuration
+            // 
+            this.cboDuration.FormattingEnabled = true;
+            this.cboDuration.Location = new System.Drawing.Point(80, 51);
+            this.cboDuration.Name = "cboDuration";
+            this.cboDuration.Size = new System.Drawing.Size(66, 21);
+            this.cboDuration.TabIndex = 36;
+            this.cboDuration.SelectedIndexChanged += new System.EventHandler(this.cboDuration_SelectedIndexChanged);
+            // 
+            // txtFUOther
+            // 
+            this.txtFUOther.Location = new System.Drawing.Point(297, 84);
+            this.txtFUOther.Name = "txtFUOther";
+            this.txtFUOther.Size = new System.Drawing.Size(54, 20);
+            this.txtFUOther.TabIndex = 35;
+            this.txtFUOther.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtFUOther_KeyPress);
+            // 
+            // label21
+            // 
+            this.label21.AutoSize = true;
+            this.label21.Location = new System.Drawing.Point(255, 88);
+            this.label21.Name = "label21";
+            this.label21.Size = new System.Drawing.Size(36, 13);
+            this.label21.TabIndex = 34;
+            this.label21.Text = "Other:";
+            // 
+            // rdbFU90
+            // 
+            this.rdbFU90.AutoSize = true;
+            this.rdbFU90.Location = new System.Drawing.Point(203, 85);
+            this.rdbFU90.Name = "rdbFU90";
+            this.rdbFU90.Size = new System.Drawing.Size(37, 17);
+            this.rdbFU90.TabIndex = 33;
+            this.rdbFU90.TabStop = true;
+            this.rdbFU90.Text = "90";
+            this.rdbFU90.UseVisualStyleBackColor = true;
+            this.rdbFU90.CheckedChanged += new System.EventHandler(this.rdbFUCheckedChanged);
+            // 
+            // rdbFU60
+            // 
+            this.rdbFU60.AutoSize = true;
+            this.rdbFU60.Location = new System.Drawing.Point(160, 85);
+            this.rdbFU60.Name = "rdbFU60";
+            this.rdbFU60.Size = new System.Drawing.Size(37, 17);
+            this.rdbFU60.TabIndex = 32;
+            this.rdbFU60.TabStop = true;
+            this.rdbFU60.Text = "60";
+            this.rdbFU60.UseVisualStyleBackColor = true;
+            this.rdbFU60.CheckedChanged += new System.EventHandler(this.rdbFUCheckedChanged);
+            // 
+            // rdbFU30
+            // 
+            this.rdbFU30.AutoSize = true;
+            this.rdbFU30.Location = new System.Drawing.Point(117, 85);
+            this.rdbFU30.Name = "rdbFU30";
+            this.rdbFU30.Size = new System.Drawing.Size(37, 17);
+            this.rdbFU30.TabIndex = 31;
+            this.rdbFU30.TabStop = true;
+            this.rdbFU30.Text = "30";
+            this.rdbFU30.UseVisualStyleBackColor = true;
+            this.rdbFU30.CheckedChanged += new System.EventHandler(this.rdbFUCheckedChanged);
+            // 
+            // label19
+            // 
+            this.label19.Location = new System.Drawing.Point(4, 85);
+            this.label19.Name = "label19";
+            this.label19.Size = new System.Drawing.Size(103, 16);
+            this.label19.TabIndex = 30;
+            this.label19.Text = "Quick Follow up:";
+            this.label19.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // dtCloneAppointment
+            // 
+            this.dtCloneAppointment.Location = new System.Drawing.Point(80, 26);
+            this.dtCloneAppointment.Name = "dtCloneAppointment";
+            this.dtCloneAppointment.Size = new System.Drawing.Size(136, 20);
+            this.dtCloneAppointment.TabIndex = 29;
+            this.dtCloneAppointment.ValueChanged += new System.EventHandler(this.dtCloneAppointment_ValueChanged);
+            // 
+            // cboSlots
+            // 
+            this.cboSlots.FormattingEnabled = true;
+            this.cboSlots.Location = new System.Drawing.Point(303, 24);
+            this.cboSlots.Name = "cboSlots";
+            this.cboSlots.Size = new System.Drawing.Size(121, 21);
+            this.cboSlots.TabIndex = 28;
+            this.cboSlots.SelectedIndexChanged += new System.EventHandler(this.cboSlots_SelectedIndexChanged);
+            // 
+            // label25
+            // 
+            this.label25.AutoSize = true;
+            this.label25.Location = new System.Drawing.Point(238, 29);
+            this.label25.Name = "label25";
+            this.label25.Size = new System.Drawing.Size(59, 13);
+            this.label25.TabIndex = 27;
+            this.label25.Text = "Time Slots:";
+            // 
+            // label24
+            // 
+            this.label24.Location = new System.Drawing.Point(152, 53);
+            this.label24.Name = "label24";
+            this.label24.Size = new System.Drawing.Size(40, 16);
+            this.label24.TabIndex = 26;
+            this.label24.Text = "Clinic:";
+            this.label24.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // txtClinic
+            // 
+            this.txtClinic.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.txtClinic.Location = new System.Drawing.Point(200, 53);
+            this.txtClinic.Name = "txtClinic";
+            this.txtClinic.Size = new System.Drawing.Size(233, 16);
+            this.txtClinic.TabIndex = 25;
+            // 
+            // textBox1
+            // 
+            this.textBox1.AcceptsReturn = true;
+            this.textBox1.Location = new System.Drawing.Point(80, 123);
+            this.textBox1.Multiline = true;
+            this.textBox1.Name = "textBox1";
+            this.textBox1.Size = new System.Drawing.Size(353, 60);
+            this.textBox1.TabIndex = 24;
+            // 
+            // label20
+            // 
+            this.label20.Location = new System.Drawing.Point(4, 131);
+            this.label20.Name = "label20";
+            this.label20.Size = new System.Drawing.Size(56, 16);
+            this.label20.TabIndex = 23;
+            this.label20.Text = "Notes:";
+            this.label20.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // label22
+            // 
+            this.label22.Location = new System.Drawing.Point(16, 53);
+            this.label22.Name = "label22";
+            this.label22.Size = new System.Drawing.Size(56, 16);
+            this.label22.TabIndex = 21;
+            this.label22.Text = "Duration:";
+            this.label22.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // label23
+            // 
+            this.label23.Location = new System.Drawing.Point(8, 29);
+            this.label23.Name = "label23";
+            this.label23.Size = new System.Drawing.Size(64, 16);
+            this.label23.TabIndex = 20;
+            this.label23.Text = "Start Time:";
+            this.label23.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
             // tabPatientInfo
             // 
             this.tabPatientInfo.Controls.Add(this.groupBox2);
             this.tabPatientInfo.Location = new System.Drawing.Point(4, 22);
             this.tabPatientInfo.Name = "tabPatientInfo";
-            this.tabPatientInfo.Size = new System.Drawing.Size(463, 500);
+            this.tabPatientInfo.Size = new System.Drawing.Size(467, 498);
             this.tabPatientInfo.TabIndex = 0;
             this.tabPatientInfo.Text = "Contact Information";
             // 
@@ -561,9 +796,9 @@ namespace IndianHealthService.ClinicalScheduling
             this.panel1.Controls.Add(this.cmdCancel);
             this.panel1.Controls.Add(this.cmdOK);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panel1.Location = new System.Drawing.Point(0, 486);
+            this.panel1.Location = new System.Drawing.Point(0, 484);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(471, 40);
+            this.panel1.Size = new System.Drawing.Size(475, 40);
             this.panel1.TabIndex = 1;
             // 
             // chkPrint
@@ -571,7 +806,7 @@ namespace IndianHealthService.ClinicalScheduling
             this.chkPrint.AutoSize = true;
             this.chkPrint.Location = new System.Drawing.Point(13, 14);
             this.chkPrint.Name = "chkPrint";
-            this.chkPrint.Size = new System.Drawing.Size(144, 17);
+            this.chkPrint.Size = new System.Drawing.Size(139, 17);
             this.chkPrint.TabIndex = 2;
             this.chkPrint.Text = "Print Appointment Letter";
             this.chkPrint.UseVisualStyleBackColor = true;
@@ -588,7 +823,6 @@ namespace IndianHealthService.ClinicalScheduling
             // 
             // cmdOK
             // 
-            this.cmdOK.DialogResult = System.Windows.Forms.DialogResult.OK;
             this.cmdOK.Location = new System.Drawing.Point(317, 8);
             this.cmdOK.Name = "cmdOK";
             this.cmdOK.Size = new System.Drawing.Size(64, 24);
@@ -616,19 +850,23 @@ namespace IndianHealthService.ClinicalScheduling
             this.AcceptButton = this.cmdOK;
             this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
             this.CancelButton = this.cmdCancel;
-            this.ClientSize = new System.Drawing.Size(471, 526);
+            this.ClientSize = new System.Drawing.Size(475, 524);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.tabControl1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.Name = "DAppointPage";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Patient Appointment";
+            this.Load += new System.EventHandler(this.DAppointPage_Load);
             this.tabControl1.ResumeLayout(false);
             this.tabAppointment.ResumeLayout(false);
             this.groupBox3.ResumeLayout(false);
             this.groupBox3.PerformLayout();
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
+            this.tabCloneForward.ResumeLayout(false);
+            this.grpCloneForward.ResumeLayout(false);
+            this.grpCloneForward.PerformLayout();
             this.tabPatientInfo.ResumeLayout(false);
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
@@ -645,6 +883,12 @@ namespace IndianHealthService.ClinicalScheduling
 		#region Fields
 
 		private CGDocumentManager	m_DocManager;
+
+        private ArrayList alResources;
+
+        private bool isCloning = false;
+
+        private DateTime originalAppointment;
 
 		private string			m_sPatientName;
         private Sex             m_enumPatientSex;
@@ -674,9 +918,167 @@ namespace IndianHealthService.ClinicalScheduling
 
 		#endregion //fields
 
-		#region Methods
+		#region
 
-		public void InitializePage(CGAppointment a)
+        private void SetDurations(DateTime apptDate)
+        {
+            DateTime m_dStart = apptDate; // move to 1200
+            DateTime m_dEnd = m_dStart.Date.AddHours(23).AddMinutes(59).AddSeconds(59); //move to 235959
+            string sSearchInfo = "1|both" + "|";
+            ArrayList m_alResources = alResources;
+            ArrayList m_alAccessTypes = new ArrayList();
+            DataTable m_availTable = CGSchedLib.CreateAvailabilitySchedule(m_DocManager, m_alResources, m_dStart, m_dEnd, m_alAccessTypes, ScheduleType.Resource, sSearchInfo);
+            if (m_availTable.Rows.Count > 0)
+            {
+                foreach (DataRow row in m_availTable.Rows)
+                {
+                    double minPerSlot = (row.Field<DateTime>("END_TIME") - row.Field<DateTime>("START_TIME")).TotalMinutes / row.Field<int>("SLOTS");
+                    int totalSlots = row.Field<int>("SLOTS");
+                    double duration = 0;
+                    for (int i = 0; i < totalSlots; i++)
+                    {
+                        duration = duration + minPerSlot;
+                        cboDuration.Items.Add(duration);
+                    }
+                }
+            }
+            else
+            {
+                CGView v = this.DocManager.GetViewByResource(m_alResources);
+                int scale = v.CGrid.TimeScale;
+                //cboDuration.Items.Clear();
+                cboDuration.Items.Add((double)scale);
+                //cboDuration.SelectedIndex = 0;
+            }
+        }
+
+        private void GetAppointmentSlots(DateTime apptDate)
+        {
+            DateTime m_dStart = apptDate; // move to 1200
+            DateTime m_dEnd = m_dStart.Date.AddHours(23).AddMinutes(59).AddSeconds(59); //move to 235959
+            string sSearchInfo = "1|both" + "|";
+            ArrayList m_alResources = alResources;
+            ArrayList m_alAccessTypes = new ArrayList();
+            DataTable m_availTable = CGSchedLib.CreateAvailabilitySchedule(m_DocManager, m_alResources, m_dStart, m_dEnd, m_alAccessTypes, ScheduleType.Resource, sSearchInfo);
+            DataTable m_apptTable = CGSchedLib.CreateAppointmentSchedule(m_DocManager, m_alResources, m_dStart, m_dEnd);
+            cboSlots.Items.Clear();
+            if (m_availTable.Rows.Count>0)
+            {
+                foreach (DataRow row in m_availTable.Rows)
+                {
+                    string resource = row.Field<string>("RESOURCE");
+                    DateTime start_time = row.Field<DateTime>("START_TIME");
+                    DateTime end_time = row.Field<DateTime>("END_TIME");
+                    double minPerSlot = (row.Field<DateTime>("END_TIME") - row.Field<DateTime>("START_TIME")).TotalMinutes / row.Field<int>("SLOTS");
+                    double duration = minPerSlot;
+                    if (cboDuration.SelectedIndex >= 0)
+                    {
+                        duration = (double)cboDuration.SelectedItem;
+                    }
+                    int totalSlots = row.Field<int>("SLOTS");
+                    DateTime aStartTime = start_time;
+                    DateTime aEndTime = start_time.AddMinutes(duration);
+                    for (int i = 0; i < totalSlots; i++)
+                    {
+                        bool flag = true;
+                        foreach (DataRow appt in m_apptTable.Rows)
+                        {
+                            if (resource == appt.Field<string>("RESOURCENAME"))
+                            {
+                                DateTime apptStartTime = appt.Field<DateTime>("START_TIME");
+                                DateTime apptEndTime = appt.Field<DateTime>("END_TIME");
+                                DateTimeRange dRange1 = new DateTimeRange();
+                                dRange1.Start = aStartTime;
+                                dRange1.End = aEndTime;
+                                DateTimeRange dRange2 = new DateTimeRange();
+                                dRange2.Start = apptStartTime;
+                                dRange2.End = apptEndTime.AddSeconds(-1);
+                                if (dRange1.Intersects(dRange2))
+                                {
+                                    flag = false;
+                                }
+                                /*if(aStartTime.Ticks >= apptStartTime.Ticks && aStartTime.Ticks <= apptEndTime.AddSeconds(-1).Ticks)
+                                {
+                                    flag = false;
+                                }
+                                if (aEndTime.Ticks <= apptStartTime.Ticks && aEndTime.Ticks >= apptEndTime.AddSeconds(-1).Ticks)
+                                {
+                                    flag = false;
+                                }*/
+                            }
+                        }
+                        if (flag)
+                        {
+                            AppointmentComboboxItem item = new AppointmentComboboxItem();
+                            item.Value = aStartTime;
+                            item.Text = aStartTime.TimeOfDay.ToString();
+                            cboSlots.Items.Add(item);
+                        }
+                        aStartTime = aStartTime.AddMinutes(minPerSlot);
+                        aEndTime = aStartTime.AddMinutes(duration);
+                    }
+                }
+            }
+            else
+            {
+                CGView v= this.DocManager.GetViewByResource(m_alResources);
+                int scale = v.CGrid.TimeScale;
+                cboSlots.Items.Clear();                
+                DateTime dStartTime = apptDate.Date;
+                while (dStartTime.Day == apptDate.Date.Day)
+                {
+                    AppointmentComboboxItem item = new AppointmentComboboxItem();
+                    item.Value = dStartTime;
+                    item.Text = dStartTime.TimeOfDay.ToString();
+                    cboSlots.Items.Add(item);
+                    dStartTime = dStartTime.AddMinutes((double)scale);
+                }
+            }            
+        }
+
+        public void HideCloneForwardTab() {
+            tabControl1.TabPages.Remove(tabCloneForward);
+        }
+
+        public void SetCloneForwardable(ArrayList alResources, CGAppointment a) {
+            originalAppointment = a.StartTime;
+            //grpCloneForward.Visible = true;
+            isCloning = true;
+            //grpCloneForward.Top = groupBox4.Top;
+            //groupBox4.Top = groupBox4.Top + grpCloneForward.Height + 10;
+            txtNote.Enabled = false;
+            //this.Height = this.Height + grpCloneForward.Height + 20;
+            this.alResources = alResources;
+            cboSlots.DropDownStyle = ComboBoxStyle.DropDownList;
+            cboDuration.DropDownStyle = ComboBoxStyle.DropDownList;
+            cboDuration.Items.Clear();
+            GetAppointmentSlots(dtCloneAppointment.Value);            
+            SetDurations(dtCloneAppointment.Value);
+            txtClinic.Text = alResources[0].ToString();
+            m_sClinic = txtClinic.Text;
+            if (cboSlots.Items.Count > 0)
+            {
+                bool flag = true;
+                cboDuration.SelectedIndex = 0;
+                foreach (AppointmentComboboxItem item in cboSlots.Items)
+                {
+                    if (originalAppointment.TimeOfDay.ToString() == item.Text)
+                    {
+                        flag = false;
+                        cboSlots.SelectedIndex = cboSlots.Items.IndexOf(item);
+                    }
+                }
+                if (flag)
+                {
+                    cboSlots.SelectedIndex = 0;
+                }                
+                m_dStartTime = ((AppointmentComboboxItem)cboSlots.SelectedItem).Value;
+                m_dEndTime = m_dStartTime.AddMinutes((double)cboDuration.SelectedItem);
+            }
+            tabControl1.SelectedIndex = tabControl1.TabPages.IndexOf(tabCloneForward);
+        }
+        
+        public void InitializePage(CGAppointment a)
 		{
 			InitializePage(a.PatientID.ToString(), a.StartTime, a.EndTime, "", a.Note, a.AccessTypeID);
 		}
@@ -770,6 +1172,15 @@ namespace IndianHealthService.ClinicalScheduling
 		private void cmdOK_Click(object sender, System.EventArgs e)
 		{
 			this.UpdateDialogData(false);
+            if (isCloning)
+            {
+                if (cboSlots.Items.Count <=0)
+                {
+                    MessageBox.Show("Please select the Appointment Slot before submitting the form");
+                    return;
+                }
+            }
+            this.DialogResult = System.Windows.Forms.DialogResult.OK;
 		}
 
 		/// <summary>
@@ -875,6 +1286,139 @@ namespace IndianHealthService.ClinicalScheduling
             CGDocumentManager.Current.UserPreferences.PrintAppointmentSlipAutomacially = chkPrint.Checked;
         }
 
+        private void DAppointPage_Load(object sender, EventArgs e)
+        {
 
-	} //end Class
+        }
+
+        private void dtCloneAppointment_ValueChanged(object sender, EventArgs e)
+        {
+            cboDuration.Items.Clear();
+            GetAppointmentSlots(dtCloneAppointment.Value);
+            SetDurations(dtCloneAppointment.Value);
+            txtClinic.Text = alResources[0].ToString();
+            m_sClinic = txtClinic.Text;
+            if (cboSlots.Items.Count > 0)
+            {
+                cboDuration.SelectedIndex = 0;
+                cboSlots.SelectedIndex = cboSlots.FindStringExact(originalAppointment.TimeOfDay.ToString());
+                m_dStartTime = ((AppointmentComboboxItem)cboSlots.SelectedItem).Value;
+                m_dEndTime = m_dStartTime.AddMinutes((double)cboDuration.SelectedItem);
+            }
+        }
+
+        private void rdbFUCheckedChanged(object sender, EventArgs e)
+        {
+            if (((RadioButton)sender).Checked)
+            {
+                // This is the correct control.
+                RadioButton rb = (RadioButton)sender;
+                dtCloneAppointment.Value = originalAppointment.AddDays(Convert.ToDouble(rb.Text));
+                AppointmentComboboxItem item = new AppointmentComboboxItem();
+                item.Value = dtCloneAppointment.Value;
+                item.Text = dtCloneAppointment.Value.TimeOfDay.ToString();
+                if (cboSlots.Items.Count > 0)
+                {
+                    cboSlots.SelectedIndex = cboSlots.FindStringExact(dtCloneAppointment.Value.TimeOfDay.ToString());
+                }
+            }
+        }
+
+        private void cboDuration_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            GetAppointmentSlots(dtCloneAppointment.Value);
+            if (cboSlots.Items.Count >0)
+            {
+                cboSlots.SelectedIndex = 0;
+                m_dStartTime = ((AppointmentComboboxItem)cboSlots.SelectedItem).Value;
+                m_dEndTime = m_dStartTime.AddMinutes((double)cboDuration.SelectedItem);
+            }
+        }
+
+        private void txtFUOther_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (!char.IsDigit(e.KeyChar))
+            {
+                e.Handled = true;
+            }
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            if (Convert.ToInt32(txtFUOther.Text)>0)
+            {
+                if (Convert.ToInt32(txtFUOther.Text) <= 365)
+                {
+                    dtCloneAppointment.Value = originalAppointment.AddDays(Convert.ToInt32(txtFUOther.Text));
+                    AppointmentComboboxItem item = new AppointmentComboboxItem();
+                    item.Value = dtCloneAppointment.Value;
+                    item.Text = dtCloneAppointment.Value.TimeOfDay.ToString();
+                    if (cboSlots.Items.Count > 0)
+                    {
+                        cboSlots.SelectedIndex = cboSlots.FindStringExact(dtCloneAppointment.Value.TimeOfDay.ToString());
+                    }                    
+                }
+                else
+                {
+                    MessageBox.Show("Please enter number less then 365.");
+                }
+            }
+            else
+            {
+                MessageBox.Show("Please enter number of days before updating.");
+            }
+        }
+
+        private void cboSlots_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            m_dStartTime = ((AppointmentComboboxItem)cboSlots.SelectedItem).Value;
+            m_dEndTime = m_dStartTime.AddMinutes((double)cboDuration.SelectedItem);
+        }
+    } //end Class
+
+    public class AppointmentComboboxItem
+    {
+        public string Text { get; set; }
+        public DateTime Value { get; set; }
+
+        public override string ToString()
+        {
+            return Text;
+        }
+    }
+
+    public class DateTimeRange
+    {
+        public DateTime Start { get; set; }
+        public DateTime End { get; set; }
+
+        public bool Intersects(DateTimeRange test)
+        {
+            
+            if (this.Start == this.End || test.Start == test.End)
+                return false; // No actual date range
+
+            if (this.Start == test.Start || this.End == test.End)
+                return true; // If any set is the same time, then by default there must be some overlap. 
+
+            if (this.Start < test.Start)
+            {
+                if (this.End > test.Start && this.End < test.End)
+                    return true; // Condition 1
+
+                if (this.End > test.End)
+                    return true; // Condition 3
+            }
+            else
+            {
+                if (test.End > this.Start && test.End < this.End)
+                    return true; // Condition 2
+
+                if (test.End > this.End)
+                    return true; // Condition 4
+            }
+
+            return false;
+        }
+    }
 }
