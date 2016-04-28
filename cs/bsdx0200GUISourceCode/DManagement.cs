@@ -111,7 +111,11 @@ namespace IndianHealthService.ClinicalScheduling
 		private System.Windows.Forms.GroupBox groupBox1;
 		private System.Windows.Forms.Label lblWorkstations;
 		private System.Windows.Forms.DataGrid grdWorkStations;
-		private System.Windows.Forms.TextBox txtSendMessage;
+        private TabPage tpConfiguration;
+        private CheckBox chkEventPolling;
+        private Label lblEventPollInterval;
+        private NumericUpDown nudEventPolling;
+        private System.Windows.Forms.TextBox txtSendMessage;
 
 		#endregion Fields
 
@@ -384,11 +388,18 @@ namespace IndianHealthService.ClinicalScheduling
 			cboBSDXClinic.DisplayMember = "RESOURCE_NAME";
 			cboBSDXClinic.ValueMember = "RESOURCEID";
 
-		}
+            string result = docManager.RemoteSession.TransmitRPC("VEFA GET BMX POLL INTERVAL", "");
+            if (result.Split('^')[0] == "1")
+            {
+                chkEventPolling.Checked = true;
+                nudEventPolling.Enabled = true;
+                nudEventPolling.Value = Convert.ToInt32(result.Split('^')[1]);
+            }            
+        }
 
 		private void DManagement_Load(object sender, System.EventArgs e)
 		{
-			this.cmdChangeResource.Enabled = false;
+            this.cmdChangeResource.Enabled = false;
 			this.cmdRemoveUser.Enabled = false;
 			//Select the grid's zeroeth row
 			if (m_dvResources.Count > 0)
@@ -513,6 +524,10 @@ namespace IndianHealthService.ClinicalScheduling
             this.cmdWorkStationsMessage = new System.Windows.Forms.Button();
             this.cmdWorkStationsShutdown = new System.Windows.Forms.Button();
             this.cmdWorkStationsRefresh = new System.Windows.Forms.Button();
+            this.tpConfiguration = new System.Windows.Forms.TabPage();
+            this.nudEventPolling = new System.Windows.Forms.NumericUpDown();
+            this.lblEventPollInterval = new System.Windows.Forms.Label();
+            this.chkEventPolling = new System.Windows.Forms.CheckBox();
             this.pnlPageBottom.SuspendLayout();
             this.tabMain.SuspendLayout();
             this.tpResources.SuspendLayout();
@@ -545,6 +560,8 @@ namespace IndianHealthService.ClinicalScheduling
             this.pnlWorkstations.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.panel1.SuspendLayout();
+            this.tpConfiguration.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudEventPolling)).BeginInit();
             this.SuspendLayout();
             // 
             // pnlPageBottom
@@ -573,6 +590,7 @@ namespace IndianHealthService.ClinicalScheduling
             this.tabMain.Controls.Add(this.tpAccessGroups);
             this.tabMain.Controls.Add(this.tpTransferAppts);
             this.tabMain.Controls.Add(this.tpWorkStations);
+            this.tabMain.Controls.Add(this.tpConfiguration);
             this.tabMain.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tabMain.Location = new System.Drawing.Point(0, 0);
             this.tabMain.Name = "tabMain";
@@ -830,8 +848,8 @@ namespace IndianHealthService.ClinicalScheduling
             this.label1.Size = new System.Drawing.Size(690, 53);
             this.label1.TabIndex = 1;
             this.label1.Text = " Use the Access Types panel to define the kinds of access available for schedulin" +
-                "g at this facility.  Common types of access include Walkin, Scheduled, Same Day," +
-                " and Dental Expanded Functions.";
+    "g at this facility.  Common types of access include Walkin, Scheduled, Same Day," +
+    " and Dental Expanded Functions.";
             // 
             // pnlAddEditAT
             // 
@@ -1182,6 +1200,63 @@ namespace IndianHealthService.ClinicalScheduling
             this.cmdWorkStationsRefresh.Text = "&Refresh";
             this.cmdWorkStationsRefresh.Click += new System.EventHandler(this.cmdWorkStationsRefresh_Click);
             // 
+            // tpConfiguration
+            // 
+            this.tpConfiguration.BackColor = System.Drawing.SystemColors.Control;
+            this.tpConfiguration.Controls.Add(this.nudEventPolling);
+            this.tpConfiguration.Controls.Add(this.lblEventPollInterval);
+            this.tpConfiguration.Controls.Add(this.chkEventPolling);
+            this.tpConfiguration.Location = new System.Drawing.Point(4, 22);
+            this.tpConfiguration.Name = "tpConfiguration";
+            this.tpConfiguration.Padding = new System.Windows.Forms.Padding(3);
+            this.tpConfiguration.Size = new System.Drawing.Size(696, 428);
+            this.tpConfiguration.TabIndex = 7;
+            this.tpConfiguration.Text = "Configuration";
+            // 
+            // nudEventPolling
+            // 
+            this.nudEventPolling.Enabled = false;
+            this.nudEventPolling.Location = new System.Drawing.Point(374, 24);
+            this.nudEventPolling.Maximum = new decimal(new int[] {
+            9999999,
+            0,
+            0,
+            0});
+            this.nudEventPolling.Minimum = new decimal(new int[] {
+            5,
+            0,
+            0,
+            0});
+            this.nudEventPolling.Name = "nudEventPolling";
+            this.nudEventPolling.Size = new System.Drawing.Size(74, 20);
+            this.nudEventPolling.TabIndex = 11;
+            this.nudEventPolling.Value = new decimal(new int[] {
+            5,
+            0,
+            0,
+            0});
+            this.nudEventPolling.ValueChanged += new System.EventHandler(this.nudEventPolling_ValueChanged);
+            // 
+            // lblEventPollInterval
+            // 
+            this.lblEventPollInterval.AutoSize = true;
+            this.lblEventPollInterval.Location = new System.Drawing.Point(185, 26);
+            this.lblEventPollInterval.Name = "lblEventPollInterval";
+            this.lblEventPollInterval.Size = new System.Drawing.Size(167, 13);
+            this.lblEventPollInterval.TabIndex = 9;
+            this.lblEventPollInterval.Text = "Event Polling Interval (in seconds)";
+            // 
+            // chkEventPolling
+            // 
+            this.chkEventPolling.AutoSize = true;
+            this.chkEventPolling.Location = new System.Drawing.Point(33, 25);
+            this.chkEventPolling.Name = "chkEventPolling";
+            this.chkEventPolling.Size = new System.Drawing.Size(130, 17);
+            this.chkEventPolling.TabIndex = 7;
+            this.chkEventPolling.Text = "Event Polling Enabled";
+            this.chkEventPolling.UseVisualStyleBackColor = true;
+            this.chkEventPolling.CheckedChanged += new System.EventHandler(this.chkEventPolling_CheckedChanged);
+            // 
             // DManagement
             // 
             this.AcceptButton = this.cmdClose;
@@ -1227,6 +1302,9 @@ namespace IndianHealthService.ClinicalScheduling
             this.groupBox1.ResumeLayout(false);
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
+            this.tpConfiguration.ResumeLayout(false);
+            this.tpConfiguration.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudEventPolling)).EndInit();
             this.ResumeLayout(false);
 
 		}
@@ -2401,5 +2479,31 @@ namespace IndianHealthService.ClinicalScheduling
         }
         #endregion Workstations
 
+        private void chkEventPolling_CheckedChanged(object sender, EventArgs e)
+        {
+            if (chkEventPolling.Checked)
+            {
+                nudEventPolling.Enabled = true;
+                int interval = Convert.ToInt32(nudEventPolling.Value);
+                string result = this.m_DocManager.RemoteSession.TransmitRPC("VEFA SET BMX POLL INTERVAL", interval.ToString());                
+                this.m_DocManager.RemoteSession.EventServices.EventPollingInterval = (interval * 1000);
+                this.m_DocManager.RemoteSession.EventServices.IsEventPollingEnabled = true;
+            }
+            else
+            {
+                nudEventPolling.Enabled = false;
+                string result = this.m_DocManager.RemoteSession.TransmitRPC("VEFA SET BMX POLL INTERVAL", "0");                
+                this.m_DocManager.RemoteSession.EventServices.EventPollingInterval = 5000;
+                this.m_DocManager.RemoteSession.EventServices.IsEventPollingEnabled = false;
+            }
+        }
+
+        private void nudEventPolling_ValueChanged(object sender, EventArgs e)
+        {
+            string result = this.m_DocManager.RemoteSession.TransmitRPC("VEFA SET BMX POLL INTERVAL", nudEventPolling.Value.ToString());
+            this.m_DocManager.RemoteSession.EventServices.IsEventPollingEnabled = false;
+            this.m_DocManager.RemoteSession.EventServices.EventPollingInterval = (Convert.ToInt32(nudEventPolling.Value) * 1000);
+            this.m_DocManager.RemoteSession.EventServices.IsEventPollingEnabled = true;
+        }
     }
 }

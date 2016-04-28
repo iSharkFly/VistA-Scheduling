@@ -1,10 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <asmv1:assembly xsi:schemaLocation="urn:schemas-microsoft-com:asm.v1 assembly.adaptive.xsd" manifestVersion="1.0" xmlns:asmv1="urn:schemas-microsoft-com:asm.v1" xmlns="urn:schemas-microsoft-com:asm.v2" xmlns:asmv2="urn:schemas-microsoft-com:asm.v2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:co.v1="urn:schemas-microsoft-com:clickonce.v1" xmlns:asmv3="urn:schemas-microsoft-com:asm.v3" xmlns:dsig="http://www.w3.org/2000/09/xmldsig#" xmlns:co.v2="urn:schemas-microsoft-com:clickonce.v2">
-  <asmv1:assemblyIdentity name="ClinicalScheduling.exe" version="2.0.0.1" publicKeyToken="0000000000000000" language="neutral" processorArchitecture="msil" type="win32" />
+  <asmv1:assemblyIdentity name="ClinicalScheduling.exe" version="2.0.1.0" publicKeyToken="0000000000000000" language="neutral" processorArchitecture="msil" type="win32" />
   <description asmv2:iconFile="hwIco281.ICO" xmlns="urn:schemas-microsoft-com:asm.v1" />
   <application />
   <entryPoint>
-    <assemblyIdentity name="ClinicalScheduling" version="2.0.0.18765" language="neutral" processorArchitecture="msil" />
+    <assemblyIdentity name="ClinicalScheduling" version="2.0.1.36047" language="neutral" processorArchitecture="msil" />
     <commandLine file="ClinicalScheduling.exe" parameters="" />
   </entryPoint>
   <trustInfo>
@@ -43,50 +43,50 @@
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="BMXNET40.dll" size="102400">
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="BMXNET40.dll" size="98304">
       <assemblyIdentity name="BMXNET40" version="4.0.0.1" language="neutral" processorArchitecture="msil" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-        <dsig:DigestValue>87hyS0Cc8g0C25p8lM/YJxDWmS0=</dsig:DigestValue>
+        <dsig:DigestValue>BuPNd0YwOUCOVZHLX1mbUngBCRA=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="BMXWIN40.dll" size="89600">
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="BMXWIN40.dll" size="86528">
       <assemblyIdentity name="BMXWIN40" version="4.0.0.1" language="neutral" processorArchitecture="msil" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-        <dsig:DigestValue>Bat1XLf4HJ6KVnk8jAG0GWO3Btw=</dsig:DigestValue>
+        <dsig:DigestValue>GUd/pXlwaLDjoY/43aEkcBkqBKY=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
   <dependency>
     <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="ClinicalScheduling.exe" size="724992">
-      <assemblyIdentity name="ClinicalScheduling" version="2.0.0.18765" language="neutral" processorArchitecture="msil" />
+      <assemblyIdentity name="ClinicalScheduling" version="2.0.1.36047" language="neutral" processorArchitecture="msil" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-        <dsig:DigestValue>kLWcOlE0wrV4llowt87RoKjIMgg=</dsig:DigestValue>
+        <dsig:DigestValue>9kNK3139SoUY6RVxrpqC/e+Jrjg=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
   <dependency>
     <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="ar\ClinicalScheduling.resources.dll" size="5120">
-      <assemblyIdentity name="ClinicalScheduling.resources" version="2.0.0.18765" language="ar" processorArchitecture="msil" />
+      <assemblyIdentity name="ClinicalScheduling.resources" version="2.0.1.36047" language="ar" processorArchitecture="msil" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-        <dsig:DigestValue>uGPZoM38EhWW3xqvMljNbIyrwX0=</dsig:DigestValue>
+        <dsig:DigestValue>MfE38dsPcWZ3BLKvbiIPDrfZaDo=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
@@ -102,13 +102,13 @@
       </hash>
     </dependentAssembly>
   </dependency>
-  <file name="ClinicalScheduling.exe.config" size="613">
+  <file name="ClinicalScheduling.exe.config" size="1672">
     <hash>
       <dsig:Transforms>
         <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
       </dsig:Transforms>
       <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-      <dsig:DigestValue>lEUsBWWQtJix6v4p2Q8lns1f5Vk=</dsig:DigestValue>
+      <dsig:DigestValue>BCce4nUOp5hl3qvhPufpWRGw9q4=</dsig:DigestValue>
     </hash>
   </file>
   <file name="dsPatientApptDisplay2.xsd" size="8748">

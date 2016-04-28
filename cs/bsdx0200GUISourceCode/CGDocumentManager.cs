@@ -389,6 +389,7 @@ namespace IndianHealthService.ClinicalScheduling
                 path = path.Substring(0, path.LastIndexOf('\\'));
                 //path = path.Substring(0, path.LastIndexOf('\\'));
                 path = path + '\\' + "Putty\\putty.exe";
+                
                 if (System.IO.File.Exists(path))
                 {
                     string prms = "-ssh -l " + m_SshUser + " -pw " + m_SshPassword + " -L " + m_Port + ":127.0.0.1:" + m_Port + " " + m_Server;
@@ -919,9 +920,16 @@ DoneTrying:
 			//Table #19
             setProgressDelegate(21);
             _current.RemoteSession.EventServices.Subscribe("BSDX ADMIN SHUTDOWN");
-
-			_current.RemoteSession.EventServices.EventPollingInterval = 5000; //in milliseconds
-			_current.RemoteSession.EventServices.IsEventPollingEnabled = true;
+                        
+            string result = _current.RemoteSession.TransmitRPC("VEFA GET BMX POLL INTERVAL","");
+            bool eventPoolEnabled = false;
+            if (result.Split('^')[0] == "1")
+            {
+                eventPoolEnabled = true;
+            }
+            int eventPoolInterval = Convert.ToInt32(result.Split('^')[1]);
+            _current.RemoteSession.EventServices.EventPollingInterval = (eventPoolInterval * 1000); //in milliseconds
+			_current.RemoteSession.EventServices.IsEventPollingEnabled = eventPoolEnabled;            
 			
             //PORT TODO: No Autofire in BMX 4.0
             //_current.RemoteSession.EventServices. = 12; //AutoFire every 12*5 seconds

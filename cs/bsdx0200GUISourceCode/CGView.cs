@@ -4041,6 +4041,11 @@ namespace IndianHealthService.ClinicalScheduling
 
         private void mnuRefresh_Click(object sender, EventArgs e)
         {
+            //this.m_DocManager.RemoteSession.EventServices.EventPollingInterval = 50000;
+            //this.m_DocManager.RemoteSession.EventServices.RefreshEventPoll();
+            this.DocManager.RemoteSession.EventServices.IsEventPollingEnabled = true;
+            this.DocManager.RemoteSession.EventServices.RefreshEventPoll();
+            this.DocManager.RemoteSession.EventServices.IsEventPollingEnabled = false;
             ForceRefreshGrid();
         }
 
